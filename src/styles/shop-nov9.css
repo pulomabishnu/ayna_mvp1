@@ -1,0 +1,38 @@
+/*
+ * Shop and Services, Nov 9 (founder: simple, easy to navigate, understood at a glance, high
+ * converting, brand colours only). Same layout as the approved Shop, cleaned up:
+ *   - the need chips wrap in one centred block on wide screens (no arrow buttons under them);
+ *   - one line under the title on what's different (a match % and the reason why);
+ *   - product cards like the landing picks: the photo on its white plate, the words underneath,
+ *     no outline or offset shadow around the whole card;
+ *   - "Only my matches" sits next to Filters.
+ */
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ayshop-hero__lede {
+  margin: -6px auto 22px; max-width: 34em; text-align: center; color: #3e2723; font: 500 18px/1.45 var(--ay-font-ui, Figtree, sans-serif);
+}
+@media (min-width: 900px) {
+  :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ay-scrollrow__arrow { display: none !important; }
+  :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ay-scrollrow__track { overflow: visible !important; -webkit-mask: none !important; mask: none !important; }
+  :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero :is(.ay-shopgroups, .ay-shopgroups__row) { flex-wrap: wrap !important; justify-content: center !important; row-gap: 10px !important; max-width: 980px; margin: 0 auto !important; overflow: visible !important; }
+  :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ay-scrollrow { max-width: 1000px !important; width: auto !important; }
+  :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ay-scrollrow__track { width: auto !important; max-width: 1000px !important; }
+}
+/* cards: plate + words, no frame */
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard {
+  border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important;
+}
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__photo {
+  border: 0 !important; border-radius: 22px !important; background: #fff !important; box-shadow: none !important; overflow: hidden; transition: transform .18s ease;
+}
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard:hover .ay-pcard__photo { transform: translateY(-3px); }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__body { padding: 12px 4px 0 !important; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__name { font-size: 17px !important; font-weight: 700 !important; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__heart { top: 12px !important; right: 12px !important; bottom: auto !important; background: #ffedac !important; border: 0 !important; box-shadow: none !important; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__seematch { display: inline-flex; margin-top: 8px !important; padding: 8px 14px !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; border: 0 !important; font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif) !important; text-decoration: none !important; }
+@media (prefers-reduced-motion: reduce) { :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__grid .ay-pcard__photo { transition: none; } }
+/* Only my matches */
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine { display: inline-flex; align-items: center; gap: 8px; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine.is-on { background: #3e2723 !important; color: #ffedac !important; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine.is-on svg { fill: #f7badd; stroke: #f7badd; }
+:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop-hero .ay-scrollrow__arrow { display: none !important; } /* swipe on phones, wrap on desktop */
