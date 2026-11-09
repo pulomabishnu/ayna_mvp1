@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
 import { groupShelves } from '../matching/shelfGroups.js';
+import { whyFitSummary } from './match/WhyFit.jsx';
+import { evidenceLevel } from './pdp/evidenceLevel.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';
@@ -93,12 +95,22 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
         .filter((g) => g.items.length);
     } catch { return []; }
   })();
+  // Nov 8 (founder: "actually informative"): why the #1 fits, and what ayna checked for her.
+  const firstWhyFit = first && quizResults ? whyFitSummary(first, quizResults, healthProfile, matchOpts) : null;
+  const checked = (() => {
+    if (!quizResults || !picks.length) return null;
+    let held = 0;
+    try { held = (getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || []).reduce((n, sh) => n + (sh.restrictedCount || 0), 0); } catch { held = 0; }
+    const gov = picks.filter((p) => { try { return evidenceLevel(p).level >= 3; } catch { return false; } }).length;
+    const studied = picks.filter((p) => { try { return evidenceLevel(p).level >= 2; } catch { return false; } }).length;
+    return { held, gov, studied };
+  })();
   const byArea = byNeed.length ? byNeed : areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }));
   const groupWord = byNeed.length ? (byArea.length === 1 ? 'need' : 'needs') : (byArea.length === 1 ? 'area' : 'areas');
   const [swap, setSwap] = useState({});
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
-    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(persona ? ['persona'] : []), 'finish']
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -198,6 +210,24 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               <Kinetic text={first.name} className={`ays-title${String(first.name || '').length > 40 ? ' is-long' : ''}`} />
               {(first.brand || firstWhy) && <p className="ays-body">{[first.brand, firstWhy].filter(Boolean).join(' · ')}</p>}
             </div>
+          </>}
+          {active === 'why' && firstWhyFit && <>
+            <div className="ays-words"><p className="ays-kicker">Why it’s your #1</p><Kinetic text={firstWhyFit.forWhat ? `For ${firstWhyFit.forWhat.toLowerCase()}` : 'Made for what you told us'} /></div>
+            <ul className="ay-wr-why">
+              {firstWhyFit.reasons.map((r, i) => <li key={r} style={{ '--d': `${i * 140}ms` }}><span className="ay-wr-why__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>{r}</li>)}
+              {firstWhyFit.evidence && <li style={{ '--d': `${firstWhyFit.reasons.length * 140}ms` }}><span className="ay-wr-why__bars" aria-hidden="true">{[1, 2, 3].map((n) => <i key={n} className={n <= firstWhyFit.evidence.level ? 'is-on' : ''} />)}</span>Evidence: {firstWhyFit.evidence.word}</li>}
+              {firstWhyFit.price && <li style={{ '--d': `${(firstWhyFit.reasons.length + 1) * 140}ms` }}><span className="ay-wr-why__ic" aria-hidden="true">$</span>{firstWhyFit.price.word}</li>}
+            </ul>
+            {firstWhyFit.checks.length > 0 && <p className="ay-wr-checks"><b>Checked for you:</b> {firstWhyFit.checks.join(', ')}</p>}
+          </>}
+          {active === 'checked' && checked && <>
+            <div className="ays-words"><p className="ays-kicker">What ayna checked</p><Kinetic text="Every pick, checked against you" /></div>
+            <dl className="ay-wr-nums">
+              <div><dt><CountUp value={picks.length} on={active === 'checked'} reduced={reduced} /></dt><dd>{picks.length === 1 ? 'product fits' : 'products fit'} your answers</dd></div>
+              <div><dt><CountUp value={checked.held} on={active === 'checked'} reduced={reduced} /></dt><dd>{checked.held === 1 ? 'was' : 'were'} left out for your stage, medicines or safety</dd></div>
+              <div><dt><CountUp value={checked.studied} on={active === 'checked'} reduced={reduced} /></dt><dd>{checked.studied === 1 ? 'has' : 'have'} research or .gov guidance behind {checked.studied === 1 ? 'it' : 'them'}</dd></div>
+            </dl>
+            <p className="ays-body">Brands can’t pay for a better match. Every % comes from your answers and the research.</p>
           </>}
           {active === 'persona' && persona && <>
             <div className="ays-words"><p className="ays-kicker">Your shopping style</p><Kinetic text={persona.title} /></div>

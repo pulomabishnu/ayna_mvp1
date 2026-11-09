@@ -181,8 +181,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           {onConnect && (
             <li style={{ '--i': 1 }}>
               <button type="button" onClick={onConnect}>
-                <span className="ay-pz__blob is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h7l4 4v12H7z" /><path d="M14 4v4h4M10 13h5M10 16.5h5" /></svg></span>
-                <span className="ay-pz__txt"><b>Connect your health records</b><small>Allergies, medicines · 1 min</small></span>
+                <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
+                <span className="ay-pz__txt"><b>Link your wearables</b><small>Apple Health, Oura · 1 min</small></span>
                 <Arrow />
               </button>
             </li>
@@ -190,14 +190,16 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           {onConnect && (
             <li style={{ '--i': 2 }}>
               <button type="button" onClick={onConnect}>
-                <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
-                <span className="ay-pz__txt"><b>Connect a wearable</b><small>Apple Health, Oura · 1 min</small></span>
+                <span className="ay-pz__blob is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h7l4 4v12H7z" /><path d="M14 4v4h4M10 13h5M10 16.5h5" /></svg></span>
+                <span className="ay-pz__txt"><b>Connect your health records</b><small>Allergies, medicines · 1 min</small></span>
                 <Arrow />
               </button>
             </li>
           )}
         </ul>
-        <button type="button" className="ay-pz__skip" onClick={() => setStage('matches')}>Skip, see my matches <Arrow /></button>
+        {/* Nov 8 (founder): after the quiz, three clear choices: more questions, see your results
+            (ayna Wrapped, then the account), or link your wearables. */}
+        <button type="button" className="ay-pz__see" onClick={onWatchWrapped || (() => setStage('matches'))}>See my results <Arrow /></button>
       </Tag>
     );
   }
@@ -284,11 +286,15 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         <p className="ay-ob-ready__lead">You didn’t pick anything specific, so {variant === 'web' ? 'your ecosystem starts with options to explore' : 'Today starts with quick check-ins'}. Add what you want help with any time in You.</p>
       )}
       <div className="ay-ob-ready__actions ay-ob-next">
-        {!signedIn && onCreateAccount
-          ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 1 ? 'Save my match' : `Save my ${total > 0 ? `${total} ` : ''}matches`}<Arrow /></button>
-          : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<Arrow /></button>}
-        <small className="ay-ob-next__note">{!signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>
-        {onWatchWrapped && total > 0 && signedIn && <button type="button" className="ay-ob-next__link" onClick={onWatchWrapped}>Watch my ayna Wrapped</button>}
+        {onWatchWrapped && total > 0
+          ? <button type="button" className="ay-ob-next__main" onClick={onWatchWrapped}>See my results<Arrow /></button>
+          : !signedIn && onCreateAccount
+            ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 1 ? 'Save my match' : `Save my ${total > 0 ? `${total} ` : ''}matches`}<Arrow /></button>
+            : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<Arrow /></button>}
+        <small className="ay-ob-next__note">{onWatchWrapped && total > 0 ? (signedIn ? 'Your ayna Wrapped, then your matches.' : 'Your ayna Wrapped, then save them with a free account.') : !signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>
+        {onWatchWrapped && total > 0 && (signedIn
+          ? <button type="button" className="ay-ob-next__link" onClick={onSeeToday}>Skip to my matches</button>
+          : onCreateAccount && <button type="button" className="ay-ob-next__link" onClick={onCreateAccount}>Skip, save my matches</button>)}
       </div>
     </Tag>
   );

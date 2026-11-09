@@ -147,3 +147,31 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
       {scored && <MatchFeedback productId={product?.id} onUpdateHealth={onUpdateHealth} />}
   </div>;
 }
+
+/**
+ * The same facts as the panel, as plain data, for ayna Wrapped (Nov 8, founder: "your Wrapped,
+ * even better … actually informative"). Only what makes it fit, never the gaps; null if not matched.
+ */
+export function whyFitSummary(product, quizResults, healthProfile = null, matchOpts) {
+  if (!product || !quizResults) return null;
+  let details;
+  try { details = getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts); } catch { return null; }
+  const scored = details?.eligible !== false && details?.matchStatus === 'scored' && Number.isFinite(details.percent) && details.percent > 0;
+  if (!scored) return null;
+  const rows = needBreakdown(details).filter((r) => r.score > 0).slice(0, 4);
+  const forWhat = (rows.find((r) => r.needId === details.needId) || rows[0])?.phrase || '';
+  let b = null;
+  try { b = breakdownFromDetails(product, details); } catch { b = null; }
+  const ev0 = evidenceLevel(product);
+  const tr = b?.evidence || null;
+  const ev = ev0.level > 0 ? ev0 : tr ? { level: ({ A: 3, B: 2, C: 1 })[tr.grade] || 0, word: tr.label } : ev0;
+  return {
+    percent: Math.round(details.percent),
+    forWhat: cap(forWhat),
+    needs: rows.map((r) => cap(r.phrase)).filter(Boolean),
+    reasons: fitReasons(product, details, b?.raised || [], forWhat).slice(0, 3),
+    checks: (b?.checks || []).slice(0, 4).map(checkWord),
+    evidence: ev?.level > 0 ? { level: ev.level, word: ev.word } : null,
+    price: priceSpot(product),
+  };
+}

@@ -612,3 +612,8 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 html body .ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-deck__card:is(.is-tone-0, .is-tone-1, .is-tone-2) .ay-deck__head em { background: transparent !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; color: #3e2723 !important; }
 html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__num { color: #ffedac; }
 html body :is(.ayna-mobile, .app-container) .ay-pz h1#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h#ay-pz-h { margin-bottom: 12px !important; }
+/* Nov 8: "See my results" is one of the three main choices, a full button, not a skip link. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see { display: inline-flex; align-items: center; justify-content: center; justify-self: stretch; gap: 8px; min-height: 56px; padding: 14px 24px !important; border: 0 !important; border-radius: 999px; background: #3e2723 !important; color: #ffedac !important; font: 700 17px/1.2 var(--o-sans, sans-serif) !important; cursor: pointer; box-shadow: 4px 4px 0 #f7badd; animation: ay-rise .45s ease .45s both; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see { animation: none !important; } }

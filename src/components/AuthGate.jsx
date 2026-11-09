@@ -92,8 +92,9 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
   // Defaults on. Never deletes any account data.
-  // Off by default: on a shared or library computer a health app should not stay signed in.
-  const [rememberMe, setRememberMeChecked] = useState(false);
+  // Nov 8 (founder: "it randomly logs you out when you quit the tab"): on by default, like the app.
+  // Off kept the session in sessionStorage, which ends when the tab closes. Untick it on a shared computer.
+  const [rememberMe, setRememberMeChecked] = useState(true);
   // Name fields only when the quiz gave one.
   const nameMeta = firstName ? { first_name: firstName, full_name: firstName } : {};
   // Two real signups reported never getting a confirmation email
