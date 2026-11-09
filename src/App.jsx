@@ -1762,7 +1762,18 @@ function App() {
   const handleViewWaitlist = () => setCurrentView('waitlist');
   const handleViewEcosystem = () => setCurrentView('ecosystem');
   // The old Ecosystem "Dashboard" tab is Today now (Ask's "open my dashboard" lands there).
-  const handleViewEcosystemDashboard = () => setCurrentView('home');
+  // Nov 9 (founder: "Ask ayna said it would take me to my dashboard; it only closed Ask"): the
+  // dashboard is the data part of Home now, so open Home and scroll to it (also when already on Home).
+  const handleViewEcosystemDashboard = () => {
+    setCurrentView('home');
+    let tries = 0;
+    const go = () => {
+      const el = document.getElementById('wht-week-h');
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if (++tries < 20) window.setTimeout(go, 150); else goHealthData();
+    };
+    window.setTimeout(go, 60);
+  };
   // You's sections: /you/saved, /you/health, ... ('ecosystem' is its own view, /you/ecosystem).
   const openYou = (key = null) => {
     const section = key === 'overview' ? null : key;

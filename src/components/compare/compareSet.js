@@ -217,7 +217,7 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
   rows.push({ id: 'use', label: 'Intended use', values: list.map(intendedUse), full: list.map(intendedUseFull), hint: 'What the brand or ayna’s team says it is for' });
   rows.push({ id: 'format', label: 'Format', values: list.map(formatOf) });
   // The grade (only from .gov) plus the same counts per level as the product page (pdp/evidenceLevels).
-  rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), notes: list.map(evidenceCountsLine), hint: 'Graded only from .gov health pages' });
+  rows.push({ id: 'evidence', label: 'Evidence', values: list.map(govEvidence), notes: list.map(evidenceCountsLine), hint: 'Graded only from trusted health sources (NIH, CDC, FDA, MedlinePlus)' });
   if (base['Ingredients or materials']) rows.push({ id: 'ingredients', label: 'Ingredients or materials', values: base['Ingredients or materials'] });
   rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), full: list.map(safetyFull), hint: 'From the label and the brand’s warnings' });
   rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor ? detailsFor(p) : null)), keep: true });

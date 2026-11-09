@@ -2226,6 +2226,7 @@ export default function MyEcosystem({
                     quizKey={quizSlotKind === 'finish' ? 'finish' : 'personal'}
                     onShownChange={setRailShown}
                     shelves={useTabs ? [] : shelfToc}
+                    care={!careFirst && !ecoQueryTrimmed && careSummaryLines.length > 0 ? { lines: careSummaryLines, onFindCare: () => setShowCareSheet(true) } : null}
                 />
                 <div className="eco-main">
                 <div className={careFirst ? 'eco3-secondary' : 'eco3-flow'}>
@@ -2368,7 +2369,8 @@ export default function MyEcosystem({
                 )}
 
                 {/* Care note sits after her first shelf block (never on top unless urgent; urgent uses the care-first panel above). */}
-                {!careFirst && !ecoQueryTrimmed && careSummaryLines.length > 0 && (
+                {/* Nov 9: the care note lives in the For you rail (EcoRail) now, not as a box across the shelves. */}
+                {false && (
                     <CareNote
                         className="eco3-carenote2"
                         lines={careSummaryLines}

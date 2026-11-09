@@ -45,6 +45,8 @@ function renders(product) {
 
 // UI labels the redesign renamed or folded into a new control (never product text).
 const RENAMED_LABELS = [
+  // Nov 9 (founder: "using words like .gov sources, no"): plain wording, "trusted health sources".
+  /\.gov/,
   // Nov 6 (founder: "is this stuff necessary … hard to read"): provenance filler removed on purpose.
   /^Note on file: ayna synthesis/, // the "ayna synthesis … not a direct clinician quote" line (the section is titled "What health guides say")
   'ayna grades only from .gov sources, so these are not graded. They are research, not the brand’s word.',

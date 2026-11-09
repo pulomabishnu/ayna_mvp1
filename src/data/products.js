@@ -2079,7 +2079,7 @@ function careFlagsFor(up) {
     // professional clinical guidance, NOT supporting evidence for a brand.
     if (needIds.has('cycle.pms') || needIds.has('mood.cycle_related')) notes.push({
       code: 'pms_care', short: 'Track symptoms daily for 2 to 3 cycles and discuss bothersome PMS with your ob-gyn.',
-      text: 'ACOG recommends recording symptoms and period dates for 2 to 3 months. Some premenstrual symptoms respond to exercise, counseling or clinician-guided treatment. Most marketed PMS products are not proven to work.',
+      text: 'ACOG recommends recording symptoms and period dates for 2 to 3 months. Some premenstrual symptoms respond to exercise, counseling or clinician-guided treatment.',
       source: 'https://www.acog.org/womens-health/faqs/Premenstrual-Syndrome',
     });
     if (needIds.has('mood.pmdd')) notes.push({

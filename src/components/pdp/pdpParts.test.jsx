@@ -80,7 +80,7 @@ describe('the evidence meter maps the existing grade', () => {
   it('levels 1-3 fill that many of 3 bars with the grade word; no grade is its own state', () => {
     expect(evidenceMeter({ level: 0 })).toMatchObject({ level: 0, empty: true, label: 'No checked research yet' });
     expect(evidenceMeter({ level: 2, word: 'Supported for this type', scope: 'type', line: 'L', need: 'period cramps' })).toMatchObject({ level: 2, of: 3, empty: false, label: 'Good evidence for this type of product for period cramps · not studied as this exact product', note: 'L' });
-    expect(evidenceMeter({ level: 3, word: 'Strong evidence', scope: 'product' }).note).toBe('Graded by ayna from .gov health sources.');
+    expect(evidenceMeter({ level: 3, word: 'Strong evidence', scope: 'product' }).note).toBe('Graded by ayna from trusted health sources.');
     expect(evidenceMeter({ level: 1, word: 'Limited evidence', scope: 'team' }).note).toMatch(/team recorded/);
     expect(evidenceMeter({ level: 9 }).level).toBe(3);
   });

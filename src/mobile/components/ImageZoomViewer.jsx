@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const MAX_SCALE = 4;
 const DOUBLE_TAP_SCALE = 2.5;
@@ -155,7 +156,11 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
   const src = images[index];
   const label = name ? `${name} photos` : 'Product photos';
 
-  return (
+  // Nov 9 (founder: "when I click the zoom on a photo it glitches"): on the website the viewer sat
+  // inside the product page, so the page's own layers (nav, text, Ask box) drew over it. It now
+  // renders at the top of the page (the app root in the app, so the app's styles still apply).
+  const host = typeof document === 'undefined' ? null : (document.querySelector('.ayna-mobile') || document.body);
+  const viewer = (
     <div ref={dialogRef} className="ay-zoom" role="dialog" aria-modal="true" aria-label={label}>
       <div className="ay-zoom-bar">
         <span className="ay-zoom-count" aria-live="polite">{count > 1 ? `Photo ${index + 1} of ${count}` : 'Photo'}</span>
@@ -214,4 +219,5 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
       </div>
     </div>
   );
+  return host ? createPortal(viewer, host) : viewer;
 }

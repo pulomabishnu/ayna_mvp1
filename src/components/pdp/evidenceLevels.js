@@ -26,7 +26,7 @@ export { isPeerReviewed };
 
 /** Short count words for a header row ("1 .gov", "4 peer-reviewed", "3 from Saalt", "6 people's experiences"). */
 export function levelCountWords(id, n, brand = '') {
-  if (id === 'gov') return `${n} .gov`;
+  if (id === 'gov') return `${n} from trusted health sources`;
   if (id === 'peer') return `${n} peer-reviewed`;
   if (id === 'brand') return `${n} from ${String(brand || '').trim() || 'the brand'}`;
   if (id === 'people') return `${n} people’s ${n === 1 ? 'experience' : 'experiences'}`;
@@ -75,9 +75,9 @@ export function evidenceFor(product, { m = null } = {}) {
   const graded = Boolean(ev.topGrade && ev.level);
   const status = graded ? (ev.scope === 'type' ? ev.word : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`) : 'Not graded yet';
   const why = graded
-    ? ev.line || `Graded by ayna from ${ev.source || 'a .gov health source'}.`
+    ? ev.line || `Graded by ayna from ${ev.source || 'a trusted health source'}.`
     : counts.gov > 0
-      ? 'ayna grades only from .gov sources, and none on file has been graded for this product yet.'
+      ? ''
       : `No .gov source on file covers this ${product.category === 'cup' ? 'cup' : product.category === 'disc' ? 'disc' : 'product'} yet.`;
   const parts = LEVELS.map((l) => (counts[l.id] ? levelCountWords(l.id, counts[l.id], brand) : '')).filter(Boolean);
   return { brand, counts, links, graded, grade: ev, status, why, summary: [status, ...parts].join(' · ') };

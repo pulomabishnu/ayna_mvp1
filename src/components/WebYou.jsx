@@ -34,6 +34,7 @@ import { Shout } from './ui/ay';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from './you/setupSteps.js';
 import '../styles/you-hub.css';
 import '../styles/unique-b.css';
+import '../styles/you-nov9.css';
 import { useSavedPosts, postLine } from '../hooks/useSavedPosts.js';
 import { recentQuestions } from '../utils/askRecent.js';
 import usePersistentState from '../hooks/usePersistentState.js';

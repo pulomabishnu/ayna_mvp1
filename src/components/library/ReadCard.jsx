@@ -53,7 +53,7 @@ export default function ReadCard({ article, layout = 'rail', href = null, onOpen
           {credit && <p className="ay-rcard__credit">Written by {credit.by} <span aria-hidden="true">·</span> Reviewed by {credit.reviewedBy}</p>}
           {sources.length > 0 && (
             <p className="ay-rcard__sources"><span className="sr-only">Sources: </span>
-              {sources.map((s, i) => <span key={`${s.name}-${i}`} className="ay-rcard__src">{s.level && <EvMark level={s.level} />}{s.name}{s.level && <span className="sr-only"> ({s.level === 'gov' ? '.gov health source' : 'peer-reviewed'})</span>}</span>)}
+              {sources.map((s, i) => <span key={`${s.name}-${i}`} className="ay-rcard__src">{s.level && <EvMark level={s.level} />}{s.name}{s.level && <span className="sr-only"> ({s.level === 'gov' ? 'trusted health source' : 'peer-reviewed'})</span>}</span>)}
             </p>
           )}
           {state}

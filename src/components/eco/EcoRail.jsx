@@ -14,7 +14,7 @@ function goShelf(e, key) {
   document.getElementById(`eco-area-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-export default function EcoRail({ clash, onFixStages, quizSlot, quizKey = 'quiz', onShownChange, shelves = [] }) {
+export default function EcoRail({ clash, onFixStages, quizSlot, quizKey = 'quiz', onShownChange, shelves = [], care = null }) {
   const news = useLatestAnnouncement();
   const [gone, dismiss] = useDismissed('ayna_eco_rail_closed_v1');
   const [open, setOpen] = useState(false);
@@ -33,6 +33,22 @@ export default function EcoRail({ clash, onFixStages, quizSlot, quizKey = 'quiz'
             <button type="button" className="eco-rail__go" onClick={onFixStages}>Update life stages<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
             <button type="button" className="eco-rail__quiet" onClick={() => dismiss(clash.key)}>Not now</button>
           </div>
+        </section>
+      ),
+    });
+  }
+  // Nov 9 (founder: "why can't this go on the side"): the care note sits in For you, short, with
+  // Find care, instead of a big box across the shelves. Not closable: it's about her health.
+  if (care?.lines?.length) {
+    items.push({
+      key: 'care',
+      short: 'Worth raising with a clinician',
+      node: (
+        <section className="eco-rail__card is-care" aria-labelledby="eco-rail-care">
+          <p className="eco-rail__tab">Worth a check</p>
+          <h2 id="eco-rail-care" className="eco-rail__title eco-rail__title--sm">{care.lines[0]}</h2>
+          {care.lines.length > 1 && <details className="eco-rail__more"><summary>Read more</summary>{care.lines.slice(1).map((l) => <p key={l} className="eco-rail__body">{l}</p>)}</details>}
+          {care.onFindCare && <div className="eco-rail__acts"><button type="button" className="eco-rail__go" onClick={care.onFindCare}>Find care<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button></div>}
         </section>
       ),
     });

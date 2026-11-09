@@ -309,6 +309,8 @@ const MARKETED_FOR = {
   'sexual.libido': { re: /\blibido\b|sex drive|\barousal\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
   'cognition.brain_fog': { re: /brain fog|mental clarity|cognitive (function|support|health)|\bmemory\b/, ok: (f) => f.cat === 'supplement' || f.cat === 'mental-health' },
   'sleep.trouble': { re: /\bsleep\b|insomnia|fall asleep|stay asleep/, ok: (f) => f.cat === 'supplement' || f.cat === 'sleep' },
+  // Nov 9 (founder: Loop Quiet 2 is "made for deeper sleep and focus" but didn't show for trouble focusing).
+  'cognition.concentration': { re: /\b(focus|concentrat(e|ion|ing))\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/focus(ed)? on (women|our|the)|we focus/) },
   'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
   'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
 };

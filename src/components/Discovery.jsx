@@ -954,10 +954,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!matchesSustainability(item, sustainabilityFilter)) return false;
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
             if (!matchesFormat(item, formatFilter)) return false;
-            if (onlyMine && !personalizedSet.has(item.id)) return false;
+            // Nov 9 (founder: "add the personalized button back, like only your personalized"): Personalized shows only her matches.
+            if ((onlyMine || (personalizationFilter && hasAnswers && personalizedSet.size > 0)) && !personalizedSet.has(item.id)) return false;
             if (!passesAvoid(item, avoidAttrs)) return false;
             return true;
-    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, formatFilter, onlyMine, matchOpts]);
+    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, formatFilter, onlyMine, hasAnswers, matchOpts]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));
@@ -1682,7 +1683,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         if (!on && sortBy === 'best') setSortBy('default');
     };
     const personalizedSwitch = (
-        <button type="button" role="switch" aria-checked={personalizationFilter} className={`ayna-browse__pswitch${personalizationFilter ? ' is-on' : ''}`} onClick={() => setPersonalized(!personalizationFilter)}>
+        <button type="button" role="switch" aria-checked={personalizationFilter} className={`ayna-browse__pswitch${personalizationFilter ? ' is-on' : ''}`} onClick={() => { if (!hasAnswers) { onRequirePersonalizeAuth?.(); return; } setPersonalized(!personalizationFilter); }}>
             <span className="ayna-browse__pswitch-track" aria-hidden="true"><span /></span>
             Personalized
         </button>
@@ -1903,11 +1904,7 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
                         Filters{activeFilterCount ? ` · ${activeFilterCount}` : ''}
                     </button>
-                    {hasProfileForSort && personalizedSwitch}
-                    <button type="button" className={`ay-btn ay-btn--secondary ayshop__onlymine${onlyMine ? ' is-on' : ''}`} aria-pressed={onlyMine} onClick={() => { if (!hasAnswers) { onRequirePersonalizeAuth?.(); return; } setOnlyMine((v) => !v); }}>
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>
-                        Only my matches
-                    </button>
+                    {personalizedSwitch}
                     <CompareToggle className="ayshop__compare" />
                 </div>
                 {/* "Best match" is a sort (first, and the default once she has a profile), not a separate switch. */}
@@ -1948,11 +1945,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                             { value: priceFilter, set: setPriceFilter, options: [['under-25', 'Under $25'], ['25-50', '$25–49'], ['50-100', '$50–99'], ['100-plus', '$100+'], ['subscription', 'Subscription']] },
                             { value: eligibilityFilter, set: setEligibilityFilter, options: [['fsa-hsa', 'FSA/HSA eligible']] },
                         ] },
-                        ...(inExplore ? [{ title: 'Area', hint: 'Periods, pelvic floor, menopause…', rows: [{ value: macroGroup, set: pickArea, options: SHOP_GROUPS.map((g) => [g.id, sentenceCase(g.label)]) }] }] : []),
+                        { title: 'Format', hint: 'Not a pill, devices, apps…', rows: [{ value: formatFilter, set: setFormatFilter, options: [['no-pill', 'Not a pill'], ['pill', 'Pills, gummies and powders'], ['topical', 'Creams, gels and patches'], ['device', 'Devices'], ['app', 'Apps and care']] }] },
+                        // Nov 9 (founder: "wtf are these filters"): no Area section; the need chips at the top already do that, with the same names.
                         ...(lockType ? [] : [{ title: 'Type', rows: [{ value: typeFilter, set: setTypeFilter, options: [['products', 'Products'], ['services', 'Apps & services']] }] }]),
                         // Fertility, Pregnancy, Postpartum and Menopause are category chips on the page already.
                         { title: 'Life stage', hint: 'Period years to post-menopause', rows: [{ value: lifeStageFilter, set: setLifeStageFilter, options: [['period', 'Period years'], ['fertility', 'Trying to conceive'], ['pregnancy', 'Pregnant'], ['postpartum', 'Postpartum'], ['perimenopause', 'Perimenopause and menopause'], ['postmenopause', 'Post-menopause']] }] },
-                        { title: 'Format', hint: 'Not a pill, devices, apps…', rows: [{ value: formatFilter, set: setFormatFilter, options: [['no-pill', 'Not a pill'], ['pill', 'Pills, gummies and powders'], ['topical', 'Creams, gels and patches'], ['device', 'Devices'], ['app', 'Apps and care']] }] },
                         { title: 'Ingredients and values', hint: 'Leave out fragrance, vegan, reusable…', rows: [
                             ...(inExplore ? [{ label: 'Leave out', extra: <AvoidChips selected={avoidAttrs} onChange={setAvoidAttrs} mine={myAvoid} className="ayshop__avoid" />, count: avoidAttrs.length, options: [] }] : []),
                             // With "Leave out" in the sheet, its fragrance and paraben chips cover the same thing, so they aren't repeated here.

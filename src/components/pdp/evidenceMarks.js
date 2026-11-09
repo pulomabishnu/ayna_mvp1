@@ -14,7 +14,7 @@ export const LEVELS = [
 
 /** The label for a level ("From Saalt" for the brand). */
 export function levelLabel(id, brand = '') {
-  if (id === 'gov') return 'Checked against .gov';
+  if (id === 'gov') return 'Checked against trusted health sources';
   if (id === 'peer') return PEER_LABEL;
   if (id === 'brand') return `From ${String(brand || '').trim() || 'the brand'}`;
   if (id === 'people') return 'People’s experiences';

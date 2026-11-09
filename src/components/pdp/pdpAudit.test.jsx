@@ -123,7 +123,7 @@ describe('evidence: four labelled levels, the .gov-only grading rule kept (audit
     expect(isPeerReviewed('https://medlineplus.gov/x')).toBe(false);
   });
   it('labels: a Lancet systematic review is "Peer-reviewed · not graded by ayna", never "not checked"', () => {
-    expect(levelLabel('gov')).toBe('Checked against .gov');
+    expect(levelLabel('gov')).toBe('Checked against trusted health sources');
     expect(levelLabel('peer')).toBe('Peer-reviewed · not graded by ayna');
     expect(levelLabel('brand', 'Saalt')).toBe('From Saalt');
     expect(levelLabel('people')).toBe('People’s experiences');

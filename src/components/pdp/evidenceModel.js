@@ -112,7 +112,7 @@ export function linkKind(url, brand) {
   if (FORUM.test(host)) return { tier: 'community', label: 'Community post' };
   if (LEGAL.test(host)) return { tier: 'legal', label: 'Court record or legal news' };
   if (PRESS.test(host)) return { tier: 'press', label: 'Magazine or health site, not peer reviewed' };
-  if (isMedicalNonGov(url)) return { tier: 'nongov', label: 'Not a .gov source, not checked by ayna' };
+  if (isMedicalNonGov(url)) return { tier: 'nongov', label: 'Other source' };
   return { tier: 'other', label: 'Not peer reviewed' };
 }
 
@@ -383,11 +383,11 @@ const CLAIM_KIND = {
   brand: 'The brand’s claim',
   product: 'Study of this product',
   ingredient: 'About an ingredient, not this exact product',
-  gov: 'Independent .gov health source',
-  expert: 'Medical society or clinic page, not a .gov source',
+  gov: 'Trusted health source',
+  expert: 'Medical society or clinic page',
   listing: 'A seller’s listing, not evidence',
   paper: 'Peer-reviewed · not graded by ayna',
-  other: 'Not a .gov source, not checked by ayna',
+  other: 'Other source',
   community: 'Community experience, not evidence',
 };
 
@@ -440,7 +440,7 @@ export function evidenceLayers(product, m, { communityCount = 0 } = {}) {
     brandCount > 0 && { id: 'brand', label: 'The brand’s claims', note: 'What the brand says about its own product. Not checked by ayna.' },
     count('product') > 0 && { id: 'product', label: 'Studies of this product', n: count('product'), note: 'Research on this exact product.' },
     (m.research.ingredients.length > 0 || count('ingredient') > 0) && { id: 'ingredient', label: 'Ingredient research', n: m.research.ingredients.length || count('ingredient'), note: 'About an ingredient, not this exact product.' },
-    govUrls.size > 0 && { id: 'gov', label: 'Independent .gov sources', n: govUrls.size, note: 'Health pages from MedlinePlus, NIH, FDA, CDC and similar.' },
+    govUrls.size > 0 && { id: 'gov', label: 'Trusted health sources', n: govUrls.size, note: 'Health pages from MedlinePlus, NIH, FDA, CDC and similar.' },
     communityCount > 0 && { id: 'community', label: 'Community experience', n: communityCount, note: 'People’s experiences. Not evidence that it works.' },
   ].filter(Boolean);
 }

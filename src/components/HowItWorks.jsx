@@ -19,7 +19,7 @@ const ICON = {
 
 /* The evidence levels, each with its live catalog count (the product page's own evidenceFor). */
 const LEVEL_TILES = [
-  { id: 'gov', title: 'Checked against .gov', cap: 'MedlinePlus, NIH, FDA, CDC and other .gov health pages. Only these can give an ayna grade.' },
+  { id: 'gov', title: 'Checked against trusted health sources', cap: 'Health pages from the NIH, CDC, FDA and MedlinePlus. Only these can give an ayna grade.' },
   { id: 'peer', title: 'Peer-reviewed studies', cap: 'Found on PubMed or PMC. Shown, not graded by ayna.' },
   { id: 'brand', title: 'From the brand', cap: 'The brand’s own claims, recorded as its word, never as proof.' },
   { id: 'people', title: 'People’s experiences', cap: 'Posts and reviews, kept in the Reviews tab.' },
@@ -53,7 +53,7 @@ const TICK = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.
    wording, unchanged: the three promises at a glance, their full text one tap away. */
 const STANDARDS = [
   { icon: ICON.scale, b: 'Relevant, not paid-first.', t: 'Personalized picks are ranked on relevance to you, not on commission rate or partnership status. Sponsorship is never a match input. Partner brands can be shown higher in Browse, always with a label.' },
-  { icon: ICON.check, b: 'Graded only from .gov sources.', t: 'Unsupported claims are labeled, not upgraded into facts.' },
+  { icon: ICON.check, b: 'Graded only from trusted health sources.', t: 'Unsupported claims are labeled, not upgraded into facts.' },
   { icon: ICON.note, b: 'ayna is not a doctor, and never pretends to be.', t: 'Summaries may be AI-assisted and are grounded in cited sources where available. “Clinical context” can include published guidance, clinician-authored sources or clearly labeled brand-provided clinician claims; it does not mean every product has been independently reviewed by an ayna clinician.' },
 ];
 function Standards() {
@@ -110,11 +110,6 @@ export default function HowItWorks({ onBack, backLabel, onViewSources, onStart }
       bandLabel="Our standards"
       band={<Standards />}
     >
-      {/* Critique (Oct 27): lead with the one funnel (the live sample counts), then a plain stepper. */}
-      <EdBlock title="From the whole catalog to your short list.">
-        <HowItWorksFunnel />
-      </EdBlock>
-
       <EdBlock title="Four steps, in order.">
         <ol className="ip-stepper">
           <li>
@@ -143,13 +138,9 @@ export default function HowItWorks({ onBack, backLabel, onViewSources, onStart }
         </ol>
       </EdBlock>
 
-      <EdBlock title="How the % is built." intro="One engine for every match. Your need sets it; your preferences fine-tune it.">
-        <PercentBuild />
-        <ReadMore label="Signals we look at">
-          <ul className="ed-rows">
-            {MATCH_INPUTS.map((x) => <li key={x} className="ed-body">{x}</li>)}
-          </ul>
-        </ReadMore>
+      {/* Nov 9: the four steps first (what happens), then the funnel (how much it narrows). */}
+      <EdBlock title="From the whole catalog to your short list.">
+        <HowItWorksFunnel />
       </EdBlock>
 
       <EdBlock title="What we never do.">
@@ -160,15 +151,26 @@ export default function HowItWorks({ onBack, backLabel, onViewSources, onStart }
         </ul>
       </EdBlock>
 
-      <EdBlock title="Evidence, by level." intro="Every source on a product is sorted into one of four levels. Only the first can give a grade.">
-        <EvidenceLevels />
+      {/* Nov 9 (founder: understood at a glance, not overwhelming): the engine's details stay one tap away. */}
+      <EdBlock title="The details.">
+        <ReadMore label="How the % is built">
+          <p className="ed-body">One engine for every match. Your need sets it; your preferences fine-tune it.</p>
+          <PercentBuild />
+          <ul className="ed-rows">
+            {MATCH_INPUTS.map((x) => <li key={x} className="ed-body">{x}</li>)}
+          </ul>
+        </ReadMore>
+        <ReadMore label="How evidence is graded">
+          <p className="ed-body">Every source on a product is sorted into one of four levels. Only the first can give a grade.</p>
+          <EvidenceLevels />
+        </ReadMore>
       </EdBlock>
 
       <EdBlock title="More about matching">
         <ReadMore label="Why not just ask a chatbot?" lessLabel="Why not just ask a chatbot?">
           <ul className="ip-ticks">
             <li>{TICK}<span><strong>Your profile</strong> Matches start from the answers you choose to share, not a one-off question.</span></li>
-            <li>{TICK}<span><strong>A checked catalog</strong> Products carry their sources and safety notes where available. Only .gov sources can give a grade.</span></li>
+            <li>{TICK}<span><strong>A checked catalog</strong> Products carry their sources and safety notes where available. Only trusted health sources (NIH, CDC, FDA, MedlinePlus) can give a grade.</span></li>
             <li>{TICK}<span><strong>Real products you can buy</strong> Each match is a real product with where to buy it, and you can compare it side by side.</span></li>
           </ul>
         </ReadMore>

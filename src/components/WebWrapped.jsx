@@ -226,7 +226,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               <div><dt><CountUp value={picks.length} on={active === 'checked'} reduced={reduced} /></dt><dd>{picks.length === 1 ? 'product fits' : 'products fit'} your answers</dd></div>
               {/* Only what helps her: a zero row ("0 left out") is left off. */}
               {checked.held > 0 && <div><dt><CountUp value={checked.held} on={active === 'checked'} reduced={reduced} /></dt><dd>{checked.held === 1 ? 'was' : 'were'} left out for your stage, medicines or safety</dd></div>}
-              {checked.studied > 0 && <div><dt><CountUp value={checked.studied} on={active === 'checked'} reduced={reduced} /></dt><dd>{checked.studied === 1 ? 'has' : 'have'} research or .gov guidance behind {checked.studied === 1 ? 'it' : 'them'}</dd></div>}
+              {checked.studied > 0 && <div><dt><CountUp value={checked.studied} on={active === 'checked'} reduced={reduced} /></dt><dd>{checked.studied === 1 ? 'has' : 'have'} research behind {checked.studied === 1 ? 'it' : 'them'}</dd></div>}
             </dl>
             <p className="ays-body">Brands can’t pay for a better match. Every % comes from your answers and the research.</p>
           </>}

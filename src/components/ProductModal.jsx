@@ -906,7 +906,7 @@ export default function ProductModal({
               <a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
                 <span className="ayp-reads__title">{r.title}</span>
                 {r.teaser && <span className="ayp-reads__teaser">{r.teaser}</span>}
-                <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against .gov</span>
+                <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against trusted health sources</span>
                 <span className="ayp-reads__go" aria-hidden="true">→</span>
               </a>
             ) }))} />

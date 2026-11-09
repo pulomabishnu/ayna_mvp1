@@ -49,7 +49,7 @@ describe('evidence model: nothing the team wrote is lost', () => {
     // Founder rule (Oct 24): only .gov health pages count; an unopened PubMed paper and a medical society are labelled, not dropped.
     expect(linkKind('https://pubmed.ncbi.nlm.nih.gov/2/', 'LOLA')).toEqual({ tier: 'paper', label: 'Peer-reviewed · not graded by ayna' });
     expect(linkKind('https://medlineplus.gov/ency/article/003150.htm', 'LOLA').tier).toBe('credible');
-    expect(linkKind('https://www.acog.org/womens-health/faqs/x', 'LOLA')).toEqual({ tier: 'nongov', label: 'Not a .gov source, not checked by ayna' });
+    expect(linkKind('https://www.acog.org/womens-health/faqs/x', 'LOLA')).toEqual({ tier: 'nongov', label: 'Other source' });
     expect(linkKind('https://www.mayoclinic.org/x', 'LOLA').tier).toBe('nongov');
   });
 

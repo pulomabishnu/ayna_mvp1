@@ -668,7 +668,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </>
         );
       }} />
-      <p className="ayq-meta">Graded only from .gov health sources. Strong means those sources back this kind of product for this need. Limited means little or no good evidence.</p>
+      <p className="ayq-meta">Graded only from trusted health sources (NIH, CDC, FDA, MedlinePlus). Strong means those sources back this kind of product for this need. Limited means little or no good evidence.</p>
     </div>
   );
   const claimBlock = claims.length > 0 && (
@@ -874,7 +874,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const sourceRow = (x) => {
     const kind = linkKind(x.url, m.brand);
     const pub = x.publisher || publisherOf(x.url, m.brand);
-    const tag = kind.tier === 'credible' ? (x.label && !/expert guidance/i.test(x.label) ? x.label : '.gov health source') : kind.label || 'Not checked by ayna';
+    const tag = kind.tier === 'credible' ? (x.label && !/expert guidance/i.test(x.label) ? x.label : 'Trusted health source') : kind.label || 'Not checked by ayna';
     return <li key={x.url}><a href={x.url} target="_blank" rel="noopener noreferrer"><span className="ayq-indexlist__tag">{tag}</span><span className="ayq-indexlist__title">{cleanTitle(noDash(x.title), pub)}</span><span className="ayq-indexlist__pub">{[pub, x.year].filter(Boolean).join(', ')}</span><span className="sr-only"> (opens in a new tab)</span></a></li>;
   };
   const govSources = allSources.filter((x) => linkKind(x.url, m.brand).tier === 'credible');
@@ -882,7 +882,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const sourcesBody = allSources.length > 0 && (
         <div className="ayq-index">
           {govSources.length > 0 && <>
-            <h4 className="ayq-subh">.gov sources we checked <span className="ayq-count">{govSources.length}</span></h4>
+            <h4 className="ayq-subh">Trusted health sources <span className="ayq-count">{govSources.length}</span></h4>
             <ul className="ayq-indexlist">{govSources.map(sourceRow)}</ul>
           </>}
           {otherSources.length > 0 && <>
@@ -941,7 +941,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </div>
         ))}
       </div>
-      {!sf.alert.length && sf.sources.length > 0 && <p className="ayq-meta ayv-srcline"><SourcesButton title="Sources for these notes" items={sortSources(sf.sources).map((x) => ({ url: x.url, title: x.title, publisher: x.publisher || hostLabel(x.url), meta: [x.type, x.year, x.negative ? 'Found no clear benefit' : '', x.kind?.tier === 'credible' ? 'Checked against .gov' : x.kind?.label].filter(Boolean).join(', '), summary: [x.summary, whyText(x.why) ? `ayna’s note: ${whyText(x.why)}` : ''].filter(Boolean).join(' ') }))} /></p>}
+      {!sf.alert.length && sf.sources.length > 0 && <p className="ayq-meta ayv-srcline"><SourcesButton title="Sources for these notes" items={sortSources(sf.sources).map((x) => ({ url: x.url, title: x.title, publisher: x.publisher || hostLabel(x.url), meta: [x.type, x.year, x.negative ? 'Found no clear benefit' : '', x.kind?.tier === 'credible' ? 'Checked against trusted health sources' : x.kind?.label].filter(Boolean).join(', '), summary: [x.summary, whyText(x.why) ? `ayna’s note: ${whyText(x.why)}` : ''].filter(Boolean).join(' ') }))} /></p>}
     </>
   );
   const statItems = (stats || []).filter((x) => x && x.value).slice(0, 4);
@@ -1005,7 +1005,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       {sourcesBody}
     </>
   ) : null;
-  const EV_LABEL = { gov: '.gov', peer: 'Peer-reviewed', brand: 'From the brand', people: 'People' };
+  const EV_LABEL = { gov: 'Trusted health source', peer: 'Peer-reviewed', brand: 'From the brand', people: 'People' };
   const evBars = ['gov', 'peer', 'brand', 'people'].map((id) => ({ id, label: EV_LABEL[id], n: Number(evx.counts?.[id]) || 0 })).filter((b) => b.n > 0);
   const evTotal = evBars.reduce((a, b) => a + b.n, 0);
   const evMax = Math.max(1, ...evBars.map((b) => b.n));
@@ -1035,7 +1035,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       </section>
       {/* 2. The sources, strongest first: ayna's grades, then the .gov studies. */}
       {gradeBlock}
-      {studyCards.length > 0 && <SourceGrid items={studyCards} label={rs.negative.length ? 'Other .gov health sources' : '.gov health sources'} id="ayq-studies" />}
+      {studyCards.length > 0 && <SourceGrid items={studyCards} label={rs.negative.length ? 'Other trusted health sources' : 'Trusted health sources'} id="ayq-studies" />}
       {/* Level 2: peer-reviewed papers, labelled for what they are (never graded by ayna). */}
       {peerLinks.length > 0 && <OtherLinks items={peerLinks} label={`Peer-reviewed ${peerLinks.length === 1 ? 'paper' : 'papers'}`} />}
       {/* 3. Deeper, closed until she asks. */}

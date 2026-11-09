@@ -129,7 +129,7 @@ export function evidenceMeter(ev) {
     label = `${['', 'Limited', 'Some', 'Good'][raw]} evidence for this type of product${need} · not studied as this exact product`;
   } else if (ev.scope === 'product') label = `${ev.word}${need}`;
   else if (ev.scope === 'team') label = `${ev.word}${need} (the team’s rating, not yet checked)`;
-  const note = ev.scope === 'type' ? (ev.line || '') : ev.scope === 'team' ? 'The level the team recorded. Not yet checked against .gov health sources.' : 'Graded by ayna from .gov health sources.';
+  const note = ev.scope === 'type' ? (ev.line || '') : ev.scope === 'team' ? 'The level the team recorded.' : 'Graded by ayna from trusted health sources.';
   return { level, of: 3, empty: false, label, need: '', note };
 }
 
