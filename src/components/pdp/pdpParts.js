@@ -27,14 +27,8 @@ export const TAB_LABELS = { summary: 'ayna summary', clinical: 'Clinical opinion
 /** Below 480px the tab bar shows these (build brief, week 1); the accessible name stays the full label. */
 export const TAB_SHORT_LABELS = { summary: 'Summary', clinical: 'Clinical', literature: 'Research', reviews: 'Reviews' };
 
-/** Long lists show this many, then "Show all N" in place (PDP rule 8). */
-export const SHOW_FIRST = 3;
-
-/** Split a list into what shows and what waits behind "Show all N". */
-export function splitShow(list, n = SHOW_FIRST) {
-  const all = (list || []).filter((x) => x != null && x !== '');
-  return { shown: all.slice(0, n), rest: all.slice(n), total: all.length };
-}
+// Its own small module so pages that only need it don't load the passport data (Nov 9 speed).
+export { SHOW_FIRST, splitShow } from './splitShow.js';
 
 // ---------------------------------------------------------------------------
 // The one match line under the price (founder, Oct 24): a % with its plain why,

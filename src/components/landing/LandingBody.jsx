@@ -263,7 +263,7 @@ export function Proof({ onViewArticles, tone = '' }) {
           <Go className="lb-more" href="/explore/resources" onGo={onViewArticles}>Read our sources<Arrow /></Go>
         </header>
         <ul className={`lb-stats${anim}`} ref={ref} aria-busy={nums ? undefined : 'true'}>
-          {(nums || [0, 1, 2, 3]).map((s, i) => (s
+          {(nums || [null, null, null, null]).map((s, i) => (s
             ? <li key={s.unit} className={`lb-stat is-${s.tone}`}><Icon k={s.icon} /><b><span className="lb-sr">{s.n.toLocaleString('en-US')}</span><span aria-hidden="true"><CountUp n={s.n} play={play} /></span></b><span>{s.unit}</span></li>
             : <li key={i} className="lb-stat is-light is-skel" aria-hidden="true" />))}
         </ul>

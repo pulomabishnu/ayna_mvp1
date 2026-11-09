@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { splitShow } from '../../pdp/pdpParts.js';
+import { splitShow } from '../../pdp/splitShow.js';
 import './ay-primitives.css';
 
 /*

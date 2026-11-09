@@ -45,6 +45,11 @@ const lazyView = (loader, fallback, startNow = false) => {
     return <Suspense fallback={fb}><Lazy {...props} /></Suspense>;
   };
 };
+// Nov 9 speed: a static import here pulled the whole catalog (about 3MB) back into the entry chunk.
+const EcosystemPreview = lazyView(() => import('./components/v3/EcosystemPreview'), null);
+const ProfileChatbot = lazyView(() => import('./components/ProfileChatbot'), null);
+const HealthRefreshPrompt = lazyView(() => import('./components/health/HealthRefreshPrompt.jsx'), null);
+const WebHomeTop = lazyView(() => import('./components/you/WebHomeTop.jsx'), null);
 const WebIntake = lazyView(() => import('./components/WebIntake'));
 const WebCommunity = lazyView(() => import('./components/WebCommunity'), <ViewSkeleton label="Loading community" cards={3} />);
 // Full-screen overlay after the quiz: keep the page behind it visible rather
@@ -109,7 +114,6 @@ const Screenings = lazyView(() => import('./components/Screenings'));
 import { useScrollPosition } from './hooks/useScrollPosition';
 import { useHeaderScroll } from './hooks/useHeaderScroll';
 import { enrichLlmProductForDiscovery } from './utils/enrichLlmProductForDiscovery';
-import ProfileChatbot from './components/ProfileChatbot';
 import { loadHealthProfile, hasHealthProfileSignals } from './utils/healthDataProfile.js';
 import { loadHealthProfileForCurrentUser, saveHealthProfileForCurrentUser } from './utils/healthProfileStore';
 import { forgetSharedIntake, loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from './utils/healthIntakeStore';
@@ -172,10 +176,7 @@ import { proDoor, retakeDoor, proNow } from './pro/proDoor.js';
 import { openProPaywall } from './pro/paywall.js';
 import { Capacitor } from '@capacitor/core';
 import AppOnlySheet from './components/AppOnlySheet.jsx';
-import HealthRefreshPrompt from './components/health/HealthRefreshPrompt.jsx';
-import WebHomeTop from './components/you/WebHomeTop.jsx';
 import ProfileSetupGate from './components/ProfileSetupGate.jsx';
-import { resetRoutineData } from './utils/resetRoutine.js';
 import { outcomesToProductHistory, readTries } from './health/outcomes.js';
 import { readHomeLook } from './mobile/components/homeLook.js';
 import { webHomeView } from './mobile/utils/navTab.js';
@@ -183,7 +184,6 @@ import { webHomeView } from './mobile/utils/navTab.js';
 readHomeLook();
 import NewAccountStart from './components/NewAccountStart';
 import { markOAuthSource, takeOAuthSource, shouldOfferEcosystemStart } from './utils/oauthNewAccount';
-import EcosystemPreview from './components/v3/EcosystemPreview';
 import EcosystemViewTabs from './components/EcosystemViewTabs';
 import { clearPersonalStorage } from './utils/clearPersonalStorage';
 import { syncUserData } from './health/userDataSync.js';
@@ -198,7 +198,6 @@ import { trackLandingCta, landingCtaCopy, CTA_COPY } from './utils/funnelEvents.
 import YouTabs from './components/you/YouTabs.jsx';
 import { loadProductReviewStats, mergeReviewBuckets, REVIEWS_CHANGED_EVENT } from './utils/community/reviewRatings.js';
 import SaveAuthSheet from './components/save/SaveAuthSheet.jsx';
-import RoutineTimeline from './components/routine/RoutineTimeline.jsx';
 import TodayRead from './components/today/TodayRead.jsx';
 import { SaveFollowUpStrip } from './components/save/SaveFollowUp.jsx';
 import { savePrompt, stashPendingSave, takePendingSave } from './utils/savePrompt.js';
@@ -206,7 +205,6 @@ import { setSavedRemindersOwner } from './utils/savedReminders.js';
 import { compareStore, useCompare } from './utils/compareStore.js';
 import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js';
 import { openTodayLog } from './components/today/openLog.js';
-import HomeWidgets from './home/HomeWidgets.jsx';
 import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
 import { stampFactUpdates } from './matching/factFreshness.js';
@@ -1725,7 +1723,7 @@ function App() {
     }
     forgetSharedIntake();
     try { localStorage.removeItem(INTAKE_DRAFT_KEY); } catch { /* storage blocked */ }
-    resetRoutineData();
+    import('./utils/resetRoutine.js').then((m) => m.resetRoutineData()).catch(() => {});
     setMyProducts({});
     setTrackedProducts({});
     setOmittedProducts({});

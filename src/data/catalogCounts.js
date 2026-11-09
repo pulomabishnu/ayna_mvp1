@@ -5,7 +5,7 @@
 // The catalog data itself is untouched.
 import { ALL_PRODUCTS, filterPrescriptionCareGate, isTeenProduct } from './catalog.js';
 import { RELEASED_STARTUPS } from './startups.js';
-import { isService } from '../utils/search/exploreSearch.js';
+import { isService } from '../utils/search/isService.js';
 
 /** Services are the women's health companies (startups) and digital entries; everything else is a product. */
 export const isServiceListing = isService;

@@ -7,9 +7,7 @@
  */
 import { searchProducts, searchArticles, matchesSearchOption } from './index.js';
 import { COMMUNITY_TOPICS } from '../community/topics.js';
-import { STARTUPS } from '../../data/startups.js';
 
-const STARTUP_IDS = new Set(STARTUPS.map((s) => String(s.id)));
 // Community topics that are about life, not health.
 const NOT_HEALTH = new Set(['college', 'budget']);
 
@@ -19,9 +17,8 @@ export const HEALTH_TOPICS = COMMUNITY_TOPICS.filter((t) => !NOT_HEALTH.has(t.ke
 /** Services: telehealth, at-home tests, apps and programs from women's health companies (src/data/startups.js). */
 // Catalog entries that are a service, not a thing you buy (Visana, Midi, apps):
 // type 'digital'. QA3 M8: Products lists products only, on web and app.
-export function isService(item) {
-  return Boolean(item && (STARTUP_IDS.has(String(item.id)) || item.type === 'digital'));
-}
+export { isService } from './isService.js';
+import { isService } from './isService.js';
 
 export function splitCatalog(items = []) {
   const products = [];
