@@ -123,7 +123,7 @@ function facts(product) {
     // tc: text with benefit-denying sentences removed (for "mentions X" rules).
     tc: (re) => re.test(claims),
     // Claim sentences: a claim verb and the need in the same sentence (marketed_for rule).
-    cs: (re) => claims.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x)),
+    cs: (re) => claims.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x) && !AGENCY_VOICE.test(x)),
     limited: product.evidenceStrength === 'limited',
     id: product.id, cat: normalCategory(product.category), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
@@ -287,6 +287,8 @@ const NOV5_MAP = {
   'p-queen-of-the-thrones-pelvic-castor-oil-pack': { 'pain.pelvic': WEAK },
 };
 // A founder's own story ("started after her own recurring BV") is not a claim about the product.
+// ayna's own note on what a health agency or study says ("nih says yoga can help stress") is not the brand's claim.
+const AGENCY_VOICE = /\b(nih|nccih|acog|cdc|fda|who|nhs|mayo clinic|research|studies|a study|trials?|reviews?) (says?|shows?|found|suggests?)\b|\b(research|evidence|studies) (on|for)\b|\b(is|are) (unclear|mixed|unproven)\b/;
 const FOUNDER_STORY = /\b(started|founded|founder|co-founded|after (her|their|his) own|her own|launched)\b/;
 let RULES_CACHE = null;
 const rulesInOrder = () => (RULES_CACHE ||= [...RELEVANCE_RULES.filter((r) => !r.fillOnly), ...RELEVANCE_RULES.filter((r) => r.fillOnly)]);
@@ -309,8 +311,18 @@ const MARKETED_FOR = {
   'sexual.libido': { re: /\blibido\b|sex drive|\barousal\b/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
   'cognition.brain_fog': { re: /brain fog|mental clarity|cognitive (function|support|health)|\bmemory\b/, ok: (f) => f.cat === 'supplement' || f.cat === 'mental-health' },
   'sleep.trouble': { re: /\bsleep\b|insomnia|fall asleep|stay asleep/, ok: (f) => f.cat === 'supplement' || f.cat === 'sleep' },
+  // Nov 9 live-catalog audit (848 products, 120 matched nothing): what brands sell their products for.
+  'pain.menstrual_cramp': { re: /\b(period |menstrual )?cramps?\b|period pain|menstrual pain|dysmenorrh/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair'].includes(f.cat) },
+  'pain.cycle_headache': { re: /\bheadaches?\b|\bmigraines?\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair'].includes(f.cat) },
+  'postpartum.recovery': { re: /\bpostpartum\b|post-partum|after (giving )?birth|after delivery|c-section|perine(al|um)/, ok: (f) => !PERIOD_CATEGORIES.has(f.cat) },
+  'mood.general_anxiety': { re: /\banxi(ety|ous)\b|\bstress(ed| relief)?\b(?! (urinary )?incontinence)/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['skincare', 'skin', 'hair', 'intimate-care', 'diagnostics', 'incontinence'].includes(f.cat) && !f.t(/stress(ed)? skin|skin stress|oxidative stress/) },
+  'skin.acne': { re: /\bacne\b|breakouts?|blemish(es)?|pimples?/, ok: (f) => ['skincare', 'skin', 'supplement'].includes(f.cat) },
+  'hair.loss': { re: /hair (growth|loss|thinning|density|shedding)|thinning hair/, ok: (f) => ['supplement', 'hair', 'skincare'].includes(f.cat) },
+  'menopause.body_changes': { re: /\b(peri)?menopaus(e|al)\b/, ok: INGESTIBLE_OR_DEVICE },
   // Nov 9 (founder: Loop Quiet 2 is "made for deeper sleep and focus" but didn't show for trouble focusing).
-  'cognition.concentration': { re: /\b(focus|concentrat(e|ion|ing))\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/focus(ed)? on (women|our|the)|we focus/) },
+  'urinary.recurrent_uti': { re: /\butis?\b|urinary tract infections?/, ok: (f) => INGESTIBLE_OR_DEVICE(f) || f.cat === 'supplement' },
+  'vaginal.dryness': { re: /\bdryness\b|\bmoistur(e|izer|izing|ize)\b/, ok: (f) => f.cat === 'intimate-care' && f.t(/vagin|vulv|intimate|labia/) && !f.t(/\bwash\b|cleans/) },
+  'cognition.concentration': { re: /\bfocus(ed)?\b|\bconcentration\b(?! of)|\bconcentrating\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && f.cat !== 'diagnostics' && !f.t(/focus(ed)? on (women|our|the)|we focus/) },
   'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
   'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
 };
@@ -568,7 +580,9 @@ export const RELEVANCE_RULES = [
   { id: 'prenatal', why: 'A prenatal vitamin.',
     when: (f) => f.n(/prenatal/), set: { 'pregnancy.prenatal': DIRECT, 'fertility.ttc': SECONDARY, 'postpartum.lactation': ADJACENT } },
   { id: 'probiotic_vaginal', why: 'A general probiotic is not a BV or yeast treatment.',
-    when: (f) => f.cat === 'supplement' && f.t(/probiotic|lactobacill/) && !f.t(/bloat/),
+    when: (f) => f.cat === 'supplement' && f.t(/probiotic|lactobacill/) && !f.t(/bloat/)
+      // Nov 9 audit: a greens powder or meal shake with a probiotic in it is not sold for vaginal health.
+      && f.t(/vagin|vulv|feminine|intimate|\bph\b|women'?s|urinary|\bbv\b|yeast/),
     set: (f) => ({ 'vaginal.discharge': ADJACENT, 'vaginal.odor': ADJACENT, 'vaginal.bv': ADJACENT, 'vaginal.yeast': ADJACENT,
       ...(f.has('uti') ? { 'urinary.recurrent_uti': ADJACENT } : {}) }),
     cap: { 'vaginal.bv': ADJACENT, 'vaginal.yeast': ADJACENT }, roles: ['prevention'] },
@@ -1565,7 +1579,7 @@ export function buildProductProfile(product) {
         e.contextual.push({ level, requires: value.requires, rule: rule.id, why: rule.why });
       } else {
         // nov5_by_id was a modest by-use placeholder (Nov 5), so a brand claim may raise it.
-        if (rule.fillOnly && e.score > 0 && e.rule !== 'nov5_by_id') continue;
+        if (rule.fillOnly && e.score > 0 && !['nov5_by_id', 'postpartum_tagged'].includes(e.rule)) continue;
         const level = rule.broad ? Math.min(WEAK, value) : value;
         if (e.score < level) { e.score = level; e.rule = rule.id; e.why = rule.why; e.broad = Boolean(rule.broad); }
       }
