@@ -96,7 +96,7 @@ html body .app-container.app-container.app-container.app-container.app-container
   #ayeco .eco3-head .ay-h1 { font-size: 30px !important; }
   #ayeco .ay-shelf__head { border-bottom: 1px solid rgba(62, 39, 35, .15) !important; }
   #ayeco .eco3-empty { transform: none !important; border-radius: 16px !important; box-shadow: none !important; }
-  #ayeco .eco-stack__cost span { background: #f7badd !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
+  #ayeco .eco-stack__cost span { background: transparent !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; border-radius: 16px !important; box-shadow: none !important; }
   /* Your tools: icons and the open/close marker follow the theme (they were espresso on espresso in dark). */
   #ayeco .eco3-tool-ic, #ayeco .eco3-tool-ic svg { color: var(--ay-fg) !important; stroke: currentColor !important; border-color: currentColor !important; }
   #ayeco .eco3-details__item summary::after { border-color: var(--ay-fg) !important; color: var(--ay-fg) !important; }
@@ -197,14 +197,14 @@ html body .wy-email.wy-email .wy-seg.wy-seg > .ay-chip { flex: none; min-height:
    list). Her picks as a grid of square cards, the same look as the Shop cards; the save note as one
    butter strip with its two actions on one line. */
 html body .app-container .ay-ecoprev.is-mine { max-width: 1200px; margin: 0 auto; padding: 48px 32px 96px; box-sizing: border-box; }
-html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin: 0 0 32px; padding: 16px 20px; border-radius: 20px; background: #f7badd; color: #3e2723; }
+html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin: 0 0 32px; padding: 16px 20px; border-radius: 20px; background: transparent; color: #3e2723; }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save p { margin: 0; max-width: 56ch; font: 500 15px/1.45 var(--ay-sans-stack, sans-serif); }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__save .ay-ecoprev__secondary { margin: 0; text-decoration: underline; text-underline-offset: 4px; font-weight: 600; background: none; border: 0; cursor: pointer; }
 html body .app-container .ay-ecoprev.is-mine .ay-ecoprev__primary { border-radius: 999px !important; box-shadow: none !important; cursor: pointer; }
 html body .app-container .ay-ecoprev__mine { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
 html body .app-container .ay-ecoprev__mine > li { min-width: 0; }
-html body .app-container .ay-ecoprev__mine button { display: grid; gap: 10px; width: 100%; height: 100%; padding: 12px; border: 0; border-radius: 24px; background: #f7badd; color: #3e2723; text-align: left; cursor: pointer; transition: transform .2s ease; }
+html body .app-container .ay-ecoprev__mine button { display: grid; gap: 10px; width: 100%; height: 100%; padding: 12px; border: 0; border-radius: 24px; background: transparent; color: #3e2723; text-align: left; cursor: pointer; transition: transform .2s ease; }
 html body .app-container .ay-ecoprev__mine button:hover { transform: translateY(-3px); }
 html body .app-container .ay-ecoprev__mine button:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 html body .app-container .ay-ecoprev__mineimg { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 16px; background: #fff; }

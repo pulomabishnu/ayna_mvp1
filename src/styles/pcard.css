@@ -156,7 +156,7 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px !important; padding: 0 !important; list-style: none !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li {
   display: inline-flex; align-items: center; min-height: 24px; margin: 0 !important; padding: 0 8px !important; border-radius: var(--ay-r-sm, 8px);
-  background: var(--ay-butter-deep, #f7badd); color: #3e2723; font: 500 13px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
+  background: var(--ay-butter-deep, transparent); color: #3e2723; font: 500 13px/1.2 var(--ay-font-ui) !important; white-space: nowrap;
 }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li::before { content: none !important; }
 /* 6. Evidence mark + safety icon */
@@ -170,7 +170,7 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__facts li { background: rgba(255, 237, 172, .14); color: var(--pc-ink); }
 /* Fact chips: always a visible butter-deep chip (the app's light theme painted none). */
-:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li { background: #f7badd !important; color: #3e2723 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__facts li { background: transparent !important; color: #3e2723 !important; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard .ay-pcard__facts li { background: rgba(255, 237, 172, .14) !important; color: #ffedac !important; }
 /* Evidence words wrap instead of "Supported for this ty…". */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext { align-items: flex-start; }

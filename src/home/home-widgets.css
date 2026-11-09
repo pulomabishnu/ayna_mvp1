@@ -5,12 +5,12 @@
    Brand palette only (butter, pink, sky, espresso) via the --x-* tokens. */
 
 .ayna-mobile :is(.ay-homewidgets, .ay-chs-layer) {
-  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f7badd); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
+  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, transparent); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
   --x-page: var(--d-page, #ffedac); --x-pink: var(--d-pink, #f7badd); --x-sky: var(--d-sky, #769ebe);
   --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-serif: var(--ay-app-heading, var(--f-display, 'ayna Display', serif)); --x-scale: var(--ayna-text-scale, 1);
 }
 .app-container :is(.ay-homewidgets, .ay-chs-layer) {
-  --x-ink: var(--wh-ink, var(--ay-text, #3e2723)); --x-soft: var(--wh-soft, var(--ay-text-2, rgba(62, 39, 35, .74))); --x-group: var(--ay-group, #f7badd); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-ink: var(--wh-ink, var(--ay-text, #3e2723)); --x-soft: var(--wh-soft, var(--ay-text-2, rgba(62, 39, 35, .74))); --x-group: var(--ay-group, transparent); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
   --x-page: var(--ay-page, #ffedac); --x-pink: #f7badd; --x-sky: #769ebe;
   --x-sans: var(--ay-sans, 'Figtree', sans-serif); --x-serif: var(--ay-serif, 'ayna Display', serif); --x-scale: 1;
 }

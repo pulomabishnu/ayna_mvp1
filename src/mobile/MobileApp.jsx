@@ -147,6 +147,7 @@ import './app-polish-2.css';
 import '../styles/ds.css';
 import './ds-app.css';
 import '../styles/focus-group-oct26.css';
+import './app-flat-nov9.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';

@@ -27,7 +27,7 @@
   --ip-text: #3e2723; --ip-text-2: rgba(62, 39, 35, .82); --ip-rule: rgba(62, 39, 35, .28); --ip-outline: #3e2723; --ip-tile: #ffedac; --ip-deep: #f7badd;
   --ay-text: #3e2723; --ay-text-2: rgba(62, 39, 35, .82); --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .82); --ay-ink: #3e2723; --legacy-ink: #3e2723;
   --ay-hairline: rgba(62, 39, 35, .28); --ay-outline-color: #3e2723; --ay-outline: 1.5px solid #3e2723; --ay-border-ink: 1.5px solid #3e2723;
-  --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-surface: #f7badd; --legacy-surface: #f7badd; --ay-chip-bg: transparent;
+  --ay-fill-ink: #3e2723; --ay-on-ink: #ffedac; --ay-surface: transparent; --legacy-surface: transparent; --ay-chip-bg: transparent;
   --ed-text: #3e2723; --ed-text-2: rgba(62, 39, 35, .82); --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .28); --ed-page: #ffedac;
   color: #3e2723;
 }
@@ -145,7 +145,7 @@ html body .app-container .ay-ih :is(#ay-ih, .ay-ih__h1):is(#ay-ih, .ay-ih__h1):i
 .app-container.app-container .fp .fp-rules .fp-rules__glance li::before { content: none; }
 
 /* contact: the form on the pink band reads the same in light and dark */
-html body .app-container.app-container .uq-contact .ed-form { background: #f7badd !important; color: #3e2723 !important; border: 1px solid rgba(62, 39, 35, .2) !important; }
+html body .app-container.app-container .uq-contact .ed-form { background: transparent !important; color: #3e2723 !important; border: 1px solid rgba(62, 39, 35, .2) !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(label, legend, .ed-field > span, p) { color: #3e2723 !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; }
 html body .app-container.app-container .uq-contact .ed-form :is(input, textarea)::placeholder { color: rgba(62, 39, 35, .7) !important; }

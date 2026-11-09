@@ -29,7 +29,7 @@ html body .app-container.app-container.app-container.app-container.app-container
 
 /* Nov 3 v2: connect health data as 3 steps (Pro, the app, log in and connect). */
 .app-container .qz-conn { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: none; }
-.app-container .qz-conn > li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: 24px; background: #f7badd; color: #3e2723; }
+.app-container .qz-conn > li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: 24px; background: transparent; color: #3e2723; }
 .app-container .qz-conn > li::before { content: none !important; }
 .app-container .qz-conn > li.is-now { background: #f7badd; }
 .app-container .qz-conn > li.is-done { background: #3e2723; color: #ffedac; }

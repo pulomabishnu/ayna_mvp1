@@ -113,7 +113,7 @@ html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ay
 }
 html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) {
   flex: none !important; width: 120px !important; height: 120px !important; max-width: none !important; padding: 0 !important; margin: 0 !important; transform: none !important;
-  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: #f7badd !important;
+  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: transparent !important;
 }
 html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
 @media (max-width: 480px) {

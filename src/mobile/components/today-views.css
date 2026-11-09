@@ -4,7 +4,7 @@
 .ay-tv__panel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 .ay-tv__panel[hidden] { display: none; }
 .ay-tv__panel > * { min-width: 0; }
-.ay-tv__pbtn { all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: start; gap: 4px; width: 136px; min-height: 44px; padding: 12px; border-radius: 16px; background: var(--ay-surface, #f7badd); }
+.ay-tv__pbtn { all: unset; box-sizing: border-box; cursor: pointer; display: grid; align-content: start; gap: 4px; width: 136px; min-height: 44px; padding: 12px; border-radius: 16px; background: var(--ay-surface, transparent); }
 .ay-tv__pbtn:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: 2px; }
 .ay-tv__plate { width: 112px; height: 112px; margin-bottom: 4px; }
 .ay-tv__name { font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ay-fg, #3e2723); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -24,7 +24,7 @@
 /* The 1 to 3 things inside the toggle: calm tiles, title then one row of actions.
    Specificity beats the Home's older compact-item rules (ds-app.css, ayna-home.css). */
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-compact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 !important; padding: 0 !important; }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { display: grid !important; grid-template-columns: 40px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 8px; margin: 0 !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--ay-surface, #f7badd) !important; box-shadow: none !important; }
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact { display: grid !important; grid-template-columns: 40px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 8px; margin: 0 !important; padding: 16px !important; border: 0 !important; border-radius: 16px !important; background: var(--ay-surface, transparent) !important; box-shadow: none !important; }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact::before { display: none !important; }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__title { font: 700 calc(17px * var(--ayna-text-scale, 1))/1.25 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-today__item.is-compact .ay-today__why:not([hidden]) { display: block !important; margin: 0 !important; font-size: 15px !important; line-height: 1.4 !important; -webkit-line-clamp: unset; }
@@ -51,5 +51,5 @@
 /* One colour rule (review, Oct 26): the For today cards are the butter surface; pink marks only what is for now. */
 
 /* The toggle stays in reach while its content scrolls (review #15). */
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: relative; top: auto; z-index: 20; background-color: #f7badd !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: relative; top: auto; z-index: 20; background-color: transparent !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-tv > .ayk-tabs { background-color: #45302b !important; box-shadow: 0 0 0 8px var(--r-canvas, #2e1c18); }

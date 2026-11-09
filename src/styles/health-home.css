@@ -14,7 +14,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db {
   --db-ink: var(--ay-ink, #3e2723); --db-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --db-deep: rgba(62, 39, 35, .14);
-  --db-surface: #f7badd; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
+  --db-surface: transparent; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
   --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); /* older rules inside the dashboard */
@@ -249,7 +249,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 
 /* ---------- loading skeleton (HealthDashboard) ---------- */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton { display: grid; gap: 16px; padding: 8px 0; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton i { display: block; border-radius: 16px; background: var(--ay-butter-deep, #f7badd); }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton i { display: block; border-radius: 16px; background: var(--ay-butter-deep, transparent); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton .is-hello { width: 60%; height: 34px; border-radius: 8px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton .is-hero { height: 220px; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-hh-skeleton span { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -307,7 +307,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row { display: flex; gap: 12px; margin: 0; padding: 0 0 4px; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row::-webkit-scrollbar { display: none; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row li { flex: 0 0 236px; scroll-snap-align: start; border: 0 !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row button { display: grid !important; grid-template-columns: minmax(0, 1fr) 18px; align-items: start; height: 100%; padding: 16px !important; border-radius: 16px; background: var(--ay-surface, #f7badd) !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row button { display: grid !important; grid-template-columns: minmax(0, 1fr) 18px; align-items: start; height: 100%; padding: 16px !important; border-radius: 16px; background: var(--ay-surface, transparent) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row button > span { font-weight: 600; line-height: 1.3; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-ask.is-row small { font-weight: 400; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 /* Highlights as a carousel (SnapCarousel): colour-blocked cards, the first pink. */

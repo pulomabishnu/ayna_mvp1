@@ -7,7 +7,7 @@
 /* ---------- shell ---------- */
 
 .ayna-play-intake {
-  --ip-bg: var(--ay-butter-deep, #f7badd);
+  --ip-bg: var(--ay-butter-deep, transparent);
   --ip-deep: transparent;
   --ip-select: var(--legacy-butter);
   position: relative;
@@ -34,7 +34,7 @@
   --ayna-color-ink: var(--legacy-ink);
   --ayna-brown: var(--legacy-ink);
 }
-.ayna-play-intake.ip-tone--peri { --ip-bg: var(--ay-butter-deep, #f7badd); --ip-deep: transparent; --ip-select: var(--ay-butter); }
+.ayna-play-intake.ip-tone--peri { --ip-bg: var(--ay-butter-deep, transparent); --ip-deep: transparent; --ip-select: var(--ay-butter); }
 .ayna-play-intake.ip-tone--butter { --ip-bg: var(--legacy-butter); --ip-deep: var(--ay-butter-deep); --ip-select: var(--legacy-pink); }
 .ayna-play-intake.ip-tone--pink { --ip-bg: var(--legacy-pink); --ip-deep: var(--ay-pink-deep); --ip-select: var(--legacy-butter); }
 .ayna-play-intake.ip-tone--mint { --ip-bg: var(--ay-mint); --ip-deep: var(--ay-mint-deep); --ip-select: var(--legacy-butter); }
@@ -321,7 +321,7 @@
 .ip-spectrum-readout strong { display: block; font: 400 28px/1.15 var(--ay-font-display); letter-spacing: -.045em; }
 .ip-spectrum-readout span { display: block; margin-top: 6px; font: 500 13px/1.35 var(--ay-font-ui); color: var(--ay-ink-soft); }
 .ip-spectrum-track { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); margin: 18px 0 16px; padding-top: 6px; }
-.ip-spectrum-line { position: absolute; left: 12.5%; right: 12.5%; top: 23px; height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--ay-butter-deep, #f7badd), var(--ay-pink-deep), var(--ay-butter-deep)); border: 1.5px solid var(--ay-ink); }
+.ip-spectrum-line { position: absolute; left: 12.5%; right: 12.5%; top: 23px; height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--ay-butter-deep, transparent), var(--ay-pink-deep), var(--ay-butter-deep)); border: 1.5px solid var(--ay-ink); }
 .ip-spectrum-stop { position: relative; display: grid; justify-items: center; gap: 10px; padding: 0; border: 0; background: none; cursor: pointer; }
 .ip-spectrum-stop::before { content: ''; width: 34px; height: 34px; border: 2.5px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); transition: transform .25s var(--ay-pop), background-color .2s; }
 .ip-spectrum-stop[aria-checked='true']::before { background: var(--legacy-ink); transform: scale(1.2); box-shadow: 0 0 0 4px var(--ay-paper), 0 0 0 6px var(--legacy-ink); }
@@ -423,7 +423,7 @@
 .ip-row.is-warning[aria-checked='true'] { background: #fbeee8; border-color: var(--ay-alert); }
 .ip-mark { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border: 2px solid var(--legacy-ink); border-radius: 50%; background: var(--ay-paper); font: 500 13px/1 var(--ay-font-ui); }
 .ip-mark[data-mark='helped'] { background: var(--ay-mint); }
-.ip-mark[data-mark='didnt_help'] { background: var(--ay-butter-deep, #f7badd); }
+.ip-mark[data-mark='didnt_help'] { background: var(--ay-butter-deep, transparent); }
 .ip-mark[data-mark='worse'] { background: #fbeee8; border-color: var(--ay-alert); color: var(--ay-alert); }
 .ip-divider { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font: 500 13px/1 var(--ay-font-ui); }
 .ip-divider::after { content: ''; flex: 1; height: 1.5px; background: var(--ay-ink-faint); order: 1; }

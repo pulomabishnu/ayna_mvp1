@@ -133,11 +133,11 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today_
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menu > summary::-webkit-details-marker { display: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menu > summary:focus-visible { outline: 3px solid var(--tdy-ink); outline-offset: 2px; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menu > summary svg { width: 22px; height: 22px; fill: currentColor; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menu[open] > summary { background: #f7badd; color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menu[open] > summary { background: transparent; color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist { position: absolute; z-index: 20; right: 0; top: calc(100% + 4px); display: grid; min-width: 232px; max-width: min(320px, calc(100vw - 48px)); padding: 6px; border: 1.5px solid var(--tdy-ink); border-radius: 16px; background: var(--ay-calm-page); color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-wh .ay-today__menulist { background: #3e2723; color: #ffedac; border-color: #ffedac; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist button { display: flex; align-items: center; width: 100%; min-height: 44px; margin: 0 !important; padding: 0 12px !important; border: 0 !important; border-radius: 8px; background: none !important; color: inherit !important; box-shadow: none !important; font: 600 15px/1.3 var(--ay-font-ui) !important; text-align: left; text-decoration: none !important; cursor: pointer; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist button:hover { background: #f7badd !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist button:hover { background: transparent !important; color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist .ay-nu__menu { display: grid; gap: 0; padding: 4px 0 0 12px; border-top: 1px solid var(--tdy-hair); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist .ay-nu__q { padding: 4px 0; font: 500 13px/1.4 var(--ay-font-ui); color: inherit; opacity: .8; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh .ay-today__menulist :is(.ay-nu__reason, .ay-nu__skip) { font-weight: 500 !important; }
@@ -311,9 +311,9 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='b
 @media (min-width: 761px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__title { background-image: linear-gradient(transparent 72%, #ffedac 72%, #ffedac 94%, transparent 94%) !important; } }
 /* Awning stripes only as a thin band (b6387c05): one 8px rule over the You header. */
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head { position: relative; padding-top: 24px; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 999px; background: repeating-linear-gradient(90deg, #f7badd 0 18px, #f7badd 18px 36px, #ffedac 36px 54px); box-shadow: inset 0 0 0 1.5px #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-head::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 999px; background: repeating-linear-gradient(90deg, transparent 0 18px, transparent 18px 36px, #ffedac 36px 54px); box-shadow: inset 0 0 0 1.5px #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat { background: #f7badd !important; color: #3e2723 !important; border-color: #3e2723 !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: #f7badd !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(2) .ay-stat { background: transparent !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li:nth-child(3) .ay-stat { background: #ffedac !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat :is(b, span) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wy-stats > li .ay-stat b { font-family: var(--ay-heading) !important; font-variant-numeric: tabular-nums; }
@@ -357,19 +357,19 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs 
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec.wx-needs .ay-needsticker { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec:not(.wx-phrases) .wx-topics .ay-chip { border-color: transparent !important; box-shadow: none !important; background: var(--ds-group) !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+1) { background: #f7badd !important; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: #f7badd !important; color: #3e2723 !important; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:nth-child(5n+3) { background: transparent !important; color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-sec .wx-topics .ay-chip:hover { box-shadow: 3px 3px 0 var(--ds-line) !important; }
 /* ASK: what ayna answers from sits on a filled pink block; the starters become filled colour tiles (Oct 22 Ask landing), no outlines */
 @media (min-width: 1024px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side { padding: 28px 26px; border-radius: 20px; background: #f7badd; color: #3e2723; box-shadow: none; } }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__side :is(p, h1, .wx-ask__title, .wx-ask__basedh, .wx-ask__note) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based { border-top-color: rgba(62, 39, 35, .3); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li { border-color: #3e2723; background: #ffedac; color: #3e2723; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .wx-ask__based li:first-child { background: transparent; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .wx-ask__side { box-shadow: none; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 !important; border: 0 !important; background: none !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li { border-top: 0 !important; border-radius: 16px; background: var(--ds-group); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-pink { background: #f7badd; }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-sky { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-sky { background: transparent; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink { background: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:is(.is-pink, .is-sky) :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-ink :is(button, small, .ay-askh-tile-label) { color: #ffedac !important; }
@@ -382,7 +382,7 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child .ay-askh-go { align-self: flex-end; }
 @media (max-width: 599px) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list { grid-template-columns: 1fr; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child { grid-row: auto; } html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li:first-child button { flex-direction: row !important; align-items: center !important; } }
 @media (prefers-reduced-motion: reduce) { html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list button { transition: none; transform: none !important; } }
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group { background: #f7badd; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group { background: transparent; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group :is(button, small, .ay-askh-tile-label) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ayna-ask-panel .ay-askh-list > li.is-group .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
 
@@ -430,12 +430,12 @@ html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-co
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh--today .ay-wh-week .ay-wh-side__rows b.is-line { font: 700 17px/1.35 var(--ay-font-ui); }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px !important; margin: 12px 0; } /* QA (Oct 27): ID-weighted so health-home.css's list rule (gap 0, 8px 0 padding) stops flattening the tiles */
-html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div { padding: 16px !important; border: 0 !important; border-radius: 16px; background: var(--ay-butter-deep, #f7badd); color: #3e2723; }
+html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div { padding: 16px !important; border: 0 !important; border-radius: 16px; background: var(--ay-butter-deep, transparent); color: #3e2723; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+2), html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:nth-child(4n+3) { background: #f7badd; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div :is(dt, dd) { color: #3e2723 !important; }
 html body :is(#ds-w, .app-container):is(#ds-w, .app-container) .ay-wh.ay-wh.ay-wh .ay-wh-connect .ay-db-facts.is-preview > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
 /* Daily Rundown reminder as a Settings row (founder Oct 26 19:22) */
-.ay-rundown-setting { margin: 16px 0; padding: 16px; border: 1px solid var(--ay-rule, rgba(62,39,35,.22)); border-radius: 16px; background: var(--ay-surface, #f7badd); color: var(--ay-fg, #3e2723); }
+.ay-rundown-setting { margin: 16px 0; padding: 16px; border: 1px solid var(--ay-rule, rgba(62,39,35,.22)); border-radius: 16px; background: var(--ay-surface, transparent); color: var(--ay-fg, #3e2723); }
 .ay-rundown-setting h3 { margin: 0 0 4px; font: 700 17px/1.3 var(--ay-font-ui); }
 .ay-rundown-setting p { margin: 0 0 12px; font: 500 14px/1.45 var(--ay-font-ui); }
 /* QA (Oct 27): in app Settings the card sits inside the padded list already, and

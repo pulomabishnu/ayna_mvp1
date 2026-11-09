@@ -35,7 +35,7 @@
 
 /* ===== shadows only on the main objects ===== */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ay-shelf-head h2, .ay-eco-mix, .ay-eco-cover, .ayna-figma-guest-match, .ay-pdp-hero, .ayna-fresh-detail-image, .ay-intro-part, .ip-card, .ip-age, .ay-empty-art, .ay-lib-item button > div, .ay-lib-item img, .ayna-shared-header-action, .ay-header-ask-pill) { box-shadow: none !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-guest-match { background: #f7badd !important; border: 0 !important; color: var(--b-espresso) !important; min-height: 44px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-guest-match { background: transparent !important; border: 0 !important; color: var(--b-espresso) !important; min-height: 44px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-pdp-hero { border-radius: 16px !important; }
 
 /* ===== Swipe to discover: flat rose row ===== */
@@ -140,7 +140,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-state:not(.is-mid):not(.is-done) { display: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-total { display: inline-flex !important; align-items: center; gap: 8px; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-total i { display: block !important; width: 44px !important; height: 6px !important; border-radius: 3px !important; border: 0 !important; background: linear-gradient(var(--b-espresso), var(--b-espresso)) 0 0 / var(--p, 0%) 100% no-repeat, rgba(62, 39, 35, .18) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-match { background: #f7badd !important; color: var(--b-espresso) !important; border: 0 !important; box-shadow: none !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-match { background: transparent !important; color: var(--b-espresso) !important; border: 0 !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-match * { color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-item :is(img, button > div:first-child) { box-shadow: none !important; }
 
@@ -329,7 +329,7 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-head { padding-top: 16px !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-ripple { display: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-diagram svg line { stroke-width: 2px !important; stroke: var(--r-line-strong) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part.tone-butter { background: #f7badd !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part.tone-butter { background: transparent !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part[aria-pressed='true'] { box-shadow: 0 0 0 3px var(--r-canvas), 0 0 0 5px var(--r-line-strong) !important; }
 
 /* Community empty state sits in the middle of the free space */
@@ -351,11 +351,11 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-reel-track:not(:first-child) { background: #ffedac !important; color: var(--b-espresso) !important; }
 /* intro nodes keep their brand fills in both modes */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part { color: var(--b-espresso) !important; border-color: var(--b-espresso) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part.tone-mint { background: #f7badd !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part.tone-mint { background: transparent !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-intro-part.tone-pink { background: var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-intro-part { border-color: var(--b-butter) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-read-teaser { margin-bottom: 20px !important; padding-bottom: 20px !important; border-bottom: 1px solid var(--r-line) !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-reel-cover:is(.is-mint, .is-peri) { background: #f7badd !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-reel-cover:is(.is-mint, .is-peri) { background: transparent !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-reel-cover.is-pink { background: var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ay-pdp .ayna-figma-guest-match span { opacity: 1 !important; color: var(--b-espresso) !important; }
 

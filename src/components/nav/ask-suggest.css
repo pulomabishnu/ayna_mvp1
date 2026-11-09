@@ -2,7 +2,7 @@
    Brand colours only: butter, butter-deep, espresso, pink. */
 .ay-asksug {
   --asksug-butter: #FFEDAC;
-  --asksug-butter-deep: #f7badd;
+  --asksug-butter-deep: transparent;
   --asksug-espresso: #3E2723;
   --asksug-pink: #F7BADD;
   width: 100%;
@@ -97,7 +97,7 @@
   width: 44px; height: 44px; min-width: 44px;
   border-radius: 999px !important;
   display: inline-flex; align-items: center; justify-content: center;
-  background: #f7badd !important; color: #3E2723 !important;
+  background: transparent !important; color: #3E2723 !important;
   border: 1px solid #3E2723 !important; padding: 0; cursor: pointer;
   box-shadow: none !important;
   font-size: 13px; font-weight: 700;
@@ -109,7 +109,7 @@
   width: 44px; height: 44px; min-width: 44px;
   border-radius: 999px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: #f7badd; color: #3E2723;
+  background: transparent; color: #3E2723;
   border: 1px solid #3E2723;
   text-decoration: none;
 }

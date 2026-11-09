@@ -8,7 +8,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) :is(.ay-askh, .ay-askh-stats) {
   --k-ink: var(--d-ink, var(--ay-text, #3e2723)); --k-soft: var(--d-ink-2, var(--ay-text-2, rgba(62, 39, 35, .78)));
-  --k-group: var(--d-group, var(--ay-group, #f7badd)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
+  --k-group: var(--d-group, var(--ay-group, transparent)); --k-hair: var(--d-hair, var(--ay-hairline, rgba(62, 39, 35, .15)));
   --k-page: var(--d-page, var(--ay-page, #ffedac));
   --k-display: var(--ay-app-heading, var(--ay-heading, 'ayna Display', serif)); --k-sans: 'Figtree', system-ui, sans-serif;
 }
@@ -35,7 +35,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list button { display: flex !important; align-items: center !important; gap: 12px; width: 100%; min-height: 64px; margin: 0 !important; padding: 12px 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: var(--k-ink) !important; text-align: left !important; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .ay-askh-icon { border-color: #3e2723; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-pink .ay-askh-icon { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-sky .ay-askh-icon { background: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-sky .ay-askh-icon { background: transparent; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-group .ay-askh-icon { background: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list .is-ink .ay-askh-icon { background: #3e2723; color: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-list-text { display: grid; gap: 2px; flex: 1; min-width: 0; }
@@ -56,8 +56,8 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border: 1.5px solid #3e2723; border-radius: 10px; color: #3e2723; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-pink { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-sky { background: #f7badd; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-butter { background: #f7badd; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-sky { background: transparent; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-butter { background: transparent; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-sq.is-ink { background: #3e2723; color: #ffedac; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-q { flex: 1; min-width: 0; font: 500 calc(15px * var(--ayna-text-scale, 1))/1.35 var(--k-sans); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ayna-ask-panel) .ay-askh-again { flex: none; font: 600 13px/1 var(--k-sans); color: var(--k-soft); text-decoration: underline; text-underline-offset: 3px; }
@@ -109,4 +109,4 @@ html body .app-container .ayna-ask-panel .ay-askh-homebtn svg { width: 22px; hei
   html body .app-container .ayna-ask-panel:not(#ay-none) .ayna-ask-panel__messages.is-home { padding-top: 12px !important; }
 }
 /* Brand dark on the website: the Ask panel stays butter paper, so its ink stays espresso (the greeting and note were butter on butter). */
-html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: #f7badd; --k-page: #ffedac; }
+html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ayna-ask-panel:not(#ay-none) .ay-askh { --k-ink: #3e2723; --k-soft: rgba(62, 39, 35, .78); --k-hair: rgba(62, 39, 35, .15); --k-group: transparent; --k-page: #ffedac; }
