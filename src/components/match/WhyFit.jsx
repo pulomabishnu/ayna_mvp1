@@ -27,7 +27,9 @@ function fitReasons(product, details, raised = [], need = '') {
   const out = [];
   const n = String(need || '').toLowerCase();
   // Two lines about the same need ("matches the heavy periods you selected" / "…you told ayna about") say one thing.
-  const same = (a, b) => a.toLowerCase() === b.toLowerCase() || (n && a.toLowerCase().includes(n) && b.toLowerCase().includes(n));
+  // Nov 9 (live check: "Within your budget" and "$12.99 fits your budget" both showed): one line per topic.
+  const topic = (t) => (/\bbudget\b|\bprice\b|costs? less/i.test(t) ? 'budget' : /review|rated|rating|stars?\b/i.test(t) ? 'reviews' : '');
+  const same = (a, b) => a.toLowerCase() === b.toLowerCase() || (n && a.toLowerCase().includes(n) && b.toLowerCase().includes(n)) || (topic(a) && topic(a) === topic(b));
   const add = (t) => { const s = cap(String(t || '').trim().replace(/\.$/, '')); if (s && !NEGATIVE.test(s) && !out.some((x) => same(x, s))) out.push(s); };
   const bf = details?.browseFit;
   if (details?.matchStatus === 'scored') { whyMatch(details).reasons.forEach(add); raised.slice(0, 2).forEach((x) => add(x.text)); }

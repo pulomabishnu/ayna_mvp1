@@ -1360,7 +1360,12 @@ function App() {
       const rawIntake = pendingQuizResults?.fullHealthIntake || pendingQuizResults;
       saveHealthIntakeForCurrentUser(rawIntake).catch(e => reportSaveFailure('Could not save your health profile', e));
       setPendingQuizResults(null);
-      setShowWrapped(true);
+      // Nov 9: she just watched her Wrapped before making the account (quiz > See my results >
+      // Wrapped > Save), so don't play it again; open her matches. The flag survives Google/Apple
+      // sign-in leaving the page.
+      let watched = false;
+      try { watched = window.sessionStorage.getItem('ayna_guest_wrapped_watched') === '1'; window.sessionStorage.removeItem('ayna_guest_wrapped_watched'); } catch { /* storage blocked */ }
+      if (!watched) setShowWrapped(true);
     } else if (pendingAction === 'browse' || pendingAction === 'personalize') {
       handleViewDiscovery('');
     } else if (pendingAction === 'free-product') {
@@ -2769,8 +2774,8 @@ function App() {
             }}
             guest
             primaryLabel="Save my matches →"
-            onPrimary={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
-            onClose={() => { setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
+            onPrimary={() => { try { window.sessionStorage.setItem('ayna_guest_wrapped_watched', '1'); } catch { /* storage blocked */ } setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
+            onClose={() => { try { window.sessionStorage.setItem('ayna_guest_wrapped_watched', '1'); } catch { /* storage blocked */ } setGuestPreview((g) => ({ ...g, done: true })); setShowAuthModal(true); }}
             onBrowse={() => {
               // Browse means browse: her matches come along, no sign-up wall.
               setGuestPreview((g) => ({ ...g, done: true }));
@@ -3687,7 +3692,7 @@ function App() {
           only about it never being unmounted by navigation. */}
       {currentView !== 'campus-resources' && <ConsentBanner />}
       {/* First visit tips (same store and key as the app): after setup only. */}
-      <TutorialLayer surface="web" userId={user?.id || null} ready={Boolean(quizResults)} />
+      <TutorialLayer surface="web" userId={user?.id || null} accountCreatedAt={user?.created_at || null} ready={Boolean(quizResults)} />
     </div>
   );
 }

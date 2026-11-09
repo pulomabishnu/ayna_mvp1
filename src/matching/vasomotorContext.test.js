@@ -53,7 +53,8 @@ describe('vasomotor symptoms do not cause menopause classification', () => {
     expect(note?.source).toContain('medlineplus.gov');
     expect(note?.text).toMatch(/period/i);
     expect(note?.text).toMatch(/anxious|stress/i);
-    expect(note?.text).toMatch(/does not prove|not prove/i);
+    expect(note?.text).toMatch(/tracking/i);
+    expect(note?.text).not.toMatch(/menopause/i);
   });
 
   it('co-selecting anxiety and PMS does not manufacture episode timing or a diagnosis', () => {
@@ -62,8 +63,8 @@ describe('vasomotor symptoms do not cause menopause classification', () => {
     expect(profile.vasomotorTiming).toEqual([]);
     expect(profile.contexts.menopause_transition).toBeUndefined();
     const note = getMatchCareFlags(q).notes.find(n => n.code === 'vasomotor_other_causes');
-    expect(note?.text).not.toContain('You reported episodes around your period');
-    expect(note?.text).toContain('timing and triggers');
+    expect(note?.text).not.toContain('around your period');
+    expect(note?.text).toContain('any age');
   });
 
   it('no period link is assumed from anxiety timing alone', () => {

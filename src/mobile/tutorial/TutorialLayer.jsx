@@ -67,7 +67,7 @@ const STABLE_POLLS = 2;
 
 const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
 
-export default function TutorialLayer({ userId = null, surface = 'app', ready = true }) {
+export default function TutorialLayer({ userId = null, surface = 'app', ready = true, accountCreatedAt = null }) {
   const cfg = SURFACES[surface] || SURFACES.app;
   const screens = screensFor(surface);
   const avoid = avoidFor(surface);
@@ -91,7 +91,14 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
   }, [offNote]);
 
   // Seen state is per person: switch owner before the next check reads it.
-  useEffect(() => { setTourOwner(userId); }, [userId]);
+  // Nov 9 (live check: a member since August got first-visit tips on every page in a new browser):
+  // tips live on the device, so an account older than 3 days that never chose starts with them off.
+  // Settings > Replay the tour still brings them back.
+  useEffect(() => {
+    const p = setTourOwner(userId);
+    const age = accountCreatedAt ? Date.now() - new Date(accountCreatedAt).getTime() : 0;
+    if (userId && p.enabled === null && age > 3 * 864e5) setTipsEnabled(false);
+  }, [userId, accountCreatedAt]);
 
   const end = useCallback((how = 'done') => {
     const r = runRef.current;

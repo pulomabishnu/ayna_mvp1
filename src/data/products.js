@@ -2124,18 +2124,19 @@ function careFlagsFor(up) {
       const stressTimed = timing.some(t => ['stress_anxiety', 'with_stress_reported'].includes(t));
       // Co-selected PMS/anxiety are NOT proof that flushing follows either.
       // Only explicitly reported temporal context enters this explanation.
+      // Nov 9 (founder: "don't tell people things they don't need to hear"): say what helps, briefly.
       const timingLine = periodTimed && stressTimed
-        ? 'You reported episodes around your period and during anxiety or stress.'
-        : periodTimed ? 'You reported episodes around your period or PMS.'
-          : stressTimed ? 'You reported episodes while anxious or stressed.'
+        ? 'You noticed them around your period and when stressed.'
+        : periodTimed ? 'You noticed them around your period.'
+          : stressTimed ? 'You noticed them when anxious or stressed.'
             : '';
       const guide = timingLine
-        ? `${timingLine} That timing is worth tracking, but it does not prove the cause or suggest menopause.`
-        : 'Hot flashes can happen at different ages. The timing and triggers are worth tracking before attributing a cause.';
+        ? `${timingLine} Tracking when they happen helps you and your clinician.`
+        : 'Hot flashes can happen at any age. Tracking when they happen helps you and your clinician.';
       notes.push({
         code: 'vasomotor_other_causes',
         short: guide,
-        text: `${guide} Flushing can also be associated with medicines, physical activity, temperature, strong emotions or other medical conditions. If it persists or changes, check with a clinician.`,
+        text: `${guide} Some medicines, heat and strong emotions can cause flushing too. If it keeps happening or changes, check with a clinician.`,
         source: 'https://medlineplus.gov/ency/article/003241.htm',
       });
     }
