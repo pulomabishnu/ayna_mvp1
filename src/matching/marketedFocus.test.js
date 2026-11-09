@@ -28,3 +28,14 @@ describe('marketed for (catalog audit)', () => {
   });
 });
 
+
+// Nov 9 coverage audit: Gas, Breast tenderness and digestive bloating had products the brand sells for them
+// that never reached a user who picked that need.
+describe('needs that had no matching product', () => {
+  const s = (p, need) => buildProductProfile({ type: 'physical', tags: [], ...p }).health_need_relevance?.[need]?.score || 0;
+  it('gas, breast tenderness and digestive bloating', () => {
+    expect(s({ id: 'p-t-bitters', name: 'Digestive Bitters', category: 'supplement', summary: 'The brand says it eases occasional gas, bloating and indigestion.' }, 'digestive.gas')).toBeGreaterThanOrEqual(0.55);
+    expect(s({ id: 'p-t-chaste', name: 'Hormone Support', category: 'supplement', summary: 'Marketed for fewer PMS symptoms like breast tenderness.' }, 'cycle.breast_tenderness')).toBeGreaterThanOrEqual(0.55);
+    expect(s({ id: 'p-t-bloat', name: 'Bye Bloat', category: 'supplement', summary: 'A capsule made for occasional bloating.' }, 'bloating.digestive')).toBeGreaterThanOrEqual(0.55);
+  });
+});

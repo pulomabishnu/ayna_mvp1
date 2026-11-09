@@ -322,6 +322,10 @@ const MARKETED_FOR = {
   // Nov 9 (founder: Loop Quiet 2 is "made for deeper sleep and focus" but didn't show for trouble focusing).
   'urinary.recurrent_uti': { re: /\butis?\b|urinary tract infections?/, ok: (f) => INGESTIBLE_OR_DEVICE(f) || f.cat === 'supplement' },
   'vaginal.dryness': { re: /\bdryness\b|\bmoistur(e|izer|izing|ize)\b/, ok: (f) => f.cat === 'intimate-care' && f.t(/vagin|vulv|intimate|labia/) && !f.t(/\bwash\b|cleans/) },
+  // Nov 9 coverage audit: Gas, Breast tenderness and Abdominal discomfort had no product at all.
+  'digestive.gas': { re: /\bgas\b|\bgassy\b|flatulen/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !f.t(/gas permeable|natural gas/) },
+  'cycle.breast_tenderness': { re: /breast (tenderness|pain|soreness)|tender breasts|sore breasts|mastalgia/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && !['postpartum'].includes(f.cat) },
+  'pain.abdominal': { re: /\bindigestion\b|stomach (ache|upset|discomfort)|upset stomach|abdominal (pain|discomfort)/, ok: INGESTIBLE_OR_DEVICE },
   'cognition.concentration': { re: /\bfocus(ed)?\b|\bconcentration\b(?! of)|\bconcentrating\b/, ok: (f) => INGESTIBLE_OR_DEVICE(f) && f.cat !== 'diagnostics' && !f.t(/focus(ed)? on (women|our|the)|we focus/) },
   'digestive.gas': { re: /\bgas\b|gassiness|flatulen/, ok: (f) => f.cat === 'supplement' },
   'pain.abdominal': { re: /stomach (ache|pain|discomfort|upset)|abdominal (pain|discomfort)|tummy (ache|trouble|troubles)|upset stomach/, ok: (f) => f.cat === 'supplement' || f.cat === 'cramp-relief' },
@@ -559,7 +563,8 @@ export const RELEVANCE_RULES = [
   { id: 'bloat_text', why: 'Made for bloating.',
     when: (f) => f.tc(/bloat/) && !PERIOD_CATEGORIES.has(f.cat),
     set: (f) => ({ 'bloating.unspecified': STRONG, 'pain.abdominal': ADJACENT,
-      'bloating.digestive': f.t(/digest|enzyme/) ? STRONG : SECONDARY,
+      // A product made for bloating with no period context is sold for digestive bloating (Nov 9 audit).
+      'bloating.digestive': f.t(/digest|enzyme|\bgut\b/) || !f.t(/cycle|period|\bpms\b|menstrual|hormonal bloat/) ? STRONG : SECONDARY,
       'bloating.cycle_related': f.t(/cycle|period|\bpms\b|menstrual|hormonal bloat/) ? STRONG : ADJACENT,
       'digestive.gas': f.t(/enzyme|\bgas\b/) ? SECONDARY : WEAK }) },
   { id: 'bloat_tag_only', why: 'Catalog tags bloating but the product is not made for it.',
@@ -1579,7 +1584,7 @@ export function buildProductProfile(product) {
         e.contextual.push({ level, requires: value.requires, rule: rule.id, why: rule.why });
       } else {
         // nov5_by_id was a modest by-use placeholder (Nov 5), so a brand claim may raise it.
-        if (rule.fillOnly && e.score > 0 && !['nov5_by_id', 'postpartum_tagged'].includes(e.rule)) continue;
+        if (rule.fillOnly && e.score > 0 && !['nov5_by_id', 'postpartum_tagged', 'bloat_text'].includes(e.rule)) continue;
         const level = rule.broad ? Math.min(WEAK, value) : value;
         if (e.score < level) { e.score = level; e.rule = rule.id; e.why = rule.why; e.broad = Boolean(rule.broad); }
       }
