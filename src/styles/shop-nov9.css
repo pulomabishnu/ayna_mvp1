@@ -10,19 +10,7 @@
   margin: -6px auto 22px; max-width: 34em; text-align: center; color: #3e2723; font: 500 18px/1.45 var(--ay-font-ui, Figtree, sans-serif);
 }
 /* Nov 9 (founder): the need chips stay one row with the arrow buttons (ScrollRow), as before. */
-/* cards: plate + words, no frame */
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard {
-  border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important;
-}
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__photo {
-  border: 0 !important; border-radius: 22px !important; background: #fff !important; box-shadow: none !important; overflow: hidden; transition: transform .18s ease;
-}
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard:hover .ay-pcard__photo { transform: translateY(-3px); }
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__body { padding: 12px 4px 0 !important; }
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__name { font-size: 17px !important; font-weight: 700 !important; }
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__heart { top: 12px !important; right: 12px !important; bottom: auto !important; background: #ffedac !important; border: 0 !important; box-shadow: none !important; }
-:is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__seematch { display: inline-flex; margin-top: 8px !important; padding: 8px 14px !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; border: 0 !important; font: 700 14px/1 var(--ay-font-ui, Figtree, sans-serif) !important; text-decoration: none !important; }
-@media (prefers-reduced-motion: reduce) { :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ay-pcard__photo { transition: none; } }
+/* Nov 9 (founder: "I liked the outline look"): product cards keep their outline; no overrides here. */
 /* Only my matches */
 :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine { display: inline-flex; align-items: center; gap: 8px; }
 :is(#sn1, html):is(#sn2, html):is(#sn3, html):is(#sn4, html):is(#sn5, html):is(#sn6, html):is(#sn7, html):is(#sn8, html) body .app-container .ayshop__onlymine svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }

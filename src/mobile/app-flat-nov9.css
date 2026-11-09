@@ -39,10 +39,8 @@ html body .ayna-mobile:not([data-theme*="dark"]):is(#ay,.ayna-mobile):is(#ay,.ay
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you-head.ay-you-band::after { content: none !important; display: none !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-svc.has-heart .ay-svc__body { padding-right: 52px !important; }
 
-/* Dark mode (Nov 9 check): the rundown sits on the espresso page, so its words are butter; Shop cards
-   are photo + words in both modes (no butter frame or offset shadow). */
+/* Dark mode (Nov 9 check): the rundown sits on the espresso page, so its words are butter. */
 html body .ayna-mobile[data-theme*="dark"]:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-rd-hero__card, html body .ayna-mobile[data-theme*="dark"]:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-rd-hero__card :is(h2, h3, p, span, small, b, strong):not(.ay-rd-hero__go *) { color: #ffedac !important; }
-html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pcard { border: 0 !important; box-shadow: none !important; background: transparent !important; }
 
 /* Nov 9 (founder: "it's not even centred, stop putting too much text"): the set-up rundown is one
    short centred block. */
