@@ -25,13 +25,16 @@
 // "Zero PFAS detected" and "PFAS-free" — those are exactly the boilerplate
 // this function must NOT flag, and "pfas" alone can't distinguish "found
 // PFAS" from "found zero PFAS" without looking at what's next to it.
-const RECALL_CONCERN_RE = /(?<!\b(?:zero|no|not|without)\s)pfas(?!-?\s?free)|forever chemical|lawsuit|class[- ]?action|settlement|settled|contaminat|recall(?:ed)?\b[^.]{0,25}\b(?:19|20)\d{2}\b|\b(?:19|20)\d{2}\b[^.]{0,25}\brecall(?:ed)?\b/i;
+const PFAS_RE = /(\b(?:zero|no|not|without)\s)?pfas(?!-?\s?free)/gi;
+// No lookbehind (iOS Safari before 16.4 can't parse it): a PFAS mention counts unless "zero/no/not/without" sits right before it.
+const hasPfasConcern = (t) => { PFAS_RE.lastIndex = 0; let m; while ((m = PFAS_RE.exec(t))) if (!m[1]) return true; return false; };
+const RECALL_CONCERN_RE = /forever chemical|lawsuit|class[- ]?action|settlement|settled|contaminat|recall(?:ed)?\b[^.]{0,25}\b(?:19|20)\d{2}\b|\b(?:19|20)\d{2}\b[^.]{0,25}\brecall(?:ed)?\b/i;
 const LEGACY_MARKER = '⚠️';
 
 export function hasFlaggedRecall(recallsText) {
   const t = String(recallsText || '').trim();
   if (!t) return false;
-  return t.includes(LEGACY_MARKER) || RECALL_CONCERN_RE.test(t);
+  return t.includes(LEGACY_MARKER) || hasPfasConcern(t) || RECALL_CONCERN_RE.test(t);
 }
 
 /**

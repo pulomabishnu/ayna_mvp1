@@ -249,8 +249,8 @@ export function getGlossaryEntry(term) {
 const escapeRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const HARD_KEYS = GLOSSARY_ENTRIES.filter((e) => e.hard).flatMap((e) => [e.term, ...e.aliases].map((k) => ({ k, e })))
   .sort((a, b) => b.k.length - a.k.length);
-const HARD_RE_I = new RegExp(`(?<![A-Za-z0-9-])(${HARD_KEYS.filter((x) => !x.e.caseSensitive).map((x) => escapeRe(x.k)).join('|')})(?![A-Za-z0-9])`, 'gi');
-const HARD_RE_CS = new RegExp(`(?<![A-Za-z0-9-])(${HARD_KEYS.filter((x) => x.e.caseSensitive).map((x) => escapeRe(x.k)).join('|')})(?![A-Za-z0-9])`, 'g');
+const HARD_RE_I = new RegExp(`(^|[^A-Za-z0-9-])(${HARD_KEYS.filter((x) => !x.e.caseSensitive).map((x) => escapeRe(x.k)).join('|')})(?![A-Za-z0-9])`, 'gi');
+const HARD_RE_CS = new RegExp(`(^|[^A-Za-z0-9-])(${HARD_KEYS.filter((x) => x.e.caseSensitive).map((x) => escapeRe(x.k)).join('|')})(?![A-Za-z0-9])`, 'g');
 
 /**
  * Hard glossary terms in a text: [{ index, length, text, entry }], in order,
@@ -263,9 +263,11 @@ export function findHardTerms(text) {
   for (const re of [HARD_RE_I, HARD_RE_CS]) {
     re.lastIndex = 0;
     let m;
+    // No lookbehind (iOS Safari before 16.4 can't parse it): the boundary is captured as m[1].
     while ((m = re.exec(t))) {
-      const e = getGlossaryEntry(m[1]);
-      if (e) hits.push({ index: m.index, length: m[1].length, text: m[1], entry: e });
+      const e = getGlossaryEntry(m[2]);
+      if (e) hits.push({ index: m.index + m[1].length, length: m[2].length, text: m[2], entry: e });
+      if (m[1].length) re.lastIndex = m.index + m[1].length + m[2].length;
     }
   }
   hits.sort((a, b) => a.index - b.index || b.length - a.length);

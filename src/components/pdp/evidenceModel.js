@@ -41,7 +41,7 @@ const REVIEWS_META = /automated access|blocks? (?:bots|scrap|automat)|(?:hasn[�
 export function isReviewsMeta(text) { return REVIEWS_META.test(String(text || '')); }
 /** Text without its sentences (and clauses) about how reviews were (not) gathered. */
 export function withoutReviewsMeta(text) {
-  const keep = String(text || '').split(/(?<=[.!?]["”’)]?)\s+(?=[A-Z"“(])/).map((sentence) => {
+  const keep = String(text || '').replace(/([.!?]["”’)]?)\s+(?=[A-Z"“(])/g, '$1\u0000').split('\u0000').map((sentence) => {
     if (!isReviewsMeta(sentence)) return sentence;
     // Keep what comes before the note about gathering; what follows it ("so ...", "read them ...") goes too.
     const all = sentence.split(/\s*[;:]\s+|,\s+(?=(?:so|and so|but|read|amazon)\b)/i).filter(Boolean);
@@ -194,8 +194,8 @@ export function collectLinks(entries, brand) {
 // ---------------------------------------------------------------------------
 export function parseRating(text) {
   const t = String(text || '');
-  const m = t.match(/(?<![\d.])(\d(?:\.\d{1,2})?)\s*(?:out of|\/)\s*5(?:\s*stars?)?[^.]{0,40}?(?:across|from|of|with)\s+([\d,]+)\s+(?:verified\s+|customer\s+|global\s+)?(?:reviews|ratings)/i)
-    || t.match(/(?<![\d.])(\d(?:\.\d)?)[-\s]?stars?[^.]{0,40}?(?:across|from|of)\s+([\d,]+)\s+(?:verified\s+)?(?:reviews|ratings)/i);
+  const m = t.match(/(?:^|[^\d.])(\d(?:\.\d{1,2})?)\s*(?:out of|\/)\s*5(?:\s*stars?)?[^.]{0,40}?(?:across|from|of|with)\s+([\d,]+)\s+(?:verified\s+|customer\s+|global\s+)?(?:reviews|ratings)/i)
+    || t.match(/(?:^|[^\d.])(\d(?:\.\d)?)[-\s]?stars?[^.]{0,40}?(?:across|from|of)\s+([\d,]+)\s+(?:verified\s+)?(?:reviews|ratings)/i);
   return m ? { value: m[1], count: m[2] } : null;
 }
 

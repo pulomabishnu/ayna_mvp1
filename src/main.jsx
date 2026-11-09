@@ -1,3 +1,4 @@
+import './polyfills.js'
 import { legacyPathFor } from './components/nav/mainTabs.js';
 import { devPreviewOn } from './utils/devPreview.js';
 import React from 'react'

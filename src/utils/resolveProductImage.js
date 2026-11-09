@@ -48,7 +48,7 @@ function lsWrite(key, url) {
 // marketing-banner signal, so it produced false positives with no
 // corresponding real catch once the one case it existed for (Wisp's
 // digital/telehealth Meta_Hero image) is already exempted by allowBrandLogo.
-const NON_PRODUCT_IMAGE_PATTERN = /(?<![a-z])(?:logo|icon|badge|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
+const NON_PRODUCT_IMAGE_PATTERN = /(?:^|[^a-z])(?:logo|icon|badge|banner|header|sprite|placeholder|social[-_]?share|og[-_]?default)(?![a-z])/i;
 
 function isVectorAssetUrl(src) {
   // Same answer as testing new URL(src).pathname, without the constructor:

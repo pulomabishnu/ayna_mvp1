@@ -35,7 +35,7 @@ const clean = (v) => {
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const same = (a, b) => Boolean(a && b && norm(a) === norm(b));
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
-const sentences = (text) => String(text || '').split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+const sentences = (text) => String(text || '').replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').map((s) => s.trim()).filter(Boolean);
 
 /** Category label without the emoji some labels carry. */
 export { categoryLabel };

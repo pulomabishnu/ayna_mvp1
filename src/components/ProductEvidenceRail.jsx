@@ -17,7 +17,7 @@ import MatchPill from './MatchPill';
 function firstSentence(text, max = 140) {
   const t = String(text || '').trim();
   if (!t) return '';
-  const cut = t.split(/(?<=[.!?])\s/)[0] || t;
+  const cut = t.replace(/([.!?])\s/, '$1\u0000').split('\u0000')[0] || t;
   if (cut.length <= max) return cut;
   const truncated = cut.slice(0, max);
   const lastSpace = truncated.lastIndexOf(' ');

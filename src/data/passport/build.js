@@ -25,7 +25,7 @@ const meaningful = (v) => (isEmptyValue(v) ? '' : str(v));
 /** Sentences in `text` that match `re`. */
 function sentencesMatching(text, re) {
   return String(text || '')
-    .split(/(?<=[.!?])\s+/)
+    .replace(/([.!?])\s+/g, '$1\u0000').split('\u0000')
     .map((s) => s.trim())
     .filter((s) => s && re.test(s));
 }

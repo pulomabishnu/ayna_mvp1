@@ -45,7 +45,7 @@ export function isMatchQuestion(text) {
 function productByName(query, catalog) {
   const q = String(query || '').trim().toLowerCase();
   if (q.length < 3) return { one: null, some: [] };
-  const stem = (w) => w.replace(/ies$/, 'y').replace(/(?<!s)s$/, '');
+  const stem = (w) => w.replace(/ies$/, 'y').replace(/([^s])s$/, '$1');
   const hits = catalog.filter((p) => { const n = `${p.brand || ''} ${p.name || ''}`.toLowerCase(); return q.split(/\s+/).every((w) => n.includes(stem(w))); });
   return { one: hits.length === 1 ? hits[0] : null, some: hits.slice(0, 4) };
 }

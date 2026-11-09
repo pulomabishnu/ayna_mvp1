@@ -98,7 +98,7 @@ const NEGATED_CLAIM = [
   /\bshould not be treated as\b/,
 ];
 function claimText(text) {
-  return text.split(/(?<=[.!?])\s+/).filter((sentence) => !NEGATED_CLAIM.some((re) => re.test(sentence))).join(' ');
+  return text.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').filter((sentence) => !NEGATED_CLAIM.some((re) => re.test(sentence))).join(' ');
 }
 
 /** Lowercased fields used by the rule predicates. */
@@ -123,7 +123,7 @@ function facts(product) {
     // tc: text with benefit-denying sentences removed (for "mentions X" rules).
     tc: (re) => re.test(claims),
     // Claim sentences: a claim verb and the need in the same sentence (marketed_for rule).
-    cs: (re) => claims.split(/(?<=[.!?])\s+/).some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x)),
+    cs: (re) => claims.replace(/([.!?])\s+/g, '$1\u0000').split('\u0000').some((x) => re.test(x) && MARKETED_VERB.test(x) && !FOUNDER_STORY.test(x)),
     limited: product.evidenceStrength === 'limited',
     id: product.id, cat: normalCategory(product.category), type: String(product.type || '').toLowerCase(),
     tags, hf, name, text,
@@ -890,7 +890,7 @@ export const ATTRIBUTE_RULES = {
     yes: /polyethylene|polypropylene|\bsynthetic\b|polyester|nylon|spandex|\bplastic\b|silicone|\bbio-?pe\b|polymer|\bpu\b|tpe\b/,
     avoidKeys: ['synthetic'],
   },
-  animal_derived: { free: /\bvegan\b|animal[- ]free/, yes: /\bgelatin\b|(?<!-)\blanolin\b(?![- ]free)|beeswax|collagen|fish oil|bovine|carmine|\bhoney\b(?! pot)|\bwhey\b/ },
+  animal_derived: { free: /\bvegan\b|animal[- ]free/, yes: /\bgelatin\b|(?:^|[^-])\blanolin\b(?![- ]free)|beeswax|collagen|fish oil|bovine|carmine|\bhoney\b(?! pot)|\bwhey\b/ },
   added_sugar: { free: /sugar[- ]free|no (added )?sugar|zero sugar/, yes: /\bcane sugar\b|\badded sugar\b|glucose syrup|\bsugar\b/ },
   artificial_sweeteners: { free: /no artificial sweeteners?|artificial[- ]sweetener[- ]free/, yes: /sucralose|aspartame|acesulfame|saccharin/ },
   essential_oils: { free: /essential[- ]oil[- ]free|no essential oils?/, yes: /essential oils?|lavender|peppermint|tea tree|eucalyptus|\bmint\b|herb-infused|herbal-infused/, avoidKeys: ['essential-oils'] },
