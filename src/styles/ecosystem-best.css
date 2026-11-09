@@ -20,7 +20,7 @@ html body .app-container .eco-awning {
 }
 html body .app-container .eco-awning::before {
   content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, #f6e3a1 0 28px, #f6e3a1 28px 56px);
+  background: repeating-linear-gradient(90deg, #f7badd 0 28px, #f7badd 28px 56px);
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 13px) no-repeat, radial-gradient(circle at 50% 0, #000 13.5px, transparent 14px) left bottom / 28px 14px repeat-x;
   mask: linear-gradient(#000 0 0) top / 100% calc(100% - 13px) no-repeat, radial-gradient(circle at 50% 0, #000 13.5px, transparent 14px) left bottom / 28px 14px repeat-x;
 }

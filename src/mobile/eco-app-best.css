@@ -24,7 +24,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-awning--app { position: relative; height: 24px; margin: 0 0 2px; filter: drop-shadow(0 1.5px 0 #3e2723); transform-origin: 50% 0; animation: eco-app-unroll .7s var(--ease-out) both; }
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-awning--app::before {
   content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, #769ebe 0 24px, #f6e3a1 24px 48px);
+  background: repeating-linear-gradient(90deg, #769ebe 0 24px, #f7badd 24px 48px);
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
   mask: linear-gradient(#000 0 0) top / 100% calc(100% - 11px) no-repeat, radial-gradient(circle at 50% 0, #000 11.5px, transparent 12px) left bottom / 24px 12px repeat-x;
 }
@@ -267,7 +267,7 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack__back { display: none !important; }
 
 /* Ecosystem lists, one at a time (founder, Oct 28): Mine | ayna picks | Saved | Routine. */
-.ayna-mobile .eco-app .eco-views { display: flex; gap: 2px; margin: 4px var(--d-gutter, 20px) 18px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f6e3a1; overflow-x: auto; scrollbar-width: none; }
+.ayna-mobile .eco-app .eco-views { display: flex; gap: 2px; margin: 4px var(--d-gutter, 20px) 18px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; overflow-x: auto; scrollbar-width: none; }
 .ayna-mobile .eco-app .eco-views::-webkit-scrollbar { display: none; }
 .ayna-mobile .eco-app .eco-views button { flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 9px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 700 13px/1 var(--ay-font-ui, Figtree, sans-serif); white-space: nowrap; cursor: pointer; }
 .ayna-mobile .eco-app .eco-views button.is-on { background: #3e2723; color: #ffedac; }

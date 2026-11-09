@@ -7,10 +7,10 @@
   --ay-ink: #3e2723; --legacy-ink: #3e2723;
   --ay-ink-muted: rgba(62, 39, 35, .78);
   --ay-butter: #ffedac; --legacy-butter: #ffedac;
-  --ay-butter-deep: #f6e3a1;
+  --ay-butter-deep: #f7badd;
   --ay-pink: #f7badd; --legacy-pink: #f7badd;
   --ay-data-blue: #769ebe;
-  --ay-surface: #f6e3a1; --legacy-surface: #f6e3a1; /* founder Oct 26: no white surfaces; white only behind product photos (--ay-plate) */
+  --ay-surface: #f7badd; --legacy-surface: #f7badd; /* founder Nov 9: no deep yellow, surfaces are pink. founder Oct 26: no white surfaces; white only behind product photos (--ay-plate) */
   --ay-r-sm: 8px; --ay-r-md: 16px; --ay-r-pill: 999px; --ay-r-round: 50%;
   --ay-rule: 1px solid rgba(62, 39, 35, .15);
   --ay-outline: 1.5px solid #3e2723; --legacy-outline: 1.5px solid #3e2723; /* always a full border; the bare colour is --ay-outline-color */
@@ -26,11 +26,11 @@
      --ay-butter (pink in theme-v3). New code uses these. --ay-outline is now always a full border everywhere. */
   --ay-fg: #3e2723; --ay-fg-muted: rgba(62, 39, 35, .78);
   --ay-border-ink: 1.5px solid #3e2723;
-  --ay-butter-base: #ffedac; --ay-butter-deep-base: #f6e3a1; --ay-pink-base: #f7badd;
+  --ay-butter-base: #ffedac; --ay-butter-deep-base: #f7badd; --ay-pink-base: #f7badd;
   /* Ink fill and the text that sits on it (selected chips, pill tabs, primary buttons). */
   --ay-fill-ink: #3e2723;
   --ay-on-ink: #ffedac;
-  --ay-track: #f6e3a1;
+  --ay-track: #f7badd;
   --ay-chip-bg: #ffedac;
   --ay-ask-corner: 30px 30px 30px 8px; /* Ask ayna speech bubble only */
   /* Type: 8 styles (PDP build brief). Sizes are desktop; phones and the app use the mobile column below. */
@@ -67,7 +67,7 @@
    highlight underline, small icons); blue is for chart lines only. The landing and Shop's pink header keep their bands. */
 :root {
   --ay-calm-page: #ffedac;
-  --ay-calm-box: #f6e3a1;
+  --ay-calm-box: #f7badd;
   --ay-calm-fg: #3e2723;
   --ay-calm-fg-muted: rgba(62, 39, 35, .8);
   --ay-calm-line: #3e2723;

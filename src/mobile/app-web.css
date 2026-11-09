@@ -29,7 +29,7 @@
   background: var(--b-rose) !important; color: var(--b-espresso) !important;
   border: 2px solid var(--b-espresso) !important; box-shadow: 3px 3px 0 var(--b-espresso) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: #f6e3a1 !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active .ay-nav-center { background: #f7badd !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav button.is-center.is-active { color: var(--r-ink) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav { background: var(--r-canvas) !important; border: 0 !important; border-top: 2px solid var(--r-line-strong) !important; box-shadow: none !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active:not(.is-center) { background: transparent !important; }
@@ -43,7 +43,7 @@
   padding: 22px var(--r-gutter) 22px !important; text-align: center;
   --band: var(--b-rose); background: var(--band) !important; color: var(--b-espresso) !important;
 }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { --band: #f6e3a1; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-lib-head { --band: #f7badd; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile :is(.ayna-shop-heading, .ay-lib-head)::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none;
   background: radial-gradient(circle at 12px 0, var(--band) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x;
@@ -112,8 +112,8 @@
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-bottom-nav { width: 100% !important; margin: 0 !important; inset: auto 0 0 0 !important; box-sizing: border-box !important; }
 
 /* Profile ("You"): sky band with the scalloped edge */
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero { position: relative; background: #f6e3a1 !important; color: var(--b-espresso) !important; overflow: visible !important; margin-bottom: 28px !important; }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero::after { content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none; background: radial-gradient(circle at 12px 0, #f6e3a1 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero { position: relative; background: #f7badd !important; color: var(--b-espresso) !important; overflow: visible !important; margin-bottom: 28px !important; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero::after { content: ''; position: absolute; left: 0; right: 0; bottom: -13px; height: 14px; pointer-events: none; background: radial-gradient(circle at 12px 0, #f7badd 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-fresh-profile-hero :is(h1, h2, span, p, strong) { color: var(--b-espresso) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero { background: var(--b-rose) !important; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-fresh-profile-hero::after { background: radial-gradient(circle at 12px 0, var(--b-rose) 12px, transparent 12.5px) 0 0 / 24px 14px repeat-x; }
@@ -136,7 +136,7 @@
   font: 500 22px/1.15 var(--f-display); color: var(--b-espresso);
 }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-stickers b::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--b-rose); clip-path: polygon(50.0% 0.0%, 59.1% 10.0%, 71.7% 5.0%, 75.6% 17.9%, 89.1% 18.8%, 86.9% 32.2%, 98.7% 38.9%, 91.0% 50.0%, 98.7% 61.1%, 86.9% 67.8%, 89.1% 81.2%, 75.6% 82.1%, 71.7% 95.0%, 59.1% 90.0%, 50.0% 100.0%, 40.9% 90.0%, 28.3% 95.0%, 24.4% 82.1%, 10.9% 81.2%, 13.1% 67.8%, 1.3% 61.1%, 9.0% 50.0%, 1.3% 38.9%, 13.1% 32.2%, 10.9% 18.8%, 24.4% 17.9%, 28.3% 5.0%, 40.9% 10.0%); }
-.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-stickers li.is-sky b::before { background: #f6e3a1; rotate: 14deg; animation-direction: reverse; }
+.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-stickers li.is-sky b::before { background: #f7badd; rotate: 14deg; animation-direction: reverse; }
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-stickers span { font: 500 13px/1 var(--f-ui); color: var(--b-butter); }
 @keyframes ay-sticker-spin { to { rotate: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ay-eco-stickers b::before { animation: none; } }

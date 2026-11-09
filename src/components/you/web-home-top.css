@@ -118,7 +118,7 @@ html body .app-container .wht__actions .wht__refresh { margin: 0; }
 html body .app-container .wht__today {
   --x-ink: var(--ay-calm-fg, #3e2723);
   --x-soft: var(--ay-text-muted, rgba(62, 39, 35, .74));
-  --x-group: var(--ay-group, #f6e3a1);
+  --x-group: var(--ay-group, #f7badd);
   --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
   --x-on: var(--ay-calm-fg, #3e2723);
   --x-on-2: var(--ay-text-muted, rgba(62, 39, 35, .74));

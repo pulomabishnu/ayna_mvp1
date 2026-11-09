@@ -70,7 +70,7 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
    routine"): one calm card, small when-labels, one row per step with a small
    icon or product thumb, a kind label, the name and one line. */
 .ay-rt2 { display: grid; gap: 12px; }
-.ay-rt2__list { list-style: none; margin: 0; padding: 4px 16px; border-radius: 20px; background: var(--ay-calm-box, #f6e3a1); color: var(--ay-calm-fg, #3e2723); border: 1px solid rgba(62, 39, 35, .14); }
+.ay-rt2__list { list-style: none; margin: 0; padding: 4px 16px; border-radius: 20px; background: var(--ay-calm-box, #f7badd); color: var(--ay-calm-fg, #3e2723); border: 1px solid rgba(62, 39, 35, .14); }
 .ay-rt2__group { padding: 12px 0; border-top: 1px solid rgba(62, 39, 35, .12); }
 .ay-rt2__group:first-child { border-top: 0; }
 .ay-rt2__group.is-now { box-shadow: inset 3px 0 0 #f7badd; margin-left: -16px; padding-left: 13px; }

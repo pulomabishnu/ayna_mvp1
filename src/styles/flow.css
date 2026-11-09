@@ -111,5 +111,5 @@
 /* ---- App Wrapped in dark mode: the story keeps its own ink/paper palette
    (dark mode flips --ay-ink to white, which left white text on butter). ---- */
 .ayna-mobile[data-theme='dark'] .ayna-wrapped {
-  --legacy-ink: #3e2723; --ay-paper: #ffedac; --legacy-butter: #ffedac; --legacy-pink: #f7badd; --ay-mint: #f6e3a1; --ay-peri: #f7badd;
+  --legacy-ink: #3e2723; --ay-paper: #ffedac; --legacy-butter: #ffedac; --legacy-pink: #f7badd; --ay-mint: #f7badd; --ay-peri: #f7badd;
 }

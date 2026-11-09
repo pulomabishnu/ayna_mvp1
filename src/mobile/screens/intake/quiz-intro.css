@@ -65,7 +65,7 @@
 .qi-title { margin: 0; font: 800 32px/1 'ayna Display', 'Figtree', sans-serif; letter-spacing: -.045em; color: var(--qi-ink); }
 
 .qi-demo { display: grid; gap: 8px; }
-.qi-stage { position: relative; box-sizing: border-box; height: 116px; border: 2px solid var(--qi-ink); border-radius: 16px; background: #f6e3a1; color: var(--qi-dark); overflow: hidden; }
+.qi-stage { position: relative; box-sizing: border-box; height: 116px; border: 2px solid var(--qi-ink); border-radius: 16px; background: #f7badd; color: var(--qi-dark); overflow: hidden; }
 .qi-demo--hold .qi-stage { background: #f7badd; }
 .qi-caption { margin: 0; font: 500 13px/1.35 'Figtree', system-ui, sans-serif; color: var(--qi-ink); }
 .qi-inline-i { display: inline-grid; place-items: center; width: 20px; height: 20px; margin: 0 2px; vertical-align: -4px; border: 1.5px solid var(--qi-ink); border-radius: 50%; font: italic 500 13px/1 'Figtree', system-ui, sans-serif; }

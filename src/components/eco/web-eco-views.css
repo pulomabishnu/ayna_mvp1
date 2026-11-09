@@ -3,7 +3,7 @@
    Spacing stays on the 4/8 scale. One border weight (1.5px), one radius family. */
 
 /* Segmented control: the same one the app uses above its lists. */
-html body .app-container #ayeco .weco-tabs { display: inline-flex; gap: 2px; margin: 8px 0 32px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f6e3a1; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+html body .app-container #ayeco .weco-tabs { display: inline-flex; gap: 2px; margin: 8px 0 32px; padding: 4px; border: 1.5px solid #3e2723; border-radius: 999px; background: #f7badd; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 html body .app-container #ayeco .weco-tabs::-webkit-scrollbar { display: none; }
 html body .app-container #ayeco .weco-tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 700 15px/1 var(--ay-sans-stack, Figtree, sans-serif); white-space: nowrap; cursor: pointer; transition: background-color .15s ease; }
 html body .app-container #ayeco .weco-tabs button:hover:not(.is-on) { background: rgba(62, 39, 35, .08); }

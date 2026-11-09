@@ -9,7 +9,7 @@
 
 .app-container .fp { --fp-r: 16px; padding-bottom: 96px; color: var(--legacy-ink); }
 .app-container .fp .fp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.app-container .fp .tone-sky { --fp-fill: #f6e3a1; --fp-on: var(--legacy-ink); }
+.app-container .fp .tone-sky { --fp-fill: #f7badd; --fp-on: var(--legacy-ink); }
 .app-container .fp .tone-rose { --fp-fill: var(--ay-rose, var(--legacy-pink)); --fp-on: var(--legacy-ink); }
 .app-container .fp .tone-ink { --fp-fill: var(--legacy-ink); --fp-on: var(--ay-paper); }
 .app-container .fp .tone-white { --fp-fill: var(--ay-product-tile, #fff); --fp-on: var(--legacy-ink); }
@@ -50,7 +50,7 @@
 .app-container .fp .fp-pill svg { width: 14px; height: 14px; }
 
 /* ---------- Equation ---------- */
-.app-container .fp .fp-eq { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 24px 0 0; padding: 16px 24px; list-style: none; background: #f6e3a1; border-radius: 20px; width: fit-content; max-width: 100%; }
+.app-container .fp .fp-eq { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 24px 0 0; padding: 16px 24px; list-style: none; background: #f7badd; border-radius: 20px; width: fit-content; max-width: 100%; }
 .app-container .fp .fp-eq__tile { display: grid; gap: 2px; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: #3e2723; box-shadow: none; }
 .app-container .fp .fp-eq__tile b { font: 700 40px/1 var(--ay-serif); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
 .app-container .fp .fp-eq__tile span { font: 600 14px/1.3 var(--ay-sans); }
@@ -178,7 +178,7 @@
 .app-container .fp .fp-claimed > .fp-link { justify-self: start; }
 .app-container .fp .fp-track { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
 .app-container .fp .fp-track li { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 16px 0 10px; border: 2px dashed var(--ay-ink-faint); border-radius: 99px; color: var(--ay-ink-soft); font: 600 var(--ay-fs-secondary)/1 var(--ay-sans); }
-.app-container .fp .fp-track li.is-done { border: 1.5px solid var(--legacy-ink); background: #f6e3a1; color: var(--legacy-ink); }
+.app-container .fp .fp-track li.is-done { border: 1.5px solid var(--legacy-ink); background: #f7badd; color: var(--legacy-ink); }
 .app-container .fp .fp-ship h3 { margin: 0 !important; font-family: var(--ay-serif) !important; font-weight: 700 !important; font-size: var(--ay-fs-section) !important; letter-spacing: -0.01em !important; }
 .app-container .fp .fp-ship__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 22px 0; }
 .app-container .fp .fp-field { display: grid; gap: 6px; min-width: 0; }
@@ -343,6 +343,6 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .f
 
 /* Founder change (Oct 26 13:38): no white surfaces. Calm panels and fields on
    this page are deeper butter; white stays only behind product photos. */
-.app-container.app-container:not([data-theme='brand-dark']) .fp { --ay-product-tile: #f6e3a1; }
+.app-container.app-container:not([data-theme='brand-dark']) .fp { --ay-product-tile: #f7badd; }
 .app-container.app-container .fp :is(.fp-reel__tile, .fp-result__tile, .fp-landed__tile) { background: #fff; }
-.app-container.app-container .fp-allfb__list li { background: #f6e3a1; }
+.app-container.app-container .fp-allfb__list li { background: #f7badd; }

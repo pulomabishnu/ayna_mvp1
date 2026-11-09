@@ -6,7 +6,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li { display: grid; justify-items: start; align-content: space-between; gap: 18px; min-height: 92px; padding: 12px; border-radius: 16px; box-sizing: border-box; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-pink { background: #f7badd; }
-html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-butter { background: #f6e3a1; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-butter { background: #f7badd; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-ink { background: #3e2723; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles b { font: 700 14px/1.2 var(--ay-font-ui, Figtree, sans-serif); color: #3e2723; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-ink b { color: #ffedac; }

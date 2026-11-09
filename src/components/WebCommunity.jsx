@@ -105,7 +105,7 @@ function KindLabel({ kind, children }) {
 }
 const VERB = { post: 'Post', question: 'Ask', review: 'Review', playlist: 'Playlist', recommend: 'Recommend' };
 const KIND_TITLES = { post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' };
-const COVER_COLORS = ['#3e2723', '#f7badd', '#F7BADD', '#f6e3a1', '#ffedac'];
+const COVER_COLORS = ['#3e2723', '#f7badd', '#F7BADD', '#ffedac'];
 const AUDIENCE = [['private', 'Only me'], ['friends', 'Friends'], ['public', 'Public']];
 const POST_MAX = 2000;
 const COMMENT_MAX = 1000;

@@ -14,7 +14,7 @@
   --pcc-ink: #3E2723;
   --pcc-edge: #3E2723;
   --pcc-rule: rgba(62, 39, 35, 0.18);
-  --pcc-chip: #F6E3A1;
+  --pcc-chip: #f7badd;
   --pcc-pink: #F7BADD;
   position: relative;
   display: flex !important;
@@ -113,7 +113,7 @@ html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ay
 }
 html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) {
   flex: none !important; width: 120px !important; height: 120px !important; max-width: none !important; padding: 0 !important; margin: 0 !important; transform: none !important;
-  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: #f6e3a1 !important;
+  border: 1.5px solid #3e2723 !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: #f7badd !important;
 }
 html body :is(#cmf1, .app-container, .ayna-mobile):is(#cmf2, .app-container, .ayna-mobile):is(#cmf3, .app-container, .ayna-mobile) :is(.cm-photos, .am-polaroids) > button:is(.cm-polaroid, .am-polaroid) img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block; }
 @media (max-width: 480px) {

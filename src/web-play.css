@@ -15,7 +15,7 @@
   --ay-peri: #f7badd;
   --legacy-butter: #ffedac;
   --legacy-pink: #f7badd;
-  --ay-mint: #f6e3a1;
+  --ay-mint: #f7badd;
   --ay-peri-ink: #4652b0;
   --ay-font-display: var(--ay-serif);
   --ay-font-ui: var(--ay-sans);
@@ -41,7 +41,7 @@
   --color-primary: var(--legacy-ink);
   --color-primary-hover: #2a1915;
   --color-primary-fade: rgba(247, 186, 221, .35);
-  --color-secondary-fade: rgba(246, 227, 161, .35);
+  --color-secondary-fade: rgba(247, 186, 221, .35);
   --color-border: var(--ay-ink-faint);
   --color-navy: var(--legacy-ink);
   --color-plum: var(--legacy-ink);
@@ -436,7 +436,7 @@ body:has(.app-container) { background: var(--ay-cream) !important; color: var(--
 .ay-why section { margin-top: 22px; }
 .ay-why h3 { margin: 0 0 10px; font: 600 var(--ay-fs-secondary)/1.2 var(--ay-sans); }
 .ay-why p { margin: 0 0 8px; font: 500 var(--ay-fs-secondary)/1.55 var(--ay-sans); }
-.ay-why-hero { display: flex; align-items: center; gap: 18px; padding: 18px; border: 2px solid #3e2723; border-radius: 22px; background: #f6e3a1; box-shadow: 3px 3px 0 #3e2723; }
+.ay-why-hero { display: flex; align-items: center; gap: 18px; padding: 18px; border: 2px solid #3e2723; border-radius: 22px; background: #f7badd; box-shadow: 3px 3px 0 #3e2723; }
 .ay-why-hero.is-good { background: #ffedac; } .ay-why-hero.is-partial { background: #f7badd; }
 .ay-why-hero strong { font: 700 var(--ay-fs-section)/1.1 var(--ay-serif); letter-spacing: -0.01em; }
 .ay-why-ring { display: grid; place-items: center; width: 84px; height: 84px; flex: none; border-radius: 50%; background: conic-gradient(#3e2723 var(--a), #ffedac 0); }

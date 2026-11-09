@@ -12,12 +12,12 @@
    older global sheets without piling on more !important than needed. */
 
 .ayna-mobile :is(.ay-hd, .ay-bn) {
-  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f6e3a1); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
+  --x-ink: var(--d-ink, #3e2723); --x-soft: var(--d-ink-2, rgba(62, 39, 35, .75)); --x-group: var(--d-group, #f7badd); --x-hair: var(--d-hair, rgba(62, 39, 35, .15));
   --x-feature: var(--d-feature, #3e2723); --x-on: var(--d-on-feature, #ffedac); --x-on-2: var(--d-on-feature-2, rgba(255, 237, 172, .78)); --x-on-hair: var(--d-feature-hair, rgba(255, 237, 172, .2));
   --x-serif: var(--f-display, 'ayna Display', serif); --x-sans: var(--f-ui, 'Figtree', sans-serif); --x-scale: var(--ayna-text-scale, 1); --x-gutter: var(--d-gutter, 20px);
 }
 .app-container .ay-wh {
-  --x-ink: var(--wh-ink, #3e2723); --x-soft: var(--wh-soft, rgba(62, 39, 35, .74)); --x-group: var(--ay-group, #f6e3a1); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
+  --x-ink: var(--wh-ink, #3e2723); --x-soft: var(--wh-soft, rgba(62, 39, 35, .74)); --x-group: var(--ay-group, #f7badd); --x-hair: var(--ay-hairline, rgba(62, 39, 35, .15));
   --x-feature: var(--ay-feature-bg, #3e2723); --x-on: var(--ay-feature-fg, #ffedac); --x-on-2: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 80%, transparent); --x-on-hair: color-mix(in srgb, var(--ay-feature-fg, #ffedac) 22%, transparent);
   --x-serif: var(--ay-serif, 'ayna Display', serif); --x-sans: var(--ay-sans, 'Figtree', sans-serif); --x-scale: 1; --x-gutter: clamp(16px, 4vw, 48px);
 }
@@ -114,7 +114,7 @@
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal-label { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li b { font: 600 calc(15px * var(--x-scale))/1.3 var(--x-sans) !important; font-variant-numeric: tabular-nums; text-align: right; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font: 500 13px/1.35 var(--x-sans) !important; color: var(--x-soft) !important; }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f6e3a1; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f7badd; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small { color: var(--x-ink) !important; font-weight: 600 !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-wx-normal li.is-out small::before { background: #f7badd; box-shadow: inset 0 0 0 1px #3e2723; }
 

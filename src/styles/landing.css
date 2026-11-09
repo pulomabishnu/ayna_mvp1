@@ -894,7 +894,7 @@
   /* color: 4 brand tints + ink/paper. Pink leads; butter highlights; peri/mint are support. */
   --bk-ink: #3e2723; --bk-ink-2: #4a4668; --bk-paper: #ffedac; --bk-white: #fff;
   --bk-pink: #f7badd; --bk-pink-soft: #fde3ef; --bk-butter: #ffedac; --bk-butter-hi: #fff6b8; --bk-butter-lo: #f3d95a;
-  --bk-peri: #f7badd; --bk-mint: #f6e3a1; --bk-sky: #c9ecff; /* sky = window chrome only */
+  --bk-peri: #f7badd; --bk-mint: #f7badd; --bk-sky: #c9ecff; /* sky = window chrome only */
   /* type: two families, four weights */
   --bk-display: var(--ay-serif); --bk-ui: var(--ay-sans);
   --fs-hero: var(--ay-fs-display); --fs-display: var(--ay-fs-display); --fs-h2: var(--ay-fs-title);

@@ -5,10 +5,10 @@
 .app-container, .ayna-mobile {
   --sb-ink: var(--ay-text, var(--ayna-heading, #3e2723));
   --sb-line: var(--ay-outline-color, #3e2723);
-  --sb-tab: var(--ay-group, #f6e3a1);
+  --sb-tab: var(--ay-group, #f7badd);
   --sb-page: var(--ay-page, #ffedac);
 }
-.ayna-mobile { --sb-ink: var(--ayna-heading, #3e2723); --sb-line: var(--ayna-heading, #3e2723); --sb-tab: #f6e3a1; --sb-page: var(--ayna-bg, #ffedac); }
+.ayna-mobile { --sb-ink: var(--ayna-heading, #3e2723); --sb-line: var(--ayna-heading, #3e2723); --sb-tab: #f7badd; --sb-page: var(--ayna-bg, #ffedac); }
 .ayna-mobile[data-theme='dark'] { --sb-tab: #4a312c; }
 
 /* ---- Die-cut need stickers ---- */

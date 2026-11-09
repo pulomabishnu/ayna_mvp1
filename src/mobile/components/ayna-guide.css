@@ -23,7 +23,7 @@
 .ay-guide-actions { justify-content: flex-start; flex-wrap: wrap; }
 .ayna-ask-drawer .ay-guide-actions button { border: 1px solid var(--ayna-border); border-radius: 10px; background: var(--d-group, #fff9ef); color: var(--ayna-heading); padding: 9px 12px; font-size: 12px; font-weight: 700; }
 .ay-guide-empty { font-size: 13px; font-style: italic; }
-.ay-guide-launches { display: grid; margin: 4px 0 12px; padding: 0 16px; list-style: none; border-radius: 20px; background: var(--d-group, #f6e3a1); }
+.ay-guide-launches { display: grid; margin: 4px 0 12px; padding: 0 16px; list-style: none; border-radius: 20px; background: var(--d-group, #f7badd); }
 .ay-guide-launches > li { margin: 0; padding: 0; }
 .ay-guide-launches > li + li { border-top: 1px solid var(--d-hair, rgba(62, 39, 35, .15)); }
 .ay-guide-launches button { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; margin: 0; padding: 10px 0; border: 0; border-radius: 0; background: none; color: var(--d-ink, #3e2723); text-align: left; cursor: pointer; }

@@ -3,7 +3,7 @@
    numbers, and her two favourites' big numbers in soft rounded tiles.
    One clear top, one number strip, one set-up card, then tiles. */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 {
-  --y-ink: #3e2723; --y-pink: #f7badd; --y-butter: #ffedac; --y-sand: #f6e3a1; --y-line: rgba(62, 39, 35, .14);
+  --y-ink: #3e2723; --y-pink: #f7badd; --y-butter: #ffedac; --y-sand: #f7badd; --y-line: rgba(62, 39, 35, .14);
 }
 /* Top: centred, a round photo in a pink ring, the name big and plain. */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-head.ay-you-head { background: none !important; background-image: none !important; padding: 8px var(--d-gutter, 20px) 4px !important; gap: 16px !important; justify-items: center !important; text-align: center !important; }
@@ -81,6 +81,6 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-stats b { color: #3e2723 !important; font-size: 28px !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-stats span { color: rgba(62, 39, 35, .75) !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-knows { display: none !important; }
-html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-setup { background: #f6e3a1 !important; box-shadow: none !important; border: 0 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-setup { background: #f7badd !important; box-shadow: none !important; border: 0 !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-setup-bar > i { background: rgba(62, 39, 35, .15) !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you-setup-bar > i.is-done { background: #3e2723 !important; }

@@ -5,7 +5,7 @@
    The checker frame is the BrandStrip's espresso and pink squares, its four edges marching clockwise
    slowly (static with reduced motion). Brand colours only, no white. 13px minimum, 44px targets. */
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
-  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .8); --pro-bg: #ffedac; --pro-deep: #f6e3a1;
+  --pro-fg: #3e2723; --pro-fg-muted: rgba(62, 39, 35, .8); --pro-bg: #ffedac; --pro-deep: #f7badd;
   --pro-line: #3e2723; --pro-shadow: #3e2723; --pro-rule: rgba(62, 39, 35, .16);
   --pro-fill: #3e2723; --pro-on-fill: #ffedac; --pro-hl: #f7badd;
   color: var(--pro-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);

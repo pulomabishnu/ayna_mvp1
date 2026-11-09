@@ -63,3 +63,8 @@
 :is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container .ed-page .uq-band.uq-contact { border-image: none !important; background: transparent !important; }
 :is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container .ed-page .uq-contact .ed-form { background: #f7badd !important; border: 0 !important; box-shadow: none !important; border-radius: 28px !important; }
 :is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .app-container .ed-page .uq-contact .ed-form :is(input, textarea) { background: #ffedac !important; }
+
+/* App Shop cards like the website's (Nov 9): photo plate + words, no outline or offset shadow. */
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .ayna-mobile:not([data-theme*="dark"]) .ayna-fresh-browse-screen .ay-pcard { border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; }
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .ayna-mobile:not([data-theme*="dark"]) .ayna-fresh-browse-screen .ay-pcard__photo { border: 0 !important; border-radius: 20px !important; background: #fff !important; box-shadow: none !important; overflow: hidden; }
+:is(#pt1, html):is(#pt2, html):is(#pt3, html):is(#pt4, html):is(#pt5, html):is(#pt6, html):is(#pt7, html):is(#pt8, html) body .ayna-mobile:not([data-theme*="dark"]) .ayna-fresh-browse-screen .ay-pcard__body { padding: 10px 2px 0 !important; }

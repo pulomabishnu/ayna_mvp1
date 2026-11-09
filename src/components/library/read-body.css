@@ -3,7 +3,7 @@
    1px rules, "When to seek care" always open on pink. Brand colours only. */
 :is(#ayr, .ayr):is(#ayr, .ayr):is(#ayr, .ayr) {
   --ayr-ink: #3e2723; --ayr-soft: rgba(62, 39, 35, .78); --ayr-rule: rgba(62, 39, 35, .18);
-  --ayr-short: #f6e3a1; --ayr-short-ink: #3e2723; --ayr-short-line: rgba(62, 39, 35, .9);
+  --ayr-short: #f7badd; --ayr-short-ink: #3e2723; --ayr-short-line: rgba(62, 39, 35, .9);
   display: grid; gap: 20px; color: var(--ayr-ink); text-align: left;
 }
 :is(.ayna-mobile[data-theme='dark'], .app-container[data-theme='brand-dark'], [data-ay-theme='brand-dark']) :is(#ayr, .ayr):is(#ayr, .ayr):is(#ayr, .ayr) {

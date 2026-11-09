@@ -11,7 +11,7 @@
 .ps__slide { position: relative; display: grid; align-content: end; justify-items: start; gap: 8px; min-height: 260px; padding: 24px; border: 1.5px solid #3e2723; border-radius: 24px; box-sizing: border-box; overflow: hidden; }
 .ps__slide.is-ink { background: #3e2723; color: #ffedac; }
 .ps__slide.is-pink { background: #f7badd; color: #3e2723; }
-.ps__slide.is-butter { background: #f6e3a1; color: #3e2723; }
+.ps__slide.is-butter { background: #f7badd; color: #3e2723; }
 .ps__icon { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #ffedac; color: #3e2723; border: 1.5px solid #3e2723; }
 .ps__slide.is-butter .ps__icon { background: #f7badd; }
 .ps__icon svg { width: 32px; height: 32px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

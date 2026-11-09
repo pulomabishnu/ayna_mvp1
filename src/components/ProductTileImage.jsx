@@ -16,7 +16,7 @@ import { productImageOverride } from '../data/productImageOverrides';
  * quiet and on-brand instead of alarming. The literal "not found" wording
  * still reaches screen readers and hover users via aria-label/title.
  */
-const FALLBACK_TINTS = ['#f7badd', '#f6e3a1', '#769ebe'];
+const FALLBACK_TINTS = ['#f7badd', '#ffedac', '#f7badd'];
 export function ProductImageFallback({ compact = false, style, className, product = null }) {
   // With a product: a designed tile (its initial in the logo face on a tint
   // picked from its name, brand under it) instead of a faint wordmark.
