@@ -373,6 +373,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
               {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. */}
               {card.kicker && card.category !== 'frame' && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
               <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
+              {card.because && <p className="ay-rd-because">{card.because}</p>}
               {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}
               {/* Safety stays on the glance: the reason and the sources, never folded. */}
               {safety && card.reason && <p className="ay-rd-basis">{card.reason}</p>}

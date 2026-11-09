@@ -27,7 +27,7 @@ export const CATEGORIES = Object.keys(CATEGORY_RANK);
 export const RUNDOWN_RULES = {
   maxContentCards: 8,
   maxDataCards: DATA_RULES.maxDataCards,
-  rotateCategories: ['education', 'match', 'saved', 'community', 'win'], // not two days running
+  rotateCategories: ['education', 'saved', 'community', 'win'], // not two days running (the daily pick is every day, founder Nov 9)
   patternRepeatDays: 3, // a pattern card shows at most 2 of any 3 days
   sleepChangeMinutes: 45, // last night vs her recent average
   sleepMinNights: 7,
@@ -157,6 +157,29 @@ export function sleepChange(healthRows, today) {
   if (lastNight == null || prior.length < RUNDOWN_RULES.sleepMinNights) return null;
   const avg = prior.reduce((a, b) => a + b, 0) / prior.length;
   return { lastNight, avg, diff: lastNight - avg, nights: prior.length };
+}
+
+
+/**
+ * What her own data says today, strongest first, as the needs a product could help with
+ * (src/matching/ontology.js ids). Used to choose the Rundown's daily pick.
+ */
+export function todaySignals({ log = {}, healthRows = [], today, answer = null, quiet = false, pos = null } = {}) {
+  const out = [];
+  const t = log?.[today] || {};
+  const y = log?.[addDays(today, -1)] || {};
+  const pain = Math.max(...[t.pain, y.pain].filter((v) => typeof v === 'number'), -1);
+  const onPeriod = !quiet && periodStatus({ log, healthRows, today, answer }).state === 'on';
+  if (pain >= 2) out.push({ id: 'pain', words: 'the pain you logged', reason: `You logged ${pain >= 3 ? 'severe' : 'moderate'} pain.`, needs: onPeriod ? ['pain.menstrual_cramp', 'pain.pelvic'] : ['pain.pelvic', 'pain.menstrual_cramp', 'pain.abdominal'] });
+  if (onPeriod) out.push({ id: 'period', words: 'your period', reason: 'You are on your period.', needs: ['pain.menstrual_cramp', 'period.product_support', 'period.heavy', 'bloating.cycle_related'] });
+  const sl = sleepCard(healthRows, today);
+  const shortSleep = sl?.explain?.kind === 'sleep';
+  if (shortSleep || t.sleep === 1 || y.sleep === 1) out.push({ id: 'sleep', words: 'your sleep', reason: shortSleep ? 'You slept less than your usual last night.' : 'You logged rough sleep.', needs: ['sleep.trouble', 'vasomotor.night_sweats'] });
+  const pms = Math.max(...[t.pms, y.pms].filter((v) => typeof v === 'number'), -1);
+  if (pms >= 2) out.push({ id: 'pms', words: 'the PMS you logged', reason: 'You logged PMS.', needs: ['cycle.pms', 'mood.cycle_related', 'bloating.cycle_related', 'cycle.breast_tenderness'] });
+  if (t.mood === 1 || y.mood === 1) out.push({ id: 'mood', words: 'your mood', reason: 'You logged a low mood.', needs: ['mood.low', 'mood.cycle_related', 'mood.general_anxiety'] });
+  if (!quiet && pos && pos.daysToNext >= 1 && pos.daysToNext <= 4) out.push({ id: 'before', words: 'the days before your period', reason: `Your period is due in about ${pos.daysToNext} ${pos.daysToNext === 1 ? 'day' : 'days'}.`, needs: ['cycle.pms', 'bloating.cycle_related', 'pain.menstrual_cramp', 'period.product_support'] });
+  return out;
 }
 
 /**
@@ -327,20 +350,31 @@ export function buildRundown(input = {}) {
     add({ key: `education:${id}`, category: 'education', kind: 'read', kicker: 'Something to know', title: READ_SUMMARIES[id].title, body: READ_SUMMARIES[id].teaser, readId: id });
   }
 
-  // 7. Recommendation: her best match for a need she has right now, never next to care.
-  if (!hasCare) {
+  // 7. Today's pick (founder, Nov 9: "every day it should recommend you at least one new product and
+  //    it HAS to be based on your health data"). One product a day, after any care card:
+  //    a) what her data says today (pain, period, sleep, mood, PMS, the days before her period) picks
+  //       the need; b) then the needs ayna is tracking; c) then the goals she picked. Within that, a
+  //       product she hasn't been shown in 30 days, strongest match first. Only products the one
+  //       engine scored for her (safety holds, medicines, her ecosystem and "not for me" are already
+  //       out, src/components/rundown/Rundown.jsx). Never filler: no match, no card.
+  {
+    const signals = todaySignals({ log, healthRows, today, answer, quiet, pos: cyclePosition(log, today) });
     const wanted = new Set(needs.flatMap((n) => WEDGE_TO_INTAKE_NEED[n] || []));
-    // Strongest current need first: a need she only hinted at (needSignal
-    // 'weak', src/matching/forYou.js) never takes the card from one she picked.
-    const weakLast = (m) => (m.needSignal === 'weak' ? 1 : 0);
-    // Something she has not been shown in the last 30 days comes first, so the card brings a new product.
-    const seenLately = (m) => (shownOn(memory, `match:${m.product?.id}`, today, 30) > 0 ? 1 : 0);
-    const rank = (list) => list.sort((a, b) => seenLately(a) - seenLately(b) || weakLast(a) - weakLast(b) || b.percent - a.percent)[0];
-    const strong = (m) => m?.product && m.percent >= RUNDOWN_RULES.matchMinPercent;
-    // A need ayna is tracking today; with none (e.g. after menopause, hot
-    // flashes), her best match for a goal she picked herself. Never filler.
-    const best = rank(matches.filter((m) => strong(m) && wanted.has(m.needId))) || (wanted.size ? null : rank(matches.filter((m) => strong(m) && m.needSignal !== 'weak' && (input.needLabels || {})[m.needId])));
-    if (best) add({ key: `match:${best.product.id}`, category: 'match', kind: 'match', kicker: 'New for you', title: matchTitle(best, decision?.debug?.needs || {}, input.needLabels || {}), match: best, followUps: [`Why is ${best.product.name} my match?`] });
+    const goals = input.needLabels || {};
+    const seenDays = (m) => shownOn(memory, `match:${m.product?.id}`, today, 30);
+    const usable = matches.filter((m) => m?.product?.id && m.percent > 0);
+    const order = (list) => [...list].sort((a, b) => (seenDays(a) > 0) - (seenDays(b) > 0) || (b.percent >= RUNDOWN_RULES.matchMinPercent) - (a.percent >= RUNDOWN_RULES.matchMinPercent) || (a.needSignal === 'weak') - (b.needSignal === 'weak') || b.percent - a.percent || seenDays(a) - seenDays(b));
+    let pick = null;
+    let because = null;
+    for (const sig of signals) {
+      const hit = order(usable.filter((m) => sig.needs.includes(m.needId)))[0];
+      if (hit) { pick = hit; because = sig; break; }
+    }
+    if (!pick) pick = order(usable.filter((m) => wanted.has(m.needId)))[0] || order(usable.filter((m) => goals[m.needId] && m.needSignal !== 'weak'))[0] || order(usable.filter((m) => m.percent >= RUNDOWN_RULES.matchMinPercent))[0] || null;
+    if (pick) {
+      const title = because ? `For ${because.words}` : matchTitle(pick, decision?.debug?.needs || {}, goals);
+      add({ key: `match:${pick.product.id}`, category: 'match', kind: 'match', kicker: seenDays(pick) > 0 ? 'Today\u2019s pick' : 'New for you today', title, because: because?.reason || null, match: pick, followUps: [`Why is ${pick.product.name} my match?`] });
+    }
   }
 
   // 7b. Goes with what she owns (src/matching/complements.js): one a day, never next to care.

@@ -270,7 +270,7 @@ export default function Rundown({
         <div className="ay-rd-hero__card is-setup">
           <p className="ay-rd-hero__kicker">Today</p>
           <h2 id="ay-rd-hero-h">Your Daily Rundown</h2>
-          <p>Create your health profile and this becomes 60 seconds on what matters for your health each day, with the reason for each thing.</p>
+          <p>Your health in 60 seconds, and one new pick a day for what your data shows.</p>
           <button type="button" className="ay-rd-hero__go" onClick={onSetUp}>Create your health profile</button>
         </div>
       </section>

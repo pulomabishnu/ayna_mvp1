@@ -43,18 +43,36 @@ describe('Daily Rundown', () => {
     expect(r.cards[1]).toMatchObject({ category: 'safety', key: 'care:pain_today', protected: true });
   });
 
-  it('no product next to care', () => {
+  // Nov 9 (founder): every day at least one new product, based on her health data. Care still comes first.
+  it('care first, then today\'s pick', () => {
     const product = { id: 'p-thermacare', name: 'ThermaCare' };
     const r = buildRundown({ ...fromFixture('today-care'), matches: [{ product, percent: 90, needId: 'pain.menstrual_cramp', why: 'For your period cramps' }] });
-    expect(cats(r)).not.toContain('match');
+    const c = cats(r);
+    expect(c).toContain('match');
+    expect(c.indexOf('safety')).toBeLessThan(c.indexOf('match'));
   });
 
-  it('match card only for a need she has now and 50 or more', () => {
-    const product = { id: 'p-thermacare', name: 'ThermaCare' };
+  it('a pick every day when she has a scored match; her data picks the need', () => {
     const base = fromFixture();
-    expect(cats(buildRundown({ ...base, matches: [{ product, percent: 90, needId: 'pain.menstrual_cramp' }] }))).toContain('match');
-    expect(cats(buildRundown({ ...base, matches: [{ product, percent: 45, needId: 'pain.menstrual_cramp' }] }))).not.toContain('match');
-    expect(cats(buildRundown({ ...base, matches: [{ product, percent: 90, needId: 'uti.recurrent' }] }))).not.toContain('match');
+    const a = { product: { id: 'p-a', name: 'A' }, percent: 90, needId: 'uti.recurrent' };
+    const b = { product: { id: 'p-b', name: 'B' }, percent: 45, needId: 'pain.menstrual_cramp' };
+    expect(cats(buildRundown({ ...base, matches: [b] }))).toContain('match');
+    expect(buildRundown({ ...base, matches: [a] }).cards.find((x) => x.category === 'match')).toBeTruthy();
+    expect(cats(buildRundown({ ...base, matches: [] }))).not.toContain('match');
+    // Pain logged today: the pain product wins over a stronger match for something else.
+    const log = { ...(base.log || {}), [TODAY]: { ...(base.log?.[TODAY] || {}), pain: 3 } };
+    const pick = buildRundown({ ...base, log, matches: [a, b] }).cards.find((x) => x.category === 'match');
+    expect(pick.match.product.id).toBe('p-b');
+    expect(pick.because).toMatch(/pain/);
+  });
+
+  it('a product shown in the last 30 days waits for a new one', () => {
+    const base = fromFixture();
+    const a = { product: { id: 'p-a', name: 'A' }, percent: 95, needId: 'pain.menstrual_cramp' };
+    const b = { product: { id: 'p-b', name: 'B' }, percent: 80, needId: 'pain.menstrual_cramp' };
+    const memory = { shown: { 'match:p-a': [addDays(TODAY, -3)] } };
+    const pick = buildRundown({ ...base, matches: [a, b], memory }).cards.find((x) => x.category === 'match');
+    expect(pick.match.product.id).toBe('p-b');
   });
 
   it('match card title says the real reason, never "what you logged" without logs', () => {
@@ -94,7 +112,8 @@ describe('Daily Rundown', () => {
     expect(cats(buildRundown({ ...base, memory: { notUseful: { 'category:pattern': { until: '2027-01-01' } } } }))).not.toContain('pattern');
     const product = { id: 'p1', name: 'P' };
     const withMatch = { ...base, matches: [{ product, percent: 90, needId: 'pain.menstrual_cramp' }] };
-    expect(cats(buildRundown({ ...withMatch, memory: { shownCategories: { [addDays(TODAY, -1)]: ['match'] } } }))).not.toContain('match');
+    // The daily pick is every day (founder, Nov 9), even when one was shown yesterday.
+    expect(cats(buildRundown({ ...withMatch, memory: { shownCategories: { [addDays(TODAY, -1)]: ['match'] } } }))).toContain('match');
   });
 
   it('never more than the content cap (safety excepted)', () => {
