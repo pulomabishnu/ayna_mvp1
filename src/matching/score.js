@@ -296,6 +296,8 @@ function avoidMatches(entry, pp) {
  *   missingFields: string[], reasons: object[], cautions: object[], penalties: object[], confirmed: object[],
  *   blockedClaims: string[], interaction: object, confidence: number }}
  */
+const madeForPregnancy = (pp) => Object.values(pp?.health_need_relevance || {}).some((r) => (r?.contextual || []).some((c) => (c.requires || []).includes('pregnancy') && (c.level || 0) >= 0.55));
+
 export function evaluateSafety(productOrProfile, up) {
   const pp = asProfile(productOrProfile);
   const s = up.safety;
@@ -534,6 +536,14 @@ export function evaluateSafety(productOrProfile, up) {
     // in pregnancy (ibuprofen: not at 20 weeks or later) was still an 81% match
     // for a third-trimester profile. In pregnancy that is her clinician's call,
     // so it is never put forward as a match.
+    // Nov 9 audit: a product with a use that only applies IN pregnancy (vitamin B6 for pregnancy
+    // nausea: ACOG Practice Bulletin 153, first-line) is not excluded by its label's routine "ask
+    // a health professional if pregnant": it stays a match with that caution.
+    else if (status === 'caution' && systemicRoute(pp, hormoneActive) && madeForPregnancy(pp)) {
+      penalize('pregnancy_caution', 'Clinician check advised in pregnancy');
+      cautions.push({ code: 'pregnancy_caution', text: 'Tell your ob-gyn or midwife you are taking this.' });
+      blockedClaims.add('pregnancy_safe');
+    }
     else if (status === 'caution' && systemicRoute(pp, hormoneActive)) {
       reasons.push({ code: 'pregnancy_clinician_only', text: 'In pregnancy, use only if your clinician says so' });
       blockedClaims.add('pregnancy_safe');
@@ -546,7 +556,14 @@ export function evaluateSafety(productOrProfile, up) {
       cautions.push({ code: 'pregnancy_unknown', text: 'Pregnancy safety is not confirmed for this product. Check with your clinician.' });
       blockedClaims.add('pregnancy_safe');
     }
-  } else if (pStatus === 'reported' && preg.overall !== 'not_applicable') {
+  }
+  // Nov 9 audit (CDC STI Treatment Guidelines, vulvovaginal candidiasis): "Only topical azole
+  // therapies, applied for 7 days, are recommended for use among pregnant women." Shorter courses
+  // (1-day, 3-day) are not put forward in pregnancy.
+  if (pStatus === 'pregnant' && /miconazole|clotrimazole|tioconazole|terconazole|monistat/i.test(`${pp.name || ''}`) && /\b(1|one|3|three)[- ](day|dose)\b|single[- ]dose|ovule/i.test(`${pp.name || ''}`)) {
+    reasons.push({ code: 'pregnancy_short_azole', text: 'In pregnancy, the CDC recommends only 7-day yeast creams' });
+  }
+  if (pStatus === 'reported' && preg.overall !== 'not_applicable') {
     // Pregnancy came from free text or a pregnancy-related need, not the
     // life-stage answer: hold contraindicated products back as restricted
     // (not a low match) and ask her to confirm her stage.

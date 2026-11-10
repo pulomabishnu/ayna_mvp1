@@ -1198,7 +1198,11 @@ function valuesFor(product, f, safety, brand, pregnancy) {
   v.organic = f.has('organic') || /\borganic\b/.test(text) ? 'yes' : 'unknown';
   v.vegan = f.has('vegan') ? 'yes' : safety.animal_derived.status === 'yes' ? 'no' : 'unknown';
   v.cruelty_free = f.has('cruelty-free') || /cruelty[- ]free/.test(text) ? 'yes' : 'unknown';
-  v.reusable = f.has('reusable') || /\breusable\b/.test(text) ? 'yes' : f.has('single-use') ? 'no' : 'unknown';
+  // Nov 9 audit: disposable pads, tampons and liners are single use even when the catalog doesn't say so,
+  // so "Reusable" counts against them (a cup, disc or period underwear is the reusable choice).
+  const disposablePeriod = (['pad', 'tampon', 'liner', 'pantyliner'].includes(f.cat) && !/\b(cloth|washable|reusable)\b/.test(text))
+    || (['disc', 'cup'].includes(f.cat) && /\bdisposable\b/.test(text));
+  v.reusable = disposablePeriod && /\bdisposable\b/.test(text) ? 'no' : f.has('reusable') || /\breusable\b/.test(text) ? 'yes' : (f.has('single-use') || disposablePeriod) ? 'no' : 'unknown';
   v.eco_friendly = brand.sustainability.length ? 'yes' : 'unknown';
   v.unscented = safety.fragrance.status === 'no' ? 'yes' : safety.fragrance.status === 'yes' ? 'no' : safety.fragrance.status === 'not_applicable' ? 'not_applicable' : 'unknown';
   v.sensitive_skin = safety.fragrance.status === 'yes' ? 'no'

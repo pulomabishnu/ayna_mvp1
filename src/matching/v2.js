@@ -116,7 +116,9 @@ export const FACTOR_WEIGHTS = {
   capacity: { roomy: 0.03, enough: 0.01, small: -0.04, midForVeryHeavy: -0.01 },
   material: { free: 0.02, contains: -0.03, organicPlain: 0.03, fragranced: -0.06 },
   price: { within: 0.02, slightlyOver: -0.02, over: -0.05, farOver: -0.15 },
-  reusable: { yes: 0.02, no: -0.04 },
+  // Nov 9 audit: she asked for reusable, yet organic disposables (97) beat a reusable cup (88). A single-use
+  // product now costs more when she asked for reusable (raises stay small, so nothing saturates at 99).
+  reusable: { yes: 0.02, no: -0.10 },
   values: { each: 0.015, max: 0.03, miss: -0.03 }, // Nov 9 (founder: preferences count): was 0.01 / 0.02
   fsaHsa: { yes: 0.01, no: -0.01 },
   evidence: { reviewedA: 0.02 },
@@ -144,8 +146,12 @@ export const HEALTH_CLAIM_CATEGORIES = new Set(['tracker', 'app', 'diagnostics',
 /** Kept for older callers: every category that is not an ingested/effect product. */
 export const NO_EFFECT_CATEGORIES = new Set([...ATTRIBUTE_FIT_CATEGORIES, ...HEALTH_CLAIM_CATEGORIES]);
 /** Evidence factor for one product and grade: full for effect products, gentler for claim products, none for fit-only. */
-export function evidenceFactorFor(category, grade) {
-  const c = String(category || '').toLowerCase();
+export function evidenceFactorFor(category, grade, pp = null) {
+  let c = String(category || '').toLowerCase();
+  // Nov 9 audit: a licensed-therapy service filed under 'mental-health' (BetterHelp) was graded like a
+  // pill, so with B evidence it lost more points than Embr Wave (C, a wearable) for anxiety. Therapy
+  // services are judged like telehealth; meditation apps and gadgets in the same category are not.
+  if (c === 'mental-health' && (pp?.matched_rules || []).includes('therapy_app')) c = 'therapy';
   if (ATTRIBUTE_FIT_CATEGORIES.has(c)) return 1;
   if (HEALTH_CLAIM_CATEGORIES.has(c)) return V2.E_CLAIM[grade] ?? 1;
   return V2.E[grade] ?? 1;
@@ -260,7 +266,7 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   const isEffect = !NO_EFFECT_CATEGORIES.has(String(pp.category || '').toLowerCase());
   const grade = evidenceGrade(pp, r.needId);
   // Nov 6: products that do a simple job (a dark, quiet room) are judged on fit, like pads.
-  const E = FIT_JUDGED_RULES.has(pp.health_need_relevance?.[r.needId]?.rule) ? 1 : evidenceFactorFor(pp.category, grade);
+  const E = FIT_JUDGED_RULES.has(pp.health_need_relevance?.[r.needId]?.rule) ? 1 : evidenceFactorFor(pp.category, grade, pp);
   const needFit = strengthOf(pp, r.needId, r.relationship) * E;
   const focus = focusOf(pp, needIds);
   // Existing product-fit modifiers (flow capacity, UTI timing, life-stage design) carry over
