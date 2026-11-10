@@ -98,3 +98,6 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .yb--list .yb-list:not(.yb-list--pro) > li:nth-child(2) .yb-row :is(b, small, span, svg) { color: #3e2723 !important; }
 /* Nov 10: the Settings row is short, so its grid row is too (it left a 72px gap above Manage your ecosystem). */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .yb.yb--list { grid-template-rows: none !important; grid-auto-rows: auto !important; }
+/* Nov 10 audit: the setup card is brown in dark mode, so its "0% complete" line is butter there. */
+html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-hsetup .ay-you2-setup-sub,
+html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-hsetup .ay-you2-setup-sub b { color: #ffedac !important; }
