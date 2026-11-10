@@ -105,7 +105,9 @@ export default function ConsentBanner() {
         <span aria-hidden="true">×</span>
       </button>
       <p>
-        Optional usage analytics are off until you choose to enable them. Analytics help us improve ayna.
+        Optional usage analytics are off until you choose to enable them. Until you choose, we only count
+        page visits and errors anonymously, with no cookies, stored data or ID, so we know the site works;
+        keeping analytics off stops that too. Analytics help us improve ayna.
         We don&apos;t use them for advertising or sell them. Health-search text, account identifiers,
         product identities and sensitive profile details are excluded; recording and automatic text/click
         capture are off. You can change your choice in Privacy Preferences. Read our{' '}

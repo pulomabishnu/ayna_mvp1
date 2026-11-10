@@ -5,7 +5,7 @@ const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
   ['Stripe', 'Payment checkout, payment-card processing and subscription billing when you choose ayna Pro. ayna receives transaction status and subscription reference information, not your full card number.'],
-  ['PostHog', 'Optional product analytics are off until you explicitly opt in. If enabled, ayna uses a dedicated analytics identifier instead of your account ID, excludes raw search text, health details and selected product identities from event payloads, and disables session recording and automatic click/text capture. You can opt out again in Privacy Preferences.'],
+  ['PostHog', 'Optional product analytics are off until you explicitly opt in. Before you choose, ayna counts page visits and app errors anonymously, without cookies, browser storage or an identifier, so we can tell whether the site is reached and working; choosing Keep analytics off or sending Global Privacy Control stops this too. If enabled, ayna uses a dedicated analytics identifier instead of your account ID, excludes raw search text, health details and selected product identities from event payloads, and disables session recording and automatic click/text capture. You can opt out again in Privacy Preferences.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one provider may process a prompt, product information and limited relevant health context when you intentionally use an AI-powered feature such as Ask ayna or AI product insights. Not every request is sent to every provider.'],
   ['Twilio', 'Phone verification and opted-in SMS features such as safety or recall messaging.'],
   ['Resend', 'Transactional and support email.'],
@@ -54,7 +54,7 @@ export default function PrivacyPolicy({ onBack, backLabel }) {
         <section>
           <h2>4. Analytics and privacy preferences</h2>
           <p>
-            Optional PostHog usage analytics are off until you explicitly opt in. You can withdraw consent at any time in Privacy Preferences or account privacy controls; a prior denial is not silently expired and Global Privacy Control is respected. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
+            Optional PostHog usage analytics are off until you explicitly opt in. Until you choose, ayna sends only an anonymous count of page visits and app errors, with no cookies, browser storage or identifier; Keep analytics off and Global Privacy Control stop this too. You can withdraw consent at any time in Privacy Preferences or account privacy controls; a prior denial is not silently expired and Global Privacy Control is respected. Session recording, automatic click/text capture and automatic exception capture are disabled, and IP collection is disabled in ayna's PostHog configuration.
           </p>
           <p>
             Raw health-search text, account email, direct account identifiers, product identifiers, and known health-profile fields are stripped before optional events are sent. Signed-in usage analytics use a dedicated random analytics identifier, not your health-record account ID. Aggregated usage counts may still be retained after you withdraw consent.
