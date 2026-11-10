@@ -26,3 +26,16 @@ describe('hidden products stay hidden in the live feed', () => {
     expect(ALL_PRODUCTS.length).toBeGreaterThan(100);
   });
 });
+
+describe('duplicate listings (founder, Nov 10)', async () => {
+  const { DUPLICATE_OF, isListedProduct: listed } = await import('./hiddenProducts.js');
+  const { getProductById } = await import('./products.js');
+  it('a duplicate never shows, and its id opens the product it duplicates', () => {
+    for (const [dup, kept] of Object.entries(DUPLICATE_OF)) {
+      expect(listed({ id: dup, name: 'x' }), dup).toBe(false);
+      expect(listed({ id: kept, name: 'x' }), kept).toBe(true);
+      expect(DUPLICATE_OF[kept], `${kept} must not itself be a duplicate`).toBeUndefined();
+    }
+    expect(getProductById('p-winx-health-vaginal-health-test-treat')?.id).toBe('p-winx-vaginal-health-test-treat');
+  });
+});

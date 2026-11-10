@@ -20,6 +20,21 @@ export const TEMPORARILY_HIDDEN_IDS = new Set([
     'p-twentyeight-health-skin-care-prescription-skincare-via-complete-care',
 ]);
 
+// Duplicate listings in the live catalog (founder, Nov 10 2026: "if it shows up twice and is the
+// same exact product, delete it; a different size or flavor, merge it"). The duplicate never
+// shows; links and saved items that use its id open the product it duplicates. Rows stay in
+// product_catalog (never deleted). Checked against /api/products on Nov 10.
+export const DUPLICATE_OF = Object.freeze({
+    // Same product listed twice (same name, price and copy).
+    'p-vella-pleasurewave-arousal-lotion-with-lptv1-2': 'p-vella-pleasurewave-arousal-lotion-with-lptv1',
+    'p-wevana-wevana-tabs-wireless-bilateral-stimulation-tabs-emdr-tappers': 'p-wevana-tabs-wireless-emdr-tappers-for-calm-focus-and-sleep',
+    // Imported copy of the team's Winx entry (src/data/brands.js), which keeps its research.
+    'p-winx-health-vaginal-health-test-treat': 'p-winx-vaginal-health-test-treat',
+    'p-le-jardin-switzerland-the-hair-multiplier-lightweight-growth-serum-3': 'p-le-jardin-switzerland-the-hair-multiplier-hair-growth-serum',
+    // Same product in another flavor or pack size: one listing.
+    'p-magna-magnesium-powered-electrolytes-core-hydration': 'p-magna-magna-magnesium-powered-electrolytes',
+});
+
 // Ayna only does OTC health products and telehealth.
 export function isRxOnlyProduct(p) {
     if (!p) return false;
@@ -33,5 +48,5 @@ export function isRxOnlyProduct(p) {
 
 /** True when a product may be shown to users. */
 export function isListedProduct(p) {
-    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !isRxOnlyProduct(p);
+    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id] && !isRxOnlyProduct(p);
 }

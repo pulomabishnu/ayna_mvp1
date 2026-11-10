@@ -1,4 +1,4 @@
-import { TEMPORARILY_HIDDEN_IDS, isRxOnlyProduct, isListedProduct } from './hiddenProducts.js';
+import { TEMPORARILY_HIDDEN_IDS, DUPLICATE_OF, isRxOnlyProduct, isListedProduct } from './hiddenProducts.js';
 import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
 import { NEEDS as ONTOLOGY_NEEDS } from '../matching/ontology.js';
 const NEEDS_BY_ID = Object.fromEntries(ONTOLOGY_NEEDS.map((n) => [n.id, n]));
@@ -914,7 +914,7 @@ export const CATALOG_PRODUCTS = [
     // The research fields matching, search and filters read (safety rules included) ship
     // with the site; the rest fills in on the product page (data/researchLoader.js).
     .map((p) => withResearch(p, PRODUCT_RESEARCH_CORE))
-    .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id))
+    .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id])
     .map(withImageOverride);
 
 const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
@@ -957,6 +957,7 @@ let productByRouteIndex = null;
 export const MERGED_PRODUCT_IDS = Object.freeze({
     'p-cora-overnight': 'p-cora-organic-pads',
     'd-balance-balance-menopause-hormones': 'd-balance-menopause',
+    ...DUPLICATE_OF,
 });
 
 export function getProductById(id) {

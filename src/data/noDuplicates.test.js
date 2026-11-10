@@ -1,3 +1,4 @@
+import { DUPLICATE_OF } from './hiddenProducts.js';
 import { describe, it, expect } from 'vitest';
 import { ALL_PRODUCTS, CATALOG_PRODUCTS } from './products.js';
 
@@ -70,6 +71,8 @@ import { getProductById, MERGED_PRODUCT_IDS } from './products.js';
 describe('merged size/absorbency duplicates', () => {
   it('a merged id is hidden, kept in the data, and opens the one product', () => {
     for (const [oldId, mainId] of Object.entries(MERGED_PRODUCT_IDS)) {
+      // Live-feed duplicates (hiddenProducts.js DUPLICATE_OF) are not in the bundled data at all.
+      if (DUPLICATE_OF[oldId]) { if (CATALOG_PRODUCTS.some((p) => p.id === mainId)) expect(getProductById(oldId)?.id).toBe(mainId); continue; }
       expect(CATALOG_PRODUCTS.some((p) => p.id === oldId && p.hidden)).toBe(true);
       expect(ALL_PRODUCTS.some((p) => p.id === oldId)).toBe(false);
       expect(getProductById(oldId)?.id).toBe(mainId);

@@ -27,3 +27,7 @@
 /* Inside the stack the tab panel classes keep the content's styles, but the card owns the box. */
 #ay-tabs#ay-tabs#ay-tabs .ay-stack__panel.ayq-panel { margin: 0 !important; padding: 14px !important; border-radius: 16px !important; background: #ffedac !important; color: #3e2723; }
 :is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs .ay-stack__panel.ayq-panel { background: #3e2723 !important; color: #ffedac; }
+/* Nov 10 (founder: "not move"): opening a card doesn't lift or slide; it just opens. */
+.ay-stack__card, .ay-stack__card.is-open { transform: none !important; transition: none !important; }
+.ay-stack__panel { animation: none !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink { border-color: #ffedac; }

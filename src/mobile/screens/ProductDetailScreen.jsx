@@ -3,7 +3,6 @@ import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
-import ProductCard from '../components/ProductCard.jsx';
 import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
@@ -451,7 +450,7 @@ export default function ProductDetailScreen({
           <div className={`ay-pdp2-hero${image ? '' : ' is-missing-image'}`}>
           <div className="ayq-apphero__tile" data-vt-target="product">
             <ProductGallery
-              images={images}
+              images={images.slice(0, 1)}
               index={photo}
               onIndex={setPhoto}
               name={name}
@@ -547,7 +546,14 @@ export default function ProductDetailScreen({
         {related.more.length > 0 && <BrandStrip className="ay-pdp-strip" />}
         {related.more.length > 0 && <section className="ayna-cabinet-collection ay-pdp-related" aria-labelledby="ay-pdp-related-more">
           <div className="ay-pdp-sechead"><h2 id="ay-pdp-related-more">More like this for you</h2><p>{related.personal ? 'Picks that fit your profile.' : 'For the same needs, from other parts of the shop.'}</p></div>
-          <div className="ay-shelf2-row">{related.more.slice(0, 3).map((p) => <ProductCard key={p.id} product={p} quizAnswers={quizAnswers} onClick={() => onOpenProduct(p)} />)}</div>
+          {/* Nov 10 (founder: "it should be one page", nothing moves sideways): a plain list, not a sideways rail. */}
+          <ul className="ay-pdp-morelist">{related.more.slice(0, 3).map((p) => (
+            <li key={p.id}><button type="button" onClick={() => onOpenProduct(p)}>
+              <span className="ay-pdp-morelist__img"><ProductImage product={p} src={p.image || p.images?.[0] || ''} alt="" allowBrandLogo={p?.type === 'digital'} fallback={<PlateName product={p} />} /></span>
+              <span className="ay-pdp-morelist__txt"><b>{p.name}</b><small>{[p.brand, shownPriceText(formatPrice(p).main)].filter(Boolean).join(' · ')}</small></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </button></li>
+          ))}</ul>
         </section>}
 
 
