@@ -525,6 +525,11 @@ export function scoreProductV2(pp, up) {
 
 function typeKey(pp, needId) {
   const cat = String(pp.category || '').toLowerCase();
+  // Nov 9 (founder: "for cramps it gives me 3 heating pads"): heat and TENS are different kinds
+  // even when the catalog files both under one category, so a shelf mixes them.
+  const n = String(pp.name || '').toLowerCase();
+  if (/heat(ing)?\b|heatwrap|thermacare|self-heating|warm(ing)? (pad|wrap|patch)/.test(n)) return 'heat';
+  if (/\btens\b|elaris|livia/.test(n)) return 'tens';
   return cat === 'supplement' || cat === 'menopause' ? `supplement:${needId}` : cat || 'other';
 }
 const round3 = (x) => Math.round(x * 1000) / 1000;
@@ -727,7 +732,8 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (filling && brand && homeHave.some((x) => x.pp.brand?.key === brand)) continue;
       const tk = typeKey(c.pp, home.needId);
       const same = chosen.filter((x) => x.home.needId === home.needId && typeKey(x.pp, home.needId) === tk);
-      if (same.length >= (filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
+      // Two heat products at most on one shelf (founder, Nov 9: "always these and the ThermaCare").
+      if (same.length >= (tk === 'heat' ? 2 : filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
       const fmt = (c.pp.formats || []).join();
       const varied = (same.every((x) => (x.pp.formats || []).join() !== fmt) ? 2 : 0) + (same.every((x) => x.pp.brand?.key !== brand) ? 1 : 0);
       const option = { c, home, isUniversal, varied };
@@ -785,8 +791,12 @@ export function buildEcosystemV2(up, products, options = {}) {
         return { ...shelf, picks: fallback, shortBy: Math.max(0, perNeed - fallback.length), coverage: round3(cover.get(shelf.needId) || 0), emptyReason: null, fallback: true };
       }
     }
-    const picks = homed
-      .sort((a, b) => b.home.v2.rankKey - a.home.v2.rankKey)
+    // Nov 9 (founder: three heating pads in a row): the best of each type leads, then the rest,
+    // so the first cards she sees are different kinds of help. Same picks, same percents.
+    const ranked = homed.sort((a, b) => b.home.v2.rankKey - a.home.v2.rankKey);
+    const seenTypes = new Set();
+    const leads = ranked.filter((x) => { const k = typeKey(x.pp, shelf.needId); if (seenTypes.has(k)) return false; seenTypes.add(k); return true; });
+    const picks = [...leads, ...ranked.filter((x) => !leads.includes(x))]
       .map((x) => ({
         ...x.home.r,
         v2: x.home.v2,
