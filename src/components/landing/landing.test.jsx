@@ -40,8 +40,15 @@ const text =(html) => html.replace(/<[^>]+>/g, ' ');
 describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    expect(text(out)).toContain('Take your quiz');
+    expect(text(out)).toContain('Sign up free');
     expect(out).toContain('matched to you'); // Nov 4: same promise as the website
+    // A quiz already started: the one button finishes it, with a small line (no second box).
+    const draft = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 3, total: 7 }} onResumeQuiz={() => {}} onStartQuizOver={() => {}} />);
+    expect(text(draft)).toContain('Finish your free quiz');
+    expect(text(draft)).toContain('Question 3 of 7, saved.');
+    expect(draft).not.toContain('Continue my quiz');
+    // Still on question 1: nothing to finish, the normal button.
+    expect(text(renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 1, total: 7 }} onResumeQuiz={() => {}} />))).toContain('Sign up free');
     const home = renderToStaticMarkup(<AppLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     expect(text(home)).toContain('Go to your Home');
   });
@@ -49,7 +56,7 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('is only the hero: rain, headline, search, Slide to start (the welcome tip anchor) and the medical note', () => {
     const html = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} onSignIn={() => {}} onBrowse={() => {}} />);
     expect(html).toContain('data-tour="landing-start"');
-    expect(html).toContain('class="lsx-search');
+    expect(html).not.toContain('lsx-search'); // no search on the app landing (founder, Nov 9)
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink alx__rain" aria-hidden="true"/);
     // The brown and pink brand bar is on the website only (founder, Oct 27 12:08).
     expect(html).not.toMatch(/class="lk-bar[ "]/);
@@ -110,7 +117,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
 
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(text(html)).toContain('Take your free quiz');
+    expect(text(html)).toContain('Sign up free');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
@@ -160,7 +167,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('.ay-sts__track').textContent).toBe('Take your free quiz');
+    expect(end.querySelector('.ay-sts__track').textContent).toBe('Sign up free');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays

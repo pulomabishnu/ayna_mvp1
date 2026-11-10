@@ -1,5 +1,4 @@
 import AppLanding from '../../components/landing/AppLanding.jsx';
-import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import '../../styles/onboarding.css';
 
 // The app's landing (founder, Oct 27 10:40): one fixed screen, no scrolling.
@@ -23,10 +22,11 @@ export default function LandingScreen({
         hasProfile={hasProfile}
         onStartQuiz={onStartQuiz}
         onGoHome={onGoToday}
-        onSearch={(q) => onBrowse?.(String(q || '').trim())}
         onSignIn={onAlreadyHaveAccount}
         onBrowse={() => onBrowse?.()}
-        banner={!hasProfile && quizDraft && onResumeQuiz ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} /> : null}
+        quizDraft={!hasProfile ? quizDraft : null}
+        onResumeQuiz={onResumeQuiz}
+        onStartQuizOver={onStartOverQuiz}
       />
     </main>
   );

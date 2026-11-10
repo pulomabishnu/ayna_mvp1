@@ -73,3 +73,7 @@
 #ay-landing.alx .alx__rain .lk-bars i { width: 6px; }
 /* Nov 4: the longer promise ("Women’s health products, matched to you.") at a size that stays clear of the product photos. */
 html body #ay-landing.alx .alx__title { font-size: clamp(32px, 9cqw, 38px) !important; line-height: 1.06 !important; }
+/* A quiz already started (founder, Nov 9): one small line under the button, not a second box. */
+#ay-landing.alx .alx__draft { margin: 0; text-align: center; font: 500 14px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; color: var(--alx-fg, #3e2723); }
+#ay-landing.alx .alx__draft-over { all: unset; cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+#ay-landing.alx .alx__draft-over:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

@@ -1,7 +1,7 @@
 import SlideToStart from '../ui/SlideToStart.jsx';
 import MedicalNote from '../MedicalNote.jsx';
 import { ScallopEdge } from '../ui/ay/index.js';
-import { Rain, HeroSearch } from './kit.jsx';
+import { Rain } from './kit.jsx';
 import './app-landing.css';
 
 /*
@@ -18,11 +18,16 @@ import './app-landing.css';
  * ayna wordmark opens it for everyone. Signed in with a profile, the main
  * action is "Go to your Home". Get my matches goes straight to question 1.
  */
-export default function AppLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onSearch, onSignIn, onBrowse, banner = null }) {
+export default function AppLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onSignIn, onBrowse, banner = null, quizDraft = null, onResumeQuiz = null, onStartQuizOver = null }) {
   const home = signedIn && hasProfile && onGoHome;
+  // Founder, Nov 9: same words as the website ("Sign up free"), no search bar, and a quiz
+  // already started is this one button ("Finish your free quiz"), never a second box.
+  const draft = !home && quizDraft && onResumeQuiz && (quizDraft.requiredDone || (quizDraft.index || 1) > 1) ? quizDraft : null;
   const cta = home
     ? { label: 'Go to your Home', slide: 'Go to your Home', go: onGoHome }
-    : { label: 'Take your quiz', slide: 'Take your quiz', go: onStartQuiz };
+    : draft
+      ? { label: 'Finish your free quiz', slide: 'Finish your free quiz', go: onResumeQuiz }
+      : { label: 'Sign up free', slide: 'Sign up free', go: onStartQuiz };
   return (
     <div id="ay-landing" className="alx">
       <section className="alx__band" aria-labelledby="alx-title">
@@ -42,7 +47,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
       <div className="alx__act">
         {banner && <div className="alx__banner">{banner}</div>}
         <SlideToStart className="alx__sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="ink" />
-        <HeroSearch onSearch={onSearch} className="alx__search" />
+        {draft && <p className="alx__draft">{draft.requiredDone ? 'Your answers are saved.' : `Question ${draft.index} of ${draft.total}, saved.`}{onStartQuizOver && <> <button type="button" className="alx__draft-over" onClick={onStartQuizOver}>Start over</button></>}</p>}
         {!signedIn && onBrowse && <button type="button" className="alx__link" onClick={() => onBrowse()}>Explore first</button>}
       </div>
       <MedicalNote className="alx__med" />
