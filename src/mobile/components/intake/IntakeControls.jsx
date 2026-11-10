@@ -396,7 +396,8 @@ export function TopicPicker({ groups, selected, onToggle, search, onSearch, onAd
   const [active, setActive] = useState(() => groups.find((g) => g.items.some((i) => selected.includes(i)))?.label || groups[0]?.label);
   const q = search.trim().toLowerCase();
   const known = groups.flatMap((g) => g.items);
-  const custom = selected.filter((item) => !known.includes(item));
+  // "Nothing right now" has its own chip under the picker: never listed again as "Added by you".
+  const custom = selected.filter((item) => !known.includes(item) && item !== 'Nothing right now');
   const results = q ? known.filter((item) => matchesSearchOption(q, item)) : [];
   const group = groups.find((g) => g.label === active) || groups[0];
   const value = search.trim().replace(/\s+/g, ' ');

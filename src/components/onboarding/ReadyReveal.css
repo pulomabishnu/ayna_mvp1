@@ -635,3 +635,14 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 .ay-pz__tick svg { width: 16px; height: 16px; fill: none; stroke: #ffedac; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 [data-theme='dark'] .ay-pz__tick { background: #ffedac; }
 [data-theme='dark'] .ay-pz__tick svg { stroke: #3e2723; }
+
+/* "What you want to learn about" (focus group, Nov 9). */
+.ay-ob-learn { display: grid; gap: 8px; margin: 8px 0 16px; }
+.ay-ob-learn h2 { color: inherit !important; margin: 0; font: 700 18px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-ob-learn p { color: inherit !important; margin: 0; font: 400 15px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-ob-learn ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.ay-ob-learn :is(button, a) { all: unset; color: inherit; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1.5px solid currentColor; border-radius: 999px; font: 600 15px/1 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-ob-learn :is(button, a) svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-ob-learn :is(button, a):focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-learn :is(h2, p, a, button) { color: inherit !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-learn h2 { display: block !important; visibility: visible !important; opacity: 1 !important; font: 700 18px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif !important; }

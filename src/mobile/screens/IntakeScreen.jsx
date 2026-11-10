@@ -81,6 +81,7 @@ import {
   withSavedOption,
   FIRST_NAME_MAX,
   isMultiSelectStep,
+  LEARN_INTERESTS,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { trackQuizStep } from '../../utils/funnelEvents.js';
@@ -805,6 +806,12 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       <>
         <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
         <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} /></div>
+        {/* Focus group, Nov 9: nothing to fix is fine. What would she like to learn about? Saved to her profile, never a match. */}
+        {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
+          <div className="aq-subq--under"><SubQuestion title="Anything you'd like to learn about? (optional)">
+            <Chips compact items={LEARN_INTERESTS} selected={intake.learnInterests || []} onToggle={(v) => set('learnInterests', (intake.learnInterests || []).includes(v) ? intake.learnInterests.filter((x) => x !== v) : [...(intake.learnInterests || []), v])} />
+          </SubQuestion></div>
+        )}
         {temperatureTiming}
       </>
     );

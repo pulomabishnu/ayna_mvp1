@@ -27,6 +27,8 @@ import { galleryImages, similarProducts, sameNeedProducts } from '../../componen
 import ProductGallery from '../../components/pdp/ProductGallery.jsx';
 import '../../components/pdp/pdp.css';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
+import BigPurchase, { bigPurchasePrice } from '../../components/pdp/BigPurchase.jsx';
+import { parsePrice } from '../../matching/productProfile.js';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
 import ProductImage from '../components/ProductImage.jsx';
@@ -282,7 +284,15 @@ export default function ProductDetailScreen({
     // Bleeding after menopause: no period or bleeding product is suggested, even unscored.
     const fallbackPool = quizAnswers ? photoPool.filter((p) => !isBleedingEvaluation(getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts))) : photoPool;
     if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool: fallbackPool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
-    return { compare, more, personal };
+    // Before a big one-time purchase: cheaper products for the same need that fit her (focus group, Nov 9).
+    const big = bigPurchasePrice(product);
+    const cheaper = !big || !onOpenProduct ? [] : [...compare, ...sameNeedProducts(product, { pool, limit: 8 })]
+      .filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i)
+      .map((p) => ({ p, amount: parsePrice(p.price).amount, m: quizAnswers ? getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null }))
+      .filter(({ amount, m }) => Number.isFinite(amount) && amount > 0 && amount < big && (!quizAnswers || (m?.matchStatus === 'scored' && m.percent >= 50)))
+      .sort((a, b) => (b.m?.percent || 0) - (a.m?.percent || 0) || a.amount - b.amount)
+      .slice(0, 2).map(({ p }) => p);
+    return { compare, more, personal, cheaper };
   }, [product, onOpenProduct, ecosystemProducts, quizAnswers, matchOpts]);
 
   // The first time she sees "Add to my routine", one line says what it means.
@@ -499,6 +509,7 @@ export default function ProductDetailScreen({
           )}
           {isPartner && partnerOpen && <div className="ayna-figma-partner-copy ayv-fine">{partnerDisclosure} <a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
+          <BigPurchase product={product} cheaper={related.cheaper || []} pctFor={(p) => matchPercentFor(p, quizAnswers, matchOpts)} onOpenProduct={onOpenProduct} onCompare={onCompare ? () => onCompare(product) : null} onAsk={() => setAskOpen(true)} />
           {/* Always visible: her IUD first when she has one, TSS for cups (PDP audit 7.5). */}
           <SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} />
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}

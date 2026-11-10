@@ -120,7 +120,7 @@ function MatchPlate({ src, product }) {
 
 function Arrow() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>; }
 
-export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null, connected = false, matchOpts = undefined }) {
+export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null, connected = false, matchOpts = undefined, onLearn = null }) {
   const ready = useCatalogReady();
   const [liveReady, setLiveReady] = useState(() => typeof window === 'undefined');
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
@@ -141,6 +141,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   const bleeding = useMemo(() => (ready ? bleedingCareNote(answers) : null), [answers, ready]);
   // Analytics: the first match is on screen (quiz start to first match).
   useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
+  // Focus group, Nov 9: "nothing to fix, but I want to learn about birth control".
+  const learn = Array.isArray(answers?.fullHealthIntake?.learnInterests) ? answers.fullHealthIntake.learnInterests : [];
   const remaining = useMemo(() => (answers?.fullHealthIntake ? moreRemaining(reconstructIntakeFromSnapshot(answers.fullHealthIntake)) : 0), [answers]);
   // Nov 3: the safety questions now come right after the reveal. Until they're
   // answered, anything she takes stays off her list, so ask for them first.
@@ -242,7 +244,16 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       ) : !ready || !liveReady ? (
         <p className="ay-ob-ready__lead" role="status">Getting your matches ready…</p>
       ) : (
-        <p className="ay-ob-ready__lead">{rows.length === 0 ? 'Nothing to work on right now, so there are no matches yet. Your profile is still saved, and Shop shows how well each product fits you.' : 'We couldn’t find a suitable option for these answers yet.'} You can change your answers anytime in You, then My health.</p>
+        <>{learn.length > 0 && (
+          <section className="ay-ob-learn" aria-labelledby="ay-ob-learn-h">
+            <h2 id="ay-ob-learn-h">What you want to learn about</h2>
+            <p>Saved to your profile. Tap one to start.</p>
+            <ul>{learn.map((t) => <li key={t}>{onLearn
+              ? <button type="button" onClick={() => onLearn(t)}>{t}<Arrow /></button>
+              : <a href={`/library?q=${encodeURIComponent(t.toLowerCase())}`}>{t}<Arrow /></a>}</li>)}</ul>
+          </section>
+        )}
+        <p className="ay-ob-ready__lead">{rows.length === 0 ? 'Nothing to work on right now, so there are no matches yet. Your profile is still saved, and Shop shows how well each product fits you.' : 'We couldn’t find a suitable option for these answers yet.'} You can change your answers anytime in You, then My health.</p></>
       )}
       <div className="ay-ob-ready__actions ay-ob-next">
         {onWatchWrapped && total > 0

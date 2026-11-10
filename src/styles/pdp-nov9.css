@@ -28,3 +28,21 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 
 /* What it is, under the name (focus group, Nov 9). */
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-whatis { margin: 6px 0 0 !important; font: 400 15px/1.45 var(--v-ui, 'Figtree', sans-serif) !important; color: inherit !important; }
+
+/* Before you spend (BigPurchase.jsx, focus group Nov 9). Butter box, espresso outline. */
+.ay-bigbuy { margin: 16px 0 0; padding: 14px 16px; border: 1.5px solid #3e2723; border-radius: 18px; background: #ffedac; color: #3e2723; font-family: var(--ay-font-ui, 'Figtree'), sans-serif; display: grid; gap: 10px; }
+.ay-bigbuy h2 { margin: 0; font: 700 17px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-bigbuy__facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ay-bigbuy__facts li { display: grid; gap: 4px; }
+.ay-bigbuy__facts b { font: 700 14px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-bigbuy__facts span { font: 400 15px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-bigbuy__alts { display: grid; gap: 6px; }
+.ay-bigbuy__alts button, .ay-bigbuy__acts button { all: unset; box-sizing: border-box; cursor: pointer; font-family: inherit; }
+.ay-bigbuy__alts button { display: grid; gap: 2px; padding: 8px 12px; border: 1.5px solid rgba(62, 39, 35, .35); border-radius: 12px; font: 600 14px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-bigbuy__alts small { font: 400 13px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .8; }
+.ay-bigbuy__acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.ay-bigbuy__acts button { min-height: 40px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 999px; font: 600 14px/1 var(--ay-font-ui, 'Figtree'), sans-serif; }
+:is(.ay-bigbuy__alts, .ay-bigbuy__acts) button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+[data-theme='dark'] .ay-bigbuy { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .45); }
+[data-theme='dark'] .ay-bigbuy__alts button { border-color: rgba(255, 237, 172, .35); }
+[data-theme='dark'] .ay-bigbuy__acts button { border-color: #ffedac; }

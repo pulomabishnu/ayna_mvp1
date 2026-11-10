@@ -313,6 +313,8 @@ const AUTH_VALUE = {
 };
 
 // Screens that make no sense to return to after signing in.
+// Quiz and first-run steps nothing in the background may navigate away from.
+const FIRST_RUN_SCREENS = new Set(['quiz', 'building', 'reveal', 'ready', 'connect', 'plan', 'checkin']);
 const AUTH_NO_RETURN = new Set(['landing', 'signin', 'quiz', 'building', 'reveal', 'connect', 'checkin', 'plan']);
 
 /** Scroll every scrolled area of the app (and the page) back to the top. */
@@ -344,6 +346,8 @@ export default function MobileApp() {
     hasDraft: hasSavedIntakeDraft(),
   }));
   const [screen, setScreenRaw] = useState(initialRoute.screen);
+  const screenNowRef = useRef(initialRoute.screen);
+  screenNowRef.current = screen;
   // Home's view: 'home' (one-screen dashboard), 'dashboard', 'chat', 'products'
   // (chat-first variant: 'chat', 'products', 'dashboard').
   const homeRoot = chatFirst ? 'chat' : 'home';
@@ -842,7 +846,9 @@ export default function MobileApp() {
       });
 
       // Mid quiz-end steps: stay there so her new answers get applied.
-      if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('ayna');
+      // Never pull her out of the first-run steps (her Wrapped right after sign-up, Nov 10:
+      // the saved matches loading back sent her to Home and skipped it).
+      if (remoteProducts.length > 0 && !session.pendingQuiz && !FIRST_RUN_SCREENS.has(screenNowRef.current)) setScreen('ayna');
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);

@@ -71,3 +71,5 @@ html body .app-container.app-container.app-container.app-container.app-container
 /* Loop A: a pick without a photo shows its brand's name on the white tile (never an empty square). */
 html body .app-container .ay-auth-summary__thumbs span.is-word { padding: 0 3px; overflow: hidden; color: #3e2723 !important; font: 700 13px/1.05 var(--ay-font-ui, 'Figtree', sans-serif); text-align: center; word-break: break-word; }
 html body .app-container.app-container.app-container.app-container.app-container.app-container .ay-auth-card.ay-auth-card .ay-auth-summary__thumbs span.is-word.is-word { color: #3e2723 !important; }
+/* Nov 10: the consent box now sits above Apple/Google; never let it shrink under them. */
+.ay-auth-ai { flex: none !important; min-height: max-content; margin-bottom: 12px; position: relative; z-index: 1; }

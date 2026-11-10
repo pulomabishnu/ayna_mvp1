@@ -38,3 +38,5 @@ html body .ay-psetup .ay-psetup__go:disabled { opacity: .45; cursor: not-allowed
    The wrapper owns the border and focus ring; the input is bare. */
 html body .ay-psetup .ay-psetup__field input { border: 0 !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; min-height: 44px; outline: none; width: 100%; }
 html body .ay-psetup .ay-psetup__field:focus-within { outline: 3px solid var(--legacy-ink, #3e2723); outline-offset: 2px; }
+/* Nov 10 dark sweep: the card is always butter, so its words are always espresso (the title was butter on butter). */
+html body .ay-psetup-card.ay-psetup-card :is(h1, h2, h3, p, label, span, small, b, a, .ay-psetup__t, .ay-psetup__sub, .ay-psetup__k, .ay-psetup__label, .ay-psetup__hint, .ay-psetup__later, .ay-psetup__link) { color: #3e2723 !important; }

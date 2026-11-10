@@ -196,7 +196,7 @@ function DisconnectChoice({ source, onCancel, onConfirm, busy }) {
   );
 }
 
-function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefresh, message = null, setMessage = () => {} }) {
+function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefresh, message = null, setMessage = () => {}, dataCount = null }) {
   const isNative = Capacitor.isNativePlatform();
   const availability = availabilityFor(source, { isNative, nativePlatform: Capacitor.getPlatform() });
   const live = connection && connection.status !== 'disconnected';
@@ -335,7 +335,8 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         <Icon name={source.icon} lg />
         <div>
           <h2>{source.name}</h2>
-          <p>{live ? (connection.status === 'active' || !connection.status ? `Connected · ${lastSyncedLine(connection.last_synced_at)}` : status?.text) : source.kind}</p>
+          {/* Focus group, Nov 9: "synced" after Don't Allow. Connected with nothing read yet says so. */}
+          <p>{live ? (connection.status === 'active' || !connection.status ? (dataCount === 0 && source.platform === 'ios' ? 'Connected · no data yet' : `Connected · ${lastSyncedLine(connection.last_synced_at)}`) : status?.text) : source.kind}</p>
         </div>
       </div>
 
@@ -536,6 +537,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
       onSignIn={onSignIn}
       onDone={done}
       onRefresh={health.refresh}
+      dataCount={[...(health.rows || []), ...((health.live || {})[apiSourceFor(source.id)] || [])].filter((r) => r && (r.source === apiSourceFor(source.id) || r.origin === apiSourceFor(source.id))).length}
       message={notice?.sourceId === source.id ? notice.text : null}
       setMessage={(text) => setNotice(text ? { sourceId: source.id, text } : null)}
     />

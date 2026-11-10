@@ -270,6 +270,8 @@ export const EMPTY = {
   brandOpenness: '', trustedBrands: [], brandSupportPreferences: [],
   avoidIngredients: [], avoidIngredientsOtherText: '', fsaHsaAnswer: '',
   trustRanking: TRUST_ITEMS, trustRankingTouched: false, anythingElse: '',
+  // Topics she wants to learn about without asking for products (focus group, Nov 9).
+  learnInterests: [],
   skippedSteps: [], recommendationCountTouched: false,
   // First-run setup (onboardingFlow.js): what she wants help with (an
   // interest, never a need) and her goals. Neither changes a match.
@@ -299,7 +301,7 @@ export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'preferredFormats', 'formatOtherText', 'recommendedProductsPerArea', 'priceRange', 'largePurchaseFrequency',
   'brandOpenness', 'trustedBrands', 'brandSupportPreferences',
   'avoidIngredients', 'avoidIngredientsOtherText',
-  'anythingElse', 'skippedSteps', 'recommendationCountTouched',
+  'anythingElse', 'learnInterests', 'skippedSteps', 'recommendationCountTouched',
   'helpTopics', 'goals', 'name',
 ];
 
@@ -729,6 +731,7 @@ export function buildSnapshot(intake) {
     fsaHsa,
     trustRanking: intake.trustRankingTouched ? intake.trustRanking : [],
     anythingElse: intake.anythingElse.trim(),
+    ...((intake.learnInterests || []).length ? { learnInterests: [...new Set(intake.learnInterests)] } : {}),
     goals: [...new Set((intake.goals || []).filter(Boolean))],
     helpTopics: [...new Set((intake.helpTopics || []).filter(Boolean))],
     // Saved only when she gave one, so older snapshots keep their shape.
@@ -1080,3 +1083,14 @@ export function remainingOptionalTopics(intake) {
   }
   return out;
 }
+
+/**
+ * "Nothing right now" on What do you want help with: what she'd like to learn about instead
+ * (focus group, Nov 9: "I'm not trying to fix anything, but I'd like to learn about birth
+ * control"). Saved on her profile only; never a product shelf, never part of a match.
+ */
+export const LEARN_INTERESTS = [
+  'Birth control', 'Periods and cycles', 'Fertility', 'Pregnancy', 'Menopause',
+  'Vaginal health', 'Sexual health', 'Sleep', 'Mood', 'Skin and hair', 'Nutrition',
+];
+

@@ -13,6 +13,7 @@ import {
   UTI_FREQUENCY, buildSnapshot, isMultiSelectStep,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
   requiredReady, missingAnswerHint, FIRST_NAME_MAX, AGE_MIN, AGE_MAX, asksBreastfeedingOnTiming, ttcDurationOptions, resumeStepId, withSavedOption, isValidUsZip, setPerimenopausePeriods, syncPerimenopausePeriods,
+  LEARN_INTERESTS,
 } from '../mobile/data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../mobile/data/intakeCatalog.js';
 import { WEB_FOLLOWUP_STEP_IDS } from '../mobile/data/quizDraftProgress.js';
@@ -650,6 +651,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
           </div>
           {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={pick} /></section>}
           <Chips small items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={pick} />
+          {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
+            <section className="qz-group"><h3>Anything you&rsquo;d like to learn about? (optional)</h3>
+              <Chips small items={LEARN_INTERESTS} selected={intake.learnInterests || []} onToggle={(v) => set('learnInterests', (intake.learnInterests || []).includes(v) ? intake.learnInterests.filter((x) => x !== v) : [...(intake.learnInterests || []), v])} />
+            </section>
+          )}
           {temperatureTiming}
         </>;
       } else {
