@@ -656,7 +656,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
         {/* Pai #12: set-up as "2 of 4" with one next step; gone once everything is done. */}
         {/* The full set-up checklist (founder, Nov 10: moved here from Home). Gone once all done. */}
-        {signedIn && setup.next && <HomeSetup hasAnswers={!!intake} productCount={ecosystemCount} connectedCount={connectedCount} checkinCount={checkinCount} go={SETUP_GO} />}
+        {signedIn && setup.next && <HomeSetup hasAnswers={!!intake} productCount={ecosystemCount} connectedCount={connectedCount} checkinCount={checkinCount} go={SETUP_GO} note={profileFilledPct < 100 ? <p className="ay-you2-setup-sub">Health profile <b>{profileFilledPct}% complete</b></p> : null} />}
 
         {/* You critique (Oct 27): one feature card (My ecosystem) and the sections as one grouped list. */}
         <div className="ay-you-bento" data-tour="you-sections" aria-label="You sections" role="navigation">
@@ -679,7 +679,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
 
         {/* Founder, Nov 9: the ecosystem page's "Manage your ecosystem" list, on You too,
             so changing answers or starting over never needs a hunt (focus group). */}
-        {signedIn && group('manage', 'Manage your ecosystem', [
+        {signedIn && (onEditProfile || onOpenMonthlyCheckin || onRequestEcosystemReset) && group('manage', 'Manage your ecosystem', [
           onEditProfile && { key: 'quiz-answers', icon: 'beliefs', title: 'Your quiz answers', sub: 'Update anytime', onClick: onEditProfile },
           onOpenMonthlyCheckin && { key: 'monthly', icon: 'checkin', title: 'Monthly check-in', sub: 'Keep your matches current', onClick: onOpenMonthlyCheckin },
           onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your ecosystem', sub: 'Start your matches over', onClick: onRequestEcosystemReset },

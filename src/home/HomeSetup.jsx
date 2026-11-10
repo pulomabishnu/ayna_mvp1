@@ -8,7 +8,7 @@ import './home-setup.css';
  * to that thing. The steps go away once all are done; "Edit my health profile"
  * always stays.
  */
-export default function HomeSetup({ hasAnswers, productCount = 0, connectedCount = 0, checkinCount = 0, go = {}, onEditProfile }) {
+export default function HomeSetup({ hasAnswers, productCount = 0, connectedCount = 0, checkinCount = 0, go = {}, onEditProfile, note = null }) {
   const setup = setupSteps({ hasAnswers, productCount, connectedCount, checkinCount });
   const LABEL = { quiz: 'Take the quiz', ecosystem: 'Add a product to your routine', connect: 'Connect health data', checkin: 'Do your first check-in' };
   return (
@@ -16,6 +16,7 @@ export default function HomeSetup({ hasAnswers, productCount = 0, connectedCount
       {setup.next && (
         <>
           <div className="ay-hsetup__top"><h2 id="ay-hsetup-h">Finish setting up</h2><span>{setup.done} of {setup.total} done</span></div>
+          {note}
           <span className="ay-hsetup__bar" aria-hidden="true">{setup.steps.map((s, i) => <i key={s.key} className={i < setup.done ? 'is-done' : ''} />)}</span>
           <ol className="ay-hsetup__steps">
             {setup.steps.map((s) => (
