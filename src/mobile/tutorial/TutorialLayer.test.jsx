@@ -42,6 +42,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(2026, 9, 25, 7, 0)); // before 8: the Rundown won't open on its own
   localStorage.clear();
+  localStorage.setItem('ayna_tour_one_page_v1', '1'); // past the one-time move to the one-page tour
   fakeLayout();
 });
 afterEach(() => {
@@ -203,5 +204,18 @@ describe('Settings', () => {
     expect(host.querySelector('[role="switch"]').getAttribute('aria-checked')).toBe('true');
     act(() => host.querySelector('.ay-tips-set__replay').click());
     expect(document.querySelector('.ay-tour__all').textContent).toContain('How ayna works');
+  });
+});
+
+describe('one-time move to the one-page tour (Nov 10)', () => {
+  it('a phone with page tips on from the old tutorial gets them off once; later choices stick', () => {
+    localStorage.removeItem('ayna_tour_one_page_v1');
+    setTipsEnabled(true);
+    mountApp({ html: HOME });
+    expect(readTour().enabled).toBe(false);
+    setTipsEnabled(true);
+    act(() => root.unmount()); root = null; app.remove();
+    mountApp({ html: HOME });
+    expect(readTour().enabled).toBe(true);
   });
 });

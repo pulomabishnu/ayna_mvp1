@@ -51,7 +51,7 @@ const click = (text) => act(() => { [...document.querySelectorAll('.ay-tour butt
 beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(2026, 9, 25, 7, 0)); // before 8: no Rundown highlight check to wait for
-  localStorage.clear();
+  localStorage.clear(); localStorage.setItem('ayna_tour_one_page_v1', '1');
   fakeLayout();
 });
 afterEach(() => {

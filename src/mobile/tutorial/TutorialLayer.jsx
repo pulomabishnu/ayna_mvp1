@@ -64,6 +64,7 @@ const SURFACES = {
 // Same local day string as the Rundown memory uses.
 const localToday = (d = new Date()) => localDayKey(d);
 const POLL_MS = 450;
+const ONE_PAGE_TOUR_KEY = 'ayna_tour_one_page_v1';
 const STABLE_POLLS = 2;
 
 const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
@@ -101,6 +102,14 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     const p = setTourOwner(userId);
     const age = accountCreatedAt ? Date.now() - new Date(accountCreatedAt).getTime() : 0;
     if (userId && p.enabled === null && age > 3 * 864e5) setTipsEnabled(false);
+    // Nov 10 (founder: the tutorial still popped up): phones that had page tips on from the old
+    // tutorial move to the one-page tour once. Page tips stay available in Settings.
+    try {
+      if (localStorage.getItem(ONE_PAGE_TOUR_KEY) !== '1') {
+        localStorage.setItem(ONE_PAGE_TOUR_KEY, '1');
+        if (readTour().enabled === true) setTipsEnabled(false);
+      }
+    } catch { /* storage blocked */ }
   }, [userId, accountCreatedAt]);
 
   const end = useCallback((how = 'done') => {
