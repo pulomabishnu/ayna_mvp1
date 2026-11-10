@@ -3848,10 +3848,22 @@ textarea {
   outline-offset: -4px;
 }
 
+/* Two equal columns: Keep off and Turn on are always the same size and style
+   (no "dark pattern" where accepting is bigger or brighter than declining). */
 .consent-banner__actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   flex-shrink: 0;
+}
+.consent-banner__actions button {
+  width: 100%;
+  min-width: 8.5rem;
+}
+.consent-banner__title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 /* Equal weight on purpose: neither button is styled as the "real" choice. */
@@ -3903,7 +3915,7 @@ textarea {
   }
   .consent-banner__actions {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
     flex: none;
     width: 100%;

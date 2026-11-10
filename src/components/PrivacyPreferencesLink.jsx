@@ -21,7 +21,9 @@ export default function PrivacyPreferencesLink({ style, className = '', separato
   const stored = getStoredConsent()
   let sdkStatus
   try { sdkStatus = window.posthog.get_explicit_consent_status?.() } catch { sdkStatus = undefined }
-  const current = stored || (sdkStatus === 'denied' ? 'denied' : 'granted')
+  // Analytics are opt-in: only an explicit grant counts as on. (This used to
+  // treat "never chose" as on and offered "Turn usage analytics off".)
+  const current = (stored === 'granted' || (!stored && sdkStatus === 'granted')) ? 'granted' : 'denied'
 
   const toggle = () => {
     if (current === 'granted') denyConsent(window.posthog)

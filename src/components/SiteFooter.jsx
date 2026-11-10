@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import posthog from 'posthog-js';
-import { getStoredConsent, denyConsent, grantConsent } from '../utils/analyticsConsent';
+import { getStoredConsent, denyConsent, grantConsent, openPrivacyChoices } from '../utils/analyticsConsent';
 import '../styles/audit-info.css';
 import '../styles/verify-people.css';
 import '../styles/site-footer.css';
@@ -17,7 +17,8 @@ import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
  * website (audit G21), and it carries the same items as the app's
  * LegalFooter (audit AP04): 18+ only, Privacy Policy, Consumer Health Data
  * Privacy notice (/consumer-health-data, the in-site page), Terms, How We
- * Make Money, and the usage-analytics switch.
+ * Make Money, and "Privacy choices", which reopens the analytics banner
+ * (AnalyticsToggle below stays as the switch in account settings).
  *
  * The analytics switch uses the same analyticsConsent helpers as the
  * consent notice and account settings, so the choice is persisted by
@@ -170,7 +171,7 @@ export default function SiteFooter({
           <a className="ay-footer-legal__link" href="/consumer-health-data" onClick={(e) => footerGo(e, onViewConsumerHealthData)}>Consumer Health Data Notice</a>
           <a className="ay-footer-legal__link" href="/terms-of-use" onClick={(e) => footerGo(e, onViewTermsOfUse)}>Terms of Use</a>
           <a className="ay-footer-legal__link" href="/how-we-make-money" onClick={(e) => footerGo(e, onViewHowWeMakeMoney)}>How We Make Money</a>
-          <AnalyticsToggle />
+          <button type="button" className="ay-footer-legal__link" onClick={openPrivacyChoices}>Privacy choices</button>
           <MotionToggle />
         </nav>
       </div>
