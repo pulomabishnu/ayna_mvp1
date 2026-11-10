@@ -268,12 +268,9 @@ export default function EcosystemScreen({
 
   const checkin = <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>;
 
-  const careBlock = careFirst && seed && <section className="ay-care-first" aria-labelledby="ay-care-first-title">
-    <p className="ay-care-first__eyebrow">Care first</p>
-    <h2 id="ay-care-first-title">Reach a clinician first</h2>
-    {notes.map((n) => <p key={n}>{n}</p>)}
-    <CareLinks care={seed.care} limit={5} />
-  </section>;
+  // Founder, Nov 9 ("take this out"): the pink panel with five care links is now the small
+  // butter care note: one line, Read more, Find care. Still always shown, never behind a tab.
+  const careBlock = careFirst && seed && <CareNote className="ay-care-banner" lines={['You said something may be urgent. Reach a clinician first.', ...notes.filter((n) => !/may be urgent/i.test(n))]} prominent findCareHref={firstCareLink(seed.care)?.href} />;
 
   // Calm care note: one combined sentence, placed after her first shelf. The
   // life-stage note moves to "For you" as a clearer card (see lifeStageFix).

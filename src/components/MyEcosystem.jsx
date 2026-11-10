@@ -2185,22 +2185,8 @@ export default function MyEcosystem({
                     })()}
                 </header>}
 
-                {careFirst && (
-                    <section className="eco3-carefirst" aria-labelledby="eco3-carefirst-title">
-                        <p className="eco3-carefirst__eyebrow">Care first</p>
-                        <h2 id="eco3-carefirst-title">Reach a clinician first</h2>
-                        {careNoteLines.map((n) => <p key={n} className="eco3-carefirst__note">{n}</p>)}
-                        <CareNearYouPanel
-                            compact
-                            quizResults={careQuizResults}
-                            healthProfile={healthProfile}
-                            userZipCode={userZipCode}
-                            onZipCodeChange={onZipCodeChange}
-                            onOpenProduct={onOpenProduct}
-                            onEditHealthProfile={onEditHealthProfile}
-                        />
-                    </section>
-                )}
+                {/* Founder, Nov 9 ("take this out"): the small care note, not the big panel. Never hidden. */}
+                {careFirst && <CareNote className="ay-care-banner" prominent lines={['You said something may be urgent. Reach a clinician first.', ...careNoteLines.filter((n) => !/may be urgent/i.test(n))]} findCareHref="/explore/services" />}
 
                 {useTabs && <WebEcoTabs view={webView} onView={setWebView} counts={{ mine: myProductList.length, picks: pickNeeds.reduce((n, x) => n + x.picks.filter((p) => !myProducts[p.id]).length, 0), saved: savedList.length }} />}
                 {useTabs && webView !== 'mine' && (

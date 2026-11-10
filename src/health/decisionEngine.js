@@ -444,7 +444,9 @@ function careCandidates({ state, ctx, logs, today, tries, window }) {
     actions: [{ id: 'get_care', label: 'Find care' }],
     basis: { kind: 'log', days: bleeding.map((l) => l.day), sources: [SOURCES.medlineVaginalBleeding] },
   }));
-  if (ctx.careFirst) out.push(care({
+  // Founder, Nov 9 ("take this out"): no separate Today card for the quiz's "anything urgent?"
+  // answer. Her ecosystem keeps the short care note with Find care.
+  if (false && ctx.careFirst) out.push(care({
     id: 'care:intake_urgent', type: 'care', level: 'prompt', priority: PRIORITY.prompt - 20,
     title: 'Check in with a clinician first',
     body: 'You told us something may need care soon. A clinician can help before you try products.',
