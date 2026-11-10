@@ -445,7 +445,10 @@ export default function ProductDetailScreen({
           </span>
         </div>
 
-        <div className={`ay-pdp2-hero${image ? '' : ' is-missing-image'}`}>
+        {/* Nov 10 (founder approved the mockup): photo beside the name and price, so Buy is on the
+            first screen. The photo still swipes and zooms. */}
+        <div className="ay-pdp3-head">
+          <div className={`ay-pdp2-hero${image ? '' : ' is-missing-image'}`}>
           <div className="ayq-apphero__tile" data-vt-target="product">
             <ProductGallery
               images={images}
@@ -463,13 +466,16 @@ export default function ProductDetailScreen({
           </div>
         </div>
 
+          <div className="ay-pdp3-id ay-pdp-title">
+            {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
+            <h1>{shownName}</h1>
+            {metaLine && <p className="ayv-metaline">{metaLine}</p>}
+            <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
+          </div>
+        </div>
+
         <div className="ayq-sheet ay-pdp-title ay-pdp2">
-          {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
-          <h1>{shownName}</h1>
-          {metaLine && <p className="ayv-metaline">{metaLine}</p>}
-          {/* No separate "what it is" line here (Nov 10): it repeated the Summary's first line just below. */}
           {matchState?.kind !== 'quiz' && <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />}
-          <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
           {sizeChips.length > 0 && (
             <div className="ay-pdp2-sizes">
               <p className="sr-only">{variantLabels.length ? variantKind : 'Options'}</p>
@@ -513,6 +519,7 @@ export default function ProductDetailScreen({
             // No #tab in the app's URL (focus group, Nov 9): a tab picked on one product
             // made every next product open scrolled down at Summary.
             syncHash={false}
+            layout="stack"
             loading={!researchLoaded}
             product={product}
             image={images[0] || ''}

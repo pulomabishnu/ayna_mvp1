@@ -1,0 +1,29 @@
+/* PdpStack.jsx: the four product views as a card stack. Brown, pink, brown, pink; each card
+   tucks under the one before it, so the names read like a wallet. Only transform/opacity animate. */
+.ay-stack { display: flex; flex-direction: column; margin: 16px 0 8px; }
+.ay-stack__card { position: relative; border-radius: 22px; border: 1.5px solid #3e2723; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.ay-stack__card + .ay-stack__card { margin-top: -16px; box-shadow: 0 -4px 14px rgba(62, 39, 35, .18); }
+.ay-stack__card.is-ink { background: #3e2723; color: #ffedac; }
+.ay-stack__card.is-pink { background: #f7badd; color: #3e2723; }
+.ay-stack__card:not(:last-child) { padding-bottom: 16px; }
+.ay-stack__card.is-open { transform: translateY(-4px); }
+.ay-stack__head { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 16px; font-family: var(--ay-font-ui, 'Figtree'), sans-serif; color: inherit; }
+.ay-stack__head:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; border-radius: 20px; }
+.ay-stack__head b { flex: 1; font: 700 17px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; color: inherit; }
+.ay-stack__ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; background: currentColor; }
+.ay-stack__ic svg { width: 17px; height: 17px; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-stack__card.is-ink .ay-stack__ic svg { stroke: #3e2723; }
+.ay-stack__card.is-pink .ay-stack__ic svg { stroke: #f7badd; }
+.ay-stack__tag { font: 700 12px/1 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .85; }
+.ay-stack__chev { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s ease; }
+.ay-stack__card.is-open .ay-stack__chev { transform: rotate(180deg); }
+.ay-stack__body { padding: 0 8px 8px; }
+.ay-stack__panel { border-radius: 16px; background: #ffedac; color: #3e2723; padding: 14px; animation: ay-stack-in .35s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ay-stack-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink { background: #4a302a; border-color: rgba(255, 237, 172, .45); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink .ay-stack__ic svg { stroke: #4a302a; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__panel { background: #3e2723; color: #ffedac; }
+@media (prefers-reduced-motion: reduce) { .ay-stack__card, .ay-stack__chev { transition: none; } .ay-stack__panel { animation: none; } .ay-stack__card.is-open { transform: none; } }
+/* Inside the stack the tab panel classes keep the content's styles, but the card owns the box. */
+#ay-tabs#ay-tabs#ay-tabs .ay-stack__panel.ayq-panel { margin: 0 !important; padding: 14px !important; border-radius: 16px !important; background: #ffedac !important; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) #ay-tabs#ay-tabs#ay-tabs .ay-stack__panel.ayq-panel { background: #3e2723 !important; color: #ffedac; }

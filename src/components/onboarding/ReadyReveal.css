@@ -646,3 +646,14 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 .ay-ob-learn :is(button, a):focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-learn :is(h2, p, a, button) { color: inherit !important; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready .ay-ob-learn h2 { display: block !important; visibility: visible !important; opacity: 1 !important; font: 700 18px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif !important; }
+
+/* Nov 10 (founder: "that page in general looks hideous"): on the app's brown page the options are
+   cards and the main button is a butter pill pinned near the bottom, not a brown pill on brown. */
+html body .ayna-mobile.ayna-mobile .ay-pz.ay-ob-ready.ay-ob-ready:not(.is-web) { min-height: calc(100dvh - env(safe-area-inset-top, 0px)); grid-template-rows: auto auto auto auto auto 1fr auto; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__list { display: grid; gap: 12px; border-top: 0 !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__list > li { border: 0 !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__list button { min-height: 88px; padding: 16px !important; border-radius: 22px !important; border: 1.5px solid rgba(255, 237, 172, .35) !important; background: rgba(255, 237, 172, .07) !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__list button.is-done { border-color: rgba(255, 237, 172, .6) !important; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__txt small { white-space: normal; overflow: visible; text-overflow: clip; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__see { align-self: end; margin-top: 24px; background: #ffedac !important; color: #3e2723 !important; box-shadow: 4px 4px 0 #f7badd; }
+html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__see:focus-visible { outline-color: #ffedac; }

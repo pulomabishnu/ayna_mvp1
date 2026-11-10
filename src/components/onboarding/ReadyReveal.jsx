@@ -155,7 +155,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   // records and a wearable, with the time each takes), a small "skip" to the matches.
   const canMore = Boolean(onMorePersonal) && (safetyLeft > 0 || remaining > 0);
   const [stage, setStage] = useState(() => (!prefsDone && (canMore || onConnect) ? 'personal' : 'matches'));
-  const moreMin = Math.max(1, Math.round(((safetyLeft || remaining) * 15) / 60));
+  const moreMin = Math.max(2, Math.round(((safetyLeft || remaining) * 30) / 60));
   const Tag = variant === 'web' ? 'section' : 'main';
   const pctFor = (p) => { const d = getProductMatchDetailsForProduct(p, answers); return isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score); };
 
@@ -166,13 +166,13 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {/* Inspo: the big stat number (heart-rate and wellness dashboards), not a highlighter. */}
         <p className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></p>
         <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
-        <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect ? 2 : 0)} minutes · all optional</p>
+        <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect ? 1 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">
           {canMore && (
             <li style={{ '--i': 0 }}>
               <button type="button" onClick={safetyLeft > 0 ? (onSafety || onMorePersonal) : onMorePersonal}>
                 <span className="ay-pz__blob is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 9.5a4 4 0 1 1 5.5 3.7c-.9.4-1.5 1.2-1.5 2.2V16" /><circle cx="12" cy="19.5" r=".6" /></svg></span>
-                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? `Answer ${safetyLeft} safety ${safetyLeft === 1 ? 'question' : 'questions'}` : 'Answer a few more questions'}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · {moreMin} min</small></span>
+                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : 'Answer a few more questions'}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · about {moreMin} min</small></span>
                 <Arrow />
               </button>
             </li>
@@ -183,15 +183,6 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                 <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
                 <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b><small>{connected ? 'Your matches use your health data too' : 'Apple Health, Oura · 1 min'}</small></span>
                 {connected ? <span className="ay-pz__tick" aria-label="Linked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg></span> : <Arrow />}
-              </button>
-            </li>
-          )}
-          {onConnect && (
-            <li style={{ '--i': 2 }}>
-              <button type="button" onClick={onConnect}>
-                <span className="ay-pz__blob is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 4h7l4 4v12H7z" /><path d="M14 4v4h4M10 13h5M10 16.5h5" /></svg></span>
-                <span className="ay-pz__txt"><b>Connect your health records</b><small>Allergies, medicines · 1 min</small></span>
-                <Arrow />
               </button>
             </li>
           )}

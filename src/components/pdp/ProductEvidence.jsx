@@ -13,6 +13,8 @@ import { fmtDate } from './fmtDate';
 import { buildEvidence, noDash, linkKind, publisherOf, cleanTitle, claimRows } from './evidenceModel';
 import PdpIcon from './PdpIcon.jsx';
 import UrgentSigns from './UrgentSigns.jsx';
+import PdpStack from './PdpStack.jsx';
+import { onlineReviewsFor } from '../../data/reviews/onlineReviews.js';
 import SourcesButton from './SourcesButton.jsx';
 import ProductCommunityReviews from './ProductCommunityReviews.jsx';
 import ProductPeopleSay from './ProductPeopleSay.jsx';
@@ -446,7 +448,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // A compact sticker buy button repeated at the end of ayna summary (no pinned buy bar, audit 7.18).
   endCta = null,
   // The app's 2x2 stat grid at the top of ayna summary ({ id, value, caption }, real fields only), and its note.
-  stats = null, statsNote = '' }) {
+  stats = null, statsNote = '',
+  // 'stack' (the app, Nov 10 redesign): the four views as a card stack, with the summary's rows below it.
+  layout = 'tabs' }) {
   const product = useApprovedResearch(baseProduct);
   // The short answer leads with the summary's first sentence (unless the team wrote a short take), so "What it is" starts after it.
   // A spec first sentence ("65 mg elemental iron…") becomes Key facts "Strength"; the next sentence is the one-liner.
@@ -712,6 +716,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   ) : null;
 
   const rv = m.reviews;
+  // ayna's own summary of online reviews, only where the team has written none (shown as ayna's, never as the team's).
+  const aynaOnline = rv.text.length ? null : onlineReviewsFor(baseProduct?.id);
+  const aynaChecked = aynaOnline ? new Date(`${aynaOnline.checked}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
   const ratingLines = [
     hasMemberRating && <p key="m" className="ayq-rating"><b><span aria-hidden="true">★ </span>{aynaRating.toFixed(1)}</b> from {plural(ratingCount, 'ayna member review')}</p>,
     rv.brandRating && <p key="b" className="ayq-rating"><b><span aria-hidden="true">★ </span>{rv.brandRating.value}</b> from {rv.brandRating.count} reviews <span className="ayq-flag">Reported by the brand or a retailer, not verified by ayna</span></p>,
@@ -739,11 +746,20 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <ReadShelf list={rv.text} label="What people say online" />{rv.sourceSummary && <p className="ayq-p"><Tx>{rv.sourceSummary}</Tx></p>}
           </>
         )}
+        {aynaOnline?.none && <p className="ayq-meta">ayna looked for public reviews on {aynaChecked} and found none we could trust yet.</p>}
+        {aynaOnline && !aynaOnline.none && (
+          <section className="ayv-aynaonline" aria-label="ayna’s summary of online reviews">
+            <h4 className="ayq-subh">What people say online</h4>
+            <ul className="ayq-ul">{aynaOnline.points.map((t) => <li key={t.slice(0, 40)} className="ayq-p">{t}</li>)}</ul>
+            {aynaOnline.caveat && <p className="ayq-meta">{aynaOnline.caveat}</p>}
+            <p className="ayq-meta">ayna’s summary of public reviews, checked {aynaChecked}. Not medical evidence. Read them: {aynaOnline.sources.map((x, i) => <span key={x.url}>{i > 0 && ', '}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>
+          </section>
+        )}
         {rv.incentivized.length > 0 && <p className="ayq-meta">Reviews on {rv.incentivized.join(', ')} may include incentivized reviews.</p>}
         <div className="ayq-reviews"><ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} initial={4} /></div>
         {memberReviews.length > 0 && <><h4 className="ayq-subh">From ayna members</h4><ul className="ayq-quotes">{memberReviews.map((r) => <li key={r.slice(0, 40)}><blockquote>{r}</blockquote></li>)}</ul></>}
         {rateControls}
-        {!ratingLines.length && !reviewRows.length && !rv.text.length && <p className="ayq-p">0 reviews yet. Tried it? You can be the first.</p>}
+        {!ratingLines.length && !reviewRows.length && !rv.text.length && !(aynaOnline && !aynaOnline.none) && <p className="ayq-p">0 reviews yet. Tried it? You can be the first.</p>}
       </div>
       <aside className="ayq-side">
         {rv.elsewhere.length > 0 && (
@@ -949,9 +965,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     </>
   );
   const statItems = (stats || []).filter((x) => x && x.value).slice(0, 4);
-  const summaryBody = (
-    <div className={`ayq-sum ayv-read ayv-sum2${askSlot || endCta ? ' has-side' : ''}`}>
-      <div className="ayv-sum2__main">
+  const summaryLead = (
+    <>
       {(lead || m.summary.length > 0) && (
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
           {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
@@ -967,25 +982,35 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           {statsNote && <p className="ayv-stats__note">{statsNote}</p>}
         </section>
       )}
-      <div className="ayv-xrows">
-        {whoBody && <Step id="ay-sum-who" title="Who it’s for" meta={count(whoL.yes.length + whoL.no.length, 'point')} className="ayv-xrow"><section className="ayv-xbody">{whoBody}</section></Step>}
-        {insideBody && <Step id="ay-sum-details" title={insideTitle} meta={chips ? count(chips.length, m.isDigital ? 'item' : 'ingredient') : ''} className="ayv-xrow"><section className="ayv-xbody">{insideBody}</section></Step>}
-        {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow"><section className="ayv-xbody">{howBody}</section></Step>}
-        {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow"><section className="ayv-xbody">{factsBody}</section></Step>}
-        <Step id="ay-sum-evidence" title="Evidence" meta={evx.status} className="ayv-xrow"><section className="ayv-xbody">{evidenceBody}</section></Step>
-        {/* Safety facts is one more row (founder, Oct 27 15:54: "why is the safety thing in the middle of it").
-            "When to get help now" sits before the tabs, always open (UrgentSigns below). */}
-        {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
-      </div>
+    </>
+  );
+  const xrowsEl = (
+    <div className="ayv-xrows">
+      {whoBody && <Step id="ay-sum-who" title="Who it’s for" meta={count(whoL.yes.length + whoL.no.length, 'point')} className="ayv-xrow"><section className="ayv-xbody">{whoBody}</section></Step>}
+      {insideBody && <Step id="ay-sum-details" title={insideTitle} meta={chips ? count(chips.length, m.isDigital ? 'item' : 'ingredient') : ''} className="ayv-xrow"><section className="ayv-xbody">{insideBody}</section></Step>}
+      {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow"><section className="ayv-xbody">{howBody}</section></Step>}
+      {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow"><section className="ayv-xbody">{factsBody}</section></Step>}
+      <Step id="ay-sum-evidence" title="Evidence" meta={evx.status} className="ayv-xrow"><section className="ayv-xbody">{evidenceBody}</section></Step>
+      {/* Safety facts is one more row (founder, Oct 27 15:54: "why is the safety thing in the middle of it").
+          "When to get help now" sits before the tabs, always open (UrgentSigns below). */}
+      {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
+    </div>
+  );
+  const sideEl = (askSlot || endCta) ? (
+    <div className="ayv-sum2__side">
+      {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
+      {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
+      {endCta && <div className="ayv-endcta">{endCta}</div>}
+    </div>
+  ) : null;
+  const summaryBody = (
+    <div className={`ayq-sum ayv-read ayv-sum2${sideEl ? ' has-side' : ''}`}>
+      <div className="ayv-sum2__main">
+        {summaryLead}
+        {xrowsEl}
       </div>
       {/* Side by side on the website (details left, Ask and Buy right); one column in the app. */}
-      {(askSlot || endCta) && (
-        <div className="ayv-sum2__side">
-          {askSlot && <section className="ayv-ask" aria-label="Ask about this product">{askSlot}</section>}
-          {/* No pinned buy bar (audit 7.18): a compact sticker button repeats here instead. */}
-          {endCta && <div className="ayv-endcta">{endCta}</div>}
-        </div>
-      )}
+      {sideEl}
     </div>
   );
 
@@ -1059,7 +1084,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const glanceCards = reviewRows.length
     ? topReviews(reviewRows, 2).filter((r) => String(r.body || '').trim()).map((r) => ({ key: r.id, stars: Number(r.rating) || null, text: String(r.body).replace(/\*+|__/g, '').trim(), meta: [authorName(r), shortDate(r.created_at)].filter(Boolean).join(', '), href: `/community/p/${r.id}`, onOpen: onOpenReview ? () => onOpenReview(r.id) : null }))
     : memberReviews.length ? memberReviews.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna member' }))
-      : rv.text.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: noDash(t), meta: 'Summary of reviews online' }));
+      : rv.text.length ? rv.text.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: noDash(t), meta: 'Summary of reviews online' }))
+        : aynaOnline?.points.length ? aynaOnline.points.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna’s summary of online reviews' })) : [];
   const allCount = Math.max(ratingCount || 0, reviewRows.length);
   const reviewsTab = (
     <div className="ayq-rev">
@@ -1115,6 +1141,32 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const bodies = { clinical: clinicalBody, literature: literatureBody, summary: summaryBody, reviews: reviewsTab };
   const tabs = TAB_ORDER.map((id) => ({ id, label: TAB_LABELS[id], short: TAB_SHORT_LABELS[id], body: bodies[id] }));
   const activeTab = TAB_ORDER.includes(tab) ? tab : DEFAULT_TAB;
+
+  if (layout === 'stack') {
+    const revTag = bigRating ? `${bigRating.value} ★` : '';
+    const cards = [
+      { id: 'summary', title: TAB_LABELS.summary, body: <div className="ayq-sum ayv-read">{summaryLead}</div> },
+      { id: 'clinical', title: TAB_LABELS.clinical, body: clinicalBody },
+      { id: 'literature', title: TAB_LABELS.literature, tag: evTotal > 0 ? plural(evTotal, 'source') : '', body: literatureBody },
+      { id: 'reviews', title: TAB_LABELS.reviews, tag: revTag, body: reviewsTab },
+    ].map((c) => ({ ...c, panelClass: `ayq-panel ayq-tp is-${c.id}` }));
+    return (
+      <TermsCtx.Provider value={plan}>
+        <div id="ay-tabs" className="ayq ayq--tabs ayv ayv--stack">
+          {/* Binding safety rule: "When to get help now" is never collapsed and never behind a tab or card. */}
+          {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
+          <div id="ay-pt">
+            <PdpStack cards={cards} active={tab} onChange={(id) => setTab(id || 'none')} />
+          </div>
+          <div className="ayq-sum ayv-read ayv-sum2 ayv-stack-rest">
+            <div className="ayv-sum2__main">{xrowsEl}</div>
+            {sideEl}
+          </div>
+          {afterOverview}
+        </div>
+      </TermsCtx.Provider>
+    );
+  }
 
   return (
     <TermsCtx.Provider value={plan}>

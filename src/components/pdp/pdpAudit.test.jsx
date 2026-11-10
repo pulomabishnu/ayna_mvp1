@@ -40,9 +40,16 @@ describe('tabs: ayna summary first and open (audit P0 #4, 7.16)', () => {
     expect(DEFAULT_TAB).toBe('summary');
     expect(TAB_ORDER.map((t) => TAB_LABELS[t])).toEqual(['ayna summary', 'Clinical opinion', 'Scientific literature', 'Reviews']);
   });
-  it('website, app page and app sheet render the summary tab first and selected', () => {
+  it('app page (Nov 10 redesign): the same four views as a card stack, ayna summary first and open', () => {
+    const html = renderToStaticMarkup(<ProductDetailScreen product={byId(SAALT)} />);
+    const cards = [...html.matchAll(/class="ay-stack__card[^"]*"[^>]*data-card="([^"]+)"/g)].map((m) => m[1]);
+    expect(cards).toEqual(TAB_ORDER);
+    expect(html).toMatch(/class="ay-stack__card is-ink is-open"[^>]*data-card="summary"/);
+    expect((html.match(/is-open/g) || []).length).toBe(1);
+  });
+  it('website and app sheet render the summary tab first and selected', () => {
     const p = byId(SAALT);
-    for (const html of [renderToStaticMarkup(<ProductModal product={p} />), renderToStaticMarkup(<ProductDetailScreen product={p} />), renderToStaticMarkup(<ProductSheet product={p} onClose={() => {}} />)]) {
+    for (const html of [renderToStaticMarkup(<ProductModal product={p} />), renderToStaticMarkup(<ProductSheet product={p} onClose={() => {}} />)]) {
       const tabs = tabsOf(html);
       expect(tabs.map((t) => t.id)).toEqual(TAB_ORDER);
       expect(tabs[0].selected).toBe(true);
@@ -93,7 +100,7 @@ describe('safety line: under the button, calm, personalised (audit P0 #3, 7.5)',
     for (const html of pages) {
       const buy = html.indexOf('ayv-buy');
       const safe = html.indexOf('class="ayv-safeline"');
-      const tabs = html.indexOf('role="tablist"');
+      const tabs = html.includes('role="tablist"') ? html.indexOf('role="tablist"') : html.indexOf('class="ay-stack"');
       expect(buy).toBeGreaterThan(-1);
       expect(safe).toBeGreaterThan(buy);
       expect(safe).toBeLessThan(tabs);
@@ -228,7 +235,7 @@ describe('decision block contents (audit 13.1, 14)', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
     // Critique Oct 27: one action row (Buy, Save, Ask) with the disclosure under it, the safety line, then the
     // tabs; the highlights are the 2x2 stat grid at the top of ayna summary.
-    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'class="ay-pdp2-act"', 'ayv-disclose', 'class="ayv-safeline"', 'role="tablist"', 'class="ayv-stats"'];
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'class="ay-pdp2-act"', 'ayv-disclose', 'class="ayv-safeline"', 'class="ay-stack"', 'class="ayv-stats"'];
     const pos = order.map((n) => html.indexOf(n));
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);
