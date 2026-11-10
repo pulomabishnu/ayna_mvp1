@@ -6,13 +6,13 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/produ
 import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
-import { isPartnerBrandItem, getPartnerDisclosureText } from '../../utils/partnerBrands.js';
+import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import { SafetyLine, MatchLockup, PriceRow, AskPanel } from '../../components/pdp/PdpParts.jsx';
-import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt, retailerOf } from '../../components/pdp/decision.js';
+import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from '../../components/pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { haptic } from '../../utils/haptics.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
@@ -234,7 +234,6 @@ export default function ProductDetailScreen({
 }) {
   // The same research layer the website loads (data/researchLoader.js), so the app shows every field.
   const { product, loaded: researchLoaded } = useResearchState(catalogProduct);
-  const [partnerOpen, setPartnerOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   // Rendered locally (not through MobileApp's shared `overlay` state, which
   // only holds one layer) so "back" from here returns to this product
@@ -339,7 +338,6 @@ export default function ProductDetailScreen({
   // One source of truth for where she buys (pdp/buyModel, the website's rule).
   const buy = buyModel(product, { brand, name: displayName(product) });
   const isPartner = isPartnerBrandItem(product);
-  const partnerDisclosure = getPartnerDisclosureText(product);
   // Same information architecture as the website's product page
   // (components/pdp/ProductEvidence): ayna's summary, At a glance, then the
   // Clinical opinion / Scientific literature / Reviews / Safety / How to use /
@@ -409,7 +407,6 @@ export default function ProductDetailScreen({
   const heroV = heroPriceView(product, { price: priceParts(product), perUnit, glance, brand });
   // At most two fact chips by the price (founder, Oct 27); the rest are Product facts "Price details".
   const priceNotes = heroNotes(heroV.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n))).slice(0, MAX_PRICE_CHIPS);
-  const others = alsoAt(buy?.rows);
   // Sizes or options as chips under the price (the variants, else the options listed in the price).
   const sizeChips = variantLabels.length ? variantLabels : (!perUse ? priceNotes : []);
   const askStarters = productAskStarters({ hasProfile: Boolean(quizAnswers), percent: matchState?.kind === 'pct' ? matchState.percent : null, kind: cupOrDisc(product), hasIud: hasIud(quizAnswers), hasSizes: variantLabels.length > 0 });
@@ -483,27 +480,29 @@ export default function ProductDetailScreen({
               {variantLabels.length > 0 && variantKind === 'Sizes' && <button type="button" className="ayv-textbtn" onClick={() => setAskOpen(true)}>Which size am I?</button>}
             </div>
           )}
-          <div className="ay-pdp2-acts" data-tour="pdp-actions" ref={actionsRef}>
+          {/* Nov 10 mockup (founder): one full-width Buy, the disclosure, then a row of small buttons. */}
+          <div className="ay-pdp3-buy" data-tour="pdp-actions" ref={actionsRef}>
             {buyLink()}
-            <button type="button" className={`ay-pdp2-act${isSaved ? ' is-on' : ''}`} aria-pressed={isSaved} aria-label={isSaved ? `Saved. Remove ${name} from Saved` : `Save ${name}`} onClick={() => { haptic('light'); onToggleSaved?.(); }}>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
+            {shopAction && <p className="ay-pdp-commission ayv-fine ayv-disclose"><span>ayna may earn a commission.</span></p>}
+          </div>
+          <div className="ay-pdp3-pills" role="group" aria-label="Product actions">
+            <button type="button" className={isSaved ? 'is-on' : undefined} aria-pressed={isSaved} aria-label={isSaved ? `Saved. Remove ${name} from Saved` : `Save ${name}`} onClick={() => { haptic('light'); onToggleSaved?.(); }}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill={isSaved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
               <span aria-hidden="true">{isSaved ? 'Saved' : 'Save'}</span>
             </button>
-            <button type="button" className="ay-pdp2-act" onClick={() => setAskOpen(true)}>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z" /></svg>
-              <span>Ask</span><span className="sr-only"> about this product</span>
+            {onAddToEcosystem && <button type="button" className={isInEcosystem ? 'is-on' : undefined} aria-pressed={isInEcosystem} onClick={() => { haptic('light'); onAddToEcosystem?.(); }}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg><span>{isInEcosystem ? 'Added' : 'Add'}</span><span className="sr-only"> to your routine</span>
+            </button>}
+            {onCommunityAction && <button type="button" onClick={() => onCommunityAction('post')}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Post</span><span className="sr-only"> about this product</span>
+            </button>}
+            <button type="button" onClick={handleShare}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5h14v-5" /></svg><span>Share</span>
+            </button>
+            <button type="button" onClick={() => setAskOpen(true)}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg><span>Ask</span><span className="sr-only"> about this product</span>
             </button>
           </div>
-          {/* The disclosure, always visible right under Buy (audit 7.9). */}
-          {shopAction && (
-            <p className="ay-pdp-commission ayv-fine ayv-disclose">
-              <span>{isPartner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
-              {buy.checked && <span>{buy.checked}</span>}
-              {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(r.url) })}>{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
-              {isPartner && <span><button type="button" className="ayp-textlink" aria-expanded={partnerOpen} onClick={() => setPartnerOpen((v) => !v)}>{partnerOpen ? 'Less' : 'How partnerships work'}</button></span>}
-            </p>
-          )}
-          {isPartner && partnerOpen && <div className="ayna-figma-partner-copy ayv-fine">{partnerDisclosure} <a href="https://www.aynahealth.co/startups" target="_blank" rel="noopener noreferrer">Read about our brand partnerships</a></div>}
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           <BigPurchase product={product} cheaper={related.cheaper || []} pctFor={(p) => matchPercentFor(p, quizAnswers, matchOpts)} onOpenProduct={onOpenProduct} onCompare={onCompare ? () => onCompare(product) : null} onAsk={() => setAskOpen(true)} />
           {/* Always visible: her IUD first when she has one, TSS for cups (PDP audit 7.5). */}

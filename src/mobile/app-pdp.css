@@ -411,3 +411,15 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 /* The block under the card sits close and evenly spaced. */
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head + .ayq-sheet { margin-top: 0 !important; padding-top: 14px !important; display: grid; gap: 12px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head + .ayq-sheet > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+/* Nov 10 mockup: full-width Buy, the one-line disclosure, then small pill actions in one row. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy { display: grid; gap: 8px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy .ayv-buy { display: flex !important; width: 100% !important; max-width: none !important; min-height: 56px; justify-content: center; align-items: center; font-size: 17px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy .ay-pdp-commission { margin: 0 !important; font: 500 13px/1.3 var(--ayna-font-ui, 'Figtree'), sans-serif !important; opacity: .85; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 700 14px/1 var(--ayna-font-ui, 'Figtree'), sans-serif; cursor: pointer; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button.is-on { background: #3e2723; color: #ffedac; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
+.ayna-mobile[data-theme='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button { border-color: #ffedac; color: #ffedac; }
+.ayna-mobile[data-theme='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button.is-on { background: #ffedac; color: #3e2723; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills button { justify-content: center; gap: 4px; padding: 0 4px; font-size: 13px; min-height: 40px; }

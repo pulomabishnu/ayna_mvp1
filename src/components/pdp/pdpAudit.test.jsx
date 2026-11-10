@@ -234,11 +234,11 @@ describe('decision block contents (audit 13.1, 14)', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
     // Critique Oct 27: one action row (Buy, Save, Ask) with the disclosure under it, the safety line, then the
     // tabs; the highlights are the 2x2 stat grid at the top of ayna summary.
-    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'class="ay-pdp2-act"', 'ayv-disclose', 'class="ayv-safeline"', 'class="ay-stack"', 'class="ayv-stats"'];
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ay-pdp3-pills"', 'class="ayv-safeline"', 'class="ay-stack"', 'class="ayv-stats"'];
     const pos = order.map((n) => html.indexOf(n));
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);
-    expect(html).toMatch(/ayna partner\. We may earn a commission\./);
+    expect(html).toMatch(/ayna may earn a commission\./);
     // Nov 5 (founder): the % is one line with "See why", which opens the full Why view.
     const plain = { fullHealthIntake: { ...IUD_PROFILE.fullHealthIntake, currentMedicationItems: ['Ibuprofen'] }, personalizationCompleted: true };
     const d = getProductMatchDetailsForProduct(byId(SAALT), plain);
