@@ -21,8 +21,9 @@ describe('commercial + health data regulatory regressions',()=>{
     expect(main).not.toContain('if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false })');
     // Banner wording approved by Puloma, 2026-11-10.
     expect(consent).toContain('Help us improve ayna for women like you');
-    expect(consent).toContain('Turn on analytics so we can see which pages and products help, across your visits. Never sold,');
-    expect(consent).toContain('never used for ads. Until you choose, we only count visits anonymously; Keep off stops that too.');
+    expect(consent).toContain("Turn on analytics so we can count visitors and see which products are popular. We don't know");
+    expect(consent).toContain('who you are unless you make an account. Never sold, never used for ads. Keep off, and our');
+    expect(consent).toContain("analytics can't see you at all.");
     expect(consent).toContain('Opt-out request honored.');
     // The policy and health notice say opted-in analytics include products viewed.
     expect(policy).toContain('the products you view and click (product name or ID)');

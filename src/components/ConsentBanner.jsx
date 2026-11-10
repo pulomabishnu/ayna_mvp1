@@ -133,8 +133,9 @@ export default function ConsentBanner() {
       </button>
       <p>
         <strong className="consent-banner__title">Help us improve ayna for women like you</strong>
-        Turn on analytics so we can see which pages and products help, across your visits. Never sold,
-        never used for ads. Until you choose, we only count visits anonymously; Keep off stops that too.{' '}
+        Turn on analytics so we can count visitors and see which products are popular. We don't know
+        who you are unless you make an account. Never sold, never used for ads. Keep off, and our
+        analytics can't see you at all.{' '}
         <a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
       </p>
       {/* Both buttons share one class and style: equal size, colour and weight. */}
