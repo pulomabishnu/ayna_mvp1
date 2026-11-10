@@ -40,6 +40,7 @@ import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/f
 import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
 import { appErrorProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
+import { applyConsentTier } from './utils/essentialAnalytics'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 import { nativePosthogTransportConfig } from './utils/nativePosthogTransport.js'
 import { trackAppOpened, eventSurface } from './utils/analyticsEvents.js'
@@ -176,7 +177,18 @@ function sanitizePosthogEvent(event) {
   if (Capacitor.isNativePlatform() && clean?.properties) {
     clean.properties.$host = 'native.aynahealth.co';
   }
-  return clean;
+  // Before a choice, only the anonymous essential tier (pageviews, errors) is
+  // sent; a decline or GPC sends nothing. See src/utils/essentialAnalytics.js.
+  // Account/privacy controls opt out through the SDK without writing the
+  // banner's key, so an explicit SDK denial counts as "Keep analytics off".
+  let optedIn = false;
+  let sdkDenied = false;
+  try {
+    optedIn = posthog.has_opted_in_capturing?.() === true;
+    sdkDenied = posthog.get_explicit_consent_status?.() === 'denied';
+  } catch { /* treat as not opted in */ }
+  const stored = sdkDenied ? 'denied' : getStoredConsent();
+  return applyConsentTier(clean, { optedIn, gpc: GPC_ENABLED, stored });
 }
 
 if (!POSTHOG_KEY) {
@@ -210,6 +222,12 @@ if (!POSTHOG_KEY) {
     // the user explicitly opts in. A stale grant also defaults to OFF.
     // GPC always disables capture here. No region lookup can silently enable it.
     opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF !== 'granted',
+    // Not opted in = cookieless: no cookies, storage or ID, so we can still
+    // tell whether anyone visits and whether the site breaks. before_send
+    // limits that to pageviews and errors and drops everything after a
+    // decline or GPC. Requires "Cookieless server hash mode" in PostHog
+    // project settings, or PostHog discards these events.
+    cookieless_mode: 'on_reject',
     before_send: sanitizePosthogEvent,
     // Automatic exception capture can include raw error messages/stacks. In a
     // health product those may accidentally contain user-entered context, so
