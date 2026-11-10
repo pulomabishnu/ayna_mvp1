@@ -292,7 +292,7 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
 const QUIZ_STEP_KEY = 'ayna_quiz_step';
 const DEV_DEMO_USER = devPreviewOn() ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
 function quizStepToResume() {
-  try { const v = sessionStorage.getItem(QUIZ_STEP_KEY); return ['connect', 'plan'].includes(v) ? v : null; } catch { return null; }
+  try { const v = sessionStorage.getItem(QUIZ_STEP_KEY); return ['connect', 'plan', 'ready'].includes(v) ? v : null; } catch { return null; }
 }
 
 function hasSavedIntakeDraft() {
@@ -490,25 +490,10 @@ export default function MobileApp() {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     rootRef.current?.firstElementChild?.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 120, easing: 'linear' });
   }, [screen]);
-  const swipeStart = useRef(null);
-  const handleMainTouchStart = (event) => {
-    // Home (its dashboard view) and Explore, the first two tabs; never on the chat.
-    const onHomeRoot = screen === 'ayna' && homeView === (chatFirst ? 'dashboard' : 'home');
-    if (overlay || !(onHomeRoot || ['browse', 'explore'].includes(screen)) || event.touches.length !== 1) return;
-    const target = event.target;
-    if (target.closest('input, textarea, select, [contenteditable="true"], [data-no-page-swipe]')) return;
-    swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-  };
-  const handleMainTouchEnd = (event) => {
-    if (!swipeStart.current || !event.changedTouches.length) return;
-    const dx = event.changedTouches[0].clientX - swipeStart.current.x;
-    const dy = event.changedTouches[0].clientY - swipeStart.current.y;
-    swipeStart.current = null;
-    if (Math.abs(dx) < 85 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-    // Swipe between the first two tabs, Home and Explore.
-    if (screen === 'ayna' && dx < 0) { setExploreSection('overview'); setScreen('explore'); }
-    if ((screen === 'explore' || screen === 'browse') && dx > 0) { setHomeView(homeRoot); setScreenRaw(homeTarget); }
-  };
+  // Swiping between Home and Explore was removed (focus group, Nov 9): a slight sideways
+  // scroll on Home threw people into Shop and back. The tab bar is the only way between tabs.
+  const handleMainTouchStart = undefined;
+  const handleMainTouchEnd = undefined;
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
@@ -593,6 +578,8 @@ export default function MobileApp() {
   // the same Supabase user_ecosystems rows used by the website.
   const ecosystemFlagsRef = useRef({ trackedProducts: {}, omittedProducts: {} });
   const pendingQuizEcosystemRef = useRef(null);
+  // nav.onSeeMatches of the latest render: saves a quiz waiting on its last step.
+  const commitPendingQuizRef = useRef(null);
   const { savedMap, isSaved, toggleSaved, clearLocal: clearLocalSaves } = useSavedProducts(authUser);
   // Guests save on this phone straight away (the same local store the website
   // uses); signing in later merges these into her account. One gentle nudge
@@ -720,7 +707,7 @@ export default function MobileApp() {
   }, [screen, session.pendingQuiz, updateSession, intakeFlow]);
   useEffect(() => {
     try {
-      if (['connect', 'plan'].includes(screen)) sessionStorage.setItem(QUIZ_STEP_KEY, screen);
+      if (['connect', 'plan', 'ready'].includes(screen)) sessionStorage.setItem(QUIZ_STEP_KEY, screen);
       else if (['quiz', 'building', 'reveal', 'eco', 'ecointro', 'browse'].includes(screen)) sessionStorage.removeItem(QUIZ_STEP_KEY);
     } catch { /* storage blocked */ }
   }, [screen]);
@@ -780,6 +767,10 @@ export default function MobileApp() {
       // happened in this app session, save those recommendations for this
       // newly authenticated user before loading the canonical merged state.
       const pending = pendingQuizEcosystemRef.current || (session.pendingIntakeSync ? storedProducts : null);
+      // A finished quiz still on its last step (signed in before "See my matches"):
+      // her answers reach her account now, so a closed app can't lose them.
+      const waiting = session.pendingQuiz?.mode === 'new' ? session.pendingQuiz.answers : null;
+      if (waiting?.fullHealthIntake) await saveHealthIntakeForCurrentUser(waiting.fullHealthIntake).catch(() => null);
       if (session.pendingIntakeSync && lastQuizAnswers?.fullHealthIntake) {
         // A completed anonymous intake must travel with its picks through
         // OAuth redirects, including the recommendation-count preference.
@@ -831,17 +822,24 @@ export default function MobileApp() {
 
       const restoredQuizAnswers = rawIntake ? mapIntakeToLegacyQuizProfile(rawIntake) : null;
 
-      updateSession((prev) => ({
+      updateSession((prev) => {
+        // Matches saved from a quiz finished just before sign-in may not be in
+        // this read yet (their write races it): keep them.
+        const remoteIds = new Set(remoteProducts.map((p) => p.id));
+        const keepLocal = waiting ? (prev.myProducts || []).filter((p) => p?.id && !remoteIds.has(p.id)) : [];
+        const merged = [...remoteProducts, ...keepLocal];
+        return {
         userName: firstName || prev.userName,
-        myProducts: remoteProducts,
+        myProducts: merged,
         omittedProducts: { ...(prev.omittedProducts || {}), ...remoteOmitted },
-        hasEcosystem: remoteProducts.length > 0,
+        hasEcosystem: merged.length > 0,
         pendingIntakeSync: false,
         // Don't clobber a completion that just happened locally this same
         // session (e.g. mobile onboarding right before sign-in) with
         // possibly-older server data.
-        lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) ? prev.lastQuizAnswers : null),
-      }));
+        lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) || waiting ? prev.lastQuizAnswers : null),
+        };
+      });
 
       // Mid quiz-end steps: stay there so her new answers get applied.
       if (remoteProducts.length > 0 && !session.pendingQuiz) setScreen('ayna');
@@ -970,7 +968,7 @@ export default function MobileApp() {
     ...(outcomeHistory ? { outcomeHistory } : {}),
   }), [planBaseOpts, planHealthContext, healthRecords, outcomeHistory]);
   const planSeeded = useMemo(() => {
-    if (!pendingAnswers || !['connect', 'plan'].includes(screen)) return [];
+    if (!pendingAnswers || !['connect', 'plan', 'ready'].includes(screen)) return [];
     try { return seedEcosystemFromAnswers(pendingAnswers, planMatchOpts); } catch { return []; }
   }, [pendingAnswers, planMatchOpts, screen]);
   const planProducts = useMemo(() => {
@@ -1000,6 +998,13 @@ export default function MobileApp() {
     // the way react-hooks/set-state-in-effect expects it.
     Promise.resolve().then(() => {
       updateSession((prev) => ({ userName: firstName || prev.userName }));
+      // Focus group, Nov 9: quiz > connect > "Save my matches" > Google dropped her
+      // on Home with the quiz never saved, and "Finish my quiz" started over at
+      // "How old are you?". A quiz waiting on its last step is saved now and her
+      // matches open, the same as tapping "See my matches".
+      // Came to sign in from "Link your wearables": back to linking them, quiz kept (founder, Nov 9).
+      if (session.pendingQuiz?.answers && authReturnScreenRef.current === 'connect') { setScreen('connect'); return; }
+      if (session.pendingQuiz?.answers && commitPendingQuizRef.current) { commitPendingQuizRef.current(); return; }
       setScreen('ayna');
     });
   }, [authUser]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1263,7 +1268,8 @@ export default function MobileApp() {
     // Night mode is a persistent user preference (Preferences screen), it
     // stays on everywhere until turned off there, so navigation must never
     // force it back to light.
-    onStartQuiz: () => { setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
+    // A finished quiz waiting on its last step goes back to that step, never to question 1.
+    onStartQuiz: () => { if (session.pendingQuiz?.answers) { setScreen(quizStepToResume() || (session.pendingQuiz.mode === 'new' ? 'ready' : 'plan')); return; } setIntakeMode(hasEcosystem ? 'add' : 'new'); setEditingHealthProfile(hasEcosystem); setScreen('quiz'); },
     onOpenMonthlyCheckin: () => setScreen('checkin'),
     onReplayStory: () => { setRevealFrom(screen); setRevealAtEnd(false); setScreen('reveal'); },
     // Leaving a replayed story: back to where she opened it.
@@ -1358,6 +1364,8 @@ export default function MobileApp() {
       if (screen === 'library') { if (navStackRef.current.length > 1) { try { window.history.back(); return; } catch { /* fall through */ } } setScreen('explore'); return; }
       if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
       if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); goBackTo(to); return; }
+      // Linking wearables is reached from her matches now: Back returns there, answers kept.
+      if (screen === 'connect' && session.pendingQuiz?.mode === 'new') { setScreen('ready'); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
@@ -1392,8 +1400,10 @@ export default function MobileApp() {
       setResumeQuizDraft(false);
       setIntakeAtOptional(false);
       setIntakeMode('new');
-      // First run: health data (step 7), then the reveal. Edits keep the plan step.
-      setScreen(authUser && health.connected.length ? (intakeMode === 'new' ? 'ready' : 'plan') : 'connect');
+      // First run: her matches straight away (focus group, Nov 9: the wearable step
+      // before any matches read as "the quiz gave me nothing"). Connecting health data
+      // is offered on the matches screen. Edits keep the plan step.
+      setScreen(intakeMode === 'new' ? 'ready' : (authUser && health.connected.length ? 'plan' : 'connect'));
     },
     // Monthly check-in: she already has an account and an ecosystem, so it
     // goes straight to her updated plan instead of back through the
@@ -1417,8 +1427,10 @@ export default function MobileApp() {
     // Nov 3: the reveal's main button plays the Wrapped story (signed in or out).
     onWatchWrapped: () => { nav.onSeeMatches(); markOnboardingDone(); setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
-    onReadyBack: () => setScreen('connect'),
+    onReadyBack: () => resumeQuizAtLastStep(),
     onReadyConnect: () => setScreen('connect'),
+    readyConnected: Boolean(authUser && health.connected.length),
+    readyMatchOpts: planMatchOpts,
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,
@@ -1522,8 +1534,11 @@ export default function MobileApp() {
       updateSession((prev) => ({ userName: name || prev.userName }));
       const resume = authMode === 'signin' ? authResumeRef.current : null;
       authResumeRef.current = null;
-      if (resume) resume();
-      else if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
+      // Her finished quiz is saved the moment she has an account (focus group, Nov 9).
+      // Signed up to link her wearables: straight back to linking them, quiz kept (founder, Nov 9).
+      if (session.pendingQuiz && authReturnScreenRef.current === 'connect') setScreen('connect');
+      else if (session.pendingQuiz?.answers && session.pendingQuiz.mode === 'new') nav.onSeeMatches();
+      else if (resume) resume();
       // Back to where she signed in from (Community invites, Saved, Today...), not always the
       // first tab: signing in should never move her away from what she was doing (team direction 55).
       else if (authReturnScreenRef.current && !AUTH_NO_RETURN.has(authReturnScreenRef.current)) setScreen(authReturnScreenRef.current);
@@ -1531,6 +1546,7 @@ export default function MobileApp() {
     },
     hasEcosystem,
   };
+  commitPendingQuizRef.current = nav.onSeeMatches;
 
   // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
   const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
@@ -1882,6 +1898,7 @@ export default function MobileApp() {
           textSizeIndex={textSizeIndex}
           onTextSizeChange={setTextSizeIndex}
           onEditProfile={() => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+          onRequestEcosystemReset={hasEcosystem ? () => setResetDialogOpen(true) : null}
           quizDraft={quizDraft}
           onResumeQuiz={resumeQuiz}
           onStartOverQuiz={startQuizOver}

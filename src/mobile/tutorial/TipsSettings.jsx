@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { readTour, replayTour, setTipsEnabled, TOUR_EVENT } from './tourStore.js';
+import { readTour, setTipsEnabled, TOUR_EVENT } from './tourStore.js';
 import { ASK_SUGGEST_EVENT, readSuggestHidden, writeSuggestHidden } from '../../components/nav/askSuggestions.js';
+import TourSheet from './TourSheet.jsx';
 import './settings-search.css';
 
 /**
@@ -12,6 +13,8 @@ export default function TipsSettings({ renderSwitch, variant = 'app' }) {
   const [prefs, setPrefs] = useState(readTour);
   const [suggestionsOn, setSuggestionsOn] = useState(() => !readSuggestHidden());
   const [status, setStatus] = useState('');
+  const [sheet, setSheet] = useState(false);
+  const theme = () => (/dark/.test(document.querySelector('.ayna-mobile, .app-container')?.getAttribute('data-theme') || '') ? 'dark' : 'light');
   useEffect(() => {
     const on = () => setPrefs(readTour());
     window.addEventListener(TOUR_EVENT, on);
@@ -30,7 +33,8 @@ export default function TipsSettings({ renderSwitch, variant = 'app' }) {
     setSuggestionsOn(next);
     setStatus(next ? 'Ask ayna suggestions are back.' : 'Ask ayna suggestions are hidden.');
   };
-  const replay = () => { replayTour(); setStatus('Tips are back. You’ll see them again on each page.'); };
+  // Focus group, Nov 9: the tour is one page you read at once. Page tips stay a separate switch.
+  const replay = () => setSheet(true);
   if (variant === 'web') {
     return (
       <section className="wy-sec ay-tips-set is-web" aria-labelledby="wy-tips-h">
@@ -49,11 +53,12 @@ export default function TipsSettings({ renderSwitch, variant = 'app' }) {
               suggestion row (founder, Oct 27: "the website doesn't need this"). */}
           <li>
             <button type="button" className="ay-group__row ay-group__row--link wy-row ay-tips-set__replay" onClick={replay}>
-              <span className="ay-group__text"><span className="ay-group__value">Replay the tour</span></span>
+              <span className="ay-group__text"><span className="ay-group__value">Show the tour</span></span>
             </button>
           </li>
         </ul>
         <p className="wy-foot ay-tips-set__status" role="status">{status}</p>
+        {sheet && <TourSheet theme={theme()} onClose={() => setSheet(false)} />}
       </section>
     );
   }
@@ -73,11 +78,12 @@ export default function TipsSettings({ renderSwitch, variant = 'app' }) {
             {renderSwitch({ on: suggestionsOn, onClick: toggleSuggestions, label: 'Show Ask ayna suggestions' })}
           </div>
           <button id="ay-settings-replay-tour" type="button" className="ay-set-row ay-tips-set__replay" onClick={replay}>
-            <span className="ay-set-title">Replay the tour</span>
+            <span className="ay-set-title">Show the tour</span>
           </button>
         </div>
         <p className="ay-tips-set__status" role="status">{status}</p>
       </section>
+      {sheet && <TourSheet theme={theme()} onClose={() => setSheet(false)} />}
     </>
   );
 }

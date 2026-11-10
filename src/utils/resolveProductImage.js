@@ -98,8 +98,25 @@ export function isPlaceholderProductImage(imageUrl, allowBrandLogo = false) {
   return false;
 }
 
+/**
+ * Shopify stores serve any width on request. Some brand photos are 4000px
+ * (Viv: ~4MB each), which loaded so slowly on a phone that the focus group
+ * (Nov 9) saw blank tiles. Ask Shopify for 1000px instead; never larger.
+ */
+export function sizedShopImage(src) {
+  try {
+    const u = new URL(src);
+    const shop = /(^|\.)cdn\.shopify\.com$/i.test(u.hostname) || /\/cdn\/shop\//.test(u.pathname);
+    if (!shop || u.searchParams.has('width')) return src;
+    if (!/\.(png|jpe?g|webp)$/i.test(u.pathname)) return src;
+    u.searchParams.set('width', '1000');
+    return u.toString();
+  } catch { return src; }
+}
+
 function proxyExternalImage(src) {
   if (!/^https?:\/\//i.test(src)) return src;
+  src = sizedShopImage(src);
   // apiUrl: inside the iOS/Android app a bare /api path points at the phone
   // (capacitor://localhost), so 35 product photos never loaded there (Nov 2).
   return apiUrl(`/api/image-proxy?url=${encodeURIComponent(src)}`);

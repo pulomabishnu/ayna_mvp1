@@ -374,7 +374,8 @@ function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
       if (!t0 || !e.changedTouches.length) return;
       const dx = e.changedTouches[0].clientX - t0.x;
       const dy = e.changedTouches[0].clientY - t0.y;
-      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      // A clear sideways swipe only (Nov 9: scrolling with a little drift changed tabs).
+      if (Math.abs(dx) < 90 || Math.abs(dx) < Math.abs(dy) * 2.2) return;
       const i = tabs.findIndex((t) => t.id === active);
       const next = tabs[i + (dx < 0 ? 1 : -1)];
       if (next) onChange(next.id);
@@ -533,7 +534,10 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     if (!syncHash) return;
     if (takeProductTab() === 'reviews') { goTo('reviews'); return; }
     const h = window.location.hash.slice(1);
-    if (resolveTarget(h)) goTo(h);
+    // The default tab opens where it is, at the top of the page: only a link to a
+    // specific tab or section (#reviews, #ingredients) scrolls down on arrival.
+    const t = resolveTarget(h);
+    if (t && (t.tab !== DEFAULT_TAB || t.anchor)) goTo(h);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {

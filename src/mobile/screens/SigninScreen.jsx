@@ -477,6 +477,22 @@ export default function SigninScreen({
             </section>
           )}
 
+          {/* The one consent box sits ABOVE Apple and Google (focus group, Nov 9: it was below
+              the email form, so "Continue with Google" seemed not to work until you scrolled). */}
+          {mode === 'signup' && (
+            <div className="ay-auth-consent">
+              <div className="ay-auth-consent-item">
+                <label className={`ay-auth-consent-row${fieldErrors.aiConsent ? ' ay-check-invalid' : ''}`}>
+                  <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
+                  <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
+                </label>
+                {/* #12 Pai: trust badges beside the consent line. */}
+                <p className="ay-auth-badges" aria-label="How we treat your data"><span>Never sold</span><span>Encrypted in transit</span></p>
+                <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
+              </div>
+            </div>
+          )}
+
           {/* Fastest way in first: Apple, then Google, then email (onboarding audit #1). */}
           <div className="ay-auth-social">
             <AppleButton onClick={handleApple} disabled={appleLoading || googleLoading || loading} />
@@ -495,20 +511,6 @@ export default function SigninScreen({
             <input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={(e) => { setPassword(e.target.value); clearField('password'); }} style={inputStyle} {...invalidProps('password')} />
           </Field>
           <InlineError id={errId('password')}>{fieldErrors.password}</InlineError>
-
-          {mode === 'signup' && (
-            <div className="ay-auth-consent">
-              <div className="ay-auth-consent-item">
-                <label className={`ay-auth-consent-row${fieldErrors.aiConsent ? ' ay-check-invalid' : ''}`}>
-                  <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
-                  <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
-                </label>
-                {/* #12 Pai: trust badges beside the consent line. */}
-                <p className="ay-auth-badges" aria-label="How we treat your data"><span>Never sold</span><span>Encrypted in transit</span></p>
-                <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
-              </div>
-            </div>
-          )}
 
           {mode === 'signin' && (
             <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', margin: '2px 2px 10px' }}>

@@ -476,7 +476,7 @@ function greetingForNow(date = new Date()) {
   return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
 }
 
-function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz }) {
+function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz, onRequestEcosystemReset = null }) {
   const { profile, stats, playlists } = useMyCommunity(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const showPhoto = profile?.avatar_url && !avatarFailed;
@@ -682,7 +682,13 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           />
         </div>
 
-        {/* Monthly check-in is a row above, and "Update answers" is the health profile bar in the header: no duplicate links. */}
+        {/* Founder, Nov 9: the ecosystem page's "Manage your ecosystem" list, on You too,
+            so changing answers or starting over never needs a hunt (focus group). */}
+        {signedIn && group('manage', 'Manage your ecosystem', [
+          onEditProfile && { key: 'quiz-answers', icon: 'beliefs', title: 'Your quiz answers', sub: 'Something changed? Update them anytime.', onClick: onEditProfile },
+          onOpenMonthlyCheckin && { key: 'monthly', icon: 'checkin', title: 'Monthly check-in', sub: 'A few quick questions so your matches keep up', onClick: onOpenMonthlyCheckin },
+          onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your ecosystem', sub: 'Start your matches over from scratch', onClick: onRequestEcosystemReset },
+        ])}
       </div>
       {/* The signature strip marks the end of You (founder, Oct 27 13:20). */}
       <LegalFooter strip />
@@ -3635,6 +3641,7 @@ function ContactScreen({ onBack }) {
 /* ------------------------------- Orchestrator ------------------------------- */
 
 export default function ProfileFlow({
+  onRequestEcosystemReset = null,
   onUpdateIntake = null,
   onUpdateIntakeLocal = null,
   onEditProfileAt = null,
@@ -3748,6 +3755,7 @@ export default function ProfileFlow({
         onOpenEcosystem={onGoEcosystem ? () => { onClose(); onGoEcosystem(); } : undefined}
         onOpenSaved={onOpenSaved ? () => { onClose(); onOpenSaved(); } : undefined}
         onOpenMonthlyCheckin={onOpenMonthlyCheckin ? () => { onClose(); onOpenMonthlyCheckin(); } : undefined}
+        onRequestEcosystemReset={onRequestEcosystemReset ? () => { onClose(); onRequestEcosystemReset(); } : undefined}
         quizDraft={quizDraft}
         onResumeQuiz={onResumeQuiz}
         onStartOverQuiz={onStartOverQuiz}

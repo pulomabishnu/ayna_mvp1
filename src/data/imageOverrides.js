@@ -166,6 +166,8 @@ export const OFFICIAL_IMAGE_OVERRIDES = Object.freeze({
   'p-milli-vaginal-dilator': { src: 'https://www.hellomilli.com/wp-content/uploads/2023/08/Milli-1024x518.webp', alt: 'Milli vaginal dilator', source: 'https://www.hellomilli.com/', checkedOn: '2026-11-09' },
   'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684': { src: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/sp684__vddd5f8f8f9d55fe38494e5b3b7a0f7eb4a4e4619.webp', alt: 'Thorne Hormone Advantage bottle', source: 'https://www.thorne.com/products/dp/hormone-advantage', checkedOn: '2026-11-09' },
   'p-thorne-magnesium-citramate': { src: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/m272__vda7610df9740590138e35b7c377895c4d7d1a6a1.webp', alt: 'Thorne Magnesium CitraMate bottle', source: 'https://www.thorne.com/products/dp/magnesium-citramate', checkedOn: '2026-11-09' },
+  // Its image was O Positiv's site-wide share picture (the URO packs), the same as another product (focus group, Nov 9).
+  'p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule': { src: 'https://cdn.shopify.com/s/files/1/0588/9340/2261/files/pdp-image1-ezgif.com-png-to-webp-converter.webp?v=1764801824', alt: 'O Positiv MENO Heart + Blood Pressure Support Capsules jar', source: 'https://opositiv.com/products/meno-heart-health-blood-pressure-support-capsules', checkedOn: '2026-11-09' },
   'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum': { src: 'https://trinnylondon.com/cdn/shop/files/naked-ambition-serum-skincare-01.png', alt: 'Trinny London Naked Ambition serum', source: 'https://trinnylondon.com/us/products/naked-ambition', checkedOn: '2026-11-09' },
 });
 

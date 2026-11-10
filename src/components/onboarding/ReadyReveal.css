@@ -629,3 +629,9 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__see { animation: none !important; } }
+
+/* Wearables linked: a tick instead of the arrow (founder, Nov 9). */
+.ay-pz__tick { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #3e2723; }
+.ay-pz__tick svg { width: 16px; height: 16px; fill: none; stroke: #ffedac; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+[data-theme='dark'] .ay-pz__tick { background: #ffedac; }
+[data-theme='dark'] .ay-pz__tick svg { stroke: #3e2723; }

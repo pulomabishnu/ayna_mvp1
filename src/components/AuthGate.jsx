@@ -670,6 +670,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
         {/* Fastest way in first: Apple, then Google, then "or", then email (onboarding audit #1). */}
         {!resetView && <>
+          {/* Consent first, above Apple and Google (focus group, Nov 9). */}
+          {isSignup && (
+            <AiConsentBox id={FIELD_IDS.aiConsent} checked={aiConsent} onChange={toggleAiConsent} error={fieldErrors.aiConsent} />
+          )}
           <div className="ay-auth-oauth" style={styles.oauthRow}>
             <button
               type="button"
@@ -869,9 +873,6 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
                 Forgot password?
               </button>
             </div>
-          )}
-          {isSignup && (
-            <AiConsentBox id={FIELD_IDS.aiConsent} checked={aiConsent} onChange={toggleAiConsent} error={fieldErrors.aiConsent} />
           )}
             </>
           )}

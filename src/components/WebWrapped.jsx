@@ -108,6 +108,14 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const byArea = byNeed.length ? byNeed : areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }));
   const groupWord = byNeed.length ? (byArea.length === 1 ? 'need' : 'needs') : (byArea.length === 1 ? 'area' : 'areas');
   const [swap, setSwap] = useState({});
+  const leadOffset = (() => {
+    const shown = new Set();
+    return byArea.slice(0, 6).map((a) => {
+      const k = Math.max(0, a.items.findIndex((p) => !shown.has(p.id)));
+      if (a.items[k]) shown.add(a.items[k].id);
+      return k;
+    });
+  })();
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
     ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
@@ -187,11 +195,15 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           {active === 'categories' && <>
             <div className="ays-words"><p className="ays-kicker">What we found for you</p><Kinetic text={`${picks.length} ${picks.length === 1 ? 'match' : 'matches'} for ${byArea.length} ${groupWord}`} /></div>
             <ul className={`ay-wr-even is-n${Math.min(byArea.length, 6)}`}>{byArea.slice(0, 6).map((a, i) => {
-              const at = (swap[a.label] || 0) % a.items.length;
+              // Focus group, Nov 9: the same heating pad led every need. Each need opens on a
+              // product the needs before it aren't already showing, when it has one.
+              const at = (leadOffset[i] + (swap[a.label] || 0)) % a.items.length;
               const p = a.items[at];
-              return <li key={a.label} style={{ '--d': `${i * 120}ms` }}>
+              // role="group": tapping a need's card never skips the story ahead to the #1 match.
+              return <li key={a.label} role="group" aria-label={a.label} style={{ '--d': `${i * 120}ms` }}>
                 {p && plate(p, 'ay-wr-even__plate')}
                 <span className="ay-wr-even__label">{a.label}{a.sub?.length > 1 && <small className="ay-wr-even__sub">{a.sub.join(", ")}</small>}</span>
+                {p && <small className="ay-wr-even__name">{p.name}</small>}
                 <strong className="ay-wr-even__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</strong>
                 {a.items.length > 1 && <button type="button" className="ay-wr-even__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
               </li>;

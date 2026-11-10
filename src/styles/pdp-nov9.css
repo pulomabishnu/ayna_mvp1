@@ -25,3 +25,6 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-w2-factors.is-points li::before { content: none !important; }
 /* Dark: the "When to get help now" row reads butter on espresso. */
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body [data-theme*="dark"] .ay-urgent.is-fold :is(.ay-urgent__sum, .ay-urgent__sum b, .ay-urgent__sum small, .ay-urgent__chev) { color: #ffedac !important; }
+
+/* What it is, under the name (focus group, Nov 9). */
+:is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ayv-whatis { margin: 6px 0 0 !important; font: 400 15px/1.45 var(--v-ui, 'Figtree', sans-serif) !important; color: inherit !important; }

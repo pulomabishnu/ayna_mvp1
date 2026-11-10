@@ -1,3 +1,4 @@
+import { TEMPORARILY_HIDDEN_IDS, isRxOnlyProduct, isListedProduct } from './hiddenProducts.js';
 import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
 import { NEEDS as ONTOLOGY_NEEDS } from '../matching/ontology.js';
 const NEEDS_BY_ID = Object.fromEntries(ONTOLOGY_NEEDS.map((n) => [n.id, n]));
@@ -837,18 +838,7 @@ export const DIGITAL_PRODUCTS = [
 // devices like IUDs, etc.) are filtered out here so no surface in the app can
 // ever show one, rather than relying on each consumer to remember to gate them.
 // See isRxOnlyProduct below.
-// Hidden for now (team decision, Oct 11 2026): a clinician teaching model, not a
-// consumer product. Bring back once there's a clinician-facing surface.
-const TEMPORARILY_HIDDEN_IDS = new Set([
-    'p-mypelvicbra-prolapse-chicken',
-    // Removed 2026-10-13 (founder): no photo anywhere and apparently discontinued.
-    // June Cup's domain now belongs to a soccer tournament; Pink Stork Bloat
-    // capsules no longer exist (only gummies); Queen V "The Pop It" is not sold
-    // by any retailer we could find.
-    'p-june-cup',
-    'p-pink-stork-bloat',
-    'p-queen-v-pop',
-]);
+// TEMPORARILY_HIDDEN_IDS lives in ./hiddenProducts.js (shared with the live feed).
 
 // Main's catalog corrections/packaging can rename a product (e.g. to its exact
 // packaged SKU name). Users' saved intake history and avoid lists store the
@@ -934,7 +924,7 @@ export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
 export function adoptLiveCatalog(products) {
     if (!Array.isArray(products) || !products.length) return;
     const byId = new Map(BUNDLED_PRODUCTS.map((p) => [p.id, p]));
-    for (const p of products) if (p?.id && p?.name && !p.hidden) byId.set(p.id, p);
+    for (const p of products) if (p?.name && isListedProduct(p)) byId.set(p.id, p);
     ALL_PRODUCTS = [...byId.values()];
     productByIdIndex = null;
     productByRouteIndex = null;
@@ -1280,15 +1270,7 @@ export function isPrescriptionRestrictedProduct(p) {
  * for them. Search for what they treat (e.g. "hormone replacement therapy")
  * should surface telehealth providers instead, see findTelehealthAccessForProduct.
  */
-export function isRxOnlyProduct(p) {
-    if (!p) return false;
-    if (p.category === 'telehealth') return false;
-    if (p.requiresPrescription === true) return true;
-    const wtb = (p.whereToBuy || []).map((x) => String(x).toLowerCase());
-    // Covers both pharmacy-dispensed prescriptions and clinician-administered
-    // devices/procedures (e.g. IUD insertion), neither is something Ayna sells.
-    return wtb.some((s) => s.includes('pharmacy with prescription') || s.includes('clinic insertion') || s.includes('clinic administered'));
-}
+export { isRxOnlyProduct };
 
 let _telehealthCatalog = null;
 function getTelehealthCatalog() {

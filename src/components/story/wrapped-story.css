@@ -191,6 +191,7 @@
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even li { display: grid; justify-items: start; align-content: start; gap: 4px; padding: 12px; border: 1.5px solid #3e2723; border-radius: 20px; background: #f7badd; color: #3e2723; box-sizing: border-box; animation: ayWrTile .55s cubic-bezier(.2, 1.3, .4, 1) both; animation-delay: var(--d, 0ms); }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__plate { width: 64px; height: 64px; margin-bottom: 4px; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__label { font: 700 16px/1.2 var(--s-ui); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__name { font: 500 13px/1.3 var(--s-ui); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__n { font: 800 22px/1.1 var(--s-display); }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__swap { all: unset; cursor: pointer; margin-top: 2px; font: 600 13px/1.3 var(--s-ui); text-decoration: underline; text-underline-offset: 3px; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-even__swap:focus-visible { outline: 2px solid #3e2723; outline-offset: 2px; border-radius: 4px; }

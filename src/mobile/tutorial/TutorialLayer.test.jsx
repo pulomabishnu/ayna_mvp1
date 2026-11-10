@@ -65,30 +65,19 @@ describe('tips overlay', () => {
     expect(document.querySelector('.ay-tour.is-banner .ay-tour__dim')).toBeNull();
   });
 
-  it('offers the welcome on Home, then runs Home’s tips with the off note first', () => {
+  it('offers the welcome on Home; Show me around opens the whole tour on one sheet, no pop-ups after (focus group, Nov 9)', () => {
     mountApp({ html: HOME });
     wait(1000);
     expect(dialog()?.textContent).toContain('Want a quick tour?');
-    click('Show me tips');
-    expect(readTour().enabled).toBe(true);
-    wait(1000);
-    expect(dialog().textContent).toContain('tap a ring for more');
-    expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
-    expect(dialog().getAttribute('aria-modal')).toBe('true');
-    expect(document.querySelector('.ay-tour__count')?.textContent).toBe('Tip 1 of 2');
-    click('Next');
-    expect(dialog().textContent).toContain('Daily Rundown');
-    expect(dialog().textContent).not.toContain('Turn tips off any time');
-    click('Got it');
+    click('Show me around');
+    expect(readTour().enabled).toBe(false);
+    const sheet = document.querySelector('.ay-tour__all');
+    expect(sheet.textContent).toContain('How ayna works');
+    expect(sheet.textContent).toContain('Health profile');
+    act(() => [...sheet.querySelectorAll('button')].find((x) => x.textContent === 'Got it').click());
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
+    wait(3000);
     expect(dialog()).toBeNull();
-    expect(readTour().seen.home).toBeTruthy();
-    // Then Home's parts, one group at a time (here: Your data and Your products).
-    wait(1500);
-    expect(dialog().textContent).toContain('Your data and Your products');
-    click('Got it');
-    expect(readTour().seen['home-links']).toBeTruthy();
-    wait(2000);
-    expect(dialog()).toBeNull(); // first visit only
   });
 
   it('a tip that was off screen on the first visit shows once it scrolls into view', () => {
@@ -122,20 +111,16 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('signed out on the app landing: the welcome tip on Slide to start, no opt-in asked', () => {
-    mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Slide</button></div>' });
+  it('signed out on the app landing: no tip (the button says Take your quiz)', () => {
+    mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
     wait(4000);
-    expect(dialog().textContent).toContain('Welcome to ayna');
-    // Starting the slide counts as seen: the tap reaches the page and the tip closes.
-    act(() => { app.querySelector('.ay-sts__track').dispatchEvent(new Event('pointerdown', { bubbles: true })); });
     expect(dialog()).toBeNull();
-    expect(readTour().seen.landing).toBeTruthy();
   });
 
-  it('No thanks turns tips off and nothing shows again', () => {
+  it('I’ll explore turns tips off and nothing shows again', () => {
     mountApp({ html: HOME });
     wait(1000);
-    click('No thanks');
+    click('I’ll explore');
     expect(readTour().enabled).toBe(false);
     wait(3000);
     expect(dialog()).toBeNull();
@@ -217,7 +202,6 @@ describe('Settings', () => {
     expect(readTour().enabled).toBe(true);
     expect(host.querySelector('[role="switch"]').getAttribute('aria-checked')).toBe('true');
     act(() => host.querySelector('.ay-tips-set__replay').click());
-    expect(readTour()).toMatchObject({ enabled: true, seen: {} });
-    expect(host.textContent).toContain('Tips are back');
+    expect(document.querySelector('.ay-tour__all').textContent).toContain('How ayna works');
   });
 });

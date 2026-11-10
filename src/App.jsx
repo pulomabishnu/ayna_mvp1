@@ -1301,6 +1301,13 @@ function App() {
 
   React.useEffect(() => {
     if (!user) return;
+    // A guest who finished the quiz and then signed in some other way (the header's
+    // Sign in after browsing her matches, a gated page) keeps her answers: they are
+    // saved exactly like "Save my matches" (focus group, Nov 9: quiz lost after sign-in).
+    if (pendingQuizResults && pendingAction !== 'quiz-complete') {
+      setPendingAction('quiz-complete'); pendingActionRef.current = 'quiz-complete';
+      return;
+    }
     if (!pendingAction) {
       // No pending action, user was already signed in (e.g. returning session).
       // Stay on welcome so they can navigate themselves.
@@ -1391,7 +1398,7 @@ function App() {
       setCurrentView('delete-account');
     }
     setPendingAction(null); pendingActionRef.current = null;
-  }, [user, pendingAction, catalogReady]);
+  }, [user, pendingAction, catalogReady, pendingQuizResults]);
 
   // Google/Apple from a sign-in form (not the post-quiz save) can create a
   // brand-new empty account. Once her saved data has loaded, offer the quiz
@@ -3622,7 +3629,7 @@ function App() {
               markOAuthSource(pendingAction === 'quiz-complete' ? 'save' : pendingAction === 'free-product' ? 'free-product' : 'signin');
               try {
                 if (pendingAction) sessionStorage.setItem('ayna_pending_auth_action', pendingAction);
-                if (pendingAction === 'quiz-complete' && pendingQuizResults) {
+                if (pendingQuizResults) {
                   sessionStorage.setItem('ayna_pending_quiz_results', JSON.stringify(pendingQuizResults));
                 }
               } catch { /* ignore */ }

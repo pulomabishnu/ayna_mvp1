@@ -64,10 +64,10 @@ function firstMatches(answers, limit = 3) {
  */
 // Nov 5: the CDC birth control note and the pregnancy constipation first steps join the list, most important first.
 const CARE_LINE_CODES = ['urgent_yes', 'pregnancy_bleeding', 'estrogen_bc_condition', 'ttc_spironolactone', 'uti_right_now', 'uti_first_time', 'vaginitis_testing', 'spotting_check', 'severe_pain', 'very_heavy_flow', 'pmdd_care', 'pregnancy_nausea', 'pregnancy_constipation', 'recurrent_uti_care', 'pms_care', 'pcos_care', 'adenomyosis_care', 'peri_brain_fog', 'symptom_check'];
-function perNeed(answers) {
+function perNeed(answers, matchOpts = undefined) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
-    const { shelves: rawShelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers);
+    const { shelves: rawShelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers, null, matchOpts);
     // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
     const shelves = groupShelves(rawShelves);
     const ranked = getRecommendationMatchesAndRest(answers).matches || [];
@@ -120,12 +120,13 @@ function MatchPlate({ src, product }) {
 
 function Arrow() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>; }
 
-export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null }) {
+export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null, connected = false, matchOpts = undefined }) {
   const ready = useCatalogReady();
   const [liveReady, setLiveReady] = useState(() => typeof window === 'undefined');
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
   const matches = useMemo(() => (ready && liveReady ? firstMatches(answers, 5) : []), [answers, ready, liveReady]);
-  const { rows, total, careNote } = useMemo(() => (ready && liveReady ? perNeed(answers) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady]);
+  // Her connected health data counts too (founder, Nov 9: results from the quiz AND wearables).
+  const { rows, total, careNote } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
   // matches before the extra questions are kept for this tab only (ids, no answers).
   const changed = useMemo(() => {
@@ -176,10 +177,10 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           )}
           {onConnect && (
             <li style={{ '--i': 1 }}>
-              <button type="button" onClick={onConnect}>
+              <button type="button" onClick={onConnect} className={connected ? 'is-done' : undefined}>
                 <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
-                <span className="ay-pz__txt"><b>Link your wearables</b><small>Apple Health, Oura · 1 min</small></span>
-                <Arrow />
+                <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b><small>{connected ? 'Your matches use your health data too' : 'Apple Health, Oura · 1 min'}</small></span>
+                {connected ? <span className="ay-pz__tick" aria-label="Linked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg></span> : <Arrow />}
               </button>
             </li>
           )}
@@ -195,7 +196,12 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         </ul>
         {/* Nov 8 (founder): after the quiz, three clear choices: more questions, see your results
             (ayna Wrapped, then the account), or link your wearables. */}
-        <button type="button" className="ay-pz__see" onClick={onWatchWrapped || (() => setStage('matches'))}>See my results <Arrow /></button>
+        {/* Founder, Nov 9: signed in (she made an account to link her data) it says See my Home;
+            signed out it says to create the account that saves them (Wrapped plays right after). */}
+        {signedIn
+          ? <button type="button" className="ay-pz__see" onClick={onSeeToday || onWatchWrapped || (() => setStage('matches'))}>See my Home <Arrow /></button>
+          : <button type="button" className="ay-pz__see" onClick={onCreateAccount || onWatchWrapped || (() => setStage('matches'))}>Create your account to save <Arrow /></button>}
+
       </Tag>
     );
   }
@@ -236,13 +242,13 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       ) : !ready || !liveReady ? (
         <p className="ay-ob-ready__lead" role="status">Getting your matches ready…</p>
       ) : (
-        <p className="ay-ob-ready__lead">We couldn’t find a suitable symptom-management option for these answers yet. Explore the catalog or update your needs in You.</p>
+        <p className="ay-ob-ready__lead">{rows.length === 0 ? 'Nothing to work on right now, so there are no matches yet. Your profile is still saved, and Shop shows how well each product fits you.' : 'We couldn’t find a suitable option for these answers yet.'} You can change your answers anytime in You, then My health.</p>
       )}
       <div className="ay-ob-ready__actions ay-ob-next">
         {onWatchWrapped && total > 0
           ? <button type="button" className="ay-ob-next__main" onClick={onWatchWrapped}>See my results<Arrow /></button>
           : !signedIn && onCreateAccount
-            ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 1 ? 'Save my match' : `Save my ${total > 0 ? `${total} ` : ''}matches`}<Arrow /></button>
+            ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 0 ? 'Save my profile' : total === 1 ? 'Save my match' : `Save my ${total} matches`}<Arrow /></button>
             : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<Arrow /></button>}
         <small className="ay-ob-next__note">{onWatchWrapped && total > 0 ? (signedIn ? 'Your ayna Wrapped, then your matches.' : 'Your ayna Wrapped, then save them with a free account.') : !signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>
         {onWatchWrapped && total > 0 && (signedIn

@@ -1,4 +1,5 @@
 import { applyCatalogCorrections } from '../data/catalogCorrections.js';
+import { isListedProduct } from '../data/hiddenProducts.js';
 /**
  * Catalog loader.
  *
@@ -45,7 +46,7 @@ function readCache() {
     const { ts, products } = JSON.parse(raw);
     if (!Array.isArray(products) || !products.length) return null;
     if (Date.now() - ts > CACHE_TTL_MS) return null;
-    return products.map(applyCatalogCorrections);
+    return products.filter(isListedProduct).map(applyCatalogCorrections);
   } catch {
     return null;
   }
@@ -84,7 +85,7 @@ export async function loadProductCatalog() {
       const res = await fetch(API_PATH, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const products = Array.isArray(data?.products) ? data.products.map(applyCatalogCorrections) : [];
+      const products = Array.isArray(data?.products) ? data.products.filter(isListedProduct).map(applyCatalogCorrections) : [];
       if (!products.length) throw new Error('empty catalog');
       const { adoptLiveCatalog } = await import('../data/products.js');
       adoptLiveCatalog(products);

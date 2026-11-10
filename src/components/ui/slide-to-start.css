@@ -54,3 +54,9 @@ html.ay-motion .ay-sts__knob { animation: ay-sts-nudge 1100ms 900ms var(--ay-eas
 .ay-sts.is-lg .ay-sts__label { inset: 0 16px 0 71px; font-size: clamp(16px, 4.4vw, 18px); font-weight: 800; letter-spacing: -.01em; white-space: nowrap; }
 .ay-sts.is-lg .ay-sts__label svg { display: none; }
 @media (hover: hover) { html.ay-motion .ay-sts.is-lg .ay-sts__track:hover { box-shadow: 5px 5px 0 #f7badd; } html.ay-motion .ay-sts.is-lg .ay-sts__track:hover .ay-sts__knob { box-shadow: none; } }
+
+/* Nov 9 focus group: a plain button now (no knob, no slide). Label centred, arrow on the right. */
+.ay-sts.is-button .ay-sts__label,
+.ay-sts.is-button.is-lg .ay-sts__label { inset: 0 20px; opacity: 1; }
+.ay-sts.is-button .ay-sts__label svg,
+.ay-sts.is-button.is-lg .ay-sts__label svg { display: block; width: 20px; height: 20px; }

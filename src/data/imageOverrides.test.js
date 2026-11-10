@@ -1,3 +1,4 @@
+import { sizedShopImage } from '../utils/resolveProductImage.js';
 import { describe, it, expect } from 'vitest';
 import { CATALOG_PRODUCTS } from './products.js';
 import { OFFICIAL_IMAGE_OVERRIDES, officialImageFor } from './imageOverrides.js';
@@ -9,7 +10,7 @@ const entries = Object.entries(OFFICIAL_IMAGE_OVERRIDES);
 const byId = new Map(CATALOG_PRODUCTS.map((p) => [p.id, p]));
 // Nov 9 photo pass: products that live only in the live catalog (/api/products, Supabase) and not in
 // the bundled files. Their override still applies by id wherever the product renders.
-const LIVE_ONLY = new Set(['p-intimina-lily-cup-compact', 'p-intimina-ziggy-cup-2', 'p-milli-vaginal-dilator', 'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684', 'p-thorne-magnesium-citramate', 'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum']);
+const LIVE_ONLY = new Set(['p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule', 'p-intimina-lily-cup-compact', 'p-intimina-ziggy-cup-2', 'p-milli-vaginal-dilator', 'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684', 'p-thorne-magnesium-citramate', 'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum']);
 
 describe('official image overrides', () => {
   it('only maps catalog ids, and never ones that already have a local packshot', () => {
@@ -31,7 +32,7 @@ describe('official image overrides', () => {
   it('is what cards and the product page gallery show, through the image proxy', () => {
     for (const [id, e] of entries) {
       const shown = productImageOverride(id);
-      expect(shown).toBe(`/api/image-proxy?url=${encodeURIComponent(e.src)}`);
+      expect(shown).toBe(`/api/image-proxy?url=${encodeURIComponent(sizedShopImage(e.src))}`);
       expect(productGallery({ id })).toEqual([shown]);
       if (byId.has(id)) expect(galleryImages(byId.get(id))[0]).toBe(shown);
       expect(officialImageFor({ id })).toBe(e);
@@ -40,5 +41,15 @@ describe('official image overrides', () => {
 
   it('leaves the team-locked catalog image field alone', () => {
     for (const [id] of entries) if (byId.has(id)) expect(withImageOverride(byId.get(id))).toBe(byId.get(id));
+  });
+});
+
+describe('Shopify photos are fetched at 1000px (focus group, Nov 9: 4MB photos showed as blank tiles)', () => {
+  it('adds width=1000 to Shopify image files only, never twice', () => {
+    expect(sizedShopImage('https://vivforyourv.com/cdn/shop/files/LDisc.png')).toBe('https://vivforyourv.com/cdn/shop/files/LDisc.png?width=1000');
+    expect(sizedShopImage('https://cdn.shopify.com/s/files/1/x.jpg?v=1')).toBe('https://cdn.shopify.com/s/files/1/x.jpg?v=1&width=1000');
+    expect(sizedShopImage('https://cdn.shopify.com/s/files/1/x.jpg?width=500')).toBe('https://cdn.shopify.com/s/files/1/x.jpg?width=500');
+    expect(sizedShopImage('https://example.com/a.png')).toBe('https://example.com/a.png');
+    expect(sizedShopImage('https://cdn.shopify.com/s/files/1/x.svg')).toBe('https://cdn.shopify.com/s/files/1/x.svg');
   });
 });

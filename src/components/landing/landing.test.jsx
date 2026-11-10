@@ -15,11 +15,13 @@ let root; let host;
 afterEach(() => { act(() => root?.unmount()); host?.remove(); root = null; });
 const mount = (el) => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); act(() => root.render(el)); };
 
-describe('Slide to start (founder, Oct 27 01:10)', () => {
-  it('is one real button with a clear name and a visible tap hint', () => {
+describe('The start button (was Slide to start)', () => {
+  it('is one plain button that says what it does (focus group, Nov 9: no slider)', () => {
     const html = renderToStaticMarkup(<SlideToStart onComplete={() => {}} />);
-    expect(html).toMatch(/<button type="button" class="ay-sts__track[^"]*" aria-label="Get my matches. Slide or tap to start."/);
-    expect(html).toContain('or tap to start');
+    expect(html).toMatch(/<button type="button" class="ay-sts__track">/);
+    expect(text(html)).toContain('Take your quiz');
+    expect(html).not.toContain('ay-sts__thumb');
+    expect(html).not.toContain('Slide');
   });
 
   it('starts on a tap or click (and so on Enter and Space, which click a button)', () => {
@@ -38,10 +40,10 @@ const text =(html) => html.replace(/<[^>]+>/g, ' ');
 describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    expect(out).toContain('aria-label="Get my matches. Slide or tap to start."');
+    expect(text(out)).toContain('Take your quiz');
     expect(out).toContain('matched to you'); // Nov 4: same promise as the website
     const home = renderToStaticMarkup(<AppLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
-    expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
+    expect(text(home)).toContain('Go to your Home');
   });
 
   it('is only the hero: rain, headline, search, Slide to start (the welcome tip anchor) and the medical note', () => {
@@ -108,7 +110,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
 
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(html).toContain('aria-label="Sign up free. Slide or tap to start."');
+    expect(text(html)).toContain('Take your free quiz');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
@@ -120,7 +122,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(html).toContain('aria-label="Pause motion"');
     expect(html).not.toContain('<mark');
     const home = renderToStaticMarkup(<WebLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
-    expect(home).toContain('aria-label="Go to your Home. Slide or tap to start."');
+    expect(text(home)).toContain('Go to your Home');
   });
 
   it('keeps the website sections, the Pro teaser with Learn more to /pro, the founders and the medical note last', () => {
@@ -158,7 +160,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('.ay-sts__track').getAttribute('aria-label')).toBe('Sign up free. Slide or tap to start.');
+    expect(end.querySelector('.ay-sts__track').textContent).toBe('Take your free quiz');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays

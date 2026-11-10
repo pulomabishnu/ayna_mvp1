@@ -381,6 +381,12 @@ export default function ProductDetailScreen({
   const breakdown = matchBreakdownFor(product, quizAnswers ? matchDetails : null);
   const perUse = costPerUse(product);
   const metaLine = metaLineFor(product, glance, keyFormat(product, brand));
+  const whatItIs = (() => {
+    const t = String(product?.summary || product?.description || '').trim();
+    if (!t) return '';
+    const first = (t.match(/^.+?[.!?](?=\s|$)/) || [t])[0];
+    return first.length > 170 ? `${first.slice(0, 167).replace(/\s+\S*$/, '')}…` : first;
+  })();
   const highlights = highlightsFor(product, glance);
   // The app's 2x2 stat grid in ayna summary: the highlights, then short facts on file (never guessed).
   const stats = (() => {
@@ -457,6 +463,10 @@ export default function ProductDetailScreen({
           {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
           <h1>{shownName}</h1>
           {metaLine && <p className="ayv-metaline">{metaLine}</p>}
+          {/* What it is, before Buy (focus group, Nov 9: for new kinds of products she had to
+              scroll past Buy to the Summary to learn what the thing even does). The team's own
+              first sentence, shown as written. */}
+          {whatItIs && <p className="ayv-whatis">{whatItIs}</p>}
           {matchState?.kind !== 'quiz' && <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />}
           <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
           {sizeChips.length > 0 && (
@@ -498,6 +508,9 @@ export default function ProductDetailScreen({
         <div className="ay-pdp-passport">
           <ProductEvidence
             key={product.id}
+            // No #tab in the app's URL (focus group, Nov 9): a tab picked on one product
+            // made every next product open scrolled down at Summary.
+            syncHash={false}
             loading={!researchLoaded}
             product={product}
             image={images[0] || ''}

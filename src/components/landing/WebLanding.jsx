@@ -75,7 +75,7 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
     // Founder, Nov 4: a quiz already started merges into the one slider (no separate "Finish your quiz" box).
     : quizDraft && onResumeQuiz
       ? { label: 'Finish your free quiz', slide: 'Slide to finish your free quiz', go: () => { trackLandingCta('finish_quiz', 'web', 'Finish your free quiz'); onResumeQuiz(); } }
-      : { label: 'Sign up free', slide: 'Slide to sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief: the button says Sign up free
+      : { label: 'Take your free quiz', slide: 'Take your free quiz', go: () => { trackLandingCta('sign_up_free', 'web', 'Take your free quiz'); onStartQuiz?.(); } }; // Nov 9 focus group: say it starts the quiz (was "Sign up free")
   const draftLine = !home && quizDraft && onResumeQuiz ? (
     <p className="wl-draft">
       {quizDraft.requiredDone ? 'Your answers are saved.' : `Question ${quizDraft.index} of ${quizDraft.total}, saved.`}

@@ -41,17 +41,7 @@ const pdpParts = (buyText) => [
 ];
 
 export const SCREENS = [
-  {
-    // Signed out, the first thing on the landing (founder Oct 27 03:59): one welcome tip on
-    // Slide to start. No opt-in needed; it waits out the slider's one-time nudge (waitMs).
-    id: 'landing',
-    root: '[data-tour="landing-start"]',
-    landing: true,
-    waitMs: 2400,
-    tips: [
-      { id: 'landing-start', anchor: '[data-tour="landing-start"] .ay-sts__track', text: 'Welcome to ayna: start here to build your ecosystem.' },
-    ],
-  },
+  // The landing's welcome tip is gone (focus group, Nov 9): the button says "Take your quiz".
   {
     // The quiz (founder, Oct 29): people didn't know they can hold an option
     // to see what it means. Shown once, no opt-in needed, like the landing tip.
@@ -273,17 +263,7 @@ export const SCREENS = [
  * the welcome is offered there, under the same Daily Rundown rules.
  */
 export const WEB_SCREENS = [
-  {
-    // Signed out, the first thing on the landing (founder Oct 27 03:59): one welcome tip on
-    // Slide to start. No opt-in needed; it waits out the slider's one-time nudge (waitMs).
-    id: 'landing',
-    root: '[data-tour="landing-start"]',
-    landing: true,
-    waitMs: 2400,
-    tips: [
-      { id: 'landing-start', anchor: '[data-tour="landing-start"] .ay-sts__track', text: 'Welcome to ayna: start here to build your ecosystem.' },
-    ],
-  },
+  // No landing tip (focus group, Nov 9): the button says what it does.
   {
     // The quiz (founder, Oct 29): people didn't know they can hold an option
     // to see what it means. Shown once, no opt-in needed, like the landing tip.

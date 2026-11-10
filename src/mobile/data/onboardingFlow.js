@@ -102,7 +102,7 @@ export function topicsFromSupport(support = []) {
 const WHY = {
   name: 'Only to greet you. Optional, and you can leave it blank.',
   helpTopics: 'This only picks which options we show next. It is not added to your health profile.',
-  support: 'Each one you pick gets its own matches and its own place on Today.',
+  support: 'Each one you pick gets its own matches and its own place on Today. Pick things you want to learn about too, like birth control. You can change this anytime in You, then My health.',
   periodFlow: 'We use it to match absorbency for pads, tampons, cups and period underwear.',
   periodPain: 'Stronger pain moves heat, TENS and pain relief options up, and tells us when to suggest care.',
   utiFrequency: 'Symptoms right now point you to testing and care first. Repeat symptoms bring prevention forward.',
@@ -126,7 +126,7 @@ const WHY = {
 export const ONBOARDING_WHY = WHY;
 // The app's tab is Home; the website's is still Today (QA, Oct 25).
 const WHY_WEB = {
-  support: 'Each one you pick gets its own matches and its own place on Today.',
+  support: 'Each one you pick gets its own matches and its own place on Today. Pick things you want to learn about too, like birth control. You can change this anytime in You, then My health.',
   goals: 'Goals shape what Today talks about. They never change a match score.',
 };
 
@@ -134,7 +134,9 @@ const WHY_WEB = {
 // fields stay those of intakeModel.js.
 const TITLES = {
   // Nov 3 (founder: "a 5 year old should be able to fill this out"): short, plain words.
-  support: { title: 'What do you want help with?', subtitle: 'Pick all that fit.' },
+  // Nov 9 focus group: people skipped things they live with but don't call a problem
+  // (heavy periods) and ended up with an empty profile. Say those count, and where to change it.
+  support: { title: 'What do you want help with?', subtitle: 'Include things you live with too, like heavy periods.' },
   periodFlow: { title: 'How heavy is your period flow?', subtitle: 'On a typical heavy day' },
   periodPain: { title: 'How much do period cramps get in your way?' },
   ttcDuration: { title: 'How long have you been trying to get pregnant?' },

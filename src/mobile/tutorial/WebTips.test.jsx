@@ -65,58 +65,25 @@ afterEach(() => {
 });
 
 describe('website first visit', () => {
-  it('welcome on Home after setup, then Home’s tips, then each screen once', () => {
+  it('welcome on Home after setup; Show me around opens the one-page tour, then no pop-ups (focus group, Nov 9)', () => {
     mountWeb({ html: HOME });
     wait(1000);
     expect(dialog()?.textContent).toContain('Want a quick tour?');
     expect(document.querySelector('.ay-tour').classList.contains('is-web')).toBe(true);
-    click('Show me tips');
-    wait(1000);
-    expect(dialog().textContent).toContain('Daily Rundown');
-    expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
-    expect(dialog().textContent).toContain('Turn off tips');
-    // No rings without health data: the Rundown is Home's one tip, then Home's next part.
-    expect(document.querySelector('.ay-tour__count')).toBeNull();
-    click('Got it');
-    expect(readTour().seen.home).toBeTruthy();
-    wait(1500);
-    expect(dialog().textContent).toContain('A few things for today');
-    expect(dialog().textContent).not.toContain('Turn tips off any time');
-    expect(dialog().textContent).toContain('Turn off tips');
-    click('Got it');
-    expect(readTour().seen['today-more']).toBeTruthy();
-    wait(1500);
-    // The top bar part: the Saved heart (the fixture's nav has none, so nothing more).
+    click('Show me around');
+    expect(document.querySelector('.ay-tour__all').textContent).toContain('How ayna works');
+    act(() => [...document.querySelectorAll('.ay-tour__all button')].find((x) => x.textContent === 'Got it').click());
+    wait(2000);
     expect(dialog()).toBeNull();
-
-    swap('explore', EXPLORE);
-    wait(1000);
-    expect(dialog().textContent).toContain('Search products');
-    expect(dialog().textContent).not.toContain('Turn tips off any time'); // only on the very first tip
-    expect(dialog().textContent).toContain('Turn off tips');
-    click('Next');
-    click('Got it');
-    expect(readTour().seen.explore).toBeTruthy();
     swap('explore', EXPLORE);
     wait(2000);
     expect(dialog()).toBeNull();
   });
 
-  it('signed out on the landing: one welcome tip on Slide to start, after the nudge, no opt-in asked', () => {
-    const LANDING = `<form class="lsx-search" data-rect='{"left":40,"top":300,"width":500,"height":56}'><input /></form><div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track" data-rect='{"left":40,"top":380,"width":500,"height":68}'>Slide</button></div>`;
-    mountWeb({ view: 'welcome', html: LANDING, ready: false });
-    wait(1500);
-    expect(dialog()).toBeNull(); // the slider's one-time nudge plays first
-    wait(2500);
-    expect(dialog().textContent).toContain('Welcome to ayna: start here to build your ecosystem.');
-    // Below the slide, clear of the search above it.
-    const top = parseFloat(dialog().style.top);
-    expect(top).toBeGreaterThanOrEqual(448);
-    click('Got it');
-    expect(readTour().seen.landing).toBeTruthy();
-    expect(readTour().enabled).toBe(true);
-    wait(3000);
-    expect(dialog()).toBeNull(); // once
+  it('signed out on the landing: no tip', () => {
+    mountWeb({ view: 'welcome', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your free quiz</button></div>', ready: false });
+    wait(4000);
+    expect(dialog()).toBeNull();
   });
 
   it('signed out: browsing tips show, tips about her own data wait for a profile', () => {
@@ -127,13 +94,6 @@ describe('website first visit', () => {
     swap('explore', EXPLORE);
     wait(1000);
     expect(dialog().textContent).toContain('Search products');
-  });
-
-  it('Turn off tips on the landing tip turns them off', () => {
-    mountWeb({ view: 'welcome', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Slide</button></div>', ready: false });
-    wait(4000);
-    click('Turn off tips');
-    expect(readTour().enabled).toBe(false);
   });
 
   it('nothing before setup is done, and never on setup screens', () => {
@@ -205,10 +165,10 @@ describe('website first visit', () => {
 });
 
 describe('website opt-out', () => {
-  it('No thanks: nothing shows on any screen', () => {
+  it('I’ll explore: nothing shows on any screen', () => {
     mountWeb({ html: HOME });
     wait(1000);
-    click('No thanks');
+    click('I’ll explore');
     expect(readTour().enabled).toBe(false);
     wait(2000);
     expect(dialog()).toBeNull();
@@ -239,7 +199,7 @@ describe('website opt-out', () => {
 });
 
 describe('website Settings and replay', () => {
-  it('Show tips switch and Replay the tour, then tips run again', () => {
+  it('Show tips switch and Show the tour', () => {
     setTipsEnabled(false);
     markScreenSeen('explore');
     host = document.createElement('div');
@@ -256,15 +216,15 @@ describe('website Settings and replay', () => {
     act(() => sw().click());
     expect(readTour().enabled).toBe(false);
     act(() => host.querySelector('.ay-tips-set__replay').click());
-    expect(readTour()).toMatchObject({ enabled: true, seen: {}, offNoteShown: false });
-    expect(host.querySelector('[role="status"]').textContent).toContain('Tips are back');
+    expect(document.querySelector('.ay-tour__all').textContent).toContain('How ayna works');
     act(() => root.unmount());
     host.remove();
 
-    mountWeb({ view: 'explore', html: EXPLORE });
+    // Page tips are still there for anyone who turns them on in Settings.
+    setTipsEnabled(true);
+    mountWeb({ view: 'community', html: '<div data-tour="community"><div data-tour="community-tabs">tabs</div></div>' });
     wait(1000);
-    expect(dialog().textContent).toContain('Search products');
-    expect(dialog().textContent).toContain('Turn tips off any time in Settings.');
+    expect(dialog()).not.toBeNull();
   });
 });
 
@@ -277,7 +237,7 @@ describe('website registry and placement', () => {
   });
   it('covers the six screens, at most 2 tips each, one short sentence', () => {
     // The page screens, plus parts (within) for long pages and the top bar.
-    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'home', 'landing', 'library', 'metric-sheet', 'product-page', 'quiz-hold', 'services', 'you']);
+    expect(WEB_SCREENS.filter((s) => !s.within).map((s) => s.id).sort()).toEqual(['ask', 'community', 'compare', 'explore', 'home', 'library', 'metric-sheet', 'product-page', 'quiz-hold', 'services', 'you']);
     for (const s of WEB_SCREENS) {
       expect(tipsToShow(s, () => true).length).toBeLessThanOrEqual(2);
       for (const t of s.tips) {

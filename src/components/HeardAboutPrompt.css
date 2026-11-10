@@ -19,3 +19,7 @@
 [data-theme='dark'] .ay-heard__primary, [data-theme='brand-dark'] .ay-heard__primary { background: #ffedac; color: #3e2723; border-color: #ffedac; }
 .ay-heard__skip { min-height: 44px; padding: 0; border: 0; background: none; color: var(--hp-ink); font: 600 15px/1 var(--ay-font-ui, 'Figtree'), sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .ay-heard :is(button, input):focus-visible { outline: 3px solid var(--hp-ink); outline-offset: 2px; }
+/* Focus group, Nov 9: in dark mode the "Tell us where" box was a dark field that was hard to
+   read. A light field with dark text, like the light theme. */
+[data-theme='dark'] .ay-heard__input, [data-theme='brand-dark'] .ay-heard__input { background: #ffedac; color: #3e2723; border-color: #ffedac; caret-color: #3e2723; }
+[data-theme='dark'] .ay-heard__input::placeholder, [data-theme='brand-dark'] .ay-heard__input::placeholder { color: rgba(62, 39, 35, .62); }

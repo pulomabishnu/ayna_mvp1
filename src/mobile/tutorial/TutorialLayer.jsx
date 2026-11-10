@@ -5,6 +5,7 @@ import { readRundownMemory, seenFirstRundown } from '../../components/rundown/ru
 import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor, partsOf } from './tips.js';
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markTipsSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, partPresent, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
+import TourSheet from './TourSheet.jsx';
 import './tutorial.css';
 import { localDayKey } from '../../utils/localDate.js';
 
@@ -84,6 +85,8 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
   const runRef = useRef(null);
   useLayoutEffect(() => { runRef.current = run; }, [run]);
   const [offNote, setOffNote] = useState(false);
+  // The whole tour on one sheet (the welcome card's "Show me around").
+  const [sheet, setSheet] = useState(false);
   useEffect(() => {
     if (!offNote) return undefined;
     const t = window.setTimeout(() => setOffNote(false), 4500);
@@ -108,9 +111,9 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       markTipsSeen(r.tips.map((t) => t.id), r.screenId);
       if (r.tips.some((t) => t.offNote)) markOffNoteShown();
       if (how === 'off') { setTipsEnabled(false); setOffNote(true); }
-      // The landing's welcome tip is her first tip: unless she turned them off, tips are on.
-      else if (r.landing && readTour().enabled === null) setTipsEnabled(true);
-    } else if (how === 'yes') setTipsEnabled(true);
+      // Focus group, Nov 9: a one-time tip (the quiz's press-and-hold) no longer turns
+      // on page-by-page tips. Those are opt-in from Settings only.
+    } else if (how === 'yes') { setTipsEnabled(false); setSheet(true); }
     else if (how === 'no') setTipsEnabled(false);
     setRun(null);
     setGeo(null);
@@ -236,6 +239,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     return () => { window.clearTimeout(t); window.removeEventListener('keydown', onKey, true); document.removeEventListener('pointerdown', onDown, true); };
   }, [run, end, surface]);
 
+  if (sheet) return <TourSheet theme={theme} onClose={() => setSheet(false)} />;
   if (!run) {
     // After "Turn off tips": say where to turn them back on, for a few seconds.
     if (!offNote) return null;
@@ -258,10 +262,10 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         <section ref={bubbleRef} className={`ay-tour__card ay-tour__welcome${banner ? ' is-banner' : ''}`} style={surface === 'web' ? { bottom: cfg.bottomInset() + 24 } : { bottom: cfg.bottomInset() + 12 }} role="dialog" aria-modal={banner ? 'false' : 'true'} aria-labelledby="ay-tour-w-h" aria-describedby="ay-tour-w-p">
           <span className="ay-tour__mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg></span>
           <h2 id="ay-tour-w-h">Want a quick tour?</h2>
-          <p id="ay-tour-w-p">Tips show up the first time you open each page.</p>
+          <p id="ay-tour-w-p">Everything on one page, in a minute. It’s in Settings too.</p>
           <div className="ay-tour__actions">
-            <button type="button" className="ay-tour__ghost" onClick={() => end('no')}>No thanks</button>
-            <button type="button" className="ay-tour__go" data-primary onClick={() => end('yes')}>Show me tips</button>
+            <button type="button" className="ay-tour__ghost" onClick={() => end('no')}>I’ll explore</button>
+            <button type="button" className="ay-tour__go" data-primary onClick={() => end('yes')}>Show me around</button>
           </div>
         </section>
       </div>,

@@ -972,41 +972,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
   const ready = requiredReady(step.id, intake) && !minorBlocked && (step.id !== 'zip' || String(intake.zipcode || '').length > 0);
-  const storyTouch = useRef(null);
-  const storyWheel = useRef(0);
-  const storyAdvance = (direction) => {
-    if (direction > 0 && ready) goNext();
-    if (direction < 0) goBack();
-  };
-  const onStoryTouchStart = (event) => {
-    storyTouch.current = { x: event.touches[0]?.clientX, y: event.touches[0]?.clientY, target: event.target };
-  };
-  const onStoryTouchEnd = (event) => {
-    const start = storyTouch.current;
-    storyTouch.current = null;
-    if (!start || start.y == null || start.target?.closest('input, textarea, select, button, .ayna-intake-timeline, [role="slider"], [contenteditable], .qi')) return;
-    const deltaX = start.x - event.changedTouches[0]?.clientX;
-    const delta = start.y - event.changedTouches[0]?.clientY;
-    if (Math.abs(deltaX) > 75 && Math.abs(deltaX) > Math.abs(delta) * 1.3) { storyAdvance(Math.sign(deltaX)); return; }
-    const body = event.currentTarget.querySelector('.aq-scroll');
-    if (!body || Math.abs(delta) < 100) return;
-    if (delta > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8) storyAdvance(1);
-    if (delta < 0 && body.scrollTop <= 8) storyAdvance(-1);
-  };
-  const onStoryWheel = (event) => {
-    if (event.target.closest('input, textarea, select, [role="listbox"], .qi')) return;
-    const body = event.currentTarget.querySelector('.aq-scroll');
-    if (!body) return;
-    const atEnd = event.deltaY > 0 && body.scrollTop + body.clientHeight >= body.scrollHeight - 8;
-    const atStart = event.deltaY < 0 && body.scrollTop <= 8;
-    if (!atEnd && !atStart) { storyWheel.current = 0; return; }
-    storyWheel.current += event.deltaY;
-    if (Math.abs(storyWheel.current) > 220) {
-      storyAdvance(Math.sign(storyWheel.current));
-      storyWheel.current = 0;
-    }
-  };
-
   if (minorGate) {
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
@@ -1057,7 +1022,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       hint={!ready ? missingAnswerHint(step.id, intake) : null}
       cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
       below={phase === 'optional' && !isLast ? <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button> : null}
-      rootProps={{ onTouchStart: onStoryTouchStart, onTouchEnd: onStoryTouchEnd, onWheel: onStoryWheel }}
+      // No swipe or scroll-past-the-end to change question (focus group, Nov 9: a small
+      // swipe while scrolling the choices jumped to the next step). Continue and Back only.
+      rootProps={{}}
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
       overlay={<>
         <QuizIntro variant="app" enabled={introEnabled && !onboarding} />

@@ -16,6 +16,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import { applyCatalogEvidence } from '../src/data/catalogEvidence.js';
+import { isListedProduct } from '../src/data/hiddenProducts.js';
 
 let _client = null;
 function getClient() {
@@ -108,7 +109,7 @@ export default async function handler(req, res) {
 
     if (error) throw new Error(error.message);
 
-    const products = (data || []).filter(isPublishable).map(toClientProduct);
+    const products = (data || []).filter(isPublishable).map(toClientProduct).filter(isListedProduct);
 
     if (products.length === 0) {
       // An empty table almost certainly means "not seeded yet", which is very

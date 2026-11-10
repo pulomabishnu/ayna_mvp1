@@ -17,7 +17,6 @@ import CardDeck from '../../components/today/CardDeck.jsx';
 import TodayViews from '../components/TodayViews.jsx';
 import ServiceCard from '../../components/cards/ServiceCard.jsx';
 import { CompareToggle } from '../../components/compare/CompareControls.jsx';
-import SlideToStart from '../../components/ui/SlideToStart.jsx';
 import { splitPostTitle } from '../../components/community/postCard.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -124,10 +123,9 @@ describe('rendered parts carry their tips’ anchors', () => {
     mount(<div data-tour="explore" data-kind="services"><ServiceCard service={{ id: 's1', name: 'Telehealth visit', brand: 'Clinic', category: 'services' }} as="button" onOpen={() => {}} /></div>);
     expect(document.querySelector(tip(SCREENS, 'services', 'services-card').anchor)).not.toBeNull();
   });
-  it('Landing: Slide to start carries the welcome tip (app and web)', () => {
-    mount(<SlideToStart tour="landing-start" onComplete={() => {}} />);
-    expectFound(SCREENS, 'landing', ['landing-start']);
-    expectFound(WEB_SCREENS, 'landing', ['landing-start']);
+  it('Landing: no welcome tip any more (focus group, Nov 9: the button says Take your quiz)', () => {
+    expect(SCREENS.some((s) => s.id === 'landing')).toBe(false);
+    expect(WEB_SCREENS.some((s) => s.id === 'landing')).toBe(false);
   });
   it('Shop: the Compare button', () => {
     mount(<div data-tour="explore"><CompareToggle /></div>);

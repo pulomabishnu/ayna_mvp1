@@ -21,8 +21,8 @@ import './app-landing.css';
 export default function AppLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onSearch, onSignIn, onBrowse, banner = null }) {
   const home = signedIn && hasProfile && onGoHome;
   const cta = home
-    ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
-    : { label: 'Get my matches', slide: 'Slide to find your matches', go: onStartQuiz };
+    ? { label: 'Go to your Home', slide: 'Go to your Home', go: onGoHome }
+    : { label: 'Take your quiz', slide: 'Take your quiz', go: onStartQuiz };
   return (
     <div id="ay-landing" className="alx">
       <section className="alx__band" aria-labelledby="alx-title">

@@ -343,6 +343,12 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
       {availability.ok && storeState && !storeState.available && <p className="ay-hc-note">{storeMessage(storeState.reason, source)}</p>}
       {connection?.status === 'needs_reauth' && <p className="ay-hc-note is-alert">{source.name} stopped letting ayna sync. Reconnect to keep your data current.</p>}
       {connection?.status === 'error' && <p className="ay-hc-note is-alert">The last sync failed. Try Sync now; if it keeps failing, reconnect.</p>}
+      {/* Focus group, Nov 9: after tapping "Don't Allow" in Apple's sheet the app still said
+          connected, with no way back to that sheet. iOS never tells apps what was declined and
+          only shows its sheet once, so say plainly where to change it. */}
+      {live && source.platform === 'ios' && (
+        <p className="ay-hc-note"><b>Tapped Don’t Allow, or nothing shows up?</b> Apple only asks once. Open the Health app, tap your picture, then Privacy, Apps, ayna, and turn on what you want to share. Then come back and tap Sync now.</p>
+      )}
 
       <div className="ay-hc-facts">
         {providesLine(source) && <p><b>Can provide.</b> {providesLine(source)}.</p>}
