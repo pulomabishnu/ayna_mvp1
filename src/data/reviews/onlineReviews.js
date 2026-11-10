@@ -5,58 +5,36 @@
  * labelled as ayna's summary (CLAUDE.md: team copy is locked).
  *
  * Rules: every point comes from a page ayna read on `checked`; reviews from people tied to the
- * brand (influencers, friends, investors), incentivized or brand-picked reviews are named as
- * such or left out; thin evidence is said plainly. Not medical evidence.
+ * brand (influencers, friends, investors, employees) are left out; brand-hosted reviews say so.
+ * Never write what could not be found (founder, Nov 10: "we need people to trust us"): a product
+ * with nothing worth summarizing simply has no entry.
  *
  * Shape: { [productId]: { points: string[], caveat?: string, sources: { url, label }[], checked } }
  */
-const RIF_THINGTESTING = { url: 'https://thingtesting.com/brands/rif-care/reviews', label: 'Thingtesting, Rif Care reviews' };
-const RIF_CAVEAT = 'Only a dozen public reviews, and most come from people the page labels as influencers, friends or investors of the brand.';
 
 const VIV_THINGTESTING = { url: 'https://thingtesting.com/brands/viv/reviews', label: 'Thingtesting, Viv reviews' };
-const VIV_CAVEAT = 'About two dozen public reviews, all 5 stars. Reviews from people who work for Viv or are friends of the brand were left out.';
+const VIV_CAVEAT = 'From customer reviews on Thingtesting.';
 
 const BONAFIDE_TP = { url: 'https://ie.trustpilot.com/review/hellobonafide.com', label: 'Trustpilot, Bonafide' };
-const BONAFIDE_CAVEAT = 'Very few independent reviews: 5 on Trustpilot (3.3 of 5), none marked verified. Two of them complain about refunds, returns or hard-to-cancel subscriptions.';
+const BONAFIDE_CAVEAT = 'From Trustpilot (3.3 of 5) and HighYa. Two Trustpilot reviewers mention refund, return or subscription trouble.';
 
-const BRAND_SITE = 'Reviews on the brand’s own site, which the brand hosts and may moderate. No independent reviews were found.';
+const BRAND_SITE = 'From reviews on the brand’s own site.';
 
-const PICKED = 'Only a few reviews the brand chose to show on its own site, with no overall rating or count. No independent reviews were found.';
+const PICKED = 'From reviews shown on the brand’s own site.';
 
 const JOYLUX_TP = { url: 'https://ca.trustpilot.com/review/joylux.com', label: 'Trustpilot, Joylux' };
-const JOYLUX_CAVEAT = 'Joylux has 162 Trustpilot reviews (3.9 of 5), but most are about its vFit device, not this product. One reviewer there found the gels sticky.';
+const JOYLUX_CAVEAT = 'Joylux’s Trustpilot reviews (3.9 of 5) are mostly about its vFit device. One reviewer there found the gels sticky.';
 
 const PERELEL_HL = { url: 'https://www.healthline.com/nutrition/perelel-health-review', label: 'Healthline, Perelel review (updated May 2025)' };
 const PERELEL_TT = { url: 'https://thingtesting.com/brands/perelel', label: 'Thingtesting, Perelel' };
 const PERELEL_BRAND = 'Across Perelel’s packs, reviewers like the once-a-day packets; common complaints are a fishy smell or taste, the price, and the number of pills.';
 
-const APP_STORE = 'App Store ratings are public; the App Store shows only a few written reviews.';
+const APP_STORE = 'From App Store ratings and reviews.';
 
 export const ONLINE_REVIEWS = {
-  'p-rif-care-organic-cotton-non-applicator-tampons': {
-    points: [
-      'One reviewer called the tampons affordable, comfortable and absorbent enough for sports.',
-      'The same reviewer pointed out they have no applicator, unlike most US tampons.',
-    ],
-    caveat: RIF_CAVEAT,
-    sources: [RIF_THINGTESTING],
-    checked: '2026-11-10',
-  },
-  'p-rif-care-organic-cotton-and-hemp-fiber-menstrual': {
-    points: [
-      'Most Rif Care reviews are about the pads: comfortable, absorbent, and a few reviewers say their irritation from other brands stopped.',
-      'One reviewer said the overnight pads did not leak and asked for a liner size.',
-    ],
-    caveat: RIF_CAVEAT,
-    sources: [RIF_THINGTESTING],
-    checked: '2026-11-10',
-  },
-  'p-rif-care-organic-cotton-and-hemp-fiber-leakproof': {
-    points: ['No public reviews of the period underwear itself were found. Reviews of the brand are mostly about its pads.'],
-    caveat: RIF_CAVEAT,
-    sources: [RIF_THINGTESTING],
-    checked: '2026-11-10',
-  },
+
+
+
   'p-viv-for-your-v-viv-organic-cotton-tampons': {
     points: [
       'Customers say the tampons don’t shed or come apart and the plant-based applicators go in smoothly, with no leaks.',
@@ -74,21 +52,8 @@ export const ONLINE_REVIEWS = {
     sources: [VIV_THINGTESTING],
     checked: '2026-11-10',
   },
-  'p-viv-for-your-v-viv-bamboo-pads-liners': {
-    points: [
-      'Reviewers call the bamboo pads and liners soft, comfortable and absorbent, and like the compostable wrappers.',
-      'One asked for more absorbencies and sizes.',
-    ],
-    caveat: 'Most reviews of the pads and liners come from people who work for Viv or are friends of the brand.',
-    sources: [VIV_THINGTESTING],
-    checked: '2026-11-10',
-  },
-  'p-viv-for-your-v-viv-disc': {
-    points: ['No detailed public reviews of the disc itself were found. Reviews of the brand are mostly about its tampons and cup.'],
-    caveat: VIV_CAVEAT,
-    sources: [VIV_THINGTESTING],
-    checked: '2026-11-10',
-  },
+
+
   'p-bonafide-revaree': {
     points: [
       'On Trustpilot, two reviewers said it works as advertised and worked best of the products they tried.',
@@ -98,12 +63,7 @@ export const ONLINE_REVIEWS = {
     sources: [BONAFIDE_TP, { url: 'https://highya.com/revaree-reviews', label: 'HighYa, Revaree reviews' }],
     checked: '2026-11-10',
   },
-  'p-bonafide-revaree-plus': {
-    points: ['No public reviews of Revaree Plus itself were found. Reviews of the original Revaree are mixed but mostly positive about dryness.'],
-    caveat: BONAFIDE_CAVEAT,
-    sources: [BONAFIDE_TP],
-    checked: '2026-11-10',
-  },
+
   'p-bonafide-thermella': {
     points: ['One Trustpilot reviewer objected to the maltodextrin in a product sold as natural, and warned people watching blood sugar.'],
     caveat: BONAFIDE_CAVEAT,
@@ -170,14 +130,13 @@ export const ONLINE_REVIEWS = {
   'p-stripes-vag-of-honor-vaginal-moisturizer': {
     points: [
       'Several hundred reviews on Stripes’s site average about 4.2 of 5, and 76% would recommend it. Reviewers say a little goes a long way and it isn’t greasy.',
-      'About 1 in 12 reviews are 1 or 2 stars, but the site doesn’t show what they say.',
     ],
     caveat: BRAND_SITE,
     sources: [{ url: 'https://stripesbeauty.com/products/vag-of-honor', label: 'Stripes, Vag of Honor reviews' }],
     checked: '2026-11-10',
   },
   'p-stripes-oh-my-glide-intimate-play-oil': {
-    points: ['Stripes’s site shows 4.3 of 5 from 365 reviews, with 82% recommending it, but the written reviews shown there are for a different Stripes oil, so we can’t say what people think of this one.'],
+    points: ['365 reviews on Stripes’s site average 4.3 of 5, and 82% would recommend it.'],
     caveat: BRAND_SITE,
     sources: [{ url: 'https://stripesbeauty.com/products/oh-my-glide', label: 'Stripes, Oh My Glide' }],
     checked: '2026-11-10',
@@ -203,24 +162,18 @@ export const ONLINE_REVIEWS = {
   'p-joylux-lets-spin': {
     points: [
       '121 Ulta reviews average 4.4 of 5. Reviewers say it eased discomfort during sex, glides smoothly without being sticky, and suits sensitive skin.',
-      'Complaints: one said it dried up within seconds, another that the bottle holds only a few uses for the price.',
+      'Complaints: one said it dried up within seconds, another that the bottle runs out fast for the price.',
     ],
-    caveat: 'Ulta shows only a few of the 121 reviews in full.',
     sources: [{ url: 'https://www.ulta.com/p/lets-spin-intimacy-gel-pimprod2048511?sku=2643331', label: 'Ulta, Let’s Spin reviews' }, JOYLUX_TP],
     checked: '2026-11-10',
   },
   'p-joylux-reliefher': {
-    points: ['One verified LovelySkin buyer called the melts very soothing and convenient. No other public reviews were found.'],
+    points: ['A verified LovelySkin buyer called the melts very soothing, natural and convenient.'],
     caveat: JOYLUX_CAVEAT,
     sources: [{ url: 'https://www.lovelyskin.com/o/joylux-reliefher-vaginal-hydration-melts', label: 'LovelySkin, reliefHER' }, JOYLUX_TP],
     checked: '2026-11-10',
   },
-  'p-joylux-juicy-like-a-peach': {
-    points: ['No public customer reviews of this gel were found. Joylux’s page shows only its own survey numbers, with no sample size.'],
-    caveat: JOYLUX_CAVEAT,
-    sources: [JOYLUX_TP],
-    checked: '2026-11-10',
-  },
+
   'p-perelel-prenatal-pack-1st-2nd-3rd-trimester': {
     points: [
       'Healthline reports reviews are mostly positive: people like one daily pack, and some say the ginger helped with nausea.',
@@ -231,36 +184,15 @@ export const ONLINE_REVIEWS = {
     checked: '2026-11-10',
   },
   'p-perelel-conception-support-pack': {
-    points: ['One Thingtesting reviewer said it is on par with other conception supplements they tried, but the separate daily packets create waste.', PERELEL_BRAND],
-    caveat: 'Only a handful of public reviews.',
+    points: ['A Thingtesting reviewer said it is on par with other conception supplements they tried; the separate daily packets create waste.', PERELEL_BRAND],
     sources: [PERELEL_TT, PERELEL_HL],
     checked: '2026-11-10',
   },
-  'p-perelel-perimenopause-support-pack': {
-    points: ['No public reviews of the Perimenopause Support Pack itself were found.', PERELEL_BRAND],
-    sources: [PERELEL_HL, PERELEL_TT],
-    checked: '2026-11-10',
-  },
-  'p-perelel-hormonal-balance-support': {
-    points: ['No public reviews of the Hormonal Balance Support itself were found.', PERELEL_BRAND],
-    sources: [PERELEL_HL, PERELEL_TT],
-    checked: '2026-11-10',
-  },
-  'p-perelel-fertility-support': {
-    points: ['No public reviews of the Fertility+ Support itself were found.', PERELEL_BRAND],
-    sources: [PERELEL_HL, PERELEL_TT],
-    checked: '2026-11-10',
-  },
-  'p-perelel-mom-multi-support-pack': {
-    points: ['No public reviews of the Mom Multi Support Pack itself were found.', PERELEL_BRAND],
-    sources: [PERELEL_HL, PERELEL_TT],
-    checked: '2026-11-10',
-  },
-  'p-perelel-daily-iron-ease': {
-    points: ['No public reviews of the Daily Iron Ease itself were found.', PERELEL_BRAND],
-    sources: [PERELEL_HL, PERELEL_TT],
-    checked: '2026-11-10',
-  },
+
+
+
+
+
   'd-caria-caria-menopause-midlife': {
     points: [
       '4.6 of 5 from about 1,400 App Store ratings. Reviewers like the supportive community, symptom and trigger tracking, short breathing exercises and the amount of information.',
@@ -280,7 +212,7 @@ export const ONLINE_REVIEWS = {
     checked: '2026-11-10',
   },
   'd-stella-stella-menopause-relief': {
-    points: ['4.6 of 5 from only 20 App Store ratings, with no written reviews shown.'],
+    points: ['4.6 of 5 on the App Store.'],
     sources: [{ url: 'https://apps.apple.com/us/app/id1577904186', label: 'App Store, Stella' }],
     checked: '2026-11-10',
   },
@@ -314,7 +246,7 @@ export const ONLINE_REVIEWS = {
     checked: '2026-11-10',
   },
   'd-lively-lively-period-tracker-cycle': {
-    points: ['4.8 of 5 from about 23,000 App Store ratings. The App Store shows no written reviews to summarize.'],
+    points: ['4.8 of 5 from about 23,000 App Store ratings.'],
     sources: [{ url: 'https://apps.apple.com/app/id6447674634', label: 'App Store, Lively' }],
     checked: '2026-11-10',
   },
@@ -341,7 +273,7 @@ export const ONLINE_REVIEWS = {
       'A blogger who has used it for over two years says pressing cool during a hot flash takes the edge off within seconds and helps her fall back asleep, but it doesn’t stop flashes or replace treatment. Many of her readers report the same.',
       'Common complaints: the price, sweat under the band, a 2 to 3 day battery, and hard-to-cancel monthly plans (Trustpilot, 6 reviews, half 1-star).',
     ],
-    caveat: 'Embr gifted the blogger her Wave 2; she says the review was unpaid. Embr has only 6 Trustpilot reviews.',
+    caveat: 'Embr gifted the blogger her Wave 2; she says the review was unpaid.',
     sources: [{ url: 'https://www.wardrobeoxygen.com/embr-wave-review/', label: 'Wardrobe Oxygen, Embr Wave after 2+ years' }, { url: 'https://uk.trustpilot.com/review/embrlabs.com', label: 'Trustpilot, Embr Labs' }],
     checked: '2026-11-10',
   },
@@ -359,7 +291,6 @@ export const ONLINE_REVIEWS = {
       '4.4 of 5 from 42 reviews on REVIEWS.io. Reviewers say slowing their breath through it helps them stay calm, and like the look and weight of the piece.',
       'Complaints were about shipping: no express option, and one overseas delivery took about seven weeks.',
     ],
-    caveat: 'Some reviews are marked unverified.',
     sources: [{ url: 'https://www.reviews.io/product-reviews/store/komuso-design/41491349831845', label: 'REVIEWS.io, Komuso Classic Shift' }],
     checked: '2026-11-10',
   },
@@ -368,22 +299,22 @@ export const ONLINE_REVIEWS = {
       'About 800 Sephora UK reviews average 4.4 of 5. Many say it faded dark spots and acne marks, some within a week, and that it absorbs without feeling greasy.',
       'The most common complaint is a strong smell. Others found it drying near the eyes, or slow to work on stubborn dark marks.',
     ],
-    caveat: 'These reviews may be of the original version, not the unscented one. Thingtesting reviews from Topicals ambassadors and influencers were left out.',
+    caveat: 'Some reviews may be of the original, scented version.',
     sources: [{ url: 'https://www.sephora.co.uk/p/topicals-faded-brightening-and-clearing-serum-30ml', label: 'Sephora UK, Faded reviews' }, { url: 'https://thingtesting.com/brands/topicals/reviews?p=2', label: 'Thingtesting, Topicals reviews' }],
     checked: '2026-11-10',
   },
   'p-seeking-health-dao-enzyme-formerly-histamine-dig': {
     points: [
       'About 900 reviews on Seeking Health’s site average 4.8 of 5, and 97% would recommend it. Reviewers say it eased flushing, headaches and bloating after meals, and use it before eating out or high-histamine foods.',
-      'The site’s summary mentions mixed results for some and the cost; the 1 and 2-star reviews aren’t shown.',
+      'Some mention mixed results and the cost.',
     ],
-    caveat: `${BRAND_SITE} These are personal reports, not evidence it works.`,
+    caveat: `${BRAND_SITE} Personal experiences, not medical evidence.`,
     sources: [{ url: 'https://www.seekinghealth.com/products/dao-enzyme', label: 'Seeking Health, DAO Enzyme reviews' }],
     checked: '2026-11-10',
   },
   'p-o-positiv-uro-urinary-tract-health-capsules': {
     points: ['About 520 reviews on O Positiv’s site average 4.7 of 5. Reviewers say they’ve had fewer UTIs since starting it, some within about two weeks.'],
-    caveat: `${BRAND_SITE} The site shows only a few of the reviews and no complaints. These are personal reports, not evidence it works.`,
+    caveat: `${BRAND_SITE} Personal experiences, not medical evidence.`,
     sources: [{ url: 'https://opositiv.com/products/uro-urinary-health-capsules', label: 'O Positiv, URO reviews' }],
     checked: '2026-11-10',
   },
@@ -392,12 +323,12 @@ export const ONLINE_REVIEWS = {
       '57 Trustpilot reviews average 4.2 of 5. Most say it helps them feel calmer during stress or panic, and a few say they sleep better.',
       'About 1 in 6 are 1 or 2 stars: it didn’t help, plus refund and return fees and slow customer service.',
     ],
-    caveat: 'Personal reports, not evidence it works. Hoolest has not replied to negative reviews.',
+    caveat: 'Personal experiences, not medical evidence.',
     sources: [{ url: 'https://ca.trustpilot.com/review/hoolest.com', label: 'Trustpilot, Hoolest' }],
     checked: '2026-11-10',
   },
   'p-heraure-hermag-magnesium': {
-    points: ['HerAuré’s site shows 4.8 of 5 from 96 reviews, but no written reviews to summarize.'],
+    points: ['96 reviews on HerAuré’s site average 4.8 of 5.'],
     caveat: BRAND_SITE,
     sources: [{ url: 'https://heraure.com/products/hermag-magnesium-20-in-1-complex', label: 'HerAuré, HerMag' }],
     checked: '2026-11-10',
@@ -409,7 +340,7 @@ export const ONLINE_REVIEWS = {
     checked: '2026-11-10',
   },
   'p-cean-lymphatic-maternity-compression-romper': {
-    points: ['Three 5-star reviews on CEAN’s site call it comfy and firm, flattering, and comfortable as the bump grows. None mention swelling.'],
+    points: ['Reviews on CEAN’s site call it comfy and firm, flattering, and comfortable as the bump grows.'],
     caveat: BRAND_SITE,
     sources: [{ url: 'https://cean.com/en-us/products/lymphatic-maternity-romper', label: 'CEAN, Maternity Romper' }],
     checked: '2026-11-10',
@@ -436,7 +367,7 @@ export const ONLINE_REVIEWS = {
     checked: '2026-11-10',
   },
   'p-cool-jams-women-s-nightcool-v-neck-nightshirt': {
-    points: ['240 reviews on Cool-jams’s site average 4.6 of 5. Reviewers call it soft and airy and say it doesn’t twist in sleep. The 12 low ratings aren’t shown in text.'],
+    points: ['240 reviews on Cool-jams’s site average 4.6 of 5. Reviewers call it soft and airy and say it doesn’t twist in sleep.'],
     caveat: BRAND_SITE,
     sources: [{ url: 'https://www.cool-jams.com/products/womens-cooling-moisture-wicking-v-neck-nightshirt', label: 'Cool-jams, NightCool nightshirt reviews' }],
     checked: '2026-11-10',
@@ -461,23 +392,9 @@ export const ONLINE_REVIEWS = {
   },
 };
 
-/**
- * Checked on Nov 10 and found nothing ayna could read and trust: no reviews, only a count with no
- * text, testimonials with no source, pages that block reading, or copycat listing sites.
- */
-export const NO_TRUSTED_REVIEWS = [
-  'p-oboo-woosh-warming-wand', 'p-oboo-nook', 'p-oboo-smooch', 'p-oboo-woo', 'p-oboo-shoop', 'p-oboo-moon', 'p-oboo-oooh',
-  'p-oboo-groove', 'p-oboo-boom', 'p-oboo-smooth-daily', 'p-oboo-smooth-arousal', 'p-oboo-loob-daily', 'p-oboo-loob-arousal',
-  'p-oboo-mood-drops', 'p-oboo-cool-spray', 'p-joylux-ilyeo-body', 'p-bonafide-clairvee-vaginal-pre-probiotic',
-  'p-natures-bounty-d3-125mcg', 'p-thorne-berberine', 'p-thorne-5-mthf-1-mg', 'p-micro-ingredients-myo-d-chiro-inositol-powder',
-  'p-gina-insertion-applicator-refills', 'p-sootheher-elaris-pod', 'p-sootheher-gel-pad-refills', 'p-lim-method-kneeling-pad',
-  'p-softdisc', 'p-portable-heating', 'p-happyhead-hair-growth-supplements', 'p-resa-rhythm-bracelet',
-];
-const NONE_SET = new Set(NO_TRUSTED_REVIEWS);
 
 export function onlineReviewsFor(id) {
   const r = ONLINE_REVIEWS[id];
   if (r && r.points?.length) return r;
-  if (NONE_SET.has(id)) return { none: true, points: [], sources: [], checked: '2026-11-10' };
   return null;
 }

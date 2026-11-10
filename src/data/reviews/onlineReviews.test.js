@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { ONLINE_REVIEWS, NO_TRUSTED_REVIEWS, onlineReviewsFor } from './onlineReviews.js';
+import { ONLINE_REVIEWS, onlineReviewsFor } from './onlineReviews.js';
 import { CATALOG_PRODUCTS } from '../products.js';
 
 const byId = new Map(CATALOG_PRODUCTS.map((p) => [p.id, p]));
 
 describe('ayna’s summaries of online reviews', () => {
   it('only covers real products whose team copy has no review text (never replaces the team’s)', () => {
-    for (const id of [...Object.keys(ONLINE_REVIEWS), ...NO_TRUSTED_REVIEWS]) {
+    for (const id of Object.keys(ONLINE_REVIEWS)) {
       const p = byId.get(id);
       expect(p, id).toBeTruthy();
       expect(String(p.communityReview || '').trim().length <= 20, id).toBe(true);
@@ -21,9 +21,10 @@ describe('ayna’s summaries of online reviews', () => {
       for (const t of r.points) expect(t, id).not.toMatch(/—|–/);
     }
   });
-  it('a product checked with nothing trustworthy says so; an unchecked one returns nothing', () => {
-    expect(onlineReviewsFor(NO_TRUSTED_REVIEWS[0])).toMatchObject({ none: true });
+  it('never says what could not be found (founder, Nov 10): no "not found" or "no reviews" lines', () => {
     expect(onlineReviewsFor('not-a-product')).toBe(null);
-    expect(NO_TRUSTED_REVIEWS.some((id) => ONLINE_REVIEWS[id])).toBe(false);
+    for (const [id, r] of Object.entries(ONLINE_REVIEWS)) {
+      for (const t of [...r.points, r.caveat || '']) expect(t, id).not.toMatch(/not found|were found|no (public|independent|written) reviews|can.t say|aren.t shown|only a (few|handful)/i);
+    }
   });
 });

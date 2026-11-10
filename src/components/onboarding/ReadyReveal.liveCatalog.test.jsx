@@ -25,8 +25,11 @@ describe('reveal with the published catalog', () => {
     expect(html).toContain('Mental wellbeing');
     expect(html).toContain('Temperature &amp; sweating');
     expect(html).toContain('Pixie Cup BloatFit');
-    expect(html).toContain('Tummy Drops');
     expect(html).toContain('CalmiGo Device');
+    // Nov 10 audit: the count here is exactly what is saved to her ecosystem (it said 5, then Wrapped said 2).
+    const saved = Object.values(getEcosystemSeedFromQuiz(answers).mergedProducts).filter((p) => html.includes(p.name.replace(/&/g, '&amp;')));
+    const shown = Number((html.match(/class="ay-ob-count">(\d+)</) || [])[1]);
+    expect(shown).toBe(saved.length);
     const mental = html.split('<h3>Mental wellbeing</h3>')[1].split('</ol>')[0];
     expect((mental.match(/data-kind="product"/g) || []).length).toBeGreaterThan(1);
     expect(html).not.toContain('Perimenopause Test Kit');

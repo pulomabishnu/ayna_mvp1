@@ -368,7 +368,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id h1 { margin: 2px 0 0; font-size: calc(22px * var(--ayna-text-scale, 1)); line-height: 1.15; overflow-wrap: anywhere; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-metaline { margin: 4px 0 0; font-size: 13px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ay-pdp-eyebrow { font-size: 12px; }
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id :is(.ay-pdp-price, .ayv-price, [class*='price']) { margin-top: 6px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-pricerow { margin: 8px 0 0 !important; padding: 0 !important; min-height: 0 !important; }
 /* Below the stack: the summary's detail rows, then Ask and Buy. */
 #ay-pdp .ayv--stack .ayv-stack-rest { margin-top: 12px; }
 #ay-pdp .ayv--stack .ay-stack__panel .ayq-sum { padding: 0; }

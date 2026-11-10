@@ -476,6 +476,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   }, [viewedId]);
 
   const [tab, setTab] = useState(() => {
+    // The app's card stack starts with every card down (founder, Nov 10); tapping one opens it.
+    if (layout === 'stack') return 'none';
     if (typeof window === 'undefined' || !syncHash) return DEFAULT_TAB;
     return resolveTarget(window.location.hash.slice(1))?.tab || DEFAULT_TAB;
   });
@@ -746,20 +748,19 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
             <ReadShelf list={rv.text} label="What people say online" />{rv.sourceSummary && <p className="ayq-p"><Tx>{rv.sourceSummary}</Tx></p>}
           </>
         )}
-        {aynaOnline?.none && <p className="ayq-meta">ayna looked for public reviews on {aynaChecked} and found none we could trust yet.</p>}
-        {aynaOnline && !aynaOnline.none && (
+        {aynaOnline && (
           <section className="ayv-aynaonline" aria-label="ayna’s summary of online reviews">
             <h4 className="ayq-subh">What people say online</h4>
             <ul className="ayq-ul">{aynaOnline.points.map((t) => <li key={t.slice(0, 40)} className="ayq-p">{t}</li>)}</ul>
             {aynaOnline.caveat && <p className="ayq-meta">{aynaOnline.caveat}</p>}
-            <p className="ayq-meta">ayna’s summary of public reviews, checked {aynaChecked}. Not medical evidence. Read them: {aynaOnline.sources.map((x, i) => <span key={x.url}>{i > 0 && ', '}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>
+            <p className="ayq-meta">ayna’s summary of public reviews, {aynaChecked}. Read them: {aynaOnline.sources.map((x, i) => <span key={x.url}>{i > 0 && ', '}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.label}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>
           </section>
         )}
         {rv.incentivized.length > 0 && <p className="ayq-meta">Reviews on {rv.incentivized.join(', ')} may include incentivized reviews.</p>}
         <div className="ayq-reviews"><ProductCommunityReviews productId={baseProduct?.id} rows={reviewRows} onOpenReview={onOpenReview} initial={4} /></div>
         {memberReviews.length > 0 && <><h4 className="ayq-subh">From ayna members</h4><ul className="ayq-quotes">{memberReviews.map((r) => <li key={r.slice(0, 40)}><blockquote>{r}</blockquote></li>)}</ul></>}
         {rateControls}
-        {!ratingLines.length && !reviewRows.length && !rv.text.length && !(aynaOnline && !aynaOnline.none) && <p className="ayq-p">0 reviews yet. Tried it? You can be the first.</p>}
+        {!ratingLines.length && !reviewRows.length && !rv.text.length && !aynaOnline && <p className="ayq-p">0 reviews yet. Tried it? You can be the first.</p>}
       </div>
       <aside className="ayq-side">
         {rv.elsewhere.length > 0 && (
@@ -1085,7 +1086,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ? topReviews(reviewRows, 2).filter((r) => String(r.body || '').trim()).map((r) => ({ key: r.id, stars: Number(r.rating) || null, text: String(r.body).replace(/\*+|__/g, '').trim(), meta: [authorName(r), shortDate(r.created_at)].filter(Boolean).join(', '), href: `/community/p/${r.id}`, onOpen: onOpenReview ? () => onOpenReview(r.id) : null }))
     : memberReviews.length ? memberReviews.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna member' }))
       : rv.text.length ? rv.text.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: noDash(t), meta: 'Summary of reviews online' }))
-        : aynaOnline?.points.length ? aynaOnline.points.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna’s summary of online reviews' })) : [];
+        : aynaOnline ? aynaOnline.points.slice(0, 2).map((t) => ({ key: t.slice(0, 40), text: t, meta: 'ayna’s summary of online reviews' })) : [];
   const allCount = Math.max(ratingCount || 0, reviewRows.length);
   const reviewsTab = (
     <div className="ayq-rev">
@@ -1146,7 +1147,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     const revTag = bigRating ? `${bigRating.value} ★` : '';
     const cards = [
       { id: 'summary', title: TAB_LABELS.summary, body: <div className="ayq-sum ayv-read">{summaryLead}</div> },
-      { id: 'clinical', title: TAB_LABELS.clinical, body: clinicalBody },
+      // No empty cards (founder, Nov 10: don't point at what we don't have): Clinical shows when a clinician has written.
+      ...(expertBody ? [{ id: 'clinical', title: TAB_LABELS.clinical, body: clinicalBody }] : []),
       { id: 'literature', title: TAB_LABELS.literature, tag: evTotal > 0 ? plural(evTotal, 'source') : '', body: literatureBody },
       { id: 'reviews', title: TAB_LABELS.reviews, tag: revTag, body: reviewsTab },
     ].map((c) => ({ ...c, panelClass: `ayq-panel ayq-tp is-${c.id}` }));

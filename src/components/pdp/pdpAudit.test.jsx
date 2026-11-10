@@ -40,12 +40,11 @@ describe('tabs: ayna summary first and open (audit P0 #4, 7.16)', () => {
     expect(DEFAULT_TAB).toBe('summary');
     expect(TAB_ORDER.map((t) => TAB_LABELS[t])).toEqual(['ayna summary', 'Clinical opinion', 'Scientific literature', 'Reviews']);
   });
-  it('app page (Nov 10 redesign): the same four views as a card stack, ayna summary first and open', () => {
+  it('app page (Nov 10 redesign): the same four views as a card stack, ayna summary first, every card down', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId(SAALT)} />);
     const cards = [...html.matchAll(/class="ay-stack__card[^"]*"[^>]*data-card="([^"]+)"/g)].map((m) => m[1]);
     expect(cards).toEqual(TAB_ORDER);
-    expect(html).toMatch(/class="ay-stack__card is-ink is-open"[^>]*data-card="summary"/);
-    expect((html.match(/is-open/g) || []).length).toBe(1);
+    expect(html).not.toMatch(/ay-stack__card[^"]*is-open/);
   });
   it('website and app sheet render the summary tab first and selected', () => {
     const p = byId(SAALT);

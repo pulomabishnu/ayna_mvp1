@@ -70,16 +70,11 @@ function perNeed(answers, matchOpts = undefined) {
     const { shelves: rawShelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers, null, matchOpts);
     // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
     const shelves = groupShelves(rawShelves);
-    const ranked = getRecommendationMatchesAndRest(answers).matches || [];
     const rows = shelves.map((sh) => {
       const seeded = (sh.productIds || []).map((id) => getProductById(id)).filter((p) => p && showableAsPick(p, answers));
-      const extra = ranked.filter((p) => {
-        if (!p || seeded.some((item) => item.id === p.id) || !showableAsPick(p, answers)) return false;
-        const d = getProductMatchDetailsForProduct(p, answers);
-        return !isSafetyHold(d) && !isBleedingEvaluation(d)
-          && d?.needMatches?.some((match) => (sh.needIds || [sh.needId]).includes(match.needId) && match.relevant && match.score >= 50);
-      }).sort((a, b) => Number(a.type === 'digital') - Number(b.type === 'digital'));
-      const all = [...seeded, ...extra].slice(0, 5);
+      // Nov 10 audit: only the picks that are saved to her ecosystem, so the count here matches
+      // Wrapped and My ecosystem (it said 5 here, then 2 after sign-up).
+      const all = seeded.slice(0, 5);
       // Nov 5 (founder): services (telehealth, apps, memberships) sit apart from products.
       const products = all.filter((p) => p.type !== 'digital');
       const services = all.filter((p) => p.type === 'digital');
