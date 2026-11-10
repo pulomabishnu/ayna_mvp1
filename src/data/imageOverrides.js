@@ -152,6 +152,21 @@ export const OFFICIAL_IMAGE_OVERRIDES = Object.freeze({
     source: 'Walmart listing main image',
     checkedOn: CHECKED,
   },
+  // Nov 9 photo pass (founder: "make sure all the pictures are on each product"): every live product
+  // was loaded through /api/image-proxy; these had no image or a broken one. Each was loaded and looked at.
+  'd-caria-caria-menopause-midlife': { src: appIcon('PurpleSource211/v4/81/78/8d/81788d6b-dd31-f179-232b-27653803a93b/Placeholder.mill'), alt: 'Caria app icon', source: 'https://apps.apple.com/us/app/id1477621356', checkedOn: '2026-11-09' },
+  'd-health-her-health-her-app': { src: appIcon('PurpleSource221/v4/39/b0/59/39b059ea-7d82-dfbb-0d79-0cfb65344e91/Placeholder.mill'), alt: 'Health & Her app icon', source: 'https://apps.apple.com/us/app/id1519199698', checkedOn: '2026-11-09' },
+  'd-menolog-listed-as-menelle-perimenopause-tracker': { src: appIcon('PurpleSource221/v4/57/7a/71/577a7135-5845-b640-c18c-2234fd7eaabd/Placeholder.mill'), alt: 'Menelle app icon', source: 'https://apps.apple.com/us/app/id6757102221', checkedOn: '2026-11-09' },
+  'd-perry-perry-perimenopause-community': { src: appIcon('PurpleSource221/v4/94/4f/a5/944fa545-feb7-19ca-a8f7-8c6aeb94632f/Placeholder.mill'), alt: 'perry app icon', source: 'https://apps.apple.com/us/app/id1544428724', checkedOn: '2026-11-09' },
+  'd-stella-stella-menopause-relief': { src: appIcon('PurpleSource211/v4/8f/c7/d0/8fc7d096-43a6-3e34-4ecb-37f5e7b85d23/Placeholder.mill'), alt: 'Stella app icon', source: 'https://apps.apple.com/us/app/id1577904186', checkedOn: '2026-11-09' },
+  'd-function-health-function-health-membership': { src: 'https://www.functionhealth.com/_sanity/images/bmk2ab2m/production/181ed95953ce411e3be68620e1425b28f99db2d5-2400x1260.jpg', alt: 'Function Health membership', source: 'https://www.functionhealth.com/pricing', checkedOn: '2026-11-09' },
+  'd-twentyeight-health-birth-control-emergency-contr': { src: 'https://cdn.prod.website-files.com/6167603546bbce1fb989bab3/6a679c061e3933b4b6658d00_bc_landing-p-3200.webp', alt: 'Twentyeight Health birth control', source: 'https://www.twentyeighthealth.com/birth-control', checkedOn: '2026-11-09' },
+  'p-intimina-lily-cup-compact': { src: 'https://assets.intimina.com/files/static/product-images/2022-04/550x550_LC%20Compact_EN.jpg', alt: 'INTIMINA Lily Cup Compact and its case', source: 'https://www.intimina.com/lily-cup-compact', checkedOn: '2026-11-09' },
+  'p-intimina-ziggy-cup-2': { src: 'https://assets.intimina.com/files/static/product-images/2022-04/550x550_Ziggy%202_EN.jpg', alt: 'INTIMINA Ziggy Cup 2 menstrual disc', source: 'https://www.intimina.com/ziggy-cup-2', checkedOn: '2026-11-09' },
+  'p-milli-vaginal-dilator': { src: 'https://www.hellomilli.com/wp-content/uploads/2023/08/Milli-1024x518.webp', alt: 'Milli vaginal dilator', source: 'https://www.hellomilli.com/', checkedOn: '2026-11-09' },
+  'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684': { src: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/sp684__vddd5f8f8f9d55fe38494e5b3b7a0f7eb4a4e4619.webp', alt: 'Thorne Hormone Advantage bottle', source: 'https://www.thorne.com/products/dp/hormone-advantage', checkedOn: '2026-11-09' },
+  'p-thorne-magnesium-citramate': { src: 'https://d1vo8zfysxy97v.cloudfront.net/media/product/m272__vda7610df9740590138e35b7c377895c4d7d1a6a1.webp', alt: 'Thorne Magnesium CitraMate bottle', source: 'https://www.thorne.com/products/dp/magnesium-citramate', checkedOn: '2026-11-09' },
+  'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum': { src: 'https://trinnylondon.com/cdn/shop/files/naked-ambition-serum-skincare-01.png', alt: 'Trinny London Naked Ambition serum', source: 'https://trinnylondon.com/us/products/naked-ambition', checkedOn: '2026-11-09' },
 });
 
 /** The official image entry for a product (or id), or null. */
