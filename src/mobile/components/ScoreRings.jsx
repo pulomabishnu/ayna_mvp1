@@ -58,7 +58,7 @@ const vsUsual = (chart) => {
 };
 
 // bare: no band of its own (it sits inside Home's hero band). animate: the arcs fill once on load (off under reduced motion).
-export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = null, activity = null, onOpen = null, onConnect = null, bare = false, animate = false, label = 'Your scores', connectText = '' }) {
+export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = null, activity = null, onOpen = null, onConnect = null, onLog = null, bare = false, animate = false, label = 'Your scores', connectText = '' }) {
   const s = vsUsual(sleep);
   const a = vsUsual(activity);
   const missing = [!s && 'sleep', !a && 'activity'].filter(Boolean);
@@ -78,7 +78,8 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
             todayDot={!hormonalBC}
             aria={hormonalBC ? `Day ${cycle.cycleDay} since your last bleed.` : `Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}, estimated.${onOpen ? ' Open cycle.' : ''}`}
           />
-          : <Dial center="No data" label="Cycle day" sub="Log a period" aria="Cycle day: no data yet." />}
+          // Prep call, Nov 9: "Log a period" did nothing when tapped. It opens the log now.
+          : <Dial center="No data" label="Cycle day" sub="Log a period" onClick={onLog || undefined} aria={`Cycle day: no data yet.${onLog ? ' Log a period.' : ''}`} />}
         {s
           ? <Dial count={animate} tone="ink" fill={s.fill} dir={s.dir} center={short('sleep_minutes', s.now)} label="Sleep" sub={s.sub} onClick={open('sleep')}
             aria={`Sleep: ${short('sleep_minutes', s.now)} a night this week${sleep.usual ? `, usual ${short('sleep_minutes', sleep.usual)}` : ''}. ${s.sub}.${onOpen ? ' Open sleep.' : ''}`} />

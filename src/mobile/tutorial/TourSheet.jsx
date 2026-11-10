@@ -12,7 +12,7 @@ export const TOUR_SECTIONS = [
     'Your cycle, sleep and activity sit at the top. Tap a ring for more.',
     'Rundown plays your 60-second Daily Rundown.',
     'Your data and Your products each open in one tap.',
-    'Log once a day to keep your streak going.',
+    'Log your period and symptoms from the log card, once a day.',
   ] },
   { title: 'Your matches', items: [
     'Your products, in Home, lists every match by what it helps with.',

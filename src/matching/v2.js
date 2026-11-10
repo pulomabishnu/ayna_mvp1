@@ -738,8 +738,9 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (filling && brand && homeHave.some((x) => x.pp.brand?.key === brand)) continue;
       const tk = typeKey(c.pp, home.needId);
       const same = chosen.filter((x) => x.home.needId === home.needId && typeKey(x.pp, home.needId) === tk);
-      // Two heat products at most on one shelf (founder, Nov 9: "always these and the ThermaCare").
-      if (same.length >= (tk === 'heat' ? 2 : filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
+      // One heat product per shelf (founder, Nov 9 prep call: "one heating pad and then something
+      // different"; earlier the same day: "always these and the ThermaCare").
+      if (same.length >= (tk === 'heat' ? 1 : filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
       const fmt = (c.pp.formats || []).join();
       const varied = (same.every((x) => (x.pp.formats || []).join() !== fmt) ? 2 : 0) + (same.every((x) => x.pp.brand?.key !== brand) ? 1 : 0);
       const option = { c, home, isUniversal, varied };

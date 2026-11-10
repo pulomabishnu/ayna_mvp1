@@ -286,8 +286,8 @@ export default function ProductDetailScreen({
     if (onOpenProduct && more.length < 4) more = [...more, ...sameNeedProducts(product, { pool: fallbackPool, limit: 4 - more.length, exclude: [...used, ...more.map((p) => p.id)] })];
     // Before a big one-time purchase: cheaper products for the same need that fit her (focus group, Nov 9).
     const big = bigPurchasePrice(product);
-    const cheaper = !big || !onOpenProduct ? [] : [...compare, ...sameNeedProducts(product, { pool, limit: 8 })]
-      .filter((p, i, arr) => arr.findIndex((x) => x.id === p.id) === i)
+    // Same kind of product only (Nov 10 check: a pelvic floor trainer offered moisturizer kits).
+    const cheaper = !big || !onOpenProduct ? [] : similarProducts(product, { pool, limit: 8 })
       .map((p) => ({ p, amount: parsePrice(p.price).amount, m: quizAnswers ? getProductMatchDetailsForProduct(p, quizAnswers, null, matchOpts) : null }))
       .filter(({ amount, m }) => Number.isFinite(amount) && amount > 0 && amount < big && (!quizAnswers || (m?.matchStatus === 'scored' && m.percent >= 50)))
       .sort((a, b) => (b.m?.percent || 0) - (a.m?.percent || 0) || a.amount - b.amount)
@@ -391,12 +391,6 @@ export default function ProductDetailScreen({
   const breakdown = matchBreakdownFor(product, quizAnswers ? matchDetails : null);
   const perUse = costPerUse(product);
   const metaLine = metaLineFor(product, glance, keyFormat(product, brand));
-  const whatItIs = (() => {
-    const t = String(product?.summary || product?.description || '').trim();
-    if (!t) return '';
-    const first = (t.match(/^.+?[.!?](?=\s|$)/) || [t])[0];
-    return first.length > 170 ? `${first.slice(0, 167).replace(/\s+\S*$/, '')}…` : first;
-  })();
   const highlights = highlightsFor(product, glance);
   // The app's 2x2 stat grid in ayna summary: the highlights, then short facts on file (never guessed).
   const stats = (() => {
@@ -473,10 +467,7 @@ export default function ProductDetailScreen({
           {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
           <h1>{shownName}</h1>
           {metaLine && <p className="ayv-metaline">{metaLine}</p>}
-          {/* What it is, before Buy (focus group, Nov 9: for new kinds of products she had to
-              scroll past Buy to the Summary to learn what the thing even does). The team's own
-              first sentence, shown as written. */}
-          {whatItIs && <p className="ayv-whatis">{whatItIs}</p>}
+          {/* No separate "what it is" line here (Nov 10): it repeated the Summary's first line just below. */}
           {matchState?.kind !== 'quiz' && <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />}
           <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
           {sizeChips.length > 0 && (

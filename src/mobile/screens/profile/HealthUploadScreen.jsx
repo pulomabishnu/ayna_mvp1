@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES, METRICS } from '../../../health/metrics.js';
 import { categoriesFor, fileKind, foundSummary, originFor, parseHealthFile } from '../../../health/manualImport.js';
@@ -80,13 +80,15 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
   const cats = useMemo(() => categoriesFor(rows), [rows]);
   const saveable = rows.filter((r) => consent.includes(METRICS[r.metric].category));
 
+  const [shotsOn, setShotsOn] = useState(false);
+  useEffect(() => { let on = true; extractionStatus().then((v) => { if (on) setShotsOn(Boolean(v)); }); return () => { on = false; }; }, []);
   const onFile = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
     setError(null);
     const kind = fileKind(file.name, file.type);
-    if (!kind) { setError('ayna can read CSV, JSON and TXT files, and screenshots.'); return; }
+    if (!kind) { setError(shotsOn ? 'ayna can read CSV, JSON and TXT files, and screenshots.' : 'ayna can read CSV, JSON and TXT files.'); return; }
     if (file.size > 20 * 1024 * 1024) { setError('That file is over 20 MB. Export a shorter date range and try again.'); return; }
     setBusy(true);
     try {
@@ -207,8 +209,10 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       <label htmlFor="ay-hc-app">Which app or device is it from? (optional)</label>
       <input id="ay-hc-app" value={app} onChange={(e) => setApp(e.target.value)} maxLength={60} placeholder="e.g. Flo, WHOOP, Fitbit" />
       <label className="ay-hc-file">
-        <input type="file" accept=".csv,.json,.txt,text/csv,application/json,text/plain,image/*" onChange={onFile} disabled={busy} />
-        <span>{busy ? 'Reading…' : 'Choose a file or screenshot'}</span>
+        {/* Prep call, Nov 9: screenshots "weren't working". Reading them is off until the founders
+            approve the AI processor (HEALTH_IMAGE_EXTRACTION), so the button only offers them when on. */}
+        <input type="file" accept={`.csv,.json,.txt,text/csv,application/json,text/plain${shotsOn ? ',image/*' : ''}`} onChange={onFile} disabled={busy} />
+        <span>{busy ? 'Reading…' : shotsOn ? 'Choose a file or screenshot' : 'Choose a file'}</span>
       </label>
       <p className="ay-hc-small">CSV, JSON or TXT exports are read on your device. ayna shows you what it found and saves only what you confirm. Files aren't kept.</p>
       {pendingImage && (

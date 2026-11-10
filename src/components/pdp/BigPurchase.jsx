@@ -20,12 +20,14 @@ export default function BigPurchase({ product, cheaper = [], pctFor, onOpenProdu
   if (!amount) return null;
   let ev = null;
   try { ev = evidenceLevel(product); } catch { ev = null; }
-  const evidence = ev?.word ? `${ev.word}${ev.need ? ` for ${ev.need}` : ''}.` : 'We don’t have research on this one yet.';
+  const evidence = ev?.word ? `${ev.word}${ev.need ? ` for ${ev.need}` : ''}.` : '';
+  // Nothing on file to weigh: no box at all (never a claim there is no research).
+  if (!evidence && !cheaper.length) return null;
   return (
     <section className="ay-bigbuy" aria-labelledby="ay-bigbuy-h">
       <h2 id="ay-bigbuy-h">Before you spend ${Math.round(amount).toLocaleString()}</h2>
       <ul className="ay-bigbuy__facts">
-        <li><b>The research</b><span>{evidence}</span></li>
+        {evidence && <li><b>The research</b><span>{evidence}</span></li>}
         {cheaper.length > 0 && <li><b>Cheaper options that fit you</b>
           <span className="ay-bigbuy__alts">{cheaper.map((p) => {
             const pct = pctFor?.(p);

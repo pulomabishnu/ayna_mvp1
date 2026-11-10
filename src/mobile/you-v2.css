@@ -96,3 +96,5 @@ html body .ayna-mobile[data-theme*="dark"]:is(#ay,.ayna-mobile):is(#ay,.ayna-mob
 /* Nov 9: in dark mode the pink Activity tile kept butter type (unreadable). Pink tiles read espresso. */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .yb--list .yb-list:not(.yb-list--pro) > li:nth-child(2) .yb-row { color: #3e2723 !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .yb--list .yb-list:not(.yb-list--pro) > li:nth-child(2) .yb-row :is(b, small, span, svg) { color: #3e2723 !important; }
+/* Nov 10: the Settings row is short, so its grid row is too (it left a 72px gap above Manage your ecosystem). */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .yb.yb--list { grid-template-rows: none !important; grid-auto-rows: auto !important; }

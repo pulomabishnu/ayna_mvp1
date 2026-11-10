@@ -22,7 +22,6 @@ import { buildInsights } from '../../health/insights.js';
 import { comingUp } from '../../health/comingUp.js';
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
-import HomeSetup from '../../home/HomeSetup.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
 import '../ayna-home.css';
 import HealthRefreshPrompt from '../../components/health/HealthRefreshPrompt.jsx';
@@ -107,16 +106,7 @@ export default function AynaHomeScreen(props) {
       <div data-tour="home-links">
         <HomeShortcuts cycle={cycle} sleep={chartOf('sleep_minutes')} products={myProducts} onData={() => openDashboard()} onProducts={() => onHomeView?.('products')} />
       </div>
-      {authUser && (
-        <HomeSetup
-          hasAnswers={Boolean(lastQuizAnswers || quizAnswers)}
-          productCount={myProducts.length}
-          connectedCount={healthConnectedCount}
-          checkinCount={loggedDays.length}
-          go={{ quiz: onStartQuiz, ecosystem: () => onHomeView?.('products'), connect: onOpenHealthData || onConnectHealth, checkin: () => openDashboard(true) }}
-          onEditProfile={props.onEditProfile}
-        />
-      )}
+      {/* Founder, Nov 10: the set-up steps live on You, not Home (too crowded here). */}
       <TodayViews
         todayCount={count}
         initial={charts.length ? 'week' : 'today'}

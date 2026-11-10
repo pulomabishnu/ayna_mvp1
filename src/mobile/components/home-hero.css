@@ -125,3 +125,11 @@
 
 /* Small 44px plates: a product whose photo can't load shows a product (bag) icon, never a name spilling out. */
 .ay-hsc .ay-hsc__plateicon { position: relative; width: 20px; height: 20px; fill: none; stroke: var(--ay-espresso, #3e2723); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+/* Prep call, Nov 9: the log card says what it is ("Period and symptom log"); tap logs, the calendar opens the month. */
+.ay-hh-streak-wrap { position: relative; flex: 1 1 auto; min-width: 0; display: flex; }
+.ay-hh-streak-wrap .ay-hh-streak { padding-right: 52px; }
+.ay-hh-streak-wrap .ay-hh-streak__top { flex-direction: column; align-items: flex-start; gap: 2px; }
+.ay-hh-streak-wrap .ay-hh-streak__top b { white-space: normal; font-size: 16px; }
+.ay-hh-streak-wrap .ay-hh-streak__top small { margin-left: 0; text-align: left; }
+.ay-hh-streak__month { all: unset; box-sizing: border-box; position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+.ay-hh-streak__month:focus-visible { outline: 2px solid #f7badd; outline-offset: 1px; }

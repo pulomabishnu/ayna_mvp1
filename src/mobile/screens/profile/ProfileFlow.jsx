@@ -55,6 +55,7 @@ import usePersistentState from '../../../hooks/usePersistentState.js';
 import CharRing from '../../../components/ui/CharRing.jsx';
 import { PillTabs, HouseBlend } from '../../../components/you/YouBits.jsx';
 import { setupSteps, knowsLine, countAnswers, connectedNames } from '../../../components/you/setupSteps.js';
+import HomeSetup from '../../../home/HomeSetup.jsx';
 import '../../you-hub-app.css';
 import '../../you-v2.css';
 import YouBento from '../../../components/you/YouBento.jsx';
@@ -654,14 +655,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
 
         {/* Pai #12: set-up as "2 of 4" with one next step; gone once everything is done. */}
-        {signedIn && setup.next && (
-          <section className="ay-you-setup" aria-labelledby="ay-you-setup-h">
-            <div className="ay-you-setup-top"><h2 className="ay-you-h2" id="ay-you-setup-h">Finish setting up</h2><span>{setup.done} of {setup.total} done</span></div>
-            {profileFilledPct < 100 && <p className="ay-you2-setup-sub">Health profile <b>{profileFilledPct}% complete</b></p>}
-            <span className="ay-you-setup-bar" aria-hidden="true">{/* Fills left to right with the count done, so "1 of 4" never lights the third segment. */}{setup.steps.map((st, i) => <i key={st.key} className={i < setup.steps.filter((x) => x.done).length ? 'is-done' : ''} />)}</span>
-            {SETUP_GO[setup.next.key] && <button type="button" className="ay-you-setup-go" onClick={SETUP_GO[setup.next.key]}>Next: {setup.next.label} <ChevronIcon /></button>}
-          </section>
-        )}
+        {/* The full set-up checklist (founder, Nov 10: moved here from Home). Gone once all done. */}
+        {signedIn && setup.next && <HomeSetup hasAnswers={!!intake} productCount={ecosystemCount} connectedCount={connectedCount} checkinCount={checkinCount} go={SETUP_GO} />}
 
         {/* You critique (Oct 27): one feature card (My ecosystem) and the sections as one grouped list. */}
         <div className="ay-you-bento" data-tour="you-sections" aria-label="You sections" role="navigation">
@@ -685,9 +680,9 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         {/* Founder, Nov 9: the ecosystem page's "Manage your ecosystem" list, on You too,
             so changing answers or starting over never needs a hunt (focus group). */}
         {signedIn && group('manage', 'Manage your ecosystem', [
-          onEditProfile && { key: 'quiz-answers', icon: 'beliefs', title: 'Your quiz answers', sub: 'Something changed? Update them anytime.', onClick: onEditProfile },
-          onOpenMonthlyCheckin && { key: 'monthly', icon: 'checkin', title: 'Monthly check-in', sub: 'A few quick questions so your matches keep up', onClick: onOpenMonthlyCheckin },
-          onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your ecosystem', sub: 'Start your matches over from scratch', onClick: onRequestEcosystemReset },
+          onEditProfile && { key: 'quiz-answers', icon: 'beliefs', title: 'Your quiz answers', sub: 'Update anytime', onClick: onEditProfile },
+          onOpenMonthlyCheckin && { key: 'monthly', icon: 'checkin', title: 'Monthly check-in', sub: 'Keep your matches current', onClick: onOpenMonthlyCheckin },
+          onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your ecosystem', sub: 'Start your matches over', onClick: onRequestEcosystemReset },
         ])}
       </div>
       {/* The signature strip marks the end of You (founder, Oct 27 13:20). */}

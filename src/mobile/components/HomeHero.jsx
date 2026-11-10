@@ -58,12 +58,15 @@ const CAL = 'M7 3.5v3M17 3.5v3M4.5 9.5h15M6 5.5h12a1.5 1.5 0 0 1 1.5 1.5v11A1.5 
 function Streak({ streak, onLog, onMonth = null }) {
   const { count, loggedToday, week } = streak;
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
-  const title = count > 0 ? `${count}-day streak` : 'Start your streak';
-  const sub = loggedToday ? 'Logged today' : count > 0 ? 'Log today to keep it' : 'Log today';
+  // Prep call, Nov 9: "1-day streak" read as a login streak. It is her period and symptom log.
+  const title = 'Period and symptom log';
+  const sub = loggedToday ? (count > 1 ? `Logged today · ${count} days in a row` : 'Logged today') : count > 0 ? `${count} ${count === 1 ? 'day' : 'days'} in a row · log today` : 'Tap to log today';
   return (
-    <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onMonth || onLog} aria-haspopup={onMonth ? 'dialog' : undefined}
-      aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.${onMonth ? ' Open your month.' : ''}`}>
-      <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small>{onMonth && <svg className="ay-hh-streak__cal" viewBox="0 0 24 24"><path d={CAL} /></svg>}</span>
+    // Tapping it logs (prep call, Nov 9: she tapped to log and got a calendar). The calendar icon is the month.
+    <div className="ay-hh-streak-wrap">
+    <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onLog || onMonth}
+      aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.`}>
+      <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small></span>
       <span className="ay-hh-streak__days" aria-hidden="true">
         {week.map((d) => (
           <span key={d.day} className={`${d.on ? 'is-on' : ''}${d.today ? ' is-today' : ''}`}>
@@ -73,6 +76,8 @@ function Streak({ streak, onLog, onMonth = null }) {
         ))}
       </span>
     </button>
+    {onMonth && onLog && <button type="button" className="ay-hh-streak__month" onClick={onMonth} aria-haspopup="dialog" aria-label="Open your month"><svg className="ay-hh-streak__cal" viewBox="0 0 24 24" aria-hidden="true"><path d={CAL} /></svg></button>}
+    </div>
   );
 }
 
@@ -105,7 +110,7 @@ export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, s
         <h2 id="ay-hh-hi" className="ay-hh__hi">{hello()}{name ? `, ${name}` : ''}.</h2>
         <ScoreRings bare animate label="Your scores today" cycle={cycle} hormonalBC={hormonalBC} sleep={sleep} activity={activity}
           onOpen={onOpenMetric ? (area) => onOpenMetric(area === 'cycle' ? 'cycle' : area === 'sleep' ? 'sleep_minutes' : activity?.metric || 'steps') : null}
-          onConnect={onConnect} />
+          onConnect={onConnect} onLog={onLog} />
         {(count > 0 || streak) && (
           <div className="ay-hh__row">
             {count > 0 && <RundownBubble count={count} done={done} />}

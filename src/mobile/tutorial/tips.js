@@ -122,7 +122,7 @@ export const SCREENS = [
     within: 'home',
     root: '[data-tour="home"] [data-tour="streak"]',
     tips: [
-      { id: 'home-streak', anchor: '[data-tour="home"] [data-tour="streak"]', text: 'Log once a day to keep your streak going.' },
+      { id: 'home-streak', anchor: '[data-tour="home"] [data-tour="streak"]', text: 'Log your period and symptoms here, once a day.' },
     ],
   },
   {
