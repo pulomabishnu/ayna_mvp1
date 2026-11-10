@@ -114,6 +114,16 @@ export function grantConsent(ph) {
   ph.capture('$pageview');
 }
 
+/**
+ * The footer's "Privacy choices" link: reopens the consent banner (it
+ * listens for this event), even after a choice was made, so anyone, signed
+ * in or not, can change their mind.
+ */
+export const PRIVACY_CHOICES_EVENT = 'ayna:privacy-choices';
+export function openPrivacyChoices() {
+  try { window.dispatchEvent(new Event(PRIVACY_CHOICES_EVENT)); } catch { /* no window */ }
+}
+
 /** Explicit opt-out used by the notice and privacy/account controls. */
 export function denyConsent(ph) {
   persist('denied');

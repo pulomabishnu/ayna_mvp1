@@ -612,7 +612,7 @@ export default function WebYou({ onUpdateIntakeLocal = null, onEditAnswerAt = nu
         <section className="wy-sec" aria-labelledby="yh-privacy-h">
           <h2 className="ay-group__title" id="yh-privacy-h">Privacy and your data</h2>
           <div className="ay-group wy-rows">
-            {row('analytics', 'Usage analytics', 'Anonymous, no session recording', <AnalyticsToggle />)}
+            {row('analytics', 'Usage analytics', 'Pages and products you use; never sold', <AnalyticsToggle />)}
             {onOpenHealthData && row('healthdata', 'Health data', healthConnectedCount ? `${fmtCount(healthConnectedCount)} connected` : 'Nothing connected', <button type="button" className="ct-link" onClick={onOpenHealthData}>Manage</button>)}
             {row('data', 'Your data', <>Everything we store about you<small className="ay-group__note">A JSON file: your health profile, ecosystem, reviews, phone and text settings, and AI usage.</small></>, <button type="button" className="ct-link" onClick={downloadData}>Download</button>)}
           </div>

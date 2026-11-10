@@ -19,8 +19,14 @@ describe('commercial + health data regulatory regressions',()=>{
   it('does not send optional analytics before opt-in or silently revive GPC events',()=>{
     expect(main).toContain("opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF !== 'granted'");
     expect(main).not.toContain('if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false })');
-    expect(consent).toContain('Optional usage analytics are off until you choose to enable them');
-    expect(consent).toContain('Enable optional analytics');
+    // Banner wording approved by Puloma, 2026-11-10.
+    expect(consent).toContain('Help us improve ayna for women like you');
+    expect(consent).toContain('Turn on analytics so we can see which pages and products help, across your visits. Never sold,');
+    expect(consent).toContain('never used for ads. Until you choose, we only count visits anonymously; Keep off stops that too.');
+    expect(consent).toContain('Opt-out request honored.');
+    // The policy and health notice say opted-in analytics include products viewed.
+    expect(policy).toContain('the products you view and click (product name or ID)');
+    expect(healthNotice).toContain('the products you view and click (product name or ID)');
     expect(healthNotice).toContain('only after you explicitly opt in');
     expect(policy).toContain('off until you explicitly opt in');
   });
