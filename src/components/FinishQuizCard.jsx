@@ -10,8 +10,21 @@ import './finish-quiz.css';
 export default function FinishQuizCard({ progress, onContinue, onStartOver, variant = 'app', compact = false, className = '' }) {
   const [confirming, setConfirming] = useState(false);
   if (!progress) return null;
+  // Founder, Nov 9 ("ugh come on"): nothing answered yet (still on question 1) is not a quiz
+  // to finish, so no card.
+  if (!progress.requiredDone && (progress.index || 1) <= 1) return null;
   const pct = Math.round(progress.fraction * 100);
   const line = draftProgressLine(progress);
+  // App: one slim row, not a big box over Home (founder, Nov 9). The intro screen keeps the card.
+  if (variant === 'app' && !className) {
+    return <section className="fq-row" aria-label="Finish your quiz">
+      <button type="button" className="fq-row__go" onClick={onContinue}>
+        <span className="fq-row__txt"><b>Finish your quiz</b><small>{progress.requiredDone ? 'Your matches are one step away' : `Question ${progress.index} of ${progress.total}, saved`}</small></span>
+        <span className="fq-row__bar" aria-hidden="true"><i style={{ width: `${Math.max(pct, 6)}%` }} /></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </button>
+    </section>;
+  }
   return <section className={`fq fq--${variant}${compact ? ' fq--compact' : ''}${className ? ` ${className}` : ''}`} aria-labelledby={`fq-title-${variant}${compact ? '-c' : ''}`}>
     <div className="fq__text">
       <h2 id={`fq-title-${variant}${compact ? '-c' : ''}`}>Finish your quiz</h2>
