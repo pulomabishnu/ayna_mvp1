@@ -5,6 +5,7 @@ import SafetyHoldNote from './SafetyHoldNote.jsx';
 import BleedingEvaluationNote from './BleedingEvaluationNote.jsx';
 import { usePro } from './WhyTrace.jsx';
 import { breakdownFromDetails } from '../../matching/breakdown.js';
+import { matchBreakdownFor } from '../pdp/decision.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { openProPaywall } from '../../pro/paywall.js';
 import { ALL_PRODUCTS } from '../../data/catalog.js';
@@ -88,7 +89,8 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const reasons = shown != null ? fitReasons(product, details, b?.raised || [], forWhat) : [];
   // Nov 9 (founder: "not saying every factor, not specific"): every row with its points, biggest first,
   // so the list adds up to the % she sees.
-  const factors = [...(b?.raised || []).map((x) => ({ ...x, up: true })), ...(b?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text).sort((a, z) => Math.abs(z.points || 0) - Math.abs(a.points || 0));
+  const mb = scored ? matchBreakdownFor(product, details) : null; // whole points that add up to the shown %
+  const factors = [...(mb?.raised || []).map((x) => ({ ...x, up: true })), ...(mb?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text && x.points).sort((a, z) => Math.abs(z.points || 0) - Math.abs(a.points || 0));
   const ev0 = evidenceLevel(product);
   const tr = b?.evidence || null;
   const spot = shown != null ? priceSpot(product) : null;
