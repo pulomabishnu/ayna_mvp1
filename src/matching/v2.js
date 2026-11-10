@@ -342,7 +342,7 @@ function healthParts(pp, r, needIds, x) {
     const kind = delta > 0 ? 'raised' : 'lowered';
     let text = '';
     if (steps[i].factor === 'strength') text = `A secondary option for your ${phrase}, not made mainly for it`;
-    else if (steps[i].factor === 'evidence') text = `Evidence for your ${phrase} is graded ${x.grade} in ayna's draft review (not yet clinically reviewed)`;
+    else if (steps[i].factor === 'evidence') text = `Evidence for your ${phrase}: ${({ A: 'strong research', B: 'some research', C: 'early research' })[x.grade] || `grade ${x.grade}`}`; // Nov 9 (founder): information, not caveats
     else if (steps[i].factor === 'focus') {
       const others = Object.entries(pp.health_need_relevance || {}).filter(([id, e]) => !needIds.has(id) && ((typeof e === 'number' ? e : e?.score) || 0) >= 0.55).length;
       // Founder, Nov 2: the old wording read as a penalty for helping more. It is a

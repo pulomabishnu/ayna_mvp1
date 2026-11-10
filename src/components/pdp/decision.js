@@ -151,7 +151,9 @@ export function matchBreakdownFor(product, details) {
   const raised = items(b.raised);
   const lowered = items(b.lowered);
   const shown = shownMatchPercent(b.percent);
-  addPoints([...raised, ...lowered], shown);
+  // Nov 9 (BUNI showed 92-12-12-10 = 58 next to 57%): the rows add up to the % she sees, except over the
+  // 97 cap, which gets its own row below.
+  addPoints([...raised, ...lowered], shown, b.percent > MAX_SHOWN_PERCENT ? null : shown);
   // Over 97 the page prints 97: say so as its own line, so the parts still add up to the number shown.
   const cap = shown != null && b.percent > MAX_SHOWN_PERCENT ? sumPoints([...raised, ...lowered]) - shown : 0;
   if (cap > 0) lowered.push({ text: `Capped at ${MAX_SHOWN_PERCENT}: ayna never shows a higher match`, points: -cap, cap: true });
@@ -165,11 +167,11 @@ const sumPoints = (xs) => xs.reduce((s, x) => s + (Number.isFinite(x.points) ? x
  * so they add up exactly: largest remainder, to the engine's rounded total.
  * With no shown percent (Partial fit) the points are left off.
  */
-function addPoints(list, shown) {
+function addPoints(list, shown, exact = null) {
   const withDelta = list.filter((x) => Number.isFinite(x.delta));
   if (shown == null || !withDelta.length) return;
   const raw = withDelta.map((x) => x.delta * 100);
-  const target = Math.round(raw.reduce((s, v) => s + v, 0));
+  const target = exact != null ? exact : Math.round(raw.reduce((s, v) => s + v, 0));
   const base = raw.map((v) => Math.trunc(v));
   let left = target - base.reduce((s, v) => s + v, 0);
   const order = raw.map((v, i) => ({ i, r: v - base[i] })).sort((a, b) => (left >= 0 ? b.r - a.r : a.r - b.r));
