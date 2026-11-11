@@ -650,9 +650,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
             })}
           </div>
           {custom.length > 0 && <section className="qz-group"><h3>Added by you</h3><Chips small items={custom} selected={custom} onToggle={pick} /></section>}
-          <Chips small items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={pick} />
+          <Chips small items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(v) => { const on = !(intake.supportSelections || []).includes(v); pick(v); if (on) setTimeout(() => document.querySelector('.ay-learn-q')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120); }} />
           {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
-            <section className="qz-group"><h3>Anything you&rsquo;d like to learn about? (optional)</h3>
+            <section className="qz-group ay-learn-q"><h3>Anything you&rsquo;d like to learn about? (optional)</h3>
               <Chips small items={LEARN_INTERESTS} selected={intake.learnInterests || []} onToggle={(v) => set('learnInterests', (intake.learnInterests || []).includes(v) ? intake.learnInterests.filter((x) => x !== v) : [...(intake.learnInterests || []), v])} />
             </section>
           )}

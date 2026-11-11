@@ -418,8 +418,15 @@ export default function MobileApp() {
       else window.history.pushState({ aynaNav: stack.length - 1 }, '');
     } catch { /* history unavailable */ }
   }, [screen, overlay, homeView]);
+  // Ask ayna is a drawer over the page she is on (founder, Nov 10: "when you exit it doesn't take you
+  // back to the page you were on, it goes to Home"). On the phone the back swipe ran history back past
+  // the drawer to the screen before. Now opening it adds one history step, and Back just closes it.
+  const askHistRef = useRef(false);
+  const skipPopRef = useRef(false);
   useEffect(() => {
     const onPop = () => {
+      if (skipPopRef.current) { skipPopRef.current = false; return; }
+      if (askHistRef.current) { askHistRef.current = false; setAskAynaOpen(false); return; }
       const stack = navStackRef.current;
       if (stack.length < 2) return;
       stack.pop();
@@ -675,6 +682,16 @@ export default function MobileApp() {
   });
   const { textSizeIndex, setTextSizeIndex, textScale } = useTextSize();
   const [askAynaOpen, setAskAynaOpen] = useState(() => !!(import.meta.env.DEV && new URLSearchParams(window.location.search).get('ask')));
+  useEffect(() => {
+    try {
+      if (askAynaOpen && !askHistRef.current) { askHistRef.current = true; window.history.pushState({ ...(window.history.state || {}), aynaAsk: 1 }, ''); }
+      else if (!askAynaOpen && askHistRef.current) {
+        askHistRef.current = false;
+        // Closed with its own button: take back the step it added, unless she already moved on.
+        if (window.history.state?.aynaAsk) { skipPopRef.current = true; window.history.back(); }
+      }
+    } catch { /* history unavailable */ }
+  }, [askAynaOpen]);
   const [askAynaHistoryState, setAskAynaHistoryState] = useState({ userId: null, messages: [] });
   const [askSeed, setAskSeed] = useState(null);
   // The end-of-rundown questions, as the chat's starters for this session (founder, Oct 24 20:12).
@@ -1453,6 +1470,7 @@ export default function MobileApp() {
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
     onQuizConnectSignIn: () => { authResumeRef.current = null; authReturnScreenRef.current = 'connect'; setAuthMode('signup'); setScreen('signin'); },
     planProducts,
+    planNewIds: planSeeded.map((p) => p.id),
     planAnswers: pendingAnswers,
     planInsights: healthInsightsForPlan,
     planSuggestions: planHealthContext?.suggestions || [],

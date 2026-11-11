@@ -50,6 +50,22 @@ export function QuizFrame({
 }) {
   const [whyOpen, setWhyOpen] = useState(false);
   const whyItems = why.filter(Boolean);
+  // Founder, Nov 10 ("why does it cut off the preference questions"): when answers run on below
+  // the Continue button, the list fades out and a "More below" pill says so, until she scrolls.
+  const scrollRef = useRef(null);
+  const [more, setMore] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return undefined;
+    const read = () => setMore(el.scrollHeight - el.scrollTop - el.clientHeight > 24);
+    read();
+    const t = window.setTimeout(read, 400);
+    el.addEventListener('scroll', read, { passive: true });
+    window.addEventListener('resize', read);
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
+    ro?.observe(el.firstElementChild || el);
+    return () => { window.clearTimeout(t); el.removeEventListener('scroll', read); window.removeEventListener('resize', read); ro?.disconnect(); };
+  }, [stepKey, sub]);
   const pct = progress ? Math.max(4, Math.min(100, (progress.now / Math.max(1, progress.total)) * 100)) : 0;
   return (
     <div className={`aq aq--${surface}${className ? ` ${className}` : ''}`} data-step={stepKey} data-sub={sub || undefined} data-direction={direction} {...rootProps}>
@@ -63,7 +79,7 @@ export function QuizFrame({
           )}
           {onSkip ? <button type="button" className="aq-skip" onClick={onSkip}>{skipLabel}</button> : <span className="aq-skip is-spacer" aria-hidden="true" />}
         </header>
-        <div className="aq-scroll">
+        <div className={`aq-scroll${more ? ' has-more' : ''}`} ref={scrollRef}>
           <div className="aq-slide" key={`${stepKey}-${sub || ''}`}>
             {progress?.label && <p className="aq-count">{progress.label}</p>}
             {flag && <p className="aq-flag">{flag}</p>}
@@ -79,6 +95,7 @@ export function QuizFrame({
           </div>
         </div>
         <footer className="aq-foot">
+          {more && <button type="button" className="aq-more" onClick={() => scrollRef.current?.scrollBy({ top: Math.round((scrollRef.current?.clientHeight || 400) * 0.7), behavior: 'smooth' })}>More below<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>}
           {hint && <p className="aq-hint" role="status">{hint}</p>}
           {cta && (
             <button type="button" className="aq-cta" onClick={cta.onClick} disabled={cta.disabled}>

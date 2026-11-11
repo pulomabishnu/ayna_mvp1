@@ -49,6 +49,9 @@ export const V2 = {
   ecosystemFloor: 0.5,
   // Nov 10: a secondary fit this strong (v1 score) can be the one "something different" pick.
   discoveryFloor: 30,
+  // Founder, Nov 10 ("why are my matches so low"): the something-different pick must still be a good
+  // fit (shown at 65% or more); a 51% omega-3 on the cramps shelf read as a weak match.
+  discoveryMinFit: 0.65,
   partialFloor: 0.3, // Nov 4 (founder: empty shelves): a secondary use with a C grade (about 0.31) shows as a Partial match when nothing better fits
   strongFloor: 0.75,
   // Strong needs HIGH confidence (score.js confidenceLevel: 0.75+), Nov 2 review:
@@ -794,6 +797,7 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) continue;
       const x = c.results.get(n.id);
       if (!x || types.has(typeKey(c.pp, n.id))) continue;
+      if ((x.v2?.fit ?? 0) < V2.discoveryMinFit) continue;
       // Only something our research ties to this need (a primary or secondary use on file).
       const row = REVIEWED.get(`${c.pp.product_id}|${n.id}`);
       if (!row || !['primary', 'secondary'].includes(row.strength)) continue;

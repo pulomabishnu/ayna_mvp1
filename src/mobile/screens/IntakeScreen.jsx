@@ -619,7 +619,12 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
   // Part 1: the required minimum (with the follow-ups that apply). Then a
   // checkpoint. Part 2: optional refinements, each one skippable.
-  const { required: requiredSteps, optional: optionalSteps } = useMemo(() => splitIntakeSteps(intake), [intake]);
+  const { required: requiredSteps, optional: rawOptionalSteps } = useMemo(() => splitIntakeSteps(intake), [intake]);
+  // Founder, Nov 10 ("Avoid or must-have" was confusing): the same two plain questions as the
+  // first run, one at a time. Same saved field, so nothing about matching changes.
+  const optionalSteps = useMemo(() => rawOptionalSteps.flatMap((s) => (s.id === 'avoidIngredients'
+    ? [{ ...s, title: 'Anything you want your products to avoid?', type: 'avoidOnly' }, { ...s, id: 'preferIngredients', type: 'wantOnly', title: 'Anything you prefer your products to have or be?' }]
+    : [s])), [rawOptionalSteps]);
   const onboardingSteps = useMemo(() => (onboarding ? getOnboardingSteps(intake, { part: obPart }) : []), [onboarding, obPart, intake]);
   const atCheckpoint = !onboarding && stepId === CHECKPOINT_STEP;
   const phase = onboarding ? 'onboarding' : optionalSteps.some((s) => s.id === stepId) ? 'optional' : 'required';
@@ -805,10 +810,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (step.type === 'support' && onboarding) return (
       <>
         <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
-        <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} muted={[NOTHING_SPECIFIC]} /></div>
+        {/* Founder, Nov 10: picking "Nothing right now" scrolls to the learn question that appears under it. */}
+        <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => { const on = !(intake.supportSelections || []).includes(item); toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC]); if (on) setTimeout(() => document.querySelector('.ay-learn-q')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120); }} muted={[NOTHING_SPECIFIC]} /></div>
         {/* Focus group, Nov 9: nothing to fix is fine. What would she like to learn about? Saved to her profile, never a match. */}
         {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
-          <div className="aq-subq--under"><SubQuestion title="Anything you'd like to learn about? (optional)">
+          <div className="aq-subq--under ay-learn-q"><SubQuestion title="Anything you'd like to learn about? (optional)">
             <Chips compact items={LEARN_INTERESTS} selected={intake.learnInterests || []} onToggle={(v) => set('learnInterests', (intake.learnInterests || []).includes(v) ? intake.learnInterests.filter((x) => x !== v) : [...(intake.learnInterests || []), v])} />
           </SubQuestion></div>
         )}

@@ -2829,6 +2829,7 @@ function App() {
             onClose={() => { setShowWrapped(false); if (user && takeReturnToFreeProduct()) setCurrentView('free-product'); }}
             onBack={handleWrappedBackToQuiz}
             onBrowse={() => { setShowWrapped(false); handleViewDiscovery(''); }}
+            onOpenProduct={(p) => { setShowWrapped(false); handleOpenProduct(p); }}
             onPrimary={() => { setShowWrapped(false); setCurrentView('ecosystem'); }}
             moreQuestions={webOptionalRemaining}
             moreTopics={webOptionalTopics}

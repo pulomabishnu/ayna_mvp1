@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { onboardingJustFinished } from '../../health/onboardingSignal.js';
-import { readRundownMemory, seenFirstRundown } from '../../components/rundown/rundownStore.js';
+import { readRundownMemory } from '../../components/rundown/rundownStore.js';
 import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor, partsOf } from './tips.js';
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markTipsSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, partPresent, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
@@ -178,9 +178,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       pendingRef.current = key === pending.key ? { key, count: pending.count + 1 } : { key, count: 1 };
       if (!key || pendingRef.current.count < STABLE_POLLS) return;
       if (decision.kind === 'welcome') {
-        // App (Today audit, issue 8): the tour offer waits until she has seen
-        // her first Daily Rundown, so it never covers the Rundown card.
-        if (surface === 'app' && document.querySelector('.ay-rd-hero__card:not(.is-setup)') && !seenFirstRundown(readRundownMemory())) return;
+        // Nov 10: the app's tour no longer waits for the first Daily Rundown (it never showed for new accounts).
         // One ask at a time: the Daily Rundown notification question goes first (Loop B).
         if (document.querySelector('.ay-today__notify')) return;
         markWelcomeOffered(today);

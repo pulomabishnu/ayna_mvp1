@@ -17,9 +17,11 @@ describe('something different to try (Nov 10)', () => {
   const q = (sup, extra = {}) => ({ age: '27', allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No', diagnosisSelections: ['None that I know of'], lifeStageSelections: ['I get periods regularly'], supportSelections: sup, personalizationCompleted: true, ...extra });
   it('a cramps shelf is not all devices: it holds at least three different kinds', () => {
     const shelf = getEcosystemSeedFromQuiz(q(['Cramps or period pain'])).shelves.find((s) => s.needId === 'pain.menstrual_cramp');
-    const cats = new Set(shelf.picks.map((p) => ALL_PRODUCTS.find((x) => x.id === p.productId)?.category));
+    const names = shelf.picks.map((p) => ALL_PRODUCTS.find((x) => x.id === p.productId)?.name || '');
     expect(shelf.picks.length).toBeGreaterThanOrEqual(3);
-    expect(cats.size).toBeGreaterThanOrEqual(2);
+    // Different kinds: a heating pad, a TENS unit, a stick-on wrap or patch (Nov 10: and every one a good fit).
+    const kinds = new Set(names.map((n) => (/wrap|patch/i.test(n) ? 'wrap' : /pod|tens/i.test(n) ? 'tens' : /pad/i.test(n) ? 'pad' : n)));
+    expect(kinds.size).toBeGreaterThanOrEqual(3);
   });
   it('one pick chosen still means one pick', () => {
     const shelf = getEcosystemSeedFromQuiz(q(['Cramps or period pain'], { recommendedProductsPerArea: 1, recommendationCountTouched: true })).shelves.find((s) => s.needId === 'pain.menstrual_cramp');

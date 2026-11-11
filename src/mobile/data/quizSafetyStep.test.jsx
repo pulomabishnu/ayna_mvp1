@@ -1,7 +1,7 @@
 // QA (Oct 25): quiz safety step and age range.
 import { describe, it, expect } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { EMPTY, missingAnswerHint, SAFETY_ANSWER_LABELS, AGE_MAX, AGE_MIN } from './intakeModel.js';
+import { EMPTY, missingAnswerHint, AGE_MAX, AGE_MIN } from './intakeModel.js';
 import { ONBOARDING_WHY } from './onboardingFlow.js';
 import { AgeDial } from '../components/intake/IntakeControls.jsx';
 
@@ -9,7 +9,8 @@ describe('safety step', () => {
   it('a disabled Next names what is missing, in the buttons’ words', () => {
     const none = missingAnswerHint('medications', { ...EMPTY });
     expect(none).toMatch(/Pick an answer/);
-    expect(none).toContain(SAFETY_ANSWER_LABELS['Prefer not to say']);
+    // Founder, Nov 10: no list of which answers "count"; the buttons already say it.
+    expect(none).toBe('Pick an answer to go on.');
     expect(missingAnswerHint('medications', { ...EMPTY, takesCurrent: 'Yes' })).toMatch(/Add at least one medicine/);
     expect(missingAnswerHint('medications', { ...EMPTY, takesCurrent: 'No' })).toBe('');
     expect(missingAnswerHint('age', { ...EMPTY })).toBe('');

@@ -226,3 +226,47 @@ html body .ay-wr .ay-wr-nums dt { min-width: 2.2ch; font: 800 clamp(40px, 6vw, 6
 html body .ay-wr .ay-wr-nums dd { margin: 0; font: 600 16px/1.35 var(--ay-font-ui, Figtree, sans-serif); }
 @keyframes ay-wr-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { html body .ay-wr .ay-wr-why li { animation: none; } }
+
+/* Nov 10 (founder: "why do you keep putting things in the corner", "the end looks horrible"):
+   every slide fills the screen like the #1 match slide. Content is centred top to bottom, photos
+   are big and tappable, and the end is her picks, not a table. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-categories .ays-card,
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-why .ays-card,
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-checked .ays-card { justify-content: center; gap: 22px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-tap { all: unset; box-sizing: border-box; display: block; width: 100%; cursor: pointer; border-radius: 18px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-tap:focus-visible { outline: 3px solid var(--s-line); outline-offset: 3px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-tap .ays-plate { width: 100%; }
+/* Needs: one block per need, its name and count, then its top three as big photos. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs > li { display: grid; gap: 10px; animation: ay-ob-rise 420ms ease-out both; animation-delay: var(--d, 0ms); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0; padding-bottom: 8px; border-bottom: 1.5px solid var(--s-line); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs__head b { font: 700 22px/1.15 var(--s-display); letter-spacing: -.01em; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs__head span { flex: none; font: 700 15px/1 var(--s-ui); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs.is-n3 .ay-wr-needs__row,
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs.is-n4 .ay-wr-needs__row { grid-template-columns: repeat(3, 72px); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-tip { margin: 0; font: 500 14px/1.3 var(--s-ui); color: var(--s-muted); }
+/* The end: her picks as a big 2x2 of photos, then one line and one button. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-collage { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: min(84%, 320px); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-collage.is-n1 { grid-template-columns: minmax(0, 1fr); width: min(64%, 240px); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-collage > span:nth-child(odd) { rotate: -2deg; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-collage > span:nth-child(even) { rotate: 2deg; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-fine { margin: 0; font: 500 15px/1.45 var(--s-ui); color: var(--s-muted); }
+/* The product pop-up. */
+.ay-wr-peek { position: absolute; inset: 0; z-index: 30; display: grid; align-items: end; }
+.ay-wr-peek__dim { all: unset; position: absolute; inset: 0; background: rgba(30, 18, 15, .45); cursor: pointer; }
+.ay-wr-peek__card { position: relative; display: grid; gap: 8px; max-height: 88%; overflow-y: auto; padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 24px 24px 0 0; background: #fff8dc; color: #3e2723; font-family: 'Figtree', system-ui, sans-serif; text-align: left; }
+.ay-wr-peek__x { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.ay-wr-peek__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ay-wr-peek__img { width: 140px; margin: 4px auto 8px; }
+.ay-wr-peek__img .ays-plate { position: relative; display: block; aspect-ratio: 1; padding: 8px; border: 1.5px solid #3e2723; border-radius: 16px; background: #ffedac; }
+.ay-wr-peek__img .ays-plate > span { position: absolute; inset: 8px; overflow: hidden; border-radius: 8px; background: #fff; }
+.ay-wr-peek__img .ays-plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 8%; box-sizing: border-box; }
+.ay-wr-peek__brand { margin: 0; font: 700 12px/1.2 'Figtree', sans-serif; letter-spacing: .06em; text-transform: uppercase; opacity: .8; }
+.ay-wr-peek__name { margin: 0; font: 700 22px/1.2 'ayna Display', 'Figtree', sans-serif; color: #3e2723; }
+.ay-wr-peek__meta { margin: 0; font: 700 15px/1.3 'Figtree', sans-serif; }
+.ay-wr-peek__why { margin: 0; font: 600 15px/1.4 'Figtree', sans-serif; }
+.ay-wr-peek__about { margin: 0; font: 400 15px/1.5 'Figtree', sans-serif; opacity: .9; }
+.ay-wr-peek__go { margin-top: 8px; }
+[data-theme='dark'] .ay-wr-peek__card { background: #3e2723; color: #ffedac; }
+[data-theme='dark'] .ay-wr-peek__name { color: #ffedac; }

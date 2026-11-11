@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import TutorialLayer from './TutorialLayer.jsx';
 import TipsSettings from './TipsSettings.jsx';
 import { readTour, setTipsEnabled, markScreenSeen, TOUR_KEY } from './tourStore.js';
-import { markRundownViewed } from '../../components/rundown/rundownStore.js';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 let root;
@@ -55,11 +54,8 @@ afterEach(() => {
 });
 
 describe('tips overlay', () => {
-  it('app: the tour waits for her first Daily Rundown, then opens once by itself (Nov 10)', () => {
+  it('app: the tour opens on her first Home by itself, Rundown card or not (founder, Nov 10)', () => {
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
-    wait(3000);
-    expect(document.querySelector('.ay-tour__all')).toBeNull();
-    markRundownViewed('2026-10-25');
     wait(1000);
     expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
@@ -130,15 +126,13 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('never over the Daily Rundown, and waits for its auto-launch check after 8', () => {
+  it('never over the Daily Rundown; opens once the story is closed', () => {
     vi.setSystemTime(new Date(2026, 9, 25, 9, 0));
     mountApp({ html: `${HOME}<div class="ay-rd" role="dialog" aria-modal="true"></div>` });
     wait(4000);
     expect(dialog()).toBeNull();
     app.querySelector('.ay-rd').remove();
-    wait(600);
-    expect(dialog()).toBeNull(); // still waiting out the Rundown's own check
-    wait(2500);
+    wait(1500);
     expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
 

@@ -467,11 +467,13 @@ export function tourDecision({ screen, prefs, today, onboarding = false, rundown
   if (onboarding) return { kind: 'none' };
   // Tips about her own data (Home rings, streak, For today...) wait until she has a profile.
   if (screen.profile && !hasProfile) return { kind: 'none' };
-  if (screen.rundown && !settled) return { kind: 'none' };
+  // Founder, Nov 10 ("what happened to the tutorial"): the one-page tour opens on her first Home,
+  // right after sign-up, without waiting for the Daily Rundown to settle. Page tips still wait.
   if (prefs.enabled === null) {
     if (!screen.welcome || prefs.welcomeDay === today) return { kind: 'none' };
     return { kind: 'welcome' };
   }
+  if (screen.rundown && !settled) return { kind: 'none' };
   if (prefs.enabled === false || prefs.seen[screen.id]) return { kind: 'none' };
   return { kind: 'tips', screen };
 }

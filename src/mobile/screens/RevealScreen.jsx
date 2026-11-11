@@ -4,6 +4,8 @@ import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
 import BleedingEvaluationNote from '../../components/match/BleedingEvaluationNote.jsx';
 import { ecosystemCounts } from '../../utils/ecosystemCounts.js';
 import WebWrapped from '../../components/WebWrapped.jsx';
+import { useContext } from 'react';
+import { ProductSheetContext } from '../productSheetContext.js';
 import '../../styles/flow.css';
 
 // "Wrapped" shown right after the intake. Same story as the website (founder,
@@ -22,6 +24,7 @@ export default function RevealScreen({ myProducts = [], onContinue, onBack, onEx
     ? myProducts.filter((product) => showableAsPick(product, answers, null, opts)).map((product, i) => ({ product, i, pct: matchPercentFor(product, answers, opts) ?? -1 })).sort((a, b) => b.pct - a.pct || a.i - b.i).map((x) => x.product)
     : myProducts.filter(Boolean);
   const signedIn = Boolean(authUser);
+  const sheet = useContext(ProductSheetContext);
   const done = signedIn && onExitStory ? onExitStory : onContinue;
   return (
     <WebWrapped
@@ -38,6 +41,7 @@ export default function RevealScreen({ myProducts = [], onContinue, onBack, onEx
       onBack={onBack}
       emptyBack={onBack}
       onBrowse={onGoBrowse}
+      onOpenProduct={sheet?.open ? (p) => sheet.open(p) : null}
       primaryLabel={signedIn ? (onExitStory ? 'Done' : 'See all your matches') : 'Save to a free account'}
       onPrimary={done}
     />

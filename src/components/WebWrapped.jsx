@@ -3,6 +3,7 @@ import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz } from '../data/products.js';
 import { whyLine } from '../utils/whyLine';
+import { formatPrice, shownPriceText } from '../utils/formatPrice.js';
 import { groupShelves } from '../matching/shelfGroups.js';
 import { whyFitSummary } from './match/WhyFit.jsx';
 import { evidenceLevel } from './pdp/evidenceLevel.js';
@@ -70,7 +71,7 @@ function TypeWall({ value }) {
   return <div className="ay-wr-wall" aria-hidden="true">{Array.from({ length: 4 }, (_, r) => <span key={r} style={{ '--r': r }}>{Array.from({ length: 6 }, () => value).join(' ')}</span>)}</div>;
 }
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null }) {
   const picks = products.filter(Boolean);
   const first = picks[0];
   const intake = quizResults?.fullHealthIntake || null;
@@ -107,18 +108,11 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   })();
   const byArea = byNeed.length ? byNeed : areas.map((label) => ({ label, items: picks.filter((p) => resolveEcosystemProductArea(p, ECOSYSTEM_AREAS)?.label === label) }));
   const groupWord = byNeed.length ? (byArea.length === 1 ? 'need' : 'needs') : (byArea.length === 1 ? 'area' : 'areas');
-  const [swap, setSwap] = useState({});
-  const leadOffset = (() => {
-    const shown = new Set();
-    return byArea.slice(0, 6).map((a) => {
-      const k = Math.max(0, a.items.findIndex((p) => !shown.has(p.id)));
-      if (a.items[k]) shown.add(a.items[k].id);
-      return k;
-    });
-  })();
+  // Founder, Nov 10: tap a product photo in the story and its page opens as a pop-up.
+  const [peek, setPeek] = useState(null);
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
-    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -136,16 +130,16 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
 
   const gest = useStoryGestures({ onPrev: prev, onNext: next, onClose });
   useEffect(() => {
-    if (paused || gest.held || last || reduced || active === 'categories') return undefined;
+    if (paused || peek || gest.held || last || reduced || active === 'categories') return undefined;
     const t = window.setInterval(() => {
       progressRef.current += 80 / DURATION;
       if (progressRef.current >= 1) { progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); }
       else setProgress(progressRef.current);
     }, 80);
     return () => window.clearInterval(t);
-  }, [index, paused, gest.held, last, reduced, slides.length, active]);
+  }, [index, paused, peek, gest.held, last, reduced, slides.length, active]);
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 'Escape') onClose?.(); };
+    const onKey = (e) => { if (peek) { if (e.key === 'Escape') setPeek(null); return; } if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 'Escape') onClose?.(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   });
@@ -165,6 +159,10 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const surface = ['intro', 'persona', 'finish'].includes(active) ? 'is-espresso' : 'is-butter';
   const pct = firstMatch ? shownMatchPercent(firstMatch) : null;
   const plate = (p, cls = '') => <span className={`ays-plate ${cls}`.trim()}><span><Photo product={p} /></span></span>;
+  // A tappable photo: opens the product pop-up (never advances the story).
+  const tapPlate = (p, cls = '') => <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
+  const peekPct = peek && quizResults ? (() => { const r = percentFor ? percentFor(peek) : getProfileMatchPercentForProduct(peek, quizResults, healthProfile, matchOpts); return Number.isFinite(r) && r > 0 ? shownMatchPercent(Math.round(r)) : null; })() : null;
+  const peekWhy = peek && quizResults ? (whyFor ? whyFor(peek) : whyLine(peek, getProductMatchDetailsForProduct(peek, quizResults))) : '';
 
   const story = <div className={`ays ay-wr ${surface} is-${active}${inline ? ' is-inline' : ''}`} data-theme={theme} role={inline ? 'region' : 'dialog'} aria-modal={inline ? undefined : 'true'} aria-label="Your ayna Wrapped">
     <div className="ays-frame">
@@ -194,26 +192,20 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           </>}
           {active === 'categories' && <>
             <div className="ays-words"><p className="ays-kicker">What we found for you</p><Kinetic text={`${picks.length} ${picks.length === 1 ? 'match' : 'matches'} for ${byArea.length} ${groupWord}`} /></div>
-            <ul className={`ay-wr-even is-n${Math.min(byArea.length, 6)}`}>{byArea.slice(0, 6).map((a, i) => {
-              // Focus group, Nov 9: the same heating pad led every need. Each need opens on a
-              // product the needs before it aren't already showing, when it has one.
-              const at = (leadOffset[i] + (swap[a.label] || 0)) % a.items.length;
-              const p = a.items[at];
-              // role="group": tapping a need's card never skips the story ahead to the #1 match.
-              return <li key={a.label} role="group" aria-label={a.label} style={{ '--d': `${i * 120}ms` }}>
-                {p && plate(p, 'ay-wr-even__plate')}
-                <span className="ay-wr-even__label">{a.label}{a.sub?.length > 1 && <small className="ay-wr-even__sub">{a.sub.join(", ")}</small>}</span>
-                {p && <small className="ay-wr-even__name">{p.name}</small>}
-                <strong className="ay-wr-even__n"><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</strong>
-                {a.items.length > 1 && <button type="button" className="ay-wr-even__swap" onClick={() => setSwap((m) => ({ ...m, [a.label]: (m[a.label] || 0) + 1 }))} aria-label={`Show another ${a.label} match`}>Show another</button>}
-              </li>;
-            })}</ul>
+            {/* Founder, Nov 10: each need with its top picks as photos; tap one for its page. */}
+            <ul className={`ay-wr-needs is-n${Math.min(byArea.length, 4)}`}>{byArea.slice(0, 4).map((a, i) => (
+              <li key={a.label} role="group" aria-label={a.label} style={{ '--d': `${i * 120}ms` }}>
+                <p className="ay-wr-needs__head"><b>{a.label}</b><span><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</span></p>
+                <div className="ay-wr-needs__row">{a.items.slice(0, 3).map((p) => <span key={p.id}>{tapPlate(p, 'ay-wr-needs__plate')}</span>)}</div>
+              </li>
+            ))}</ul>
+            <p className="ay-wr-tip">Tap a product to see it.</p>
           </>}
           {active === 'match' && first && <>
             <TypeWall value={pct != null ? `${pct}%` : '#1'} />
             <div className="ays-visual">
               <div className="ay-wr-hero">
-                {plate(first)}
+                {tapPlate(first)}
                 {firstMatch && (pct != null ? <span className="ay-wr-match"><strong>{pct}%</strong>match</span> : <span className="ay-wr-match is-partial">{PARTIAL_FIT}</span>)}
               </div>
             </div>
@@ -231,6 +223,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               {firstWhyFit.price && <li style={{ '--d': `${(firstWhyFit.reasons.length + 1) * 140}ms` }}><span className="ay-wr-why__ic" aria-hidden="true">$</span>{firstWhyFit.price.word}</li>}
             </ul>
             {firstWhyFit.checks.length > 0 && <p className="ay-wr-checks"><b>Checked for you:</b> {firstWhyFit.checks.join(', ')}</p>}
+            {checked && <p className="ay-wr-fine">Every pick was checked against your answers{checked.held > 0 ? `, and ${checked.held} ${checked.held === 1 ? 'was' : 'were'} left out for your safety` : ''}. Brands can’t pay for a better match.</p>}
           </>}
           {active === 'checked' && checked && <>
             <div className="ays-words"><p className="ays-kicker">What ayna checked</p><Kinetic text="Every pick, checked against you" /></div>
@@ -247,16 +240,15 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <dl className="ay-wr-facts">{persona.facts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
           </>}
           {active === 'finish' && <>
+            {/* Founder, Nov 10: the end looked like a spreadsheet and repeated the shopping-style slide.
+                Now it is her picks themselves, big, like the #1 slide, with one line and one button. */}
             <div className="ays-visual"><Burst className="is-corner" />
-              <div className="ay-wr-card">
-                <span className="ay-wr-card-mark">ayna</span>
-                <strong className="ay-wr-card-title">{persona?.title || 'My ecosystem'}</strong>
-                <ul>
-                  <li><span>Picks</span><b>{picks.length}</b></li>
-                  {/* The card people screenshot and share: product types only, never her needs (health data). */}<li><span>Areas</span><b>{areas.slice(0, 2).join(', ') || areas.length}</b></li>
-                  {first && <li><span>#1 match</span><b>{first.name}</b></li>}
-                </ul>
-              </div>
+              <div className={`ay-wr-collage is-n${Math.min(picks.length, 4)}`}>{picks.slice(0, 4).map((p) => <span key={p.id}>{tapPlate(p)}</span>)}</div>
+            </div>
+            <div className="ays-words">
+              <p className="ays-kicker">{persona?.title || 'Your ecosystem'}</p>
+              <Kinetic text={`${picks.length} ${picks.length === 1 ? 'pick' : 'picks'}, ready`} />
+              {first && <p className="ays-body">Your #1: {first.name}</p>}
             </div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
@@ -287,6 +279,19 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       </div>
     </div>
     <div className="ay-wr-toast" role="status" aria-live="polite">{shareState && <span>{shareState}</span>}</div>
+    {peek && <div className="ay-wr-peek" role="dialog" aria-modal="true" aria-label={peek.name}>
+      <button type="button" className="ay-wr-peek__dim" aria-label="Close" onClick={() => setPeek(null)} />
+      <section className="ay-wr-peek__card">
+        <button type="button" className="ay-wr-peek__x" aria-label="Close" onClick={() => setPeek(null)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+        <div className="ay-wr-peek__img">{plate(peek)}</div>
+        {peek.brand && <p className="ay-wr-peek__brand">{peek.brand}</p>}
+        <h2 className="ay-wr-peek__name">{peek.name}</h2>
+        <p className="ay-wr-peek__meta">{[shownPriceText(formatPrice(peek).main), peekPct != null ? `${peekPct}% match` : ''].filter(Boolean).join(' · ')}</p>
+        {peekWhy && <p className="ay-wr-peek__why">{peekWhy}</p>}
+        {(peek.summary || peek.description) && <p className="ay-wr-peek__about">{String(peek.summary || peek.description).slice(0, 220)}{String(peek.summary || peek.description).length > 220 ? '…' : ''}</p>}
+        {onOpenProduct && <button type="button" className="ays-cta ay-wr-peek__go" onClick={() => { const p = peek; setPeek(null); onOpenProduct(p); }}>See the full page</button>}
+      </section>
+    </div>}
   </div>;
   // The app renders it in place (it is a screen there); the website floats it over the page.
   return inline ? story : createPortal(story, document.body);

@@ -80,7 +80,9 @@ describe('no collision with the Daily Rundown', () => {
   const nine = new Date(2026, 9, 25, 9, 0);
   it('waits on Home while the Rundown could still open on its own', () => {
     expect(rundownSettled({ memory: {}, today: T, now: nine, settledMs: 500 })).toBe(false);
-    expect(tourDecision({ screen: home, prefs: fresh, today: T, settled: false }).kind).toBe('none');
+    // Page tips wait; the one-page tour (welcome) does not (founder, Nov 10).
+    expect(tourDecision({ screen: home, prefs: { ...fresh, enabled: true }, today: T, settled: false }).kind).toBe('none');
+    expect(tourDecision({ screen: home, prefs: fresh, today: T, settled: false }).kind).toBe('welcome');
   });
   it('goes ahead once the Rundown was viewed today, before 8, right after setup, or after the check passed', () => {
     expect(rundownSettled({ memory: { viewedDay: T }, today: T, now: nine })).toBe(true);

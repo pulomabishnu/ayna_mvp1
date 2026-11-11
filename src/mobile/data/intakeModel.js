@@ -826,12 +826,11 @@ export function isStepAnswered(stepId, intake) {
  */
 export function missingAnswerHint(stepId, intake) {
   if (requiredReady(stepId, intake)) return '';
-  const any = 'None, Not sure and Prefer not to answer all count.';
-  if (stepId === 'allergies') return intake?.allergyStatus === 'Yes' ? 'Add at least one allergy, or pick another answer.' : `Pick an answer to go on. ${any}`;
-  if (stepId === 'medications') return intake?.takesCurrent === 'Yes' ? 'Add at least one medicine or supplement, or pick another answer.' : `Pick an answer to go on. ${any}`;
+  if (stepId === 'allergies') return intake?.allergyStatus === 'Yes' ? 'Add at least one allergy, or pick another answer.' : 'Pick an answer to go on.';
+  if (stepId === 'medications') return intake?.takesCurrent === 'Yes' ? 'Add at least one medicine or supplement, or pick another answer.' : 'Pick an answer to go on.';
   // "Anything urgent?" has its own options: name those (QA round 2).
   if (stepId === 'safety') return `Pick ${URGENT_STATUS.slice(0, -1).join(', ')} or ${URGENT_STATUS.at(-1)} to go on.`;
-  if (stepId === 'conditions') return `Pick an answer to go on. ${any}`;
+  if (stepId === 'conditions') return 'Pick an answer to go on.';
   return '';
 }
 
@@ -999,13 +998,13 @@ export function getIntakeSteps(intake) {
     // Required minimum
     req({ id: 'age', section: 'core', title: 'Your age', type: 'age', info: 'Some products have an age range on the label, so we check it. Your life stage comes from what you tell us, never from your age. Type it, tap plus or minus, or slide the ruler.' }),
     req({ id: 'lifeStage', section: 'core', title: 'Your life stage', type: 'lifeStage', info: 'Pick every stage that fits right now. You can be in perimenopause and still have regular periods. It changes what we show, for example pregnancy-safe picks only, or midlife support. Not sure, or rather not say? Those count too.' }),
-    req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more. "Nothing right now" counts too.' }),
+    req({ id: 'support', section: 'support', title: 'What needs support?', type: 'support', info: 'Pick everything you want help with. Each one becomes its own shelf of products in your ecosystem. Use the tabs or search to find more.' }),
     ...(flowRequired(intake) && periodQuestionsApply(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) && periodQuestionsApply(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
     ...(ttcStepOwn ? [req(ttcStep)] : []),
     ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: FOLLOWUP_QUESTIONS.utiFrequency, subtitle: 'Burning, urgency or peeing more often', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
     ...(postpartumStepOwn ? [req({ id: 'postpartumTiming', section: 'support', title: FOLLOWUP_QUESTIONS.postpartumTiming, type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
-    req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out. "None", "Not sure" and "Prefer not to answer" all count.' }),
+    req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out.' }),
     req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),
     req({ id: 'medications', section: 'safety', title: 'Taking anything?', subtitle: 'Medicines + supplements', type: 'medications', info: 'Some supplements interact with medicines, for example St. John’s wort with birth control. We use this to flag those combinations.' }),
     req({ id: 'safety', section: 'safety', title: 'Anything urgent?', subtitle: 'New or rapidly worsening symptoms', type: 'safety', info: 'ayna does not diagnose. If you have new or quickly worsening symptoms, we point you to care before products.' }),

@@ -644,3 +644,9 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
    fill, so "Should be" vanished. The picked side always reads in the on-fill colour. */
 .ayna-mobile .aq .ip-avoid-tabs button.is-on.is-want, .ayna-mobile .aq .ip-avoid-tabs button.is-on.is-avoid,
 .aq .ip-avoid-tabs button.is-on.is-want.is-on, .aq .ip-avoid-tabs button.is-on.is-avoid.is-on { color: var(--aq-on-fill) !important; }
+/* More answers below the fold (Nov 10): the list fades at the bottom and a small pill sits above Continue. */
+.aq .aq-scroll.has-more { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); }
+.aq .aq-foot { position: relative; }
+.aq .aq-more { position: absolute; left: 50%; top: -44px; translate: -50% 0; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border: 1.5px solid var(--aq-line, #3e2723); border-radius: 999px; background: var(--aq-page, #ffedac); color: var(--aq-ink, #3e2723); font: 700 14px/1 'Figtree', system-ui, sans-serif; cursor: pointer; z-index: 2; }
+.aq .aq-more svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.aq .aq-more:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
