@@ -40,7 +40,7 @@ describe('Today with ayna', () => {
     expect(host.querySelector('.ay-plan')).toBeTruthy();
     expect(host.querySelector('.ay-today__homelog-trigger')).toBeNull();
     expect(host.querySelector('.ay-today__log')).toBeNull();
-    act(() => host.querySelector('.ay-plan__more').click());
+    act(() => host.querySelector('.ay-plan__row2 .ay-plan__link').click());
     expect(host.querySelector('.ay-today__log')).toBeTruthy();
     expect(host.textContent).toContain('Your log');
   });

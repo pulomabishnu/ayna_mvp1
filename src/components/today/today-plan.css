@@ -1,46 +1,56 @@
-/* Home > For today. From her inspo: one big question, a segmented control per answer
-   (filled track, the chosen segment solid), then colour-block tiles. No outlines, no cream fills.
-   8px grid; tap targets 44px; body text 15-17px; 4.5:1 contrast in light and dark. */
-.ay-plan { display: grid; gap: 0; padding: 8px 0 4px; font-family: 'Figtree', system-ui, sans-serif; color: #3e2723; }
-.ay-plan__q { margin: 0; font: 700 26px/1.15 'ayna Display', 'Figtree', sans-serif; letter-spacing: -.01em; color: inherit; }
+/* Home > For today. Hierarchy: one question (26px display), quiet rows, then one section title,
+   then tiles that each lead with one tip (19px) and one solid button. Everything else is behind
+   "More". From her inspo: segmented controls with a filled track, colour-block tiles, no outlines,
+   no cream fills. 8px grid, 44px targets, 4.5:1 text contrast in light and dark. */
+.ay-plan { display: grid; padding: 8px 0 4px; font-family: 'Figtree', system-ui, sans-serif; color: #3e2723; }
+.ay-plan .ay-plan__q { margin: 0; font: 700 26px/1.15 'ayna Display', 'Figtree', sans-serif !important; letter-spacing: -.01em; color: inherit !important; }
+.ay-plan .ay-plan__q.is-small { font-size: 20px !important; }
 .ay-plan__sub { margin: 6px 0 20px; font: 500 15px/1.4 'Figtree', sans-serif; color: rgba(62, 39, 35, .72); }
-.ay-plan__quick { display: grid; gap: 12px; }
+.ay-plan__quick { display: grid; gap: 10px; }
 .ay-plan__row { display: grid; grid-template-columns: 60px minmax(0, 1fr); align-items: center; gap: 12px; }
 .ay-plan__k { font: 600 15px/1.2 'Figtree', sans-serif; }
 .ay-plan__seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgba(62, 39, 35, .08); }
 .ay-plan__seg button { flex: 1 1 0; min-width: 0; min-height: 40px; padding: 0 6px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; transition: background-color .15s ease, color .15s ease; }
 .ay-plan__seg button.is-on { background: #3e2723; color: #ffedac; }
-.ay-plan__seg button:focus-visible { outline: 3px solid #f7badd; outline-offset: 1px; }
-.ay-plan__more { justify-self: start; margin: 14px 0 0; padding: 10px 0; min-height: 44px; border: 0; background: none; color: #3e2723; font: 600 15px/1.2 'Figtree', sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ay-plan button:focus-visible { outline: 3px solid #e0529c; outline-offset: 2px; }
+.ay-plan__row2 { display: flex; gap: 20px; margin-top: 8px; }
+.ay-plan__link { min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: 600 15px/1.2 'Figtree', sans-serif; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ay-plan__link:disabled { text-decoration: none; opacity: .75; cursor: default; }
 
-.ay-plan__tiles { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 12px; }
+.ay-plan__sum { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px; }
+.ay-plan__sum p { grid-column: 1; margin: 2px 0 0; font: 500 15px/1.4 'Figtree', sans-serif; color: rgba(62, 39, 35, .78); }
+.ay-plan__sum .ay-plan__link { grid-column: 2; grid-row: 1 / span 2; }
+
+.ay-plan .ay-plan__h { margin: 28px 0 12px; font: 700 18px/1.2 'Figtree', sans-serif !important; color: inherit !important; }
+.ay-plan__tiles { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .ay-plan__tile { padding: 20px; border-radius: 24px; }
-.ay-plan__tile.is-pink { background: #f7badd; color: #3e2723; }
-.ay-plan__tile.is-ink { background: #3e2723; color: #ffedac; }
-.ay-plan__tile h3 { margin: 0 0 8px; font: 700 14px/1.2 'Figtree', sans-serif; color: inherit; opacity: .85; }
-.ay-plan__lead { margin: 0; font: 700 21px/1.25 'ayna Display', 'Figtree', sans-serif; letter-spacing: -.01em; color: inherit; }
-.ay-plan__tips { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-.ay-plan__tips li { position: relative; padding-left: 18px; font: 500 16px/1.45 'Figtree', sans-serif; color: inherit; }
-.ay-plan__tips li::before { content: ''; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.ay-plan__care { margin: 12px 0 0; font: 500 14px/1.45 'Figtree', sans-serif; color: inherit; opacity: .85; }
-.ay-plan__acts { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
-.ay-plan__acts button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
-.ay-plan__tile.is-pink .ay-plan__acts button { background: #3e2723; color: #ffedac; }
-.ay-plan__tile.is-ink .ay-plan__acts button { background: #ffedac; color: #3e2723; }
-.ay-plan__acts button:disabled { opacity: .7; cursor: default; }
-.ay-plan__src { margin: 12px 0 0; font: 500 12px/1.4 'Figtree', sans-serif; color: inherit; opacity: .8; }
-.ay-plan__src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ay-plan .ay-plan__tile.is-pink, .ay-plan .ay-plan__tile.is-pink :is(h3, p, li, button.ay-plan__link, a) { color: #3e2723 !important; }
+.ay-plan .ay-plan__tile.is-pink { background: #f7badd; }
+.ay-plan .ay-plan__tile.is-ink, .ay-plan .ay-plan__tile.is-ink :is(h3, p, li, button.ay-plan__link, a) { color: #ffedac !important; }
+.ay-plan .ay-plan__tile.is-ink { background: #3e2723; }
+.ay-plan .ay-plan__tile h3 { margin: 0 0 6px; font: 600 14px/1.2 'Figtree', sans-serif !important; opacity: .8; text-transform: none !important; letter-spacing: 0 !important; }
+.ay-plan .ay-plan__lead { margin: 0; font: 700 19px/1.3 'ayna Display', 'Figtree', sans-serif !important; letter-spacing: -.005em; }
+.ay-plan__acts { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+.ay-plan .ay-plan__main { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; font: 700 15px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-plan .ay-plan__tile.is-pink .ay-plan__main { background: #3e2723; color: #ffedac !important; }
+.ay-plan .ay-plan__tile.is-ink .ay-plan__main { background: #ffedac; color: #3e2723 !important; }
+.ay-plan__extra { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(62, 39, 35, .2); }
+.ay-plan__tile.is-ink .ay-plan__extra { border-top-color: rgba(255, 237, 172, .25); }
+.ay-plan__tips { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.ay-plan__tips li { position: relative; padding-left: 16px; font: 500 15px/1.45 'Figtree', sans-serif; }
+.ay-plan__tips li::before { content: ''; position: absolute; left: 2px; top: .6em; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.ay-plan__care { margin: 12px 0 0; font: 500 14px/1.45 'Figtree', sans-serif; }
+.ay-plan__links { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 4px 0 0; }
+.ay-plan__src { margin: 4px 0 0; font: 500 12px/1.4 'Figtree', sans-serif; opacity: .8; }
+.ay-plan__src a { text-decoration: underline; text-underline-offset: 2px; }
 
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan { color: #ffedac; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__sub { color: rgba(255, 237, 172, .75); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__sub, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__sum p { color: rgba(255, 237, 172, .78); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__seg { background: rgba(255, 237, 172, .12); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__seg button { color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__seg button.is-on { background: #f7badd; color: #3e2723; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__more { color: #ffedac; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan__tile.is-ink { background: #4a302a; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-plan .ay-plan__tile.is-ink { background: #4a302a; }
 @media (prefers-reduced-motion: reduce) { .ay-plan__seg button { transition: none; } }
-/* Titles readable on both tiles (the app's h3 colour rule was winning). */
-.ay-plan .ay-plan__tile.is-pink h3, .ay-plan .ay-plan__tile.is-pink :is(p, li) { color: #3e2723 !important; }
-.ay-plan .ay-plan__tile.is-ink h3, .ay-plan .ay-plan__tile.is-ink :is(p, li) { color: #ffedac !important; }
-.ay-plan .ay-plan__tile h3 { font: 700 15px/1.2 'Figtree', sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; }
-.ay-plan .ay-plan__lead { font-size: 19px !important; }
+.ay-plan .ay-plan__h { margin: 28px 0 12px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-plan h2.ay-plan__h { margin: 28px 0 12px !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-plan .ay-plan__sum { margin-bottom: 4px; }
