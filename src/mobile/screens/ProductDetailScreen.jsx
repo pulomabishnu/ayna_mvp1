@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
+import { productIdentity, countBuyClick } from '../../utils/productEventProps.js';
 import { PANEL_ICONS } from '../components/pdpIcons.jsx';
 import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/products.js';
 import { matchPercentFor } from '../utils/matchScore.js';
@@ -407,7 +408,7 @@ export default function ProductDetailScreen({
   // Sizes or options as chips under the price (the variants, else the options listed in the price).
   const sizeChips = variantLabels.length ? variantLabels : (!perUse ? priceNotes : []);
   const askStarters = productAskStarters({ hasProfile: Boolean(quizAnswers), percent: matchState?.kind === 'pct' ? matchState.percent : null, kind: cupOrDisc(product), hasIud: hasIud(quizAnswers), hasSizes: variantLabels.length > 0 });
-  const buyLink = (extra = '') => (shopAction ? <a className={`ay-pdp-buyrow__buy ayv-buy ayv-sticker ${extra}`.trim()} href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(shopAction.href) }); trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'summary_end' : shopAction.placement }); }}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a> : null);
+  const buyLink = (extra = '') => (shopAction ? <a className={`ay-pdp-buyrow__buy ayv-buy ayv-sticker ${extra}`.trim()} href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(shopAction.href) }); countBuyClick(product?.id); trackApp('product_buy_now_clicked', { ...productIdentity(product), category: product?.category, placement: extra ? 'summary_end' : shopAction.placement }); }}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a> : null);
   const fitData = { details: quizAnswers ? matchDetails : null, hasProfile: Boolean(quizAnswers), onShowWhy: openWhyMatch };
 
   return (

@@ -35,6 +35,10 @@ const ALLOWED = {
   surface: 'enum', // 'web' | 'app' | 'mobile_web'
   where: 'id', // page or block id, e.g. 'today', 'explore_for_you', 'rundown'
   product_id: 'id',
+  // Product name and brand: kept by before_send only for visitors who turned
+  // analytics on (analyticsSanitize PRODUCT_KEYS); stripped for everyone else.
+  product_name: 'text',
+  brand: 'text',
   retailer: 'id',
   position: 'count',
   matches_count: 'count',
@@ -60,6 +64,10 @@ export function cleanProps(props = {}) {
     else if (type === 'id' && ID.test(String(v))) out[k] = String(v);
     else if (type === 'count' && Number.isFinite(Number(v)) && Number(v) >= 0) out[k] = Math.round(Number(v));
     else if (type === 'bool') out[k] = Boolean(v);
+    else if (type === 'text') {
+      const s = String(v).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120); // eslint-disable-line no-control-regex
+      if (s) out[k] = s;
+    }
   }
   return out;
 }
@@ -125,11 +133,11 @@ export function trackNotificationPrompt({ surface, granted, prompt = 'after_rund
 }
 
 /** A product card was on screen (once per surface/where/product per page load). */
-export function trackCardViewed({ surface, where, product_id, position } = {}) {
+export function trackCardViewed({ surface, where, product_id, product_name, brand, position } = {}) {
   const key = `${surface}:${where}:${product_id}`;
   if (!product_id || seen.has(key)) return;
   seen.add(key);
-  trackEvent(EVENTS.PRODUCT_CARD_VIEWED, { surface, where, product_id, position });
+  trackEvent(EVENTS.PRODUCT_CARD_VIEWED, { surface, where, product_id, product_name, brand, position });
 }
 
 export function trackCardClicked({ surface, where, product_id, position } = {}) {

@@ -6,6 +6,7 @@ import { devPreviewOn } from '../utils/devPreview.js';
 import { needAreaLabels } from '../utils/needAreas.js';
 import { markOnboardingDone } from '../health/onboardingSignal.js';
 import { trackApp, appScreenName } from './utils/appAnalytics.js';
+import { productIdentity } from '../utils/productEventProps.js';
 import { navTabFor, aynaRoute, initialAppRoute, homeScreenFor, showsEmptyHome } from './utils/navTab.js';
 import { useRecommendationViews } from '../utils/recommendationAnalytics.js';
 import './mobile.css';
@@ -377,6 +378,8 @@ export default function MobileApp() {
   const overlayType = overlay?.type || null;
   const overlayProductId = overlay?.type === 'product' ? overlay?.item?.id || null : null;
   const overlayProductCategory = overlay?.type === 'product' ? overlay?.item?.category || null : null;
+  const overlayProductName = overlay?.type === 'product' ? overlay?.item?.name || null : null;
+  const overlayProductBrand = overlay?.type === 'product' ? overlay?.item?.brand || null : null;
   // The ayna tab's views keep the old $screen names (Ask and Today), so the
   // "Mobile App (TestFlight)" dashboard keeps counting; Products is new.
   const screenForAnalytics = screen === 'ayna' ? ({ home: 'today', chat: 'ask', dashboard: 'today', products: 'ayna_products' })[homeView] || 'today' : screen;
@@ -394,8 +397,8 @@ export default function MobileApp() {
   useRecommendationViews(ecoRecommended, 'app_ecosystem');
   useEffect(() => {
     if (!overlayProductId) return;
-    trackApp('product_card_opened', { productId: overlayProductId, category: overlayProductCategory });
-  }, [overlayProductId, overlayProductCategory]);
+    trackApp('product_card_opened', { ...productIdentity({ id: overlayProductId, name: overlayProductName, brand: overlayProductBrand }), category: overlayProductCategory });
+  }, [overlayProductId, overlayProductCategory, overlayProductName, overlayProductBrand]);
   // Browser Back (the web preview, Android back): each screen or drill-in
   // she opens is one history step, so Back returns to the previous one in
   // the app instead of leaving the page. Overlay items stay in memory here

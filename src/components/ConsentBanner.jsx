@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVisitor } from '../utils/analyticsConsent'
+import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVisitor, isGpcActive, PRIVACY_CHOICES_EVENT } from '../utils/analyticsConsent'
 
 /**
  * Bottom-of-screen analytics consent bar.
@@ -89,44 +89,70 @@ export default function ConsentBanner() {
     return () => { cancelled = true; clearInterval(id); clearTimeout(giveUp) }
   }, [ph])
 
+  // Footer "Privacy choices" (openPrivacyChoices) reopens the banner, even
+  // after a choice, so anyone can change their mind.
+  useEffect(() => {
+    const reopen = () => { setPh(window.posthog); setVisible(true) }
+    window.addEventListener(PRIVACY_CHOICES_EVENT, reopen)
+    return () => window.removeEventListener(PRIVACY_CHOICES_EVENT, reopen)
+  }, [])
+
   if (!visible) return null
 
-  const keepAnalyticsOff = () => { denyConsent(ph); setVisible(false) }
+  const close = () => setVisible(false)
+  const keepAnalyticsOff = () => { if (ph) denyConsent(ph); close() }
+
+  // Global Privacy Control (or PostHog blocked/unavailable): nothing to choose,
+  // so confirm the opt-out instead of offering Turn on.
+  if (isGpcActive() || !ph) {
+    return (
+      <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Privacy choices" className="consent-banner">
+        <button type="button" className="consent-banner__close" aria-label="Close" onClick={close}>
+          <span aria-hidden="true">×</span>
+        </button>
+        <p>
+          {isGpcActive()
+            ? <><strong>Opt-out request honored.</strong> Your browser&apos;s Global Privacy Control is on, so analytics stay off, including the anonymous visit count.</>
+            : <>Analytics aren&apos;t running in this browser, so nothing is being collected.</>}
+          {' '}<a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
+        </p>
+      </div>
+    )
+  }
 
   return (
-    <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics notice" className="consent-banner">
+    <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics choice" className="consent-banner">
       <button
         type="button"
         className="consent-banner__close"
-        aria-label="Close analytics notice and keep optional analytics off"
-        title="Keep analytics off"
+        aria-label="Close and keep analytics off"
+        title="Keep off"
         onClick={keepAnalyticsOff}
       >
         <span aria-hidden="true">×</span>
       </button>
       <p>
-        Optional usage analytics are off until you choose to enable them. Until you choose, we only count
-        page visits and errors anonymously, with no cookies, stored data or ID, so we know the site works;
-        keeping analytics off stops that too. Analytics help us improve ayna.
-        We don&apos;t use them for advertising or sell them. Health-search text, account identifiers,
-        product identities and sensitive profile details are excluded; recording and automatic text/click
-        capture are off. You can change your choice in Privacy Preferences. Read our{' '}
-        <a href="/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</a>.
+        <strong className="consent-banner__title">Help us improve ayna for women like you</strong>
+        Turn on analytics so we can count visitors and see which products are popular. We don't know
+        who you are unless you make an account. Never sold, never used for ads. Keep off, and our
+        analytics can't see you at all.{' '}
+        <a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
       </p>
+      {/* Both buttons share one class and style: equal size, colour and weight. */}
       <div className="consent-banner__actions">
         <button
           type="button"
           data-testid="consent-decline"
           onClick={keepAnalyticsOff}
         >
-          Keep analytics off
+          Keep off
         </button>
         <button
           type="button"
           data-testid="consent-accept"
-          onClick={() => { acknowledgeAnalytics(ph); setVisible(false) }}
+          onClick={() => { acknowledgeAnalytics(ph); close() }}
         >
-          Enable optional analytics
+          Turn on
         </button>
       </div>
     </div>

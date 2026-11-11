@@ -138,6 +138,7 @@ import { loadReviewsForUser, upsertProductReviews } from './utils/reviewsStore';
 import { growTransition } from './utils/viewTransition.js';
 import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchLlmRecommendations';
 import posthog from 'posthog-js';
+import { productIdentity } from './utils/productEventProps.js';
 import { identifyAccount } from './utils/analyticsIdentity';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
@@ -2341,7 +2342,8 @@ function App() {
     const p = product?.llmGenerated ? enrichLlmProductForDiscovery(product) : product;
     const source = meta.source || 'browse';
     posthog.capture('product_card_opened', {
-      productId: p?.id,
+      // id, name and brand: kept only for visitors who turned analytics on.
+      ...productIdentity(p),
       category: p?.category,
       source,
       // Never the typed text (it can name a condition): only that it came from search.

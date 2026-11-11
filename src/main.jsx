@@ -169,14 +169,6 @@ function sanitizePosthogEvent(event) {
   // Shop/Community search (?q=) is stripped from every URL property.
   // Pageviews on a moved page also carry the old address (legacy_path: /shop,
   // /library, /ecosystem, /health), so dashboards built on those keep counting.
-  const legacy = event?.event === '$pageview' && typeof window !== 'undefined' ? legacyPathFor(window.location.pathname) : null;
-  const clean = sanitizeEventPayload(event, legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM });
-  // Capacitor's WebView reports $host=localhost even in a shipped iPhone app.
-  // The project's test-traffic rule excludes localhost, hiding every real app
-  // event. Keep the capacitor:// URL, but give native events a distinct host.
-  if (Capacitor.isNativePlatform() && clean?.properties) {
-    clean.properties.$host = 'native.aynahealth.co';
-  }
   // Before a choice, only the anonymous essential tier (pageviews, errors) is
   // sent; a decline or GPC sends nothing. See src/utils/essentialAnalytics.js.
   // Account/privacy controls opt out through the SDK without writing the
@@ -188,6 +180,20 @@ function sanitizePosthogEvent(event) {
     sdkDenied = posthog.get_explicit_consent_status?.() === 'denied';
   } catch { /* treat as not opted in */ }
   const stored = sdkDenied ? 'denied' : getStoredConsent();
+  const legacy = event?.event === '$pageview' && typeof window !== 'undefined' ? legacyPathFor(window.location.pathname) : null;
+  // Opted-in visitors agreed to analytics that include the products they view
+  // and click; everyone else's product IDs/names and /product/<id> are stripped.
+  const clean = sanitizeEventPayload(
+    event,
+    legacy ? { platform: ANALYTICS_PLATFORM, legacy_path: legacy } : { platform: ANALYTICS_PLATFORM },
+    { allowProducts: optedIn && !GPC_ENABLED },
+  );
+  // Capacitor's WebView reports $host=localhost even in a shipped iPhone app.
+  // The project's test-traffic rule excludes localhost, hiding every real app
+  // event. Keep the capacitor:// URL, but give native events a distinct host.
+  if (Capacitor.isNativePlatform() && clean?.properties) {
+    clean.properties.$host = 'native.aynahealth.co';
+  }
   return applyConsentTier(clean, { optedIn, gpc: GPC_ENABLED, stored });
 }
 
