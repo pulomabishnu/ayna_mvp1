@@ -28,6 +28,13 @@ export const READ_SECTION = {
   'postpartum-stretch-marks': 'postpartum',
 };
 
+/** Every read's illustration (public/articles/<id>.webp, 1414x2000). */
+export const READ_ILLUSTRATIONS = Object.fromEntries([
+  'bacterial-vaginosis', 'endometriosis-basics', 'fibroids', 'heavy-bleeding', 'hormonal-birth-control', 'intimate-wash',
+  'iron-deficiency-anemia', 'menopause-basics', 'ovarian-cysts', 'pcos-basics', 'pelvic-floor-dysfunction',
+  'period-pain-when-to-seek-care', 'pmdd', 'uti-prevention', 'yeast-infection-basics',
+].map((id) => [id, `/articles/${id}.webp`]));
+
 export function readPhoto(id) { return READ_PHOTOS[id] || null; }
 
 /** Named writer and clinician reviewer, for reads that have them. */
@@ -43,5 +50,7 @@ export const READ_CREDITS = {
  */
 export function coverPhotoFor(article) {
   if (!article) return null;
-  return READ_PHOTOS[article.id] || (hasTeamCover(article) ? article.image : null);
+  // Founder, Nov 11 ("a lot of pics are still missing"): every read has a picture. The Library
+  // photo first, else the writer's artwork, else the read's own illustration in public/articles.
+  return READ_PHOTOS[article.id] || (hasTeamCover(article) ? article.image : null) || READ_ILLUSTRATIONS[article.id] || null;
 }

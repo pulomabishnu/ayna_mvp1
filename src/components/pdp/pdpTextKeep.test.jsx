@@ -101,7 +101,8 @@ const RENAMED_LABELS = [
   'Ingredient research', 'Community experience', 'People’s experiences. Not evidence that it works.', 'Read the reviews',
   'ayna checks health claims only against .gov sources such as MedlinePlus, NIH and FDA. None is linked to this product yet, so it has no grade. What is on file is listed below for what it is.',
   'Not .gov health sources, so ayna has not checked them. Each is labelled by what it is.', // now "...has not graded them..."
-  /, Study record, not yet checked by ayna$/, // now "Peer-reviewed · not graded by ayna"
+  /, Study record, not yet checked by ayna$/, // now "Peer-reviewed study"
+  'Peer-reviewed · not graded by ayna', '(Peer-reviewed · not graded by ayna)', // founder, Nov 11: now "Peer-reviewed study"
   'Why ayna rated it this way', // "The research in short" when nothing is graded
   'Other pages the team used', /^\d+ links?$/, // peer-reviewed papers get their own list, so the other-pages list and count can shrink
   'ppd.plannedparenthood.org, App Store', // the Where to buy list: the link is the button, stores without a link are Key facts "Also sold at" (audit 7.9)

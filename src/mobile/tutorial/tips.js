@@ -227,7 +227,7 @@ export const SCREENS = [
     root: '[data-tour="reads"]',
     tips: [
       { id: 'library-search', anchor: '[data-tour="reads"] .ay-lib-head input', text: 'Search reads by symptom, product or topic.' },
-      { id: 'library-topics', anchor: '[data-tour="reads"] .al-topics--v9 :is(button, a)', text: 'Tap a topic to see only those reads.' },
+      { id: 'library-topics', anchor: '[data-tour="reads"] .al-tiles .al-tile', text: 'Tap a topic to see only those reads.' },
     ],
   },
   {

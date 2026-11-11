@@ -20,6 +20,7 @@ import MetricSheet from '../components/MetricSheet.jsx';
 import MonthSheet from '../components/MonthSheet.jsx';
 import { buildInsights } from '../../health/insights.js';
 import { comingUp } from '../../health/comingUp.js';
+import { flowRowsFromLog, readLog, sleepFromLog } from '../../health/dailyLog.js';
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
@@ -57,9 +58,12 @@ export default function AynaHomeScreen(props) {
   const hasProducts = hasEcosystem || myProducts.length > 0;
   const today = localToday();
   const hbc = usesHormonalBC(quizAnswers);
+  // Her own log (TodayFeed reports changes; the calendar saves into it too).
+  const [dayLog, setDayLog] = useState(() => { try { return readLog(); } catch { return {}; } });
   // Her synced rows, read the dashboard's way (30-day charts, 90-day usual band); nothing new is computed.
+  // Founder, Nov 11: periods she logs on ayna count too, so the cycle dial works without another app.
   const data = useMemo(() => {
-    const rows = healthInsightRows || [];
+    const rows = [...(healthInsightRows || []), ...flowRowsFromLog(dayLog)];
     const w = buildDashboard(rows, { days: 30, today });
     const long = buildDashboard(rows, { days: 90, today });
     const all = w.groups.flatMap((g) => g.charts);
@@ -67,8 +71,11 @@ export default function AynaHomeScreen(props) {
     const bandOf = (m) => usualBand(long.groups.flatMap((g) => g.charts).find((c) => c.metric === m)?.points, today);
     const cycle = w.cycle?.cycleDay ? w.cycle : null;
     return { rows, cycle, chartOf, bandOf, charts: rows.length ? glanceCharts(w) : [] };
-  }, [healthInsightRows, today]);
+  }, [healthInsightRows, today, dayLog]);
   const { cycle, chartOf, bandOf, charts } = data;
+  // Founder, Nov 11 ("I've been logging my sleep on ayna and it hasn't been showing"): with no watch
+  // or ring, the Sleep dial shows her own sleep log for the last 7 days.
+  const sleepLog = useMemo(() => sleepFromLog(dayLog, today), [dayLog, today]);
   // This week's highlights: the same findings as Your data (explainWeek), one sentence each with its chart.
   const highlights = useMemo(() => {
     if (!data.rows.length) return [];
@@ -79,14 +86,15 @@ export default function AynaHomeScreen(props) {
   }, [data, today, cycle, hbc, chartOf, bandOf]);
   // Her logging streak, from the days her log has entries (TodayFeed reports them).
   const [loggedDays, setLoggedDays] = useState([]);
-  const [dayLog, setDayLog] = useState({});
   const onLogged = (days, log) => { setLoggedDays(days); setDayLog(log || {}); };
   const streak = logStreak(loggedDays, today);
   // "Your month" (the streak row opens it): the existing cycle estimate and coming-up dates, nothing new.
   const [monthOpen, setMonthOpen] = useState(false);
   const monthData = useMemo(() => {
     if (!monthOpen) return null;
-    const estimate = data.rows.length ? buildInsights(data.rows, { today }).sections.find((s) => s.id === 'cycle')?.estimate || null : null;
+    // Her own period logs count too (founder, Nov 11), so the estimate works without another app.
+    const rows = data.rows;
+    const estimate = rows.length ? buildInsights(rows, { today }).sections.find((s) => s.id === 'cycle')?.estimate || null : null;
     return { estimate, coming: comingUp(cycle, estimate, today, { hormonalBC: hbc, hasProducts: myProducts.length > 0 }) };
   }, [monthOpen, data, today, cycle, hbc, myProducts.length]);
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
@@ -176,7 +184,7 @@ export default function AynaHomeScreen(props) {
         <h1 className="sr-only">Home</h1>
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* The data is the hero (founder Oct 26 21:46): greeting, three dials, the Rundown bubble and her streak. */}
-        <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} activity={chartOf('steps')}
+        <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} sleepLog={sleepLog} activity={chartOf('steps')}
           onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={logHere} onMonth={() => setMonthOpen(true)} />
         {/* "Is this still right?" for an old safety answer (src/health/healthRefresh.js). */}
         {authUser && quizAnswers && onUpdateIntake && <HealthRefreshPrompt variant="app" quizResults={quizAnswers} onSave={onUpdateIntake} onUpdate={onEditIntakeStep || null} />}
@@ -216,7 +224,7 @@ export default function AynaHomeScreen(props) {
       </div>
       {monthOpen && monthData && (
         <MonthSheet today={today} rows={data.rows} log={dayLog} cycle={cycle} estimate={monthData.estimate} coming={monthData.coming} hormonalBC={hbc}
-          onLog={() => { setMonthOpen(false); logHere(); }} onClose={() => setMonthOpen(false)} />
+          onLog={() => { setMonthOpen(false); logHere(); }} onSaved={setDayLog} onClose={() => setMonthOpen(false)} />
       )}
       {sheet && (
         <MetricSheet metric={sheet} today={today} cycle={cycle} hormonalBC={hbc} bandOf={bandOf}

@@ -84,7 +84,7 @@ export default function HealthConnectionsScreen(props) {
   return (
     <ProFeatureGate
       feature="wearables"
-      title={`Connect ${source?.name || 'health data'}`}
+      title={/^upload/i.test(source?.name || '') ? source.name : `Connect ${source?.name || 'health data'}`}
       onBack={closeGate}
     >
       <HealthConnectionsScreenCore

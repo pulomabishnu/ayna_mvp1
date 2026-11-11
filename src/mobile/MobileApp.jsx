@@ -1670,7 +1670,11 @@ export default function MobileApp() {
     onUpdate: (kind) => {
       setAskAynaOpen(false); setOverlay(null);
       if (kind === 'checkin') { setScreen('checkin'); return; }
-      if (kind === 'community' || kind === 'news') { setCommunitySeed(null); setScreen('community'); return; }
+      if (kind === 'community' || kind === 'news') {
+        setCommunitySeed(null); setScreen('community');
+        if (kind === 'community') setTimeout(() => { try { window.dispatchEvent(new CustomEvent('ayna:open-community-notifications')); } catch { /* old browser */ } }, 350);
+        return;
+      }
       if (kind === 'signin') { openAuth('signin'); return; }
       setHomeView(homeRoot); setScreenRaw(homeTarget);
     },

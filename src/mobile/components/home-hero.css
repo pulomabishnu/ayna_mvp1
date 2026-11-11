@@ -133,3 +133,11 @@
 .ay-hh-streak-wrap .ay-hh-streak__top small { margin-left: 0; text-align: left; }
 .ay-hh-streak__month { all: unset; box-sizing: border-box; position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
 .ay-hh-streak__month:focus-visible { outline: 2px solid #f7badd; outline-offset: 1px; }
+
+/* Your data tile: a small chart instead of a ring with a lone number (founder, Nov 11). */
+.ay-hsc__chart { display: block; width: 56px; height: 56px; }
+.ay-hsc__chart svg { width: 56px; height: 56px; overflow: visible; }
+.ay-hsc__chart .is-a { fill: rgba(255, 237, 172, .45); }
+.ay-hsc__chart .is-b { fill: #ffedac; }
+.ay-hsc__chart .is-c { fill: #f7badd; }
+.ay-hsc__chart .is-line { fill: none; stroke: #f7badd; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }

@@ -31,7 +31,7 @@ describe('Ask about today, answered on this device', () => {
   });
   it('abstains instead of guessing', () => {
     setTodayAskContext({ ...ctx, focus: [], rundown: [], log: { today: null, yesterday: null }, recent: [] });
-    expect(answerTodayQuestion('What should I focus on today?').answer).toMatch(/^Nothing unusual stands out today/);
+    expect(answerTodayQuestion('What should I focus on today?').answer).toMatch(/^Nothing needs your attention today/);
     expect(answerTodayQuestion('Explain my Daily Rundown').answer).toMatch(/empty today/);
     expect(answerTodayQuestion('What changed from yesterday?').answer).toMatch(/nothing to compare yet/);
     expect(answerTodayQuestion('Why was my sleep flagged?').answer).toMatch(/didn't flag sleep/);

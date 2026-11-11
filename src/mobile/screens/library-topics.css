@@ -1,0 +1,29 @@
+/* Library topics (founder, Nov 11): a two-column grid of tiles instead of a pile of wrapped chips.
+   Each tile: short name, how many reads, a picture from that topic. 8px grid, 64px+ tap targets. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 4px 0 28px; padding: 0 var(--d-gutter, 20px); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile {
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 72px; min-width: 0;
+  padding: 10px 10px 10px 14px !important; border: 1.5px solid var(--d-ink, #3e2723) !important; border-radius: 18px !important;
+  background: #fff8dc !important; color: #3e2723 !important; text-align: left; cursor: pointer; box-shadow: none !important; overflow: hidden;
+}
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile.is-wide { grid-column: 1 / -1; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile.is-foryou { background: #f7badd !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile:active { transform: scale(.98); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile__txt { display: grid; gap: 2px; min-width: 0; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile__txt b { font: 700 15px/1.2 var(--f-ui, 'Figtree'), sans-serif; color: inherit; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile__txt small { font: 500 13px/1.2 var(--f-ui, 'Figtree'), sans-serif; color: #5d4037; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile img { flex: none; width: 44px; height: 52px; border-radius: 10px; object-fit: cover; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .al-tile { background: #4a302a !important; color: #fff8dc !important; border-color: #ffedac !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .al-tile__txt small { color: #f3e3c2; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .al-tile.is-foryou { background: #f7badd !important; color: #3e2723 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .al-tile.is-foryou small { color: #5d4037; }
+
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topichead { display: grid; gap: 4px; margin: 0 0 16px; padding: 0 var(--d-gutter, 20px); }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topichead__back { justify-self: start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 !important; border: 0 !important; background: none !important; color: inherit !important; font: 600 15px/1 var(--f-ui, 'Figtree'), sans-serif; cursor: pointer; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topichead__back svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topichead h2 { margin: 0; font: 700 24px/1.2 var(--ay-font-display, 'Figtree'), sans-serif; color: inherit; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-topichead h2 small { margin-left: 6px; font: 500 15px/1 var(--f-ui, 'Figtree'), sans-serif; opacity: .8; }
+/* Rows sat flush to the screen edge while the headings sat on the gutter: same 20px gutter for both. */
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-lib .al-shelf .al-rows { padding: 0 var(--d-gutter, 20px) !important; margin-left: 0 !important; margin-right: 0 !important; box-sizing: border-box; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-lib .al-shelf .al-rows > * { margin-left: 0 !important; margin-right: 0 !important; max-width: 100% !important; }

@@ -56,7 +56,7 @@ describe('Today with ayna', () => {
   it('today fully logged and nothing else: the empty line', () => {
     saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });
     render();
-    expect(host.textContent).toContain('Nothing unusual stands out today');
+    expect(host.textContent).toContain('Nothing needs your attention today');
   });
 
   it('care cannot be dismissed', () => {
@@ -86,7 +86,7 @@ describe('Today with ayna', () => {
     act(() => button('Not useful').click());
     for (const label of ['I already knew this', 'Not relevant to me', 'Don’t show this type', 'My information changed', 'Just hide it']) expect(button(label)).toBeTruthy();
     act(() => button('Not relevant to me').click());
-    expect(host.textContent).toContain('Nothing unusual stands out today');
+    expect(host.textContent).toContain('Nothing needs your attention today');
     const act1 = posthog.capture.mock.calls.find(([e]) => e === 'today_item_action');
     expect(act1[1]).toEqual({ type: 'check_in', action: 'not_useful', reason: 'not_relevant' });
   });

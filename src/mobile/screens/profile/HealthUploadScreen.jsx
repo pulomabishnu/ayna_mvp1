@@ -209,10 +209,12 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       <label htmlFor="ay-hc-app">Which app or device is it from? (optional)</label>
       <input id="ay-hc-app" value={app} onChange={(e) => setApp(e.target.value)} maxLength={60} placeholder="e.g. Flo, WHOOP, Fitbit" />
       <label className="ay-hc-file">
-        {/* Prep call, Nov 9: screenshots "weren't working". Reading them is off until the founders
-            approve the AI processor (HEALTH_IMAGE_EXTRACTION), so the button only offers them when on. */}
-        <input type="file" accept={`.csv,.json,.txt,text/csv,application/json,text/plain${shotsOn ? ',image/*' : ''}`} onChange={onFile} disabled={busy} />
-        <span>{busy ? 'Reading…' : shotsOn ? 'Choose a file or screenshot' : 'Choose a file'}</span>
+        {/* Founder, Nov 11 ("the upload data doesn't work"): on iPhone the picker hid screenshots, so
+            picking one looked broken. Screenshots can always be picked now; while reading them is off
+            (HEALTH_IMAGE_EXTRACTION, until the founders approve the AI processor) she gets the type-it-in
+            form straight away with a plain line saying why. */}
+        <input type="file" accept=".csv,.json,.txt,text/csv,application/json,text/plain,image/*" onChange={onFile} disabled={busy} />
+        <span>{busy ? 'Reading…' : 'Choose a file or screenshot'}</span>
       </label>
       <p className="ay-hc-small">CSV, JSON or TXT exports are read on your device. ayna shows you what it found and saves only what you confirm. Files aren't kept.</p>
       {pendingImage && (

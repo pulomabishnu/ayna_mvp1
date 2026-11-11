@@ -142,10 +142,11 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
                 <span>ayna may earn a commission.</span>
               </p>
             )}
-            <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
             <ActionsRow saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} inRoutine={inRoutine} onRoutine={onAddToRoutine ? () => onAddToRoutine(product) : null} routineWords={['Routine', IN_ROUTINE]} onAsk={onAsk ? () => onAsk(`About ${name}: Anything I should know before using it?`) : null} />
             <Highlights items={highlights} note={highlights.length ? 'From the product record. Not tested by ayna.' : ''} />
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} endCta={buyLink('is-compact')} />
+            {/* Founder, Nov 11: safety right under the four sections. */}
+            <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
           </div>
         </>)}

@@ -26,7 +26,7 @@ import { galleryImages, similarProducts, sameNeedProducts } from '../../componen
 import ProductGallery from '../../components/pdp/ProductGallery.jsx';
 import '../../components/pdp/pdp.css';
 import ComparePanel from '../../components/pdp/ComparePanel.jsx';
-import BigPurchase, { bigPurchasePrice } from '../../components/pdp/BigPurchase.jsx';
+import { bigPurchasePrice } from '../../components/pdp/BigPurchase.jsx';
 import { parsePrice } from '../../matching/productProfile.js';
 import { worksWith } from '../../utils/aynaIntegrations.js';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -506,9 +506,7 @@ export default function ProductDetailScreen({
             </button>
           </div>
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
-          <BigPurchase product={product} cheaper={related.cheaper || []} pctFor={(p) => matchPercentFor(p, quizAnswers, matchOpts)} onOpenProduct={onOpenProduct} onCompare={onCompare ? () => onCompare(product) : null} onAsk={() => setAskOpen(true)} />
-          {/* Always visible: her IUD first when she has one, TSS for cups (PDP audit 7.5). */}
-          <SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} />
+          {/* Founder, Nov 11: no "Before you spend $X" box on the product page. */}
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
           {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLockup state={matchState} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}
@@ -533,6 +531,9 @@ export default function ProductDetailScreen({
             stats={stats}
             statsNote={stats.length >= 2 ? 'From the product record. Not tested by ayna.' : ''}
           />
+          {/* Founder, Nov 11: safety sits right under ayna summary, Clinical opinion, Scientific
+              literature and Reviews, not above them. Always visible: her IUD first, TSS for cups. */}
+          <div className="ay-pdp-safetyafter"><SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} /></div>
 
           {/* Team direction 9: the first screen is Buy, Save and the match row.
               Routine, variants, "Not for me", connections and other stores sit here. */}

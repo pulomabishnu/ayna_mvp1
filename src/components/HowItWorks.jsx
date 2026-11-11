@@ -21,7 +21,7 @@ const ICON = {
 /* The evidence levels, each with its live catalog count (the product page's own evidenceFor). */
 const LEVEL_TILES = [
   { id: 'gov', title: 'Checked against trusted health sources', cap: 'Health pages from the NIH, CDC, FDA and MedlinePlus. Only these can give an ayna grade.' },
-  { id: 'peer', title: 'Peer-reviewed studies', cap: 'Found on PubMed or PMC. Shown, not graded by ayna.' },
+  { id: 'peer', title: 'Peer-reviewed studies', cap: 'Found on PubMed or PMC.' },
   { id: 'brand', title: 'From the brand', cap: 'The brand’s own claims, recorded as its word, never as proof.' },
   { id: 'people', title: 'People’s experiences', cap: 'Posts and reviews, kept in the Reviews tab.' },
 ];

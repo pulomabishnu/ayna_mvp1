@@ -50,7 +50,8 @@ export const daysBetween = daysBetweenDays;
 
 export const OUTPUTS = ['answer', 'ask_more', 'show_options', 'monitor', 'escalate', 'abstain', 'no_action'];
 export const MAX_ITEMS = 3; // attention budget for non-protected items (section 62)
-export const NOTHING_TODAY = 'Nothing unusual stands out today';
+// Founder, Nov 11: "instead of saying nothing unusual stands out" it says what to do next.
+export const NOTHING_TODAY = 'Nothing needs your attention today. Log how you feel and ayna suggests what may help';
 
 export const TIERS = { safety: 5, care: 4, symptom: 3, wellness: 2, products: 1 };
 const PROTECTED_TIERS = new Set(['safety', 'care']);

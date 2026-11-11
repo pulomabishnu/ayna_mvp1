@@ -657,3 +657,18 @@ html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__list button.is-do
 html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__txt small { white-space: normal; overflow: visible; text-overflow: clip; }
 html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__see { align-self: end; margin-top: 24px; background: #ffedac !important; color: #3e2723 !important; box-shadow: 4px 4px 0 #f7badd; }
 html body .ayna-mobile.ayna-mobile .ay-pz:not(.is-web) .ay-pz__see:focus-visible { outline-color: #ffedac; }
+
+/* Founder, Nov 11 ("it should have a back button... why is it so high up... the top cuts things off"):
+   on iPhone the back arrow sat under the clock. The page now starts below the status bar, fills the
+   screen to the bottom, and the back arrow is a clear 44px button with a label. */
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready.ay-ob-ready:not(.is-web) {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+  min-height: 100dvh !important; box-sizing: border-box !important;
+}
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-ob-ready.ay-ob-ready:not(.is-web) .ay-ob-back,
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web):not(.ay-pz) .ay-ob-back {
+  position: static !important; display: inline-flex !important; align-items: center; gap: 6px; justify-self: start;
+  width: auto !important; height: 44px !important; min-width: 44px; margin: 0 0 24px -4px !important; padding: 0 12px 0 4px !important;
+  color: inherit !important; font: 600 16px/1 var(--o-sans, 'Figtree'), sans-serif;
+}
+html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-ob-back::after { content: 'Back to quiz'; }

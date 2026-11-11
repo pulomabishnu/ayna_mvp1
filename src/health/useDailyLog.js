@@ -6,7 +6,7 @@
  * uploads when back online or once syncing is switched on).
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { readLog, saveLogEntry, setLogOwner } from './dailyLog.js';
+import { LOG_SAVED_EVENT, readLog, saveLogEntry, setLogOwner } from './dailyLog.js';
 import { setTriesOwner } from './outcomes.js';
 import { syncUserData } from './userDataSync.js';
 
@@ -45,6 +45,20 @@ export function useDailyLog(userId = null) {
       globalThis.removeEventListener?.('online', online);
       clearTimeout(timer.current);
     };
+  }, [userId, runSync]);
+
+  // A day saved from the month calendar: show it here and sync it like any other save.
+  useEffect(() => {
+    const onSaved = () => {
+      setLog(readLog());
+      touched.current = true;
+      if (!userId) { setSaveState('saved_device'); return; }
+      setSaveState('saving');
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => runSync(true), SYNC_DELAY_MS);
+    };
+    globalThis.addEventListener?.(LOG_SAVED_EVENT, onSaved);
+    return () => globalThis.removeEventListener?.(LOG_SAVED_EVENT, onSaved);
   }, [userId, runSync]);
 
   const save = useCallback((day, patch) => {

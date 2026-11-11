@@ -60,11 +60,11 @@ function Streak({ streak, onLog, onMonth = null }) {
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
   // Prep call, Nov 9: "1-day streak" read as a login streak. It is her period and symptom log.
   const title = 'Period and symptom log';
-  const sub = loggedToday ? (count > 1 ? `Logged today · ${count} days in a row` : 'Logged today') : count > 0 ? `${count} ${count === 1 ? 'day' : 'days'} in a row · log today` : 'Tap to log today';
+  const sub = loggedToday ? (count > 1 ? `Logged today · ${count} days in a row` : 'Logged today') : count > 0 ? `${count} ${count === 1 ? 'day' : 'days'} in a row · log today` : 'Tap to log today or a past period';
   return (
-    // Tapping it logs (prep call, Nov 9: she tapped to log and got a calendar). The calendar icon is the month.
+    // Founder, Nov 11: tapping it opens the calendar, where she logs today or her past periods.
     <div className="ay-hh-streak-wrap">
-    <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onLog || onMonth}
+    <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onMonth || onLog}
       aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.`}>
       <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small></span>
       <span className="ay-hh-streak__days" aria-hidden="true">
@@ -76,7 +76,6 @@ function Streak({ streak, onLog, onMonth = null }) {
         ))}
       </span>
     </button>
-    {onMonth && onLog && <button type="button" className="ay-hh-streak__month" onClick={onMonth} aria-haspopup="dialog" aria-label="Open your month"><svg className="ay-hh-streak__cal" viewBox="0 0 24 24" aria-hidden="true"><path d={CAL} /></svg></button>}
     </div>
   );
 }
@@ -101,16 +100,16 @@ function HomeWaveEdge() {
   );
 }
 
-export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null }) {
+export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, sleepLog = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null }) {
   const { count, done } = useRundownCount();
   return (
     <section className="ay-hh" aria-labelledby="ay-hh-hi">
       <div className="ay-hh__band">
         <p className="ay-hh__date">{fmtLong(today)}</p>
         <h2 id="ay-hh-hi" className="ay-hh__hi">{hello()}{name ? `, ${name}` : ''}.</h2>
-        <ScoreRings bare animate label="Your scores today" cycle={cycle} hormonalBC={hormonalBC} sleep={sleep} activity={activity}
+        <ScoreRings bare animate label="Your scores today" cycle={cycle} hormonalBC={hormonalBC} sleep={sleep} sleepLog={sleepLog} activity={activity}
           onOpen={onOpenMetric ? (area) => onOpenMetric(area === 'cycle' ? 'cycle' : area === 'sleep' ? 'sleep_minutes' : activity?.metric || 'steps') : null}
-          onConnect={onConnect} onLog={onLog} />
+          onConnect={onConnect} onLog={onMonth || onLog} onLogSleep={onLog} />
         {(count > 0 || streak) && (
           <div className="ay-hh__row">
             {count > 0 && <RundownBubble count={count} done={done} />}
@@ -161,8 +160,6 @@ export function HomeHighlights({ items = [], today, onOpen }) {
 export function HomeShortcuts({ cycle = null, sleep = null, products = [], onData, onProducts }) {
   // Two photos: three ran under the corner arrow once the plates kept their 44px size (Oct 27).
   const shown = products.filter((p) => p?.id).slice(0, 2);
-  const R = 22;
-  const C = 2 * Math.PI * R;
   const ring = cycle?.cycleDay
     ? { n: String(cycle.cycleDay), k: 'Cycle day', f: cycle.avgLength ? Math.min(1, cycle.cycleDay / cycle.avgLength) : 0 }
     : sleep && (sleep.week ?? sleep.avg) != null
@@ -171,9 +168,15 @@ export function HomeShortcuts({ cycle = null, sleep = null, products = [], onDat
   return (
     <div className="ay-hsc" role="group" aria-label="Shortcuts">
       <button type="button" className="ay-hsc__tile is-data" onClick={onData} aria-label={`Your data${ring ? `: ${ring.k} ${ring.n}` : ''}. Open your dashboard.`}>
-        <span className="ay-hsc__ring" aria-hidden="true">
-          <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r={R} className="is-track" />{ring?.f > 0 && <circle cx="28" cy="28" r={R} className="is-arc" strokeDasharray={`${(C * ring.f).toFixed(1)} ${C.toFixed(1)}`} transform="rotate(-90 28 28)" />}</svg>
-          <b className={ring && ring.n.length > 3 ? 'is-long' : ''}>{ring ? ring.n : '+'}</b>
+        {/* Founder, Nov 11: the ring with a lone number was confusing. A small chart says "your charts". */}
+        <span className="ay-hsc__chart" aria-hidden="true">
+          <svg viewBox="0 0 56 56">
+            <rect x="8" y="30" width="7" height="16" rx="3.5" className="is-a" />
+            <rect x="19" y="20" width="7" height="26" rx="3.5" className="is-b" />
+            <rect x="30" y="25" width="7" height="21" rx="3.5" className="is-a" />
+            <rect x="41" y="12" width="7" height="34" rx="3.5" className="is-c" />
+            <path d="M8 22 L22 14 L33 19 L47 7" className="is-line" />
+          </svg>
         </span>
         <span className="ay-hsc__text" aria-hidden="true"><b>Your data</b><small>{ring ? 'Trends and charts' : 'Connect to start'}</small></span>
         <svg className="ay-hsc__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>

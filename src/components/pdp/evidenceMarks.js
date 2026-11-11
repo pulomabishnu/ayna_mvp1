@@ -3,7 +3,8 @@
  * surfaces (Ask ayna answers) can draw the same marks as the product page.
  * evidenceLevels.js re-exports these; the sorting of links lives there.
  */
-export const PEER_LABEL = 'Peer-reviewed · not graded by ayna';
+// Founder, Nov 11: never "not graded by ayna" anywhere, especially on sources.
+export const PEER_LABEL = 'Peer-reviewed study';
 
 export const LEVELS = [
   { id: 'gov', n: 1, mark: 'filled', grades: true },

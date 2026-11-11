@@ -25,7 +25,7 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
   const back = () => (stack.length > 1 ? setStack((st) => st.slice(0, -1)) : onBack?.());
   const selectedNeedIds = useMemo(() => { try { return quizResults ? getSelectedNeeds(quizResults).map((n) => n.id) : []; } catch { return []; } }, [quizResults]);
   const sourceTitle = gatedSourceId ? sourceById(gatedSourceId.split(':')[0])?.name : '';
-  const title = top === 'insights' ? 'Health insights' : sourceTitle ? `Connect ${sourceTitle}` : 'Health data';
+  const title = top === 'insights' ? 'Health insights' : sourceTitle ? (/^upload/i.test(sourceTitle) ? sourceTitle : `Connect ${sourceTitle}`) : 'Health data';
 
   const openSource = (id) => {
     const sourceId = String(id || '').split(':')[0];
@@ -60,7 +60,7 @@ export default function WebHealthData({ user, quizResults, onBack, onSignIn, onE
           // The basic health dashboard stays free, the same as in the app (founder's Free vs Pro, Oct 27).
           <HealthInsightsScreen authUser={user} selectedNeedIds={selectedNeedIds} onConnect={() => setStack(['list'])} onEditProfile={onEditProfile} />
         ) : gatedSourceId ? (
-          <ProFeatureGate feature="wearables" title={`Connect ${sourceTitle || 'health data'}`} onBack={back}>
+          <ProFeatureGate feature="wearables" title={/^upload/i.test(sourceTitle || '') ? sourceTitle : `Connect ${sourceTitle || 'health data'}`} onBack={back}>
             {connectionScreen(gatedSourceId)}
           </ProFeatureGate>
         ) : connectionScreen()}

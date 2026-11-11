@@ -325,7 +325,7 @@ describe('a tapped prompt is sent right away (founder, Oct 24 22:17)', () => {
     await flush();
     // Sent: her question and ayna's answer are in the thread, not waiting in the box.
     expect(document.body.textContent).toContain('What should I focus on today?');
-    expect(document.body.textContent).toMatch(/Nothing unusual stands out today|Here's what stands out today/);
+    expect(document.body.textContent).toMatch(/Nothing needs your attention today|Here's what stands out today/);
   });
 });
 

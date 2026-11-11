@@ -164,7 +164,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   if (stage === 'personal' && ready && total > 0) {
     return (
       <Tag className={`ay-ob-ready ay-pz uq-reveal is-${variant}`} aria-labelledby="ay-pz-h">
-        {onBack && <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>}
+        {onBack && <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back to quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>}
         {/* Inspo: the big stat number (heart-rate and wellness dashboards), not a highlighter. */}
         <p className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></p>
         <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import MobileHeader from '../components/MobileHeader.jsx';
 import SearchBar from '../components/SearchBar.jsx';
 import ReadCard from '../../components/library/ReadCard.jsx';
-import { Chip, ChipRow, OutlineButton } from '../../components/ui/ay';
+import { OutlineButton } from '../../components/ui/ay';
 import { READ_SECTIONS } from '../../data/readSections.js';
 import { buildLibrary, hasQuizAnswers } from '../utils/personalReads.js';
 import SuggestBox from '../../components/SuggestBox.jsx';
@@ -11,8 +11,13 @@ import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { searchArticles } from '../../utils/search/index.js';
 import '../library.css';
 import '../library-v2.css';
+import './library-topics.css';
+import { coverPhotoFor } from '../../data/readCovers.js';
 import { sentenceCase as sentence } from '../../utils/sentenceCase.js';
 const FEATURED_READ_ID = 'postpartum-stretch-marks';
+// Founder, Nov 11 ("organize it more, the filters are just tacked on top of each other"): topics are
+// a tidy two-column grid of tiles, each with a short name, how many reads and a picture from it.
+const SHORT = { chronic: 'Pelvic conditions', hormonal: 'Hormones', menstrual: 'Periods', postpartum: 'Pregnancy', 'vaginal-urinary': 'Vaginal and urinary', foryou: 'For you' };
 
 /**
  * The one featured read (where she left off, else her top pick, else the editors' pick) as the big
@@ -41,6 +46,10 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const progressOf = (a) => readProgress[a.id] || 0;
   const keepReading = articles.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);
   const topics = [['all', 'All', articles.length], ...(hasProfile && forYou.length ? [['foryou', 'For you', forYou.length]] : []), ...rows.map((r) => [r.id, sentence(r.label), r.items.length])];
+  const tiles = topics.filter(([id]) => id !== 'all').map(([id, , n]) => {
+    const list = id === 'foryou' ? forYou : (rows.find((r) => r.id === id)?.items || []);
+    return [id, SHORT[id] || id, n, coverPhotoFor(list.find((a) => coverPhotoFor(a)))];
+  });
   // Same editorial pick as the website's featured read when nothing personal applies (P1-25).
   const featured = keepReading[0] || (hasProfile && forYou[0]) || articles.find((a) => a.id === FEATURED_READ_ID) || articles[0] || null;
   const featuredLabel = keepReading[0] ? 'Pick up where you left off' : hasProfile && forYou[0] ? 'Top pick for you' : 'Featured read';
@@ -85,9 +94,16 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}
-    {q.length < 2 && <ChipRow label="Topics" className="al-topics--v9">
-      {topics.map(([id, label, n]) => <Chip key={id} selected={topic === id} onClick={() => setTopic(id)}>{label} <span className="al-topics__n">{n}</span></Chip>)}
-    </ChipRow>}
+    {q.length < 2 && topic === 'all' && <nav className="al-tiles" aria-label="Topics">
+      {tiles.map(([id, label, n, pic], i) => <button key={id} type="button" className={`al-tile is-${id}${i === tiles.length - 1 && tiles.length % 2 ? ' is-wide' : ''}`} onClick={() => setTopic(id)}>
+        <span className="al-tile__txt"><b>{label}</b><small>{n} {n === 1 ? 'read' : 'reads'}</small></span>
+        {pic && <img src={pic} alt="" loading="lazy" decoding="async" />}
+      </button>)}
+    </nav>}
+    {q.length < 2 && topic !== 'all' && <div className="al-topichead">
+      <button type="button" className="al-topichead__back" onClick={() => setTopic('all')}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>All topics</button>
+      <h2>{SHORT[topic] || ''} <small>{(topics.find(([id]) => id === topic) || [])[2]} reads</small></h2>
+    </div>}
     {body}
     <div className="ay-app-suggest-wrap">
       <SuggestBox variant="app" mode="read" context="app-library" />

@@ -95,7 +95,8 @@ describe('safety line: under the button, calm, personalised (audit P0 #3, 7.5)',
     const out = safetyLineFor(p, buildGlance(p, {}), { status: 'past', label: 'Active recall found', detail: 'Recalled in 2026 for a test.' });
     expect(out.lines[0].kind).toBe('recall');
   });
-  it('website, app page and sheet: the safety line sits right after the buy button and before the tabs; no "!" glyph, an SVG icon', () => {
+  // Founder, Nov 11: safety goes right under ayna summary, Clinical opinion, Scientific literature and Reviews.
+  it('website, app page and sheet: the safety line sits right after the four sections; no "!" glyph, an SVG icon', () => {
     const p = byId(SAALT);
     const pages = [
       renderToStaticMarkup(<ProductModal product={p} quizResults={IUD_PROFILE} />),
@@ -108,7 +109,7 @@ describe('safety line: under the button, calm, personalised (audit P0 #3, 7.5)',
       const tabs = html.includes('role="tablist"') ? html.indexOf('role="tablist"') : html.indexOf('class="ay-stack is-index"');
       expect(buy).toBeGreaterThan(-1);
       expect(safe).toBeGreaterThan(buy);
-      expect(safe).toBeLessThan(tabs);
+      expect(safe).toBeGreaterThan(tabs);
       const block = html.slice(safe, html.indexOf('</div></div>', safe));
       expect(block).toMatch(/You have an IUD/);
       expect(block.indexOf('You have an IUD')).toBeLessThan(block.indexOf('TSS risk'));
@@ -134,12 +135,12 @@ describe('evidence: four labelled levels, the .gov-only grading rule kept (audit
     expect(levelOfLink('https://www.amazon.com/dp/B079DYK334')).toBe(null);
     expect(isPeerReviewed('https://medlineplus.gov/x')).toBe(false);
   });
-  it('labels: a Lancet systematic review is "Peer-reviewed · not graded by ayna", never "not checked"', () => {
+  it('labels: a Lancet systematic review is "Peer-reviewed study", never "not checked"', () => {
     expect(levelLabel('gov')).toBe('Checked against trusted health sources');
-    expect(levelLabel('peer')).toBe('Peer-reviewed · not graded by ayna');
+    expect(levelLabel('peer')).toBe('Peer-reviewed study');
     expect(levelLabel('brand', 'Saalt')).toBe('From Saalt');
     expect(levelLabel('people')).toBe('People’s experiences');
-    expect(linkKind('https://doi.org/10.1016/S2468-2667(19)30111-2', 'Saalt').label).toBe('Peer-reviewed · not graded by ayna');
+    expect(linkKind('https://doi.org/10.1016/S2468-2667(19)30111-2', 'Saalt').label).toBe('Peer-reviewed study');
   });
   it('only .gov produces a grade: a peer-reviewed paper alone leaves the product "Not graded yet"', () => {
     const ev = evidenceFor(full(SAALT));
@@ -227,7 +228,7 @@ describe('decision block contents (audit 13.1, 14)', () => {
   it('website: name, match, price with cost per cycle, one sticker button, disclosure, safety line, actions, in that order; no fact chips, no pinned buy bar, no "No link yet"', () => {
     const html = renderToStaticMarkup(<ProductModal product={byId(SAALT)} quizResults={IUD_PROFILE} onToggleSaved={() => {}} onAskAyna={() => {}} />);
     const at = (needle) => html.indexOf(needle);
-    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ay-stack is-index"'];
+    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-acts"', 'class="ay-stack is-index"', 'class="ayv-safeline"'];
     const pos = order.map(at);
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).toMatch(/≈ \$0\.24 a cycle if it lasts 10 years/);
@@ -240,7 +241,7 @@ describe('decision block contents (audit 13.1, 14)', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
     // Critique Oct 27: one action row (Buy, Save, Ask) with the disclosure under it, the safety line, then the
     // tabs; the highlights are the 2x2 stat grid at the top of ayna summary.
-    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ay-pdp3-pills"', 'class="ayv-safeline"', 'class="ay-stack is-index"', 'class="ayv-stats"'];
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ay-pdp3-pills"', 'class="ay-stack is-index"', 'class="ayv-stats"', 'class="ayv-safeline"'];
     const pos = order.map((n) => html.indexOf(n));
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);

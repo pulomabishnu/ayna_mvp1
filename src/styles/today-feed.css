@@ -91,3 +91,17 @@
 .ayna-mobile[data-theme='dark'] .ay-today__homelog-trigger { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .55); }
 .ayna-mobile[data-theme='dark'] .ay-today__homelog-trigger > span:last-child { background: #ffedac; color: #3e2723; }
 .ayna-mobile .ay-today__homelog .ay-today__log { margin-top: 12px; }
+
+/* What may help today (founder, Nov 11), inside the log card under what she logged. */
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__help { display: grid; gap: 10px; margin: 8px 0 4px; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpcard { padding: 12px 0 4px; border-top: 1px solid currentColor; background: none; color: inherit; }
+/* Founder, Nov 11: "stop putting things in boxes": plain text under a rule, no card. */
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpcard h3 { margin: 0 0 6px; font: 700 17px/1.25 var(--ay-sans, 'Figtree'), sans-serif; color: inherit !important; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpcard ul { margin: 0 0 8px; padding-left: 1.2em; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpcard li { margin: 0 0 4px; font: 500 15px/1.45 var(--ay-sans, 'Figtree'), sans-serif; color: inherit !important; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpcard p { margin: 0 0 6px; font: 500 14px/1.4 var(--ay-sans, 'Figtree'), sans-serif; color: inherit !important; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helplinks { display: flex; flex-wrap: wrap; gap: 8px; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helplinks button { min-height: 44px; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; color: inherit !important; text-decoration: underline; text-underline-offset: 3px; margin-right: 12px; font: 600 14px/1 var(--ay-sans, 'Figtree'), sans-serif; cursor: pointer; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helplinks:empty { display: none; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpsrc { font-size: 12px !important; opacity: .85; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpsrc a { color: inherit !important; text-decoration: underline; }

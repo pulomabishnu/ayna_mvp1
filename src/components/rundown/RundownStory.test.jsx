@@ -71,7 +71,8 @@ describe('Today shows the rundown hero only with real content', () => {
     act(() => [...host.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     expect(document.querySelector('.ay-rd')).toBeTruthy();
     const opened = posthog.capture.mock.calls.find(([e]) => e === 'rundown_opened');
-    expect(opened[1]).toEqual({ kind: 'daily', count: 3, categories: ['frame', 'goal'] });
+    // count includes the daily ayna fact (founder, Nov 11).
+    expect(opened[1]).toEqual({ kind: 'daily', count: 4, categories: ['frame', 'goal'] });
   });
   it('nothing to say: no hero', () => {
     saveLogEntry(todayKey(), { pain: 0, flow: 'none', pms: 0, sleep: 2, mood: 2, skin: 2 });

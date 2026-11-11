@@ -56,3 +56,11 @@
   .ay-mcal__day .ay-mcal__n { transition: background-color 140ms ease; }
   .ay-mcal__log:active, .ay-mcal__day:active { transform: scale(.97); }
 }
+
+/* Log a day's period from the calendar (founder, Nov 11): one row of flow chips under the picked day. */
+.ay-mcal__flow { display: grid; gap: 8px; margin-top: 8px; }
+.ay-mcal .ay-mcal__flowh { margin: 0; font: 700 15px/1.2 var(--ay-font-ui, inherit) !important; color: inherit !important; }
+.ay-mcal__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ay-mcal__chip { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid currentColor; font: 600 15px/1 var(--ay-font-ui, inherit); }
+.ay-mcal .ay-mcal__chip[aria-pressed='true'] { background: #3e2723; color: #fff8dc; border-color: #3e2723; }
+.ay-mcal__chip:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }

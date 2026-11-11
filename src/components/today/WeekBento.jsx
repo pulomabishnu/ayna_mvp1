@@ -160,7 +160,11 @@ export default function WeekBento({ coming = [], cycle = null, cycleWords = '', 
     const bars = c.metric === 'sleep_minutes' || c.metric === 'steps';
     const tone = TONE;
     // Home: the first metric leads, full width; the rest pair up.
-    const span = home && i === 0 ? 'wide' : '';
+    // Founder, Nov 11 ("make sure the graphs don't look spread out"): a lone half tile at the end
+    // ran the full width instead of leaving an empty gap beside it.
+    const halves = (cycle?.cycleDay ? 1 : 0) + charts.length - (home ? 1 : 0);
+    const loneLast = i === charts.length - 1 && halves % 2 === 1 && !(home && i === 0);
+    const span = (home && i === 0) || loneLast ? 'wide' : '';
     const area = c.area || c.metric;
     tiles.push(
       <Tile key={c.metric} tone={tone} span={span} className={`wb-tile is-${c.metric}`} {...btn(area, `${LABEL(c)}: ${words}. ${now}, ${usual}.${onOpen ? ` Open ${LABEL(c).toLowerCase()}.` : ''}`, c.metric)}>

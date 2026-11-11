@@ -76,7 +76,7 @@ const FIRST = { safety: 0, care: 1 };
 function answerFocus(ctx) {
   // Safety and care first, always (QA round 2), then Today's own order.
   const items = (ctx?.focus || []).map((it, i) => ({ it, i })).sort((a, b) => (FIRST[a.it.tier] ?? 2) - (FIRST[b.it.tier] ?? 2) || a.i - b.i).map(({ it }) => it).slice(0, 3);
-  if (!items.length) return { answer: `Nothing unusual stands out today. Your log and connected data look like your usual.\n\n${NOTE}` };
+  if (!items.length) return { answer: `Nothing needs your attention today. Your log and connected data look like your usual. Log how you feel and ayna suggests what may help.\n\n${NOTE}` };
   return { answer: `Here's what stands out today:\n${items.map((it, i) => `${i + 1}. **${it.title}**${it.reason ? ` ${it.reason}` : ''}`).join('\n')}\n\n${NOTE}` };
 }
 

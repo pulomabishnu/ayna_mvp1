@@ -668,6 +668,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     setPage({ type: 'notifications' }); setError('');
     try { const rows = await community.listNotifications(supabase); setDetails(rows); await community.markNotificationsRead(supabase); } catch (e) { notifyError(e); }
   };
+  // The header bell's Community items open this page (founder, Nov 11: one bell, not two).
+  const openNotesRef = useRef(openNotifications);
+  openNotesRef.current = openNotifications;
+  useEffect(() => {
+    const go = () => openNotesRef.current?.();
+    window.addEventListener('ayna:open-community-notifications', go);
+    return () => window.removeEventListener('ayna:open-community-notifications', go);
+  }, []);
 
   const openFriends = () => {
     if (!authUser) { requireAccount('friends'); return; }
@@ -1083,7 +1091,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   return <div className="am-screen" ref={screenRef}>
     <MobileHeader activeTab="community" initial={headerInitial} onGoBrowse={onGoBrowse} onGoEco={onGoEco} onGoCommunity={() => {}} onOpenSaved={onOpenSaved} onOpenProfile={onOpenProfile} />
     <div className="am-scroll" data-tour="community">
-      {!page && <div className="am-top"><div className="am-title"><h1>Community</h1></div><div className="am-top-actions">{/* One profile entry point (Community critique, Oct 27): the app's own avatar in the top bar. Her community profile is in the Topics sheet. Search is one icon. */}<button type="button" className="am-icon-button" aria-label="Search Community" aria-expanded={searchOpen || Boolean(search)} onClick={() => { if (searchOpen && search) { setSearch(''); setSearchResults(null); } setSearchOpen((v) => !v); }}><CommunityIcon name="search" /></button><button type="button" className="am-icon-button" onClick={openNotifications} aria-label="Notifications"><CommunityIcon name="bell" /></button><button type="button" className="am-post-btn" data-tour="community-compose" onClick={() => setTypeSheet(true)}><CommunityIcon name="plus" size={18} />Post</button></div></div>}
+      {!page && <div className="am-top"><div className="am-title"><h1>Community</h1></div><div className="am-top-actions">{/* One profile entry point (Community critique, Oct 27): the app's own avatar in the top bar. Her community profile is in the Topics sheet. Search is one icon. */}<button type="button" className="am-icon-button" aria-label="Search Community" aria-expanded={searchOpen || Boolean(search)} onClick={() => { if (searchOpen && search) { setSearch(''); setSearchResults(null); } setSearchOpen((v) => !v); }}><CommunityIcon name="search" /></button>{/* Founder, Nov 11 (less repetitive): one bell, in the app header; replies are in it. */}<button type="button" className="am-post-btn" data-tour="community-compose" onClick={() => setTypeSheet(true)}><CommunityIcon name="plus" size={18} />Post</button></div></div>}
       {error && <p className="am-error" role="alert">{error}</p>}{notice && <p className="am-notice" role="status">{notice}</p>}{posted && <p className="am-notice am-posted" role="status">{posted.text}{posted.id && <button type="button" className="am-posted-view" onClick={viewPosted}>View post</button>}</p>}
       {page ? <div className="am-subpage" key={`${page.type}-${page.id || 'current'}`}>
         <div className="am-subpage-header"><button type="button" className="am-back" onClick={closePage} aria-label="Back to Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg></button><span className="am-subpage-title">{({ playlist: 'Playlist', profile: 'Profile', notifications: 'Updates', post: 'Post', friends: 'Friends', topic: 'Topic', topics: 'Topics by members' })[page.type] || 'Community'}</span></div>

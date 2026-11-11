@@ -25,7 +25,11 @@ const MAX_RANGE_DAYS = 731;
 const DEFAULT_DAYS = 400;
 const CLOCK_SKEW_MS = 5 * 60 * 1000;
 
-const LOG_COLUMNS = `day, ${LOG_FIELD_IDS.join(', ')}, field_at, updated_at`;
+// Fields added after the table was made (energy, Nov 11). Until a person runs
+// supabase/daily_log_energy_2026-11-11.sql, the server leaves them out instead of failing.
+export const NEWER_LOG_FIELDS = ['energy'];
+const OLD_FIELDS = LOG_FIELD_IDS.filter((id) => !NEWER_LOG_FIELDS.includes(id));
+const columnsFor = (fields) => `day, ${fields.join(', ')}, field_at, updated_at`;
 const TRY_COLUMNS = 'id, kind, ref, need, intervention_kind, started_day, horizon_days, outcome, recorded_day, note, removed, updated_at';
 
 export function isMissingSchema(error) {
@@ -72,9 +76,9 @@ export function rowToEntry(r) {
   return normalizeEntry({ ...r, updatedAt: r.updated_at, fieldAt: r.field_at });
 }
 
-export function entryToRow(e, userId) {
+export function entryToRow(e, userId, fields = LOG_FIELD_IDS) {
   const row = { user_id: userId, day: e.day, field_at: e.fieldAt || {}, source: LOG_SOURCE, method: LOG_METHOD, updated_at: e.updatedAt, synced_at: new Date().toISOString() };
-  for (const id of LOG_FIELD_IDS) row[id] = e[id];
+  for (const id of fields) row[id] = e[id];
   return row;
 }
 
@@ -99,14 +103,24 @@ async function q(promise) {
   return data || [];
 }
 
+/** Run with every field; if a newer column isn't in the table yet, run again without it. */
+async function withFieldFallback(run) {
+  try { return await run(LOG_FIELD_IDS); } catch (e) {
+    if (!(e instanceof DbError) || !isMissingSchema(e.db) || !/column/i.test(String(e.db?.message || '')) && String(e.db?.code) !== '42703') throw e;
+    return run(OLD_FIELDS);
+  }
+}
+
 async function saveEntries(client, userId, entries) {
   if (!entries.length) return 0;
   const days = entries.map((e) => e.day);
-  const existing = await q(client.from('user_daily_log').select(LOG_COLUMNS).eq('user_id', userId).in('day', days));
-  const merged = mergeLogs(existing.map(rowToEntry).filter(Boolean), entries);
-  const rows = days.filter((d, i) => days.indexOf(d) === i).map((d) => entryToRow(merged[d], userId));
-  await q(client.from('user_daily_log').upsert(rows, { onConflict: 'user_id,day' }));
-  return rows.length;
+  return withFieldFallback(async (fields) => {
+    const existing = await q(client.from('user_daily_log').select(columnsFor(fields)).eq('user_id', userId).in('day', days));
+    const merged = mergeLogs(existing.map(rowToEntry).filter(Boolean), entries);
+    const rows = days.filter((d, i) => days.indexOf(d) === i).map((d) => entryToRow(merged[d], userId, fields));
+    await q(client.from('user_daily_log').upsert(rows, { onConflict: 'user_id,day' }));
+    return rows.length;
+  });
 }
 
 async function saveTries(client, userId, tries) {
@@ -148,7 +162,7 @@ export default async function handler(req, res) {
       if (from > to) return res.status(400).json({ error: 'bad_range' });
       if (addDays(from, MAX_RANGE_DAYS) < to) from = addDays(to, -MAX_RANGE_DAYS);
       const [logRows, tryRows] = await Promise.all([
-        q(client.from('user_daily_log').select(LOG_COLUMNS).eq('user_id', userId).gte('day', from).lte('day', to).order('day', { ascending: true })),
+        withFieldFallback((fields) => q(client.from('user_daily_log').select(columnsFor(fields)).eq('user_id', userId).gte('day', from).lte('day', to).order('day', { ascending: true }))),
         q(client.from('user_tries').select(TRY_COLUMNS).eq('user_id', userId).order('started_day', { ascending: true })),
       ]);
       return res.status(200).json({ entries: logRows.map(rowToEntry).filter(Boolean), tries: tryRows.map(rowToTry).filter(Boolean) });

@@ -59,7 +59,7 @@ export function EvidenceRow({ product, evidence = undefined, safety = undefined 
   if (!ev && !warn) return null;
   return (
     <p className="ay-pcard__ev">
-      {ev ? <span className="ay-pcard__evtext" title={ev.label}><EvMark level={ev.level} /><span>{ev.text}</span><span className="sr-only"> ({ev.label})</span></span> : <span className="ay-pcard__evtext is-none">Not graded yet</span>}
+      {ev ? <span className="ay-pcard__evtext" title={ev.label}><EvMark level={ev.level} /><span>{ev.text}</span><span className="sr-only"> ({ev.label})</span></span> : null /* founder, Nov 11: no "not graded" anywhere */}
       {warn && <span className="ay-pcard__safe" title={warn}><SafetyGlyph /><span>Safety note</span><span className="sr-only">: {warn}</span></span>}
     </p>
   );

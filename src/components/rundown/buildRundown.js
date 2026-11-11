@@ -13,6 +13,7 @@
  *
  * Wording: may / could / pattern / based on your data. Never a diagnosis.
  */
+import { factFor } from './dailyFacts.js';
 import { addDays, daysBetweenDays } from '../../health/dailyLog.js';
 import { cycleStartsFrom, cyclesFrom, PATTERN_METRICS } from '../../health/cyclePatterns.js';
 import { READ_SUMMARIES } from '../../data/readPicks.js';
@@ -454,7 +455,10 @@ export function buildRundown(input = {}) {
   const body = kept.filter((c) => c.kind !== 'checkin');
   const protectedCards = body.filter((c) => c.protected);
   const rest = body.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
-  const content = [...protectedCards, ...rest, ...checkins];
+  // Founder, Nov 11: a daily ayna fact, near the end; it never takes a content slot.
+  const fact = factFor(today);
+  const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily ayna fact', title: fact.text, sources: [fact.source], basisLine: `From ${fact.source.label}.` };
+  const content = [...protectedCards, ...rest, ...(protectedCards.length || rest.length ? [factCard] : []), ...checkins];
   if (!content.length) return { cards: [], skipped };
   const opening = { key: `opening:${today}`, category: 'frame', kind: 'opening', kicker: 'Your daily rundown', title: `Your ${weekday(today)} rundown`, body: 'Here is your health in 60 seconds.' };
   // End of the rundown: Ask follow-ups about the cards she just saw (max 3).

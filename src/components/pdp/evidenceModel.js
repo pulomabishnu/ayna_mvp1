@@ -106,7 +106,7 @@ export function linkKind(url, brand) {
   // Founder rule (Oct 24): only .gov health pages count as checked sources.
   if (isCredible(url)) return { tier: 'credible', label: '' };
   // Level 2 (PDP audit 7.6): a peer-reviewed paper is labelled as one, never as "not checked"; it still can't produce a grade.
-  if (isPaperLink(url) || isPeerReviewed(url)) return { tier: 'paper', label: 'Peer-reviewed · not graded by ayna' };
+  if (isPaperLink(url) || isPeerReviewed(url)) return { tier: 'paper', label: 'Peer-reviewed study' };
   if (RETAIL.test(host)) return { tier: 'retail', label: 'Retailer listing' };
   if (slug.length >= 3 && host.replace(/[^a-z0-9]/g, '').includes(slug)) return { tier: 'brand', label: 'Brand’s own page, not independent' };
   if (FORUM.test(host)) return { tier: 'community', label: 'Community post' };
@@ -386,7 +386,7 @@ const CLAIM_KIND = {
   gov: 'Trusted health source',
   expert: 'Medical society or clinic page',
   listing: 'A seller’s listing, not evidence',
-  paper: 'Peer-reviewed · not graded by ayna',
+  paper: 'Peer-reviewed study',
   other: 'Other source',
   community: 'Community experience, not evidence',
 };

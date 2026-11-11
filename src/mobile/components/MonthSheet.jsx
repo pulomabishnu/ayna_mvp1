@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthComing, monthKey, periodDaySet, shiftMonth } from '../../health/monthCalendar.js';
 import './metric-sheet.css';
 import './month-sheet.css';
+import { LOG_SAVED_EVENT, readLog, saveLogEntry } from '../../health/dailyLog.js';
 
 /**
  * "Your month" (founder: a cute calendar, "only if it looks good and doesn't
@@ -17,10 +18,16 @@ const fmt = (iso, o) => at(iso).toLocaleDateString('en-US', { timeZone: 'UTC', .
 const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MARK_WORDS = { period: 'period logged', estimated: 'period expected, estimated', checkin: 'checked in' };
 
-export default function MonthSheet({ today, rows = [], log = {}, cycle = null, estimate = null, coming = [], hormonalBC = false, onLog, onClose, surface = 'app' }) {
+const FLOWS = [['none', 'None'], ['spotting', 'Spotting'], ['light', 'Light'], ['medium', 'Medium'], ['heavy', 'Heavy']];
+
+export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle = null, estimate = null, coming = [], hormonalBC = false, onLog, onClose, onSaved = null, surface = 'app' }) {
+  // Founder, Nov 11: the calendar is where she logs today AND her past periods, so ayna can
+  // estimate her cycle even if she doesn't use another period app. Saves go to the same daily log.
+  const [ownLog, setOwnLog] = useState(null);
+  const log = ownLog || logProp;
   const [ym, setYm] = useState(() => monthKey(today));
-  // Nothing picked until she taps a day (calmer first look; today has its ring).
-  const [picked, setPicked] = useState(null);
+  // Today is picked to start, so logging today is one tap; tap any earlier day to log a past period.
+  const [picked, setPicked] = useState(today);
   const sheetRef = useRef(null);
   const [opener] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
   const close = () => {
@@ -54,6 +61,17 @@ export default function MonthSheet({ today, rows = [], log = {}, cycle = null, e
   const word = (m) => (hormonalBC ? MARK_WORDS[m].replace('period', 'bleed') : MARK_WORDS[m]);
   const monthName = fmt(`${ym}-01`, { month: 'long', year: 'numeric' });
   const go = (n) => { const next = shiftMonth(ym, n); setYm(next); setPicked(null); };
+  const canLogPicked = Boolean(picked) && picked <= today;
+  const pickedFlow = picked ? log?.[picked]?.flow || null : null;
+  const setFlow = (v) => {
+    if (!canLogPicked) return;
+    saveLogEntry(picked, { flow: pickedFlow === v ? null : v });
+    const next = readLog();
+    setOwnLog(next);
+    onSaved?.(next);
+    try { window.dispatchEvent(new CustomEvent(LOG_SAVED_EVENT)); } catch { /* old browser */ }
+  };
+  const periodWord = hormonalBC ? 'Bleeding' : 'Period';
 
   let frame = null;
   const body = () => (
@@ -96,11 +114,19 @@ export default function MonthSheet({ today, rows = [], log = {}, cycle = null, e
         {pickedCell && (
           <div className="ay-mcal__picked" aria-live="polite">
             <p className="ay-mcal__pday">{pickedCell.today ? 'Today' : fmt(picked, { weekday: 'short', month: 'short', day: 'numeric' })}</p>
-            {lines.map((l) => <p key={l} className="ay-mcal__pline">{l}</p>)}
+            {lines.filter((l) => !(canLogPicked && /logged$/.test(l))).map((l) => (canLogPicked ? l.replace(/(, )?Flow [a-z]+/i, '').replace(/^Checked in: ?$/, '') : l)).filter(Boolean).map((l) => <p key={l} className="ay-mcal__pline">{l}</p>)}
+            {canLogPicked && (
+              <div className="ay-mcal__flow" role="group" aria-label={`${periodWord} on ${pickedCell.today ? 'today' : fmt(picked, { month: 'long', day: 'numeric' })}`}>
+                <p className="ay-mcal__flowh">{periodWord}</p>
+                <div className="ay-mcal__chips">
+                  {FLOWS.map(([v, label]) => <button key={v} type="button" className="ay-mcal__chip" aria-pressed={pickedFlow === v} onClick={() => setFlow(v)}>{label}</button>)}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {!hasCycle && <p className="ay-mcal__empty">Log a period to see your month.</p>}
+        {!estimate && <p className="ay-mcal__empty">{hasCycle ? 'Log the first day of your last 3 periods and ayna estimates your next one.' : "Tap the first day of your last period and pick a flow. Log your last 3 and ayna estimates your next one, even if you don't use another period app."}</p>}
 
         {soon.length > 0 && (
           <section className="ay-mcal__soon" aria-labelledby="ay-mcal-soon">
@@ -116,7 +142,7 @@ export default function MonthSheet({ today, rows = [], log = {}, cycle = null, e
           </section>
         )}
 
-        {onLog && <button type="button" className="ay-mcal__log" onClick={() => { onClose(); onLog(); }}>Log today</button>}
+        {onLog && <button type="button" className="ay-mcal__log" onClick={() => { onClose(); onLog(); }}>Log symptoms today</button>}
       </section>
     </div>
   );

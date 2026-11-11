@@ -9,7 +9,8 @@ export function storyTheme() {
   return /dark/.test(t) ? 'dark' : 'light';
 }
 
-const CONTROL = 'button, a, input, select, textarea, summary, details, label, [role="group"], .ay-pcard, [data-pid]';
+// A chart (figure role="group") is not a control: tapping it moves on (founder, Nov 11: "the third page of the rundown doesn't go to the next slide").
+const CONTROL = 'button, a, input, select, textarea, summary, details, label, [role="group"]:not(figure), .ay-pcard, [data-pid]';
 export const isControl = (el) => Boolean(el?.closest?.(CONTROL));
 
 /**

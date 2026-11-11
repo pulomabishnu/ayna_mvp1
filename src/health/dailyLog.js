@@ -41,6 +41,8 @@ export const LOG_FIELDS = [
   { id: 'sleep', label: 'Sleep', values: [1, 2, 3], options: ['Rough', 'Okay', 'Good'], primary: true, better: 'higher' },
   { id: 'mood', label: 'Mood', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'], primary: false, better: 'higher' },
   { id: 'skin', label: 'Skin', values: [1, 2, 3], options: ['Flared', 'Okay', 'Clear'], primary: false, better: 'higher' },
+  // Founder, Nov 11: "add energy".
+  { id: 'energy', label: 'Energy', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'], primary: false, better: 'higher' },
 ];
 export const LOG_FIELD_IDS = LOG_FIELDS.map((f) => f.id);
 const FIELD_BY_ID = Object.fromEntries(LOG_FIELDS.map((f) => [f.id, f]));
@@ -275,4 +277,41 @@ export function weekTakeaway(log, today = todayKey()) {
   }
   const logged = Object.values(toMap(log)).some((e) => LOG_FIELD_IDS.some((id) => e[id] != null));
   return logged ? 'A few more days and your week will show a pattern.' : 'A few taps a day. Your week shows up here.';
+}
+
+/** Fired after a day is saved outside the log card (the month calendar), so the card's state and sync catch up. */
+export const LOG_SAVED_EVENT = 'ayna:log-saved';
+
+/**
+ * Her own period logs as health rows (founder, Nov 11: "if you don't track your period on another
+ * app, ayna can still give you insights if you log your past ones"). Flow light or heavier counts as
+ * a period day, the same rule the calendar uses. Kept on her device and her account like the rest of
+ * the log; never sent to analytics.
+ */
+export function flowRowsFromLog(log = {}) {
+  const out = [];
+  for (const [day, e] of Object.entries(log || {})) {
+    const rank = e && FLOW_RANK[e.flow];
+    if (isDay(day) && rank != null && rank >= FLOW_RANK.light) out.push({ metric: 'menstrual_flow', day, value: rank, source: 'manual_import', origin: 'ayna_log' });
+  }
+  return out;
+}
+
+/**
+ * Her logged sleep for the last 7 days (Rough 1 / Okay 2 / Good 3), for the Sleep dial when no
+ * watch or ring is connected (founder, Nov 11). null when she hasn't logged sleep this week.
+ */
+export function sleepFromLog(log = {}, today) {
+  if (!isDay(today)) return null;
+  const nights = [];
+  for (let i = 0; i < 7; i++) {
+    const v = log?.[addDays(today, -i)]?.sleep;
+    if (v === 1 || v === 2 || v === 3) nights.push(v);
+  }
+  if (!nights.length) return null;
+  const words = { 1: 'Rough', 2: 'Okay', 3: 'Good' };
+  const avg = nights.reduce((a, b) => a + b, 0) / nights.length;
+  const latest = nights[0];
+  const good = nights.filter((v) => v >= 2).length;
+  return { latest: words[latest], avg, fill: avg / 3, nights: nights.length, okOrBetter: good, sub: `${good} of ${nights.length} ${nights.length === 1 ? 'night' : 'nights'} okay or better` };
 }

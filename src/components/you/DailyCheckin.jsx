@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LOG_FIELDS, lastWeek, todayKey, weekTakeaway } from '../../health/dailyLog.js';
 import { useDailyLog } from '../../health/useDailyLog.js';
+import { todayHelp } from '../../health/todayHelp.js';
 
 /*
  * You: the daily log. One card, a few taps a day: pain, flow, PMS and sleep,
@@ -29,11 +30,12 @@ export default function DailyCheckin({ variant = 'web', userId = null }) {
 const POST_CYCLE_LABELS = { flow: 'Bleeding' };
 const POST_CYCLE_HIDDEN = new Set(['pms']);
 
-export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle', today: todayProp = null, headingId = 'wy-checkin-h', title = 'Today', noCycle = false }) {
+export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle', today: todayProp = null, headingId = 'wy-checkin-h', title = 'Today', noCycle = false, pregnant = false, onOpenRead = null, onExplore = null }) {
   const app = variant === 'app';
   const today = todayProp || todayKey();
   const todays = log[today] || {};
-  const [more, setMore] = useState(() => todays.mood != null || todays.skin != null);
+  const [more, setMore] = useState(() => todays.mood != null || todays.skin != null || todays.energy != null);
+  const help = todayHelp(todays, { pregnant, postCycle: noCycle });
   const pick = (fieldId, value) => save(today, { [fieldId]: todays[fieldId] === value ? null : value });
   const loggedWeek = lastWeek(log, 'day', today).map((d) => ({ day: d.day, logged: Boolean(log[d.day] && LOG_FIELDS.some((f) => log[d.day][f.id] != null)) }));
   const rows = LOG_FIELDS.filter((f) => (f.primary || more) && !(noCycle && POST_CYCLE_HIDDEN.has(f.id)))
@@ -56,9 +58,26 @@ export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle
             </span>
           </div>
         ))}
+        {/* Founder, Nov 11: what she logged today brings things that may help, right here. */}
+        {help.length > 0 && (
+          <div className="ay-checkin__help" aria-live="polite">
+            {help.map((h) => (
+              <section key={h.id} className="ay-checkin__helpcard" aria-label={h.title}>
+                <h3>{h.title}</h3>
+                <ul>{h.tips.map((t) => <li key={t}>{t}</li>)}</ul>
+                <p className="ay-checkin__helpcare">{h.care}</p>
+                <p className="ay-checkin__helplinks">
+                  {h.read && onOpenRead && <button type="button" onClick={() => onOpenRead(h.read)}>Read more</button>}
+                  {h.shop && onExplore && <button type="button" onClick={() => onExplore(h.shop)}>See products</button>}
+                </p>
+                <p className="ay-checkin__helpsrc">Source: {h.sources.map((s, i) => <React.Fragment key={s.url}>{i ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></React.Fragment>)}</p>
+              </section>
+            ))}
+          </div>
+        )}
         {noCycle && <p className="ay-checkin__takeaway ay-checkin__note">Any bleeding after menopause is worth logging and checking with a clinician.</p>}
         <div className="ay-checkin__foot">
-          <button type="button" className="ay-checkin__more" aria-expanded={more} onClick={() => setMore((v) => !v)}>{more ? 'Less' : 'More: mood and skin'}</button>
+          <button type="button" className="ay-checkin__more" aria-expanded={more} onClick={() => setMore((v) => !v)}>{more ? 'Less' : 'More: mood, skin and energy'}</button>
           <span className="ay-checkin__status" role="status" aria-live="polite">{SAVE_TEXT[saveState] || ''}</span>
         </div>
         <div className="ay-checkin__weekrow">
