@@ -185,6 +185,9 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         if (document.querySelector('.ay-today__notify')) return;
         markWelcomeOffered(today);
         openerRef.current = document.activeElement;
+        // Nov 10 (founder research: a short walkthrough right after sign-up, skippable): the app opens
+        // the one-page tour itself, once; Skip or Got it closes it, and Settings has it again.
+        if (surface === 'app') { setTipsEnabled(false); setSheet(true); return; }
         setRun({ kind: 'welcome' });
         return;
       }

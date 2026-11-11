@@ -291,7 +291,10 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   // and the percent use it.
   const shownHealth = kneeOf(health);
   const fit = Math.max(0, Math.min(1, shownHealth + pf.total + experience));
-  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + hash01(`${userKey}|${pp.product_id}`) * 0.001;
+  // Nov 10 (founder: rank products with more reviews and research higher): research is already in
+  // the grade above; reviews add a small nudge, rating weighted by how many people rated it.
+  const reviews = reviewNudge(pp);
+  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1, { weak });
   // The breakdown (raised / lowered / unknown), from the same numbers: the
   // base parts telescope from "made for this need" to shownHealth, so
@@ -546,6 +549,14 @@ function typeKey(pp, needId) {
   return cat === 'supplement' || cat === 'menopause' ? `supplement:${needId}` : cat || 'other';
 }
 const round3 = (x) => Math.round(x * 1000) / 1000;
+/** Rating above or below 4 stars, scaled by log10 of the number of ratings (unknown count counts as 10). Max about +/-0.03. */
+export function reviewNudge(pp) {
+  const r = Number(pp?.rating);
+  if (!Number.isFinite(r) || r <= 0) return 0;
+  const n = Number(pp?.ratingCount) > 0 ? Number(pp.ratingCount) : 10;
+  const weight = Math.min(1, Math.log10(n + 1) / 4); // 10 ratings ~0.26, 10,000 ~1
+  return Math.max(-0.03, Math.min(0.03, (r - 4) * 0.03 * weight));
+}
 
 /**
  * v2 ecosystem: the same output shape as buildEcosystem (so every screen

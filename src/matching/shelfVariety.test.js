@@ -26,3 +26,13 @@ describe('something different to try (Nov 10)', () => {
     expect(shelf.picks.length).toBe(1);
   });
 });
+
+describe('reviews in ranking (Nov 10)', async () => {
+  const { reviewNudge } = await import('./v2.js');
+  it('more good ratings rank a little higher; a low rating a little lower; never more than 0.03', () => {
+    expect(reviewNudge({ rating: 4.8, ratingCount: 10000 })).toBeGreaterThan(reviewNudge({ rating: 4.8, ratingCount: 10 }));
+    expect(reviewNudge({ rating: 3.2, ratingCount: 500 })).toBeLessThan(0);
+    expect(reviewNudge({})).toBe(0);
+    expect(Math.abs(reviewNudge({ rating: 5, ratingCount: 1e9 }))).toBeLessThanOrEqual(0.03);
+  });
+});

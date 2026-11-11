@@ -55,22 +55,18 @@ afterEach(() => {
 });
 
 describe('tips overlay', () => {
-  it('app: the tour offer waits for her first Daily Rundown, then shows as a small non-modal banner', () => {
+  it('app: the tour waits for her first Daily Rundown, then opens once by itself (Nov 10)', () => {
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
     wait(3000);
-    expect(dialog()).toBeNull();
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
     markRundownViewed('2026-10-25');
     wait(1000);
-    expect(dialog()?.textContent).toContain('Want a quick tour?');
-    expect(dialog().getAttribute('aria-modal')).toBe('false');
-    expect(document.querySelector('.ay-tour.is-banner .ay-tour__dim')).toBeNull();
+    expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
 
-  it('offers the welcome on Home; Show me around opens the whole tour on one sheet, no pop-ups after (focus group, Nov 9)', () => {
+  it('on Home the whole tour opens once on one sheet; closing it ends it, no pop-ups after (Nov 10)', () => {
     mountApp({ html: HOME });
     wait(1000);
-    expect(dialog()?.textContent).toContain('Want a quick tour?');
-    click('Show me around');
     expect(readTour().enabled).toBe(false);
     const sheet = document.querySelector('.ay-tour__all');
     expect(sheet.textContent).toContain('How ayna works');
@@ -118,12 +114,13 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('I’ll explore turns tips off and nothing shows again', () => {
+  it('closing the tour with the X turns tips off and nothing shows again', () => {
     mountApp({ html: HOME });
     wait(1000);
-    click('I’ll explore');
+    act(() => document.querySelector('.ay-tour__x').click());
     expect(readTour().enabled).toBe(false);
     wait(3000);
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
     expect(dialog()).toBeNull();
   });
 
@@ -142,7 +139,7 @@ describe('tips overlay', () => {
     wait(600);
     expect(dialog()).toBeNull(); // still waiting out the Rundown's own check
     wait(2500);
-    expect(dialog()?.textContent).toContain('Want a quick tour?');
+    expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
 
   it('skips a tip whose anchor is off screen or missing', () => {

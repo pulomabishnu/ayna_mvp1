@@ -1669,6 +1669,9 @@ export function buildProductProfile(product) {
     product_id: product.id || null,
     name: product.name || '',
     tags: [...f.tags],
+    // Real reviews (rating out of 5, count when known): ranking only, never the shown percent.
+    rating: Number(product.userRating) > 0 ? Number(product.userRating) : null,
+    ratingCount: Number(product.userRatingCount || product.ratingCount || product.reviewCount) > 0 ? Number(product.userRatingCount || product.ratingCount || product.reviewCount) : null,
     category: f.cat,
     type: f.type,
     health_need_relevance,
