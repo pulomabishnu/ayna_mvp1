@@ -515,6 +515,14 @@ export default function MobileApp() {
     saveGuide(authUser.id, next);
   };
   const [loadedAccountId, setLoadedAccountId] = useState(null);
+  // Nov 10 audit ("no user is ever trapped on a loading screen"): if her account is slow to load,
+  // open the app with what's on the phone after 10 seconds; the account data still arrives after.
+  useEffect(() => {
+    const id = authUser?.id;
+    if (!id || loadedAccountId === id) return undefined;
+    const t = window.setTimeout(() => setLoadedAccountId(id), 10000);
+    return () => window.clearTimeout(t);
+  }, [authUser?.id, loadedAccountId]);
   // The landing opened on purpose (the ayna wordmark, founder Oct 27 01:13)
   // stays up for a signed-in account; only the cold-start landing hands over to Home.
   const landingPinnedRef = useRef(false);
