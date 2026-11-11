@@ -3,6 +3,7 @@ import MedicalNote from '../MedicalNote.jsx';
 import { ScallopEdge } from '../ui/ay/index.js';
 import { Rain } from './kit.jsx';
 import './app-landing.css';
+import { trackLandingCta } from '../../utils/funnelEvents.js';
 
 /*
  * The app's landing (founder, Oct 27 10:40-11:36): exactly one screen, never
@@ -27,7 +28,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
     ? { label: 'Go to your Home', slide: 'Go to your Home', go: onGoHome }
     : draft
       ? { label: 'Finish your free quiz', slide: 'Finish your free quiz', go: onResumeQuiz }
-      : { label: 'Sign up free', slide: 'Sign up free', go: onStartQuiz };
+      : { label: 'Sign up free', slide: 'Sign up free', go: () => { trackLandingCta('sign_up_free', 'app'); onStartQuiz?.(); } };
   return (
     <div id="ay-landing" className="alx">
       <section className="alx__band" aria-labelledby="alx-title">

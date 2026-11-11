@@ -42,8 +42,8 @@ describe('essential analytics tier', () => {
     expect(out.$set).toBeUndefined();
   });
 
-  it('sends only pageviews, pageleaves and errors before opt-in', () => {
-    expect([...ESSENTIAL_EVENTS].sort()).toEqual(['$pageleave', '$pageview', 'app_error']);
+  it('sends only pageviews, pageleaves, errors and new-account counts before opt-in', () => {
+    expect([...ESSENTIAL_EVENTS].sort()).toEqual(['$pageleave', '$pageview', 'app_error', 'signed_up']);
     for (const name of ['pdp_viewed', 'recommendation_viewed', 'app_opened', '$identify', 'perf_timing']) {
       expect(beforeSend({ event: name, properties: {} }, UNDECIDED)).toBeNull();
     }
@@ -128,6 +128,25 @@ describe('essential analytics tier', () => {
     const out = beforeSend({ event: 'app_error', properties: { errorName: 'TypeError', errorMessage: '[redacted]', component: 'ProductModal', view: 'product', isChunkLoadError: false, title: 'Monistat 7 | ayna' } }, UNDECIDED);
     expect(out.properties).toMatchObject({ errorName: 'TypeError', component: 'ProductModal', view: 'product', isChunkLoadError: false });
     expect(out.properties.title).toBeUndefined();
+  });
+
+  it('signed_up before a choice keeps only the sign-up method', () => {
+    const out = beforeSend({ event: 'signed_up', properties: { method: 'google', referral_source: 'linkedin.com', heard_about_source: 'tiktok' } }, UNDECIDED);
+    expect(out.properties.method).toBe('google');
+    expect(out.properties.referral_source).toBeUndefined();
+    expect(out.properties.heard_about_source).toBeUndefined();
+    expect(beforeSend({ event: 'signed_up', properties: { method: 'email' } }, { ...UNDECIDED, stored: 'denied' })).toBeNull();
+    expect(beforeSend({ event: 'signed_up', properties: { method: 'email' } }, { ...UNDECIDED, gpc: true })).toBeNull();
+  });
+
+  it('an anonymous event never carries an account id, even after sign-in', () => {
+    const out = beforeSend({ event: 'signed_up', distinct_id: 'ayna_abc12345', properties: { distinct_id: 'ayna_abc12345', $user_id: 'ayna_abc12345', $device_id: 'dev123', method: 'email' } }, UNDECIDED);
+    expect(out.properties.distinct_id).toBe('$posthog_cookieless');
+    expect(out.distinct_id).toBe('$posthog_cookieless');
+    expect(out.properties.$cookieless_mode).toBe(true);
+    expect(JSON.stringify(out)).not.toMatch(/ayna_abc|dev123/);
+    const opted = beforeSend({ event: 'signed_up', properties: { distinct_id: 'ayna_abc12345' } }, { optedIn: true, gpc: false, stored: 'granted' });
+    expect(opted.properties.distinct_id).toBe('ayna_abc12345');
   });
 
   it('every section the site serves is on the known-sections list', () => {

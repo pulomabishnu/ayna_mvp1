@@ -112,7 +112,7 @@ export default function ConsentBanner() {
         </button>
         <p>
           {isGpcActive()
-            ? <><strong>Opt-out request honored.</strong> Your browser&apos;s Global Privacy Control is on, so analytics stay off, including the anonymous visit count.</>
+            ? <><strong>Opt-out request honored.</strong> Your browser&apos;s Global Privacy Control is on, so analytics stay off, including the anonymous visit and step counts.</>
             : <>Analytics aren&apos;t running in this browser, so nothing is being collected.</>}
           {' '}<a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
         </p>
@@ -133,9 +133,9 @@ export default function ConsentBanner() {
       </button>
       <p>
         <strong className="consent-banner__title">Help us improve ayna for women like you</strong>
-        Turn on analytics so we can count visitors and see which products are popular. We don't know
-        who you are unless you make an account. Never sold, never used for ads. Keep off, and our
-        analytics can't see you at all.{' '}
+        Turn on analytics so we can see which products are popular. We don't know who you are unless
+        you make an account, and it's never sold or used for ads. Until you choose, we only count
+        visits and which steps of the site are used, anonymously; Keep off stops that too.{' '}
         <a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
       </p>
       {/* Both buttons share one class and style: equal size, colour and weight. */}

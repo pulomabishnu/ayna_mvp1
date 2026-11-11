@@ -209,6 +209,7 @@ import { addedToRoutineText, REMOVED_FROM_ROUTINE } from './utils/routineCopy.js
 import { openTodayLog } from './components/today/openLog.js';
 import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freeProductCampaign';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
+import { countJourneyStep } from './utils/journeyStep.js';
 import { stampFactUpdates } from './matching/factFreshness.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
@@ -1917,6 +1918,8 @@ function App() {
   };
 
   const handleQuizComplete = async (results, opts = {}) => {
+    // Anonymous daily count, first quiz only (same rule as quiz_started above).
+    if (!quizResults) countJourneyStep('quiz_completed');
     // First run ends on the reveal's "See my Today" (WebIntake): open Today, not the story.
     const toToday = opts?.land === 'today';
     const toSave = opts?.land === 'save';

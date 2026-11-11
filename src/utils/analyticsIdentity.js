@@ -15,11 +15,18 @@
 // a.analytics_id = the PostHog distinct_id.
 //
 // Events (no health details, generic names):
-//   signed_up                once, right after an account is created
+//   signed_up                once per new account, sent the moment it is created
+//                            (recordNewAccount): straight after an email sign-up
+//                            (before the code is verified, so an unverified or
+//                            slow-to-verify account still counts) and on the first
+//                            Google/Apple/phone sign-in. Also sent in the
+//                            anonymous tier before a consent choice (method only).
 //                            { method: 'email' | 'google' | 'apple', referral_source }
 //   account_session_started  once per browser session for a signed-in account
 //                            { is_returning, account_age_days_bucket }
 // Person properties: account_holder, account_created_week, email_verified.
+
+import { countJourneyStep } from './journeyStep.js';
 
 const LOCAL_PREFIX = 'ayna_analytics_id_v1:';
 const SIGNED_UP_PREFIX = 'ayna_signed_up_sent_v1:';
@@ -103,6 +110,37 @@ export async function resolveAccountAnalyticsId(supabase, userId) {
 }
 
 const inFlight = new Map();
+const SIGNUP_METHODS = new Set(['email', 'google', 'apple', 'phone']);
+const HEARD_ABOUT = ['instagram', 'tiktok', 'friend_family', 'clinician', 'search', 'event', 'other'];
+
+/**
+ * A new ayna account exists: send signed_up and add one to the anonymous
+ * account_created count (journeyStep.js). Once per account on this device.
+ * Called right after supabase.auth.signUp succeeds (AuthGate.jsx,
+ * useSupabaseAuth.js), and by identifyAccount for accounts made by
+ * Google/Apple/phone sign-in. Returns true if it recorded.
+ *
+ * Why (2026-11-11): signed_up undercounted against Supabase because it only
+ * fired (1) after the email code was verified, and only if that was within 30
+ * minutes of sign-up, and (2) for visitors who had turned analytics on;
+ * undecided visitors' events were all dropped except pageviews.
+ */
+export function recordNewAccount(posthog, user, { method } = {}) {
+  if (!user?.id) return false;
+  // Supabase returns a user with no identities when the email already has an account.
+  if (Array.isArray(user.identities) && user.identities.length === 0) return false;
+  const sentKey = `${SIGNED_UP_PREFIX}${opaqueAccountKey(user.id)}`;
+  if (readLocal(sentKey)) return false;
+  writeLocal(sentKey, '1');
+  const raw = String(method || user.app_metadata?.provider || 'email');
+  const props = { method: SIGNUP_METHODS.has(raw) ? raw : 'other' };
+  try { props.referral_source = posthog?.get_property?.('$initial_referring_domain') || '$direct'; } catch { props.referral_source = '$direct'; }
+  const heardAbout = String(user.user_metadata?.heard_about || '');
+  if (HEARD_ABOUT.includes(heardAbout)) props.heard_about_source = heardAbout;
+  try { posthog?.capture?.('signed_up', props); } catch { /* analytics never blocks sign-up */ }
+  countJourneyStep('account_created');
+  return true;
+}
 
 /**
  * Identify the signed-in account in PostHog, then record sign-up (once) and
@@ -128,21 +166,10 @@ export function identifyAccount(posthog, supabase, user, { now = Date.now(), ses
       );
     } catch { /* older SDK */ }
 
-    const provider = String(user.app_metadata?.provider || 'email');
+    // Google/Apple/phone accounts are created at this first sign-in. Email
+    // sign-ups were already recorded at signUp (same once-per-account key).
     const isNew = Number.isFinite(createdAt) && now - createdAt <= NEW_ACCOUNT_WINDOW_MS;
-    const sentKey = `${SIGNED_UP_PREFIX}${opaqueAccountKey(user.id)}`;
-    if (isNew && !readLocal(sentKey)) {
-      let referral = null;
-      try { referral = posthog.get_property?.('$initial_referring_domain') || null; } catch { /* ignore */ }
-      const heardAbout = String(user.user_metadata?.heard_about || '');
-      const source = ['instagram', 'tiktok', 'friend_family', 'clinician', 'search', 'event', 'other'].includes(heardAbout) ? heardAbout : null;
-      posthog.capture?.('signed_up', {
-        method: provider,
-        referral_source: referral || '$direct',
-        ...(source ? { heard_about_source: source } : {}),
-      });
-      writeLocal(sentKey, '1');
-    }
+    if (isNew) recordNewAccount(posthog, user);
 
     const store = sessionStore || (typeof window !== 'undefined' ? window.sessionStorage : null);
     let started = null;

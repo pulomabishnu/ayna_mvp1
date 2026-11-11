@@ -19,6 +19,7 @@ import { healthStoreAvailability, nativeSourceForPlatform, readDailyHealth } fro
 import { deleteSavedRecords, hasRecords, loadSavedRecords, saveRecords } from '../../health/records.js';
 import { DEV_DEMO_CONNECTIONS, devDemoRows } from '../../health/devDemo.js';
 import { localToday } from '../../utils/localDate.js';
+import { countJourneyStep } from '../../utils/journeyStep.js';
 
 // DEVELOPMENT ONLY (?healthdemo=1 in the local preview): made-up rows so the screens can be checked. Off in production builds.
 export const DEV_HEALTH_DEMO = Boolean(devPreviewOn() && typeof window !== 'undefined' && ['1', 'empty'].includes(new URLSearchParams(window.location.search).get('healthdemo')));
@@ -53,6 +54,7 @@ export function handleHealthReturn(urlString) {
   // Provider and outcome only; no health values or authorization URL.
   if (Object.hasOwn(NAMES, source) && Object.hasOwn(RETURN_TEXT, status)) {
     try {
+      if (status === 'connected') countJourneyStep('health_connected'); // anonymous daily count
       posthog.capture(status === 'connected' ? 'health_connection_succeeded' : 'health_connection_failed', {
         provider: source,
         ...(status === 'connected' ? {} : { reason: status }),

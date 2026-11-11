@@ -8,7 +8,7 @@ import { CONSENT_VERSION, stashPendingConsent, flushPendingConsent } from '../..
 import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 import { recordAppSignIn } from '../../utils/badges.js';
 import posthog from 'posthog-js';
-import { identifyAccount } from '../../utils/analyticsIdentity.js';
+import { identifyAccount, recordNewAccount } from '../../utils/analyticsIdentity.js';
 
 // Real Supabase identity for the mobile app, separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -219,6 +219,8 @@ export function useSupabaseAuth() {
       },
     });
     if (error) throw error;
+    // The account exists now, verified or not: count it (signed_up + account_created).
+    recordNewAccount(posthog, data.user, { method: 'email' });
     if (data.user?.identities?.length === 0) {
       const dup = new Error('An account with this email already exists. Sign in instead.');
       dup.code = 'email_already_exists';

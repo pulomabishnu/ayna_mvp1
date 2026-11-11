@@ -19,11 +19,15 @@ describe('commercial + health data regulatory regressions',()=>{
   it('does not send optional analytics before opt-in or silently revive GPC events',()=>{
     expect(main).toContain("opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF !== 'granted'");
     expect(main).not.toContain('if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false })');
-    // Banner wording approved by Puloma, 2026-11-10.
+    // Banner wording approved by Puloma, 2026-11-10; option B chosen 2026-11-11.
     expect(consent).toContain('Help us improve ayna for women like you');
-    expect(consent).toContain("Turn on analytics so we can count visitors and see which products are popular. We don't know");
-    expect(consent).toContain('who you are unless you make an account. Never sold, never used for ads. Keep off, and our');
-    expect(consent).toContain("analytics can't see you at all.");
+    expect(consent).toContain("Turn on analytics so we can see which products are popular. We don't know who you are unless");
+    expect(consent).toContain("you make an account, and it's never sold or used for ads. Until you choose, we only count");
+    expect(consent).toContain('visits and which steps of the site are used, anonymously; Keep off stops that too.');
+    // Same sentence in the policy and the health notice.
+    const steps = 'Until you choose, we only count visits and which steps of the site are used, anonymously; Keep off stops that too.';
+    expect(policy).toContain(steps);
+    expect(healthNotice).toContain(steps);
     expect(consent).toContain('Opt-out request honored.');
     // The policy and health notice say opted-in analytics include products viewed.
     expect(policy).toContain('the products you view and click (product name or ID)');
