@@ -1,11 +1,13 @@
-/* Ask ayna in the buy panel: a label and three small question pills. */
-.ay-askquick { display: grid; gap: 8px; margin: 14px 0 4px; }
-.ay-askquick__h { display: inline-flex; align-items: center; gap: 8px; font: 700 15px/1.2 'Figtree', system-ui, sans-serif; color: #3e2723; }
-.ay-askquick__orb { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff 0 18%, #f7badd 40%, #e0529c 100%); }
-.ay-askquick__row { display: flex; flex-wrap: wrap; gap: 8px; }
-.ay-askquick__row button { min-height: 40px; padding: 0 14px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1.2 'Figtree', system-ui, sans-serif; text-align: left; cursor: pointer; }
-.ay-askquick__row button:hover { background: rgba(62, 39, 35, .06); }
+/* Ask ayna in the buy panel. Founder, Nov 11: "it's taking up some space". One slim line:
+   the orb and label, then the questions in a row you can swipe. No wrapping, no second line. */
+.ay-askquick { display: flex; align-items: center; gap: 8px; margin: 10px 0 2px; min-width: 0; }
+.ay-askquick__h { flex: none; display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1 'Figtree', system-ui, sans-serif; color: #3e2723; }
+.ay-askquick__orb { width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff 0 18%, #f7badd 40%, #e0529c 100%); }
+.ay-askquick__row { flex: 1; min-width: 0; display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; mask-image: linear-gradient(90deg, #000 88%, transparent); }
+.ay-askquick__row::-webkit-scrollbar { display: none; }
+.ay-askquick__row button { flex: none; min-height: 36px; padding: 0 12px; border: 1px solid rgba(62, 39, 35, .35); border-radius: 999px; background: transparent; color: #3e2723; font: 500 13px/1 'Figtree', system-ui, sans-serif; white-space: nowrap; cursor: pointer; }
+.ay-askquick__row button:hover { border-color: #3e2723; }
 .ay-askquick__row button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askquick__h, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askquick__row button { color: #ffedac; border-color: #ffedac; }
-.ayna-mobile .ay-askquick { margin: 12px 0 4px; }
-.ayna-mobile[data-theme='dark'] .ay-askquick__h, .ayna-mobile[data-theme='dark'] .ay-askquick__row button { color: #ffedac; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askquick__h, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askquick__row button { color: #ffedac; border-color: rgba(255, 237, 172, .45); }
+.ayna-mobile .ay-askquick { margin: 10px 0 2px; }
+.ayna-mobile[data-theme='dark'] .ay-askquick__h, .ayna-mobile[data-theme='dark'] .ay-askquick__row button { color: #ffedac; border-color: rgba(255, 237, 172, .45); }

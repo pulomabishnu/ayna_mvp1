@@ -87,9 +87,12 @@ function answerMatchCore(text, ctx) {
     }
     if (top) return answerMatchCore(`why is this matched to me`, { ...ctx, focusProduct: top });
   }
-  const id = query ? findConfidentProductMatch(query, catalog, null, categoryLabels) : undefined;
-  const byName = !id && query ? productByName(query, catalog) : { one: null, some: [] };
-  const product = (id && catalog.find((p) => String(p.id) === String(id))) || byName.one || (!query ? focusProduct : null);
+  // On a product page, "who is this good for?" / "is it safe for me?" means the product she is
+  // looking at. Founder, Nov 11: the cup page answered about an inositol supplement.
+  const aboutThis = Boolean(focusProduct) && /\b(this|it|this one|this product)\b/i.test(text);
+  const id = query && !aboutThis ? findConfidentProductMatch(query, catalog, null, categoryLabels) : undefined;
+  const byName = !id && query && !aboutThis ? productByName(query, catalog) : { one: null, some: [] };
+  const product = (id && catalog.find((p) => String(p.id) === String(id))) || byName.one || (!query || aboutThis ? focusProduct : null);
   const safetyOnly = isSafetyQuestion(text) && !MATCH_INTENT.some((re) => re.test(text));
 
   // Several products by that name: each one's status for her, from the

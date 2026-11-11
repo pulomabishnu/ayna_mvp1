@@ -46,6 +46,7 @@ import { cardKind } from '../../utils/productCardFacts.js';
 import '../eco-needs.css';
 import '../app-pdp.css';
 import { fetchWithTimeout } from '../../utils/network.js';
+import { variantGroups } from '../../utils/variantGroups.js';
 import { productAskStarters, productMatchContext, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
 
@@ -154,10 +155,11 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
       )}
 
       {messages.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, maxHeight: 340, overflowY: 'auto' }}>
+        <div className="ay-askmsgs" style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
           {messages.map((m, i) => (
             <div
               key={i}
+              className={`ay-askmsg ${m.role === 'user' ? 'is-user' : 'is-ayna'}`}
               style={{
                 alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
                 maxWidth: '85%',
@@ -167,7 +169,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
                 padding: '10px 13px',
                 fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))',
                 lineHeight: 1.45,
-                whiteSpace: 'pre-wrap',
+                whiteSpace: 'normal',
+                overflowWrap: 'anywhere',
               }}
             >
               {m.role === 'assistant' ? renderMarkdownLite(m.text) : m.text}
@@ -488,8 +491,18 @@ export default function ProductDetailScreen({
             <div className="ay-pdp2-sizes">
               <p className="sr-only">{variantLabels.length ? variantKind : 'Options'}</p>
               {/* Many options: one row that peeks and scrolls sideways, not a wall of stacked chips (founder, Oct 27). */}
-              <ul className={`ay-pdp2-chips${sizeChips.length > 3 ? ' is-scroll' : ''}`} aria-label={variantLabels.length ? variantKind : 'Options'} tabIndex={sizeChips.length > 3 ? 0 : undefined}>{sizeChips.map((l) => <li key={l}>{l}</li>)}</ul>
-              {variantLabels.length > 0 && variantKind === 'Sizes' && <button type="button" className="ayv-textbtn" onClick={() => setAskOpen(true)}>Which size am I?</button>}
+              {/* Nov 11 ("less crowded", "don't just stack things"): what's on offer as quiet text lines,
+                  not a wall of outlined chips. Apple HIG: chips/controls are for choices you make here;
+                  these are just what the brand sells, so they read as text. */}
+              <dl className="ay-pdp2-opts">
+                {variantGroups(sizeChips).map((g) => (
+                  <div key={g.label} className="ay-pdp2-opts__row">
+                    <dt>{g.label}</dt>
+                    <dd>{g.values.join(' · ')}{g.label === 'Size' && variantKind === 'Sizes' && <> <button type="button" className="ayv-textbtn ay-pdp2-opts__help" onClick={() => setAskOpen(true)}>Which size am I?</button></>}</dd>
+                  </div>
+                ))}
+              </dl>
+              {variantKind === 'Sizes' && !variantGroups(sizeChips).some((g) => g.label === 'Size') && <button type="button" className="ayv-textbtn" onClick={() => setAskOpen(true)}>Which size am I?</button>}
             </div>
           )}
           {/* Nov 10 mockup (founder): one full-width Buy, the disclosure, then a row of small buttons. */}
@@ -508,12 +521,7 @@ export default function ProductDetailScreen({
             {onCommunityAction && <button type="button" onClick={() => onCommunityAction('post')}>
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Post</span><span className="sr-only"> about this product</span>
             </button>}
-            <button type="button" onClick={handleShare}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5h14v-5" /></svg><span>Share</span>
-            </button>
-            <button type="button" onClick={() => setAskOpen(true)}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg><span>Ask</span><span className="sr-only"> about this product</span>
-            </button>
+            {/* Share lives in the top bar and Ask has its own row: two fewer buttons here (Nov 11). */}
           </div>
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {/* Founder, Nov 11: Ask ayna right here, three quick questions. */}

@@ -118,6 +118,8 @@ const RENAMED_LABELS = [
   // Nov 3 (founder: plain words on the Clinical opinion tab; UI labels only, the attribution text itself stays).
   'No clinician has reviewed this yet. Here’s ayna’s summary of the guidance.',
   'More clinical context', 'From the clinical guidance in the sources.',
+  // Nov 11 declutter: the Share and Ask buttons left the action row (Share is in the top bar, Ask has its own row).
+  'about this product', 'Ask about this product',
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

@@ -139,3 +139,22 @@ html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#pdp-v4, #ay-p
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel :is(.ayq-gradebox, .ayq-evcheck) { margin-top: 12px !important; padding-top: 0 !important; }
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel :is(.ayq-gradebox, .ayq-evcheck) > .ayq-subh:first-child { margin-top: 0 !important; }
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-more { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+
+/* Founder, Nov 11: "the boxes, can they be brown ... and when you click on one it turns pink so you
+   know which one you're on". All four tiles brown with cream text; the open one pink with brown text.
+   The open section's text sits on the page, no yellow panel behind it. */
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card { background: #3e2723 !important; color: #ffedac !important; border: 0 !important; box-shadow: none !important; transition: background-color .2s ease, color .2s ease !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card .ay-stack__ic { background: #ffedac !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card .ay-stack__ic svg { stroke: #3e2723 !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card.is-open { background: #f7badd !important; color: #3e2723 !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card.is-open .ay-stack__ic { background: #3e2723 !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card.is-open .ay-stack__ic svg { stroke: #f7badd !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card :is(b, .ay-stack__tag, .ay-stack__chev) { color: inherit !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack .ay-stack__panel.ay-stack__panel { background: transparent !important; padding: 14px 4px !important; color: inherit; }
+@media (prefers-reduced-motion: reduce) { :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card { transition: none !important; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card:not(.is-open) { background: #4a302a !important; }
+/* Founder, Nov 11: no white on these, and the next thing sat too close under the grid. */
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid { margin-bottom: 20px !important; }
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card .ay-stack__tag { opacity: 1 !important; font-weight: 600 !important; font-size: 13px !important; }
+/* Easy to read: titles one size, never squeezed. */
+:is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card .ay-stack__head b { font-size: 16px !important; line-height: 1.2 !important; letter-spacing: 0 !important; }

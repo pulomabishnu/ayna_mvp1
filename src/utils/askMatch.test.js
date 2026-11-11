@@ -91,3 +91,13 @@ describe('Ask review (Oct 29): safety questions come from the engine', async () 
     expect(await localAnswer('what helps cramps', { profile, signedIn: true })).toBeNull();
   });
 });
+
+describe('focus product on a product page (founder, Nov 11)', () => {
+  it('"Who is this good for?" answers about the product on screen, never another one', async () => {
+    const { answerMatchQuestion } = await import('./askMatch.js');
+    const cup = { id: 'p-cup', name: 'Menstrual Cup' };
+    const other = { id: 'p-ino', name: 'Wholesome Story Myo & D-Chiro Inositol' };
+    const r = answerMatchQuestion?.('Who is this good for?', { catalog: [other, cup], quizAnswers: null, getDetails: () => null, focusProduct: cup });
+    if (r) expect(r.answer).not.toMatch(/Inositol/);
+  });
+});
