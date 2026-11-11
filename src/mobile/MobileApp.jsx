@@ -1,3 +1,4 @@
+import { takeHealthReturn } from '../health/healthReturn.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { readPendingVerification } from '../utils/pendingVerification.js';
 import { claimQuizRetake } from '../utils/proApi.js';
@@ -561,6 +562,18 @@ export default function MobileApp() {
     Promise.resolve().then(() => setScreenRaw('landing'));
   }, [screen, homeView, homeVariant, authUser, hasEcosystem, lastQuizAnswers, session.pendingQuiz]);
   const openLanding = () => { landingPinnedRef.current = true; setAskAynaOpen(false); setOverlay(null); setScreenRaw('landing'); };
+  // Connect returns where she started (Puloma, Nov 10): after a provider's page reloads the web
+  // app, the quiz's connect step reopens, otherwise Health data does.
+  if (typeof window !== 'undefined') window.__aynaScreen = screen;
+  const healthReturnDoneRef = useRef(false);
+  useEffect(() => {
+    if (healthReturnDoneRef.current || authLoading) return;
+    healthReturnDoneRef.current = true;
+    const back = takeHealthReturn();
+    if (!back) return;
+    if (back.screen === 'connect') { setScreen('connect'); return; }
+    if (authUser) setOverlay({ type: 'profile', screen: 'healthData' });
+  }, [authLoading, authUser]); // eslint-disable-line react-hooks/exhaustive-deps
   const requestAuth = (feature, resume = null) => {
     authResumeRef.current = resume || (() => setScreen(screen));
     setAuthPrompt({ feature });
@@ -1384,7 +1397,7 @@ export default function MobileApp() {
     }),
     onSavePlaylist: authUser ? handleSaveShoppingPlaylist : null,
     onOpenPlaylist: (playlistId) => { setOverlay(null); setCommunitySeed({ playlistId, token: Date.now() }); setScreen('community'); },
-    onConnectHealth: () => { if (!authUser) { requestAuth('health data'); return; } const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); proDoor('wearables', go); },
+    onConnectHealth: () => { const go = () => setOverlay({ type: 'profile', screen: 'healthData' }); if (!authUser) { requestAuth('health data', () => proDoor('wearables', go)); return; } proDoor('wearables', go); },
     onToggleHave: (id) => updateSession((prev) => {
       const next = { ...(prev.routineHave || {}) };
       if (next[id]) delete next[id]; else next[id] = true;

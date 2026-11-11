@@ -1,3 +1,4 @@
+import { rememberHealthReturn } from '../../../health/healthReturn.js';
 import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 import SuggestBox from '../../../components/SuggestBox.jsx';
@@ -246,7 +247,12 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         if (isNative) {
           const { Browser } = await import('@capacitor/browser');
           await Browser.open({ url });
-        } else window.location.assign(url);
+        } else {
+          // Web: the provider's page reloads ayna. Remember where she was so she comes back there,
+          // not to Home (Puloma, Nov 10 run-through: Connect "isn't redirecting you to the right spot").
+          rememberHealthReturn();
+          window.location.assign(url);
+        }
         return;
       }
       if (source.availability === 'device') {
