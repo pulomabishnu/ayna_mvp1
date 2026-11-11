@@ -91,3 +91,36 @@ describe('interaction table', () => {
     expect(detectIngredientKeys('good for the environment')).not.toContain('iron');
   });
 });
+
+describe('parseMedicationText: whatever she types is checked (founder, Nov 11)', async () => {
+  const { parseMedicationText } = await import('./medications.js');
+  const g = (t) => parseMedicationText(t).filter((m) => m.recognized).map((m) => m.generic);
+  it('finds medicines inside sentences, lists, doses and release suffixes', () => {
+    expect(g('I take zoloft daily')).toEqual(['sertraline']);
+    expect(g('Adderall XR 20mg')).toEqual(['amphetamine/dextroamphetamine']);
+    expect(g('prozac, wellbutrin').sort()).toEqual(['bupropion', 'fluoxetine']);
+    expect(g('Sertraline (Zoloft)')).toEqual(['sertraline']);
+    expect(g('ibuprofen as needed')).toEqual(['ibuprofen']);
+  });
+  it('catches one typo in a longer name', () => {
+    expect(g('setraline')).toEqual(['sertraline']);
+  });
+  it('never invents a match: unknown text stays unrecognized (so the engine stays careful)', () => {
+    expect(parseMedicationText('environment')[0].recognized).toBe(false);
+    expect(parseMedicationText('Lamictal')[0].recognized).toBe(false);
+  });
+});
+
+describe('typed medicines change matches exactly like picked ones', async () => {
+  const { ALL_PRODUCTS, getProductMatchDetailsForProduct } = await import('../data/products.js');
+  const iron = ALL_PRODUCTS.find((p) => p.id === 'p-nature-made-iron-65mg');
+  it('"synthroid every morning" gets the same result as picking Synthroid (iron product)', () => {
+    const base = { supportSelections: ['Low energy or fatigue'], takesCurrent: 'Yes' };
+    const picked = getProductMatchDetailsForProduct(iron, { ...base, currentMedicationItems: ['Synthroid'] });
+    const typed = getProductMatchDetailsForProduct(iron, { ...base, currentMedicationItems: ['synthroid every morning'] });
+    const none = getProductMatchDetailsForProduct(iron, { ...base, currentMedicationItems: ['nothing i know of'] });
+    expect(JSON.stringify(typed.considerations || typed.cautions || '')).toBe(JSON.stringify(picked.considerations || picked.cautions || ''));
+    expect(typed.matchStatus).toBe(picked.matchStatus);
+    expect(typed.eligible).toBe(picked.eligible);
+  });
+});

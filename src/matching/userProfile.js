@@ -25,7 +25,7 @@ import {
   normalizeText, LEGACY_FRUSTRATION_NEEDS, LEGACY_CONCERN_NEEDS, LEGACY_SYMPTOM_NEEDS, LEGACY_PREFERENCE, LEGACY_SENSITIVITY_ALLERGEN,
   CONTEXTS, LIFE_STAGE_BY_ID, needKind, bleedingAfterMenopause, isBleedingAfterMenopauseNeed,
 } from './ontology.js';
-import { normalizeMedication } from './medications.js';
+import { normalizeMedication, parseMedicationText } from './medications.js';
 import { extractFreeText, summarizeFreeText } from './freeText.js';
 import { normalizeBrand } from './productProfile.js';
 
@@ -546,7 +546,10 @@ export function buildUserProfile(intakeInput, options = {}) {
   const meds = [];
   const takesCurrent = String(intake.takesCurrent || '');
   if (takesCurrent === 'Yes' || (!takesCurrent && arr(intake.currentMedicationItems).length)) {
-    for (const raw of arr(intake.currentMedicationItems)) meds.push({ ...normalizeMedication(raw), source: 'selected' });
+    // Typed or picked, every medicine named in what she wrote is checked (parseMedicationText).
+    for (const raw of arr(intake.currentMedicationItems)) {
+      for (const m of parseMedicationText(raw)) if (!meds.some((x) => x.recognized && x.generic === m.generic)) meds.push({ ...m, source: 'selected' });
+    }
   }
   if (lifeStages.includes('hormonal_birth_control') && !meds.some((m) => m.all_classes.includes('hormonal_contraceptive'))) {
     meds.push({ ...normalizeMedication('hormonal contraceptive (unspecified)'), raw: 'Hormonal birth control (life stage)', source: 'life_stage' });

@@ -200,6 +200,57 @@ export function normalizeMedication(raw) {
   };
 }
 
+/**
+ * Everything she might type for "what do you take" (founder, Nov 11: "if there's no option but
+ * they still type it in, the code should check if whatever medicine they put interacts").
+ * Finds every known medicine named anywhere in the text: "Adderall XR 20mg", "I take zoloft
+ * daily", "lexapro and birth control", "Sertraline (Zoloft)", "setraline" (one typo). Release
+ * suffixes and doses are ignored. Text with no known medicine comes back as one unrecognized
+ * entry, so the engine stays careful with it (unrecognized medicines hold systemic products).
+ */
+const RELEASE = /\b(xr|er|sr|xl|cr|la|dr|odt|ec|ir|hcl|fe|24|lo)\b/g;
+const PHRASES = [...LOOKUP.keys()].filter((k) => k.length >= 3).sort((a, b) => b.length - a.length);
+const SINGLE_WORDS = PHRASES.filter((k) => !k.includes(' ') && k.length >= 5);
+function within(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return false;
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i += 1) {
+    let prev = row[0]; row[0] = i; let best = row[0];
+    for (let j = 1; j <= b.length; j += 1) {
+      const tmp = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp; if (row[j] < best) best = row[j];
+    }
+    if (best > max) return false;
+  }
+  return row[b.length] <= max;
+}
+export function parseMedicationText(raw) {
+  const text = ` ${normalizeText(raw).replace(/[()[\],;/+&]/g, ' ').replace(RELEASE, ' ').replace(/\s+/g, ' ').trim()} `;
+  if (!text.trim()) return [];
+  const exact = normalizeMedication(raw);
+  if (exact.recognized) return [exact];
+  const found = new Map();
+  let rest = text;
+  for (const k of PHRASES) {
+    const re = new RegExp(`(^|\\s)${escapeRe(k)}(?=\\s|$)`);
+    if (re.test(rest)) {
+      const med = normalizeMedication(k);
+      if (med.recognized && !found.has(med.generic)) found.set(med.generic, { ...med, raw: String(raw) });
+      rest = rest.replace(re, ' ');
+    }
+  }
+  // One typo in a longer word ("setraline", "levothyroxin"): edit distance 1, or 2 for 9+ letters.
+  for (const w of rest.split(' ').filter((x) => x.length >= 5)) {
+    const hit = SINGLE_WORDS.find((k) => within(w, k, k.length >= 9 ? 2 : 1));
+    if (hit) {
+      const med = normalizeMedication(hit);
+      if (med.recognized && !found.has(med.generic)) found.set(med.generic, { ...med, raw: String(raw), matched_as: 'typo' });
+    }
+  }
+  return found.size ? [...found.values()] : [exact];
+}
+
 // ─── Product ingredient detection ───────────────────────────────────────────
 // Ported from INGREDIENT_KEYWORDS in src/data/interactions.js (only the
 // ingredient keys; medication keys there describe users, not products).
