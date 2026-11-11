@@ -5,7 +5,7 @@ import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
 import EmptyState from '../components/EmptyState.jsx';
 import { healthAreaLabel } from '../utils/healthAreaLabel.js';
 import MobileHeader from '../components/MobileHeader.jsx';
-import ProductCard from '../components/ProductCard.jsx';
+import ProductTileImage from '../../components/ProductTileImage.jsx';
 import ArticleCard from '../components/ArticleCard.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz, getSelectedNeeds, getProductById } from '../../data/products.js';
@@ -56,9 +56,6 @@ function scrollToTabs() {
   requestAnimationFrame(() => document.querySelector('.eco-seg')?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
 }
 
-function onlyNote(count, phrase) {
-  return `Only ${count} strong match${count === 1 ? '' : 'es'} for ${phrase} so far`;
-}
 
 /* A product as one tappable line (name, brand, match), not a big photo card
    (founder, Oct 28: "it can say the product names and you can click to open
@@ -347,11 +344,11 @@ export default function EcosystemScreen({
 
     <section className={`eco-app-hero${ecoTab === 'dashboard' && showTabs ? ' is-today' : ''}`} aria-labelledby="ayna-cabinet-title">
       <div className="eco-app-titlerow">
-        <h1 id="ayna-cabinet-title" ref={titleRef}>My ecosystem</h1>
+        <h1 id="ayna-cabinet-title" ref={titleRef}>Your products</h1>
       </div>
       {ecoTab !== 'dashboard' && currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
-        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your ecosystem" aria-label="Search your ecosystem" />
+        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your products" aria-label="Search your products" />
       </form>}
       {/* One progress card (counts, needs covered, Wrapped) in place of the ring: the shelf counts live on the chips below. */}
       {/* Summary card: real counts, needs covered, Wrapped (no stamp: QA, Oct 27). */}
@@ -448,19 +445,31 @@ export default function EcosystemScreen({
             {shown.length > 0 && <span className="ay-shelf2-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}
             <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>Add</button>
           </div>
-          {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf2-empty">
             <p>Nothing for {section.phrase} yet. Shop has every option, with your match on each.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Explore {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
           {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Nothing here yet. <button type="button" className="eco-link" onClick={() => setView('picks')}>See {shown.length} suggestion{shown.length === 1 ? '' : 's'}</button></p>}
-          {section.products.length > 0 && <div className="ay-shelf2-row">{shown.map((product) => section.products.length
-            ? <div className="ay-shelf2-pick eco-app-mine" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} isSaved={!!savedProducts[product.id]} onToggleSaved={onToggleSaved} />
-              {/* A living routine (You audit 12): "Day 12 · Is it working?" from the date she added it, to her daily log. */}
-              {routineDay(product.addedAt) && openCheckIn && <button type="button" className="eco-app-working" onClick={openCheckIn}><span className="ayk-status is-quiet">Day {routineDay(product.addedAt)}</span>Is it working?</button>}</div>
-            : <div className="ay-shelf2-pick" key={product.id}><ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} matchOpts={matchOpts} needId={section.shelf?.needId} onOpenWhyMatch={onOpenWhyMatch} /><button type="button" onClick={() => onAddToEcosystem?.(product)}><PlusIcon size={16} />{ADD_TO_ROUTINE}</button></div>)}
-            <button type="button" className="ay-shelf2-slot" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Find a product for ${section.label}`}><PlusIcon size={20} />Find one</button>
-          </div>}
+          {/* Founder, Nov 11: "make your products actually readable". One product per line: photo,
+              name, brand and price, her match, and how long she's used it. No narrow cards, no dashed box. */}
+          {section.products.length > 0 && <ul className="ay-yp-list">{shown.map((product) => {
+            const d = quizAnswers ? getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts) : null;
+            const pct = d?.matchStatus === 'scored' ? shownMatchPercent(d.percent) : null;
+            const day = routineDay(product.addedAt);
+            const price = product.price && !/check retailer/i.test(product.price) ? String(product.price).split(' ')[0] : null;
+            return <li key={product.id} className="ay-yp-row">
+              <button type="button" className="ay-yp-row__main" onClick={() => onOpenProduct?.(product)}>
+                <span className="ay-yp-row__img"><ProductTileImage product={product} alt="" letterNode={<span aria-hidden="true">{(product.brand || product.name || '?').slice(0, 1)}</span>} /></span>
+                <span className="ay-yp-row__txt">
+                  <b>{product.name}</b>
+                  <small>{[product.brand, price].filter(Boolean).join(' · ')}</small>
+                  {pct != null && <em>{pct}% match</em>}
+                </span>
+                <svg className="ay-yp-row__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+              </button>
+              {day && openCheckIn && <button type="button" className="ay-yp-row__day" onClick={openCheckIn}>Day {day} · Is it working?</button>}
+            </li>;
+          })}</ul>}
           {shelf?.care && !careFirst && <details className="ay-shelf-care"><summary>Care options for {section.phrase}</summary><CareLinks care={shelf.care} /></details>}
         </section>;
       }).flatMap((node, index, all) => (index === all.length - 1 && index > 0 && careBanner ? [node, <div key="care-note" className="ay-carenote-slot">{careBanner}</div>] : index === 0 ? [
