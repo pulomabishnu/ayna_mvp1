@@ -13,6 +13,19 @@ const NIMH_CARE = { label: 'NIMH: Caring for your mental health', url: 'https://
 const MEDLINE_FATIGUE = { label: 'MedlinePlus: Fatigue', url: 'https://medlineplus.gov/ency/article/003088.htm' };
 
 export const TODAY_HELP = {
+  steady: {
+    id: 'steady',
+    title: 'For today',
+    tips: [
+      'A 30-minute walk can boost your mood and your health.',
+      'Drink water through the day and eat balanced meals.',
+      'Stick to your sleep schedule tonight.',
+    ],
+    care: 'If something feels off or new, check in with a clinician.',
+    sources: [NIMH_CARE],
+    read: null,
+    shop: null,
+  },
   pain: {
     id: 'pain',
     goal: 'pain.menstrual_cramp',
@@ -100,10 +113,14 @@ export function todayHelp(entry, { pregnant = false, postCycle = false } = {}) {
   // Pain in pregnancy goes through the triage questions on Today, never these tips.
   // Period-pain tips only for cramps or pelvic pain (or when she didn't say which kind).
   const crampy = !entry.pain_where || ['cramps', 'pelvic', 'back'].includes(entry.pain_where);
-  if (!pregnant && !postCycle && entry.pain >= 2 && crampy) out.push(TODAY_HELP.pain);
+  // Founder, Nov 11 ("I logged and it didn't tell me anything"): mild pain or PMS counts too.
+  if (!pregnant && !postCycle && entry.pain >= 1 && crampy) out.push(TODAY_HELP.pain);
   if (entry.mood === 1) out.push(TODAY_HELP.mood);
-  if (!pregnant && !postCycle && entry.pms >= 2) out.push(TODAY_HELP.pms);
+  if (!pregnant && !postCycle && entry.pms >= 1) out.push(TODAY_HELP.pms);
   if (entry.energy === 1) out.push(TODAY_HELP.energy);
   if (entry.sleep === 1) out.push(TODAY_HELP.sleep);
+  // Anything logged and nothing to act on: still one useful line for today, never silence.
+  const logged = ['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy'].some((f) => entry[f] != null);
+  if (!out.length && logged) out.push(TODAY_HELP.steady);
   return out.slice(0, 2);
 }

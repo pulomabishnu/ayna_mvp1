@@ -1198,11 +1198,12 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
       <TermsCtx.Provider value={plan}>
         <SourceRowsCtx.Provider value>
         <div id="ay-tabs" className="ayq ayq--tabs ayv ayv--stack">
-          {/* Binding safety rule: "When to get help now" is never collapsed and never behind a tab or card. */}
-          {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
           <div id="ay-pt">
             <PdpStack cards={cards} active={tab} onChange={(id) => setTab(id || 'none')} />
           </div>
+          {/* Founder, Nov 11: the safety parts sit together at the bottom, under the four sections.
+              "When to get help now" is still never behind a tab or card. */}
+          {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
           {afterOverview}
         </div>
         </SourceRowsCtx.Provider>
@@ -1213,12 +1214,11 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   return (
     <TermsCtx.Provider value={plan}>
       <div id="ay-tabs" className="ayq ayq--tabs ayv">
-        {/* Binding safety rule: "When to get help now" is never collapsed and never behind a tab.
-            Its own spot, the first thing in the details (founder, Oct 27 15:54). */}
-        {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
         <section id="ay-pt" className="ayq-tabsec" aria-label="ayna summary, clinical opinion, scientific literature and reviews">
           <StickyTabs tabs={tabs} active={activeTab} onChange={chooseTab} stickTop={stickTop} swipe={swipeTabs} />
         </section>
+        {/* Founder, Nov 11: safety together at the bottom, under the sections; never behind a tab. */}
+        {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
         {afterOverview}
       </div>
     </TermsCtx.Provider>
