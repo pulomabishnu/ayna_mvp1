@@ -86,3 +86,13 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-ink > button, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-ink > button * { color: #3e2723 !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-ink .ay-tp-tile__ic { background: #3e2723 !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-ink .ay-tp-tile__ic, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-ink .ay-tp-tile__ic * { color: #ffedac !important; }
+/* Plain tiles: no fill, an espresso icon circle and espresso text (butter in dark). */
+.ay-tp .ay-tp-tile.is-plain { background: transparent; }
+.ay-tp .ay-tp-tile.is-plain > button { padding-left: 4px; padding-right: 4px; }
+.ay-tp .ay-tp-tile.is-plain > button, .ay-tp .ay-tp-tile.is-plain > button * { color: #3e2723 !important; }
+.ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic { background: #3e2723 !important; }
+.ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic, .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic * { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain > button, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain > button * { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic { background: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic * { color: #3e2723 !important; }
+.ay-tp .ay-tp-tile.is-plain .ay-tp-tile__thumbs > span, .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__thumbs > span * { color: #3e2723 !important; }

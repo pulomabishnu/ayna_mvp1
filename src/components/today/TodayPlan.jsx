@@ -37,8 +37,9 @@ const FITS = {
   pms: /pms|bloat|premenstrual|cycle support/i,
 };
 const textOf = (p) => `${p?.name || ''} ${p?.category || ''} ${p?.subcategory || ''} ${(p?.needs || p?.concerns || []).join?.(' ') || ''} ${p?.description || ''}`;
-// Brand colours only (founder, Nov 11: "stay on branding"): espresso and pink, alternating.
-const TONES = ['is-ink', 'is-pink'];
+// Founder, Nov 11 ("too much colour?"): 60-30-10. The butter page leads, one pink tile is the accent
+// (the first thing that may help today), everything else is plain: an icon circle and text, no fill.
+const toneFor = (t, firstTopicKey) => (t.key === firstTopicKey ? 'is-pink' : 'is-plain');
 
 function Icon({ d }) { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>; }
 
@@ -106,7 +107,12 @@ export default function TodayPlan({
   if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: 'Log today', line: 'Mood, pain, energy, period', go: onOpenLog });
   topics.slice(0, 3).forEach((h) => tiles.push({ key: h.id, icon: ICONS[h.id] || ICONS.steady, title: SHORT[h.id] || h.title, line: h.fromData || h.tips[0], go: () => setOpen(h.id) }));
   if (insight && !insight.topic && onOpenInsight) tiles.push({ key: 'data', icon: ICONS.data, title: insight.label, line: insight.line, go: onOpenInsight });
-  if (picks.length) tiles.push({ key: 'picks', icon: ICONS.picks, title: 'New products for you', line: `${Math.min(3, picks.length)} suggestions that fit you`, thumbs: picks.slice(0, 2), go: () => setOpen('picks') });
+  // Founder, Nov 11: "one can be a suggestion, adding one thing to your routine, based off the data".
+  // The one pick that fits what her data or log brought up first; otherwise her top match.
+  const lead = topics.map((t) => ({ t, p: fits(t).find((x) => !inRoutine(x.id)) })).find((x) => x.p) || null;
+  const onePick = lead?.p || picks.find((x) => !inRoutine(x.id)) || null;
+  const why = lead ? `For ${lead.t.goalLabel || 'today'}` : 'A match for you';
+  if (onePick) tiles.push({ key: 'picks', icon: ICONS.picks, title: 'Add to your routine', line: `${onePick.name}. ${why}.`, thumbs: [onePick], go: () => setOpen('picks') });
   if (logged && onOpenLog) tiles.push({ key: 'relog', icon: ICONS.log, title: 'Your log', line: 'Add or change today', go: onOpenLog });
 
   const h = topics.find((x) => x.id === open);
@@ -114,8 +120,8 @@ export default function TodayPlan({
   return (
     <section className="ay-tp" aria-label="For today">
       <ul className={`ay-tp-grid is-${tiles.length}`}>
-        {tiles.map((t, i) => (
-          <li key={t.key} className={`ay-tp-tile ${TONES[i % TONES.length]}`}>
+        {tiles.map((t) => (
+          <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`}>
             <button type="button" onClick={t.go}>
               <span className="ay-tp-tile__ic"><Icon d={t.icon} /></span>
               <b>{t.title}</b>
@@ -148,9 +154,14 @@ export default function TodayPlan({
       </Sheet>
 
       <Sheet open={open === 'picks'} onClose={() => setOpen(null)} labelledBy="ay-tp-picks-h">
-        <p className="ay-tp-sheet__kicker">New products for you</p>
-        <h2 id="ay-tp-picks-h">Suggestions that fit what you told ayna</h2>
-        <ProductRows products={picks.slice(0, 3)} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />
+        <p className="ay-tp-sheet__kicker">Add to your routine</p>
+        <h2 id="ay-tp-picks-h">{onePick ? `${onePick.name}` : 'New products for you'}</h2>
+        {onePick && <p className="ay-tp-sheet__lead">{why}. It fits the answers you gave ayna; tap it for the full match and safety notes.</p>}
+        {onePick && <ProductRows products={[onePick]} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />}
+        {picks.filter((x) => x.id !== onePick?.id).length > 0 && <>
+          <h3>More new products for you</h3>
+          <ProductRows products={picks.filter((x) => x.id !== onePick?.id).slice(0, 3)} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />
+        </>}
         {onExplore && <button type="button" className="ay-tp-link" onClick={() => { setOpen(null); onExplore(''); }}>Explore Shop</button>}
       </Sheet>
     </section>
