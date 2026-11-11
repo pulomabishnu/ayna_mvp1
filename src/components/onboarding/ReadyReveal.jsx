@@ -67,7 +67,7 @@ const CARE_LINE_CODES = ['urgent_yes', 'pregnancy_bleeding', 'estrogen_bc_condit
 function perNeed(answers, matchOpts = undefined) {
   if (!answers) return { rows: [], total: 0, careNote: '' };
   try {
-    const { shelves: rawShelves = [], careFlags = null } = getEcosystemSeedFromQuiz(answers, null, matchOpts);
+    const { shelves: rawShelves = [], careFlags = null, everydayBasics = false } = getEcosystemSeedFromQuiz(answers, null, matchOpts);
     // Nov 6: needs one set of products serves share a shelf (src/matching/shelfGroups.js).
     const shelves = groupShelves(rawShelves);
     const rows = shelves.map((sh) => {
@@ -98,7 +98,7 @@ function perNeed(answers, matchOpts = undefined) {
     const careNoteFor = first?.code === 'pregnancy_constipation' ? 'digestive.constipation' : null;
     const grouped = groupRevealRows(rows);
     const total = new Set(grouped.flatMap((row) => [...row.products, ...row.services].map((p) => p.id))).size;
-    return { rows: grouped, total, careNote, careNoteFor };
+    return { rows: grouped, total, careNote, careNoteFor, everydayBasics };
   } catch {
     return { rows: [], total: 0, careNote: '' };
   }
@@ -121,13 +121,14 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
   const matches = useMemo(() => (ready && liveReady ? firstMatches(answers, 5) : []), [answers, ready, liveReady]);
   // Her connected health data counts too (founder, Nov 9: results from the quiz AND wearables).
-  const { rows: needRows, total: needTotal, careNote } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
+  const { rows: needRows, total: needTotal, careNote, everydayBasics = false } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
   // Founder, Nov 10 ("this should never be a thing"): no screen that says there is nothing for her.
   // When no need produced a shelf, her top matches from the same engine show as "Picks for you".
-  const rows = needRows.length || !matches.length ? needRows : [{
+  const basics = [];
+  const rows = needRows.length ? needRows : matches.length ? [{
     id: 'for-you', label: 'Picks for you', needIds: [], products: matches.filter((p) => p.type !== 'digital'), services: matches.filter((p) => p.type === 'digital'),
-  }];
-  const total = needRows.length ? needTotal : rows.length ? matches.length : 0;
+  }] : basics;
+  const total = needRows.length ? needTotal : matches.length ? matches.length : 0;
   // Nov 4 (founder: "the extra questions didn't change my match"): say what changed. The
   // matches before the extra questions are kept for this tab only (ids, no answers).
   const changed = useMemo(() => {
@@ -193,7 +194,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {/* Founder, Nov 9: signed in (she made an account to link her data) it says See my Home;
             signed out it says to create the account that saves them (Wrapped plays right after). */}
         {signedIn
-          ? <button type="button" className="ay-pz__see" onClick={onSeeToday || onWatchWrapped || (() => setStage('matches'))}>See my Home <Arrow /></button>
+          // Founder, Nov 10: ayna Wrapped is the first thing she sees after the quiz, signed in too, then Home.
+          ? <button type="button" className="ay-pz__see" onClick={onWatchWrapped || onSeeToday || (() => setStage('matches'))}>{onWatchWrapped ? 'See my results' : 'See my Home'} <Arrow /></button>
           : <button type="button" className="ay-pz__see" onClick={onCreateAccount || onWatchWrapped || (() => setStage('matches'))}>Create your account to save <Arrow /></button>}
 
       </Tag>
@@ -213,8 +215,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={{ ...bleeding, text: 'It should be checked promptly by an ob-gyn or your clinician.' }} />}
       {rows.length > 0 ? (
         <section className="ay-ob-needs" aria-labelledby="ay-ob-needs-h">
-          <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">{needRows.length ? 'What you asked for help with' : 'Your top picks'}</h2>
-          <p>{needRows.length ? 'OTC options for symptom management and support.' : 'Ranked by how well each fits your answers. Pick what you want help with to get more.'}</p>
+          <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">{everydayBasics ? 'Nothing to fix? Start with the basics' : needRows.length ? 'What you asked for help with' : 'Your top picks'}</h2>
+          <p>{everydayBasics ? 'Everyday picks for your stage, ranked by your answers and what you like. Add the ones you use and ayna suggests similar ones in your Daily Rundown.' : needRows.length ? 'OTC options for symptom management and support.' : matches.length ? 'Ranked by how well each fits your answers. Pick what you want help with to get more.' : 'Everyday picks for your stage, ranked by your answers. Add the ones you use to your ecosystem and ayna suggests similar ones in your Daily Rundown.'}</p>
           <ul className="ay-reveal-shelves">
             {rows.map((r, i) => {
               const picks = [...r.products, ...r.services];
@@ -232,6 +234,15 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
               </li>;
             })}
           </ul>
+          {/* Her "what you want to learn about" topics stay on this page too (focus group, Nov 9). */}
+          {(everydayBasics || !needRows.length) && learn.length > 0 && (
+            <section className="ay-ob-learn" aria-labelledby="ay-ob-learn-h2">
+              <h2 id="ay-ob-learn-h2">What you want to learn about</h2>
+              <ul>{learn.map((t) => <li key={t}>{onLearn
+                ? <button type="button" onClick={() => onLearn(t)}>{t}<Arrow /></button>
+                : <a href={`/library?q=${encodeURIComponent(t.toLowerCase())}`}>{t}<Arrow /></a>}</li>)}</ul>
+            </section>
+          )}
         </section>
       ) : !ready || !liveReady ? (
         <p className="ay-ob-ready__lead" role="status">Getting your matches ready…</p>
@@ -248,17 +259,18 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {/* Founder, Nov 10: never a dead end. Explore Shop and add what she uses or likes; ayna learns
             from her ecosystem and suggests similar products in the Daily Rundown. */}
         <p className="ay-ob-ready__lead">Explore Shop and add the products you use or like to your ecosystem. ayna learns from them and suggests similar ones in your Daily Rundown.</p>
-        {onBack && <button type="button" className="ay-ob-next__link ay-ob-ready__pick" onClick={onBack}>Or pick what you want help with</button>}</>
+</>
       )}
       <div className="ay-ob-ready__actions ay-ob-next">
-        {total === 0 && rows.length === 0 && onExplore && ready && liveReady
-          ? <button type="button" className="ay-ob-next__main" onClick={onExplore}>Explore Shop<Arrow /></button>
+        {total === 0 && (rows.length === 0 || basics.length > 0) && onExplore && ready && liveReady
+          ? <><button type="button" className="ay-ob-next__main" onClick={onExplore}>Explore Shop<Arrow /></button>
+            {onBack && <button type="button" className="ay-ob-next__link" onClick={onBack}>Or pick what you want help with</button>}</>
           : onWatchWrapped && total > 0
           ? <button type="button" className="ay-ob-next__main" onClick={onWatchWrapped}>See my results<Arrow /></button>
           : !signedIn && onCreateAccount
             ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 0 ? 'Save my profile' : total === 1 ? 'Save my match' : `Save my ${total} matches`}<Arrow /></button>
             : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<Arrow /></button>}
-        {!(total === 0 && rows.length === 0 && onExplore && ready && liveReady) && <small className="ay-ob-next__note">{onWatchWrapped && total > 0 ? (signedIn ? 'Your ayna Wrapped, then your matches.' : 'Your ayna Wrapped, then save them with a free account.') : !signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>}
+        {!(total === 0 && (rows.length === 0 || basics.length > 0) && onExplore && ready && liveReady) && <small className="ay-ob-next__note">{onWatchWrapped && total > 0 ? (signedIn ? 'Your ayna Wrapped, then your matches.' : 'Your ayna Wrapped, then save them with a free account.') : !signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>}
         {onWatchWrapped && total > 0 && (signedIn
           ? <button type="button" className="ay-ob-next__link" onClick={onSeeToday}>Skip to my matches</button>
           : onCreateAccount && <button type="button" className="ay-ob-next__link" onClick={onCreateAccount}>Skip, save my matches</button>)}

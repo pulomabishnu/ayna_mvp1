@@ -437,7 +437,11 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
     if (opts.log) {
       setLogOpen(true);
       requestAnimationFrame(() => document.getElementById(`ay-checkin-${opts.log}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
-    } else setExpandedItemId(item.id);
+    } else {
+      setExpandedItemId(item.id);
+      // The details open under the feed; bring them into view so the tap visibly does something.
+      requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector('.ay-today__detail')?.scrollIntoView({ block: 'center', behavior: 'smooth' })));
+    }
   } : null);
   // A check-in opened from My ecosystem is delivered after Home mounts,
   // not on a timer that can race its lazy-loaded component.

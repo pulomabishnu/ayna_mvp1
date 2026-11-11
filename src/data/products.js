@@ -2327,7 +2327,27 @@ export function getRecommendationsByFrustration(quizAnswers, healthProfile = nul
  *   seedMeta[productId] = { frustration, tag, needId, needLabel, needIds, score, tier, careProminent }
  *   seedMeta.shelves (non-enumerable) = the shelves summary.
  */
+// "Nothing right now" (founder, Nov 10: "why can't it still match if they don't put anything",
+// "ayna Wrapped should be the first thing you see"): someone who still gets periods gets everyday
+// period basics as her shelf, ranked by her answers and preferences, so the reveal, Wrapped, Home and
+// My ecosystem all show the same picks. The engine itself still builds no shelf for "Nothing right now".
+export const EVERYDAY_BASICS_LABEL = 'Everyday period basics';
+export function withEverydayBasics(quizAnswers) {
+    const fi = quizAnswers?.fullHealthIntake;
+    const support = Array.isArray(fi?.supportSelections) ? fi.supportSelections : null;
+    if (!fi || !support || support.length !== 1 || support[0] !== 'Nothing right now') return null;
+    const stages = Array.isArray(fi.lifeStageSelections) ? fi.lifeStageSelections : [];
+    if (!stages.some((x) => /get periods|irregular|hormonal birth control/i.test(String(x)))) return null;
+    if (stages.some((x) => /pregnant|postpartum|menopause/i.test(String(x)))) return null;
+    return { ...quizAnswers, fullHealthIntake: { ...fi, supportSelections: ['Period product support'] } };
+}
+
 export function getEcosystemSeedFromQuiz(quizAnswers, healthProfile = null, opts = {}) {
+    const basicsAnswers = withEverydayBasics(quizAnswers);
+    if (basicsAnswers) {
+        const seed = getEcosystemSeedFromQuiz(basicsAnswers, healthProfile, opts);
+        return { ...seed, everydayBasics: true, shelves: (seed.shelves || []).map((sh) => ({ ...sh, label: EVERYDAY_BASICS_LABEL })) };
+    }
     const mergedProducts = {};
     const seedMeta = {};
     const { up, eco } = ecosystemFor(quizAnswers, healthProfile, opts);

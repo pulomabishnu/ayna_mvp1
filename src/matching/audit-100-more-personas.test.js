@@ -3,7 +3,7 @@
 // 60 completed/mixed-depth profiles, 20 abandoned/partial, 20 connected-data.
 // All assertions inspect actual selected needs, safety gates and product IDs.
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
+import { ALL_PRODUCTS, getEcosystemSeedFromQuiz, withEverydayBasics } from '../data/products.js';
 import { EMPTY, LIFE_STAGES, buildSnapshot } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildProductProfile } from './productProfile.js';
@@ -197,7 +197,8 @@ describe('100 additional distinct real-engine quiz simulations',()=>{
   });
   it.each(CASES)('$id $kind $label',c=>{
     const {quiz,ctx,insights}=quizAndContext(c);
-    const up=buildUserProfile(quiz,{healthContext:ctx||undefined});
+    // "Nothing right now" with periods gets everyday period basics (founder, Nov 10); the rest is unchanged.
+    const up=buildUserProfile(withEverydayBasics(quiz)||quiz,{healthContext:ctx||undefined});
     const out=getEcosystemSeedFromQuiz(quiz,null,{engine:'v2',...(ctx?{healthContext:ctx}:{})});
     const shelves=out.shelves;
     const picks=shelves.flatMap(sh=>sh.picks);

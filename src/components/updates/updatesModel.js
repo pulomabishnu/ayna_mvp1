@@ -67,7 +67,8 @@ export function buildUpdates({ facts = [], checkinDue = false, checkinMonth = ''
 /** True when the bell should show its dot. */
 export function hasUnseen(items, seen, unreadCommunity = 0) {
   if (unreadCommunity > 0) return true;
-  return items.some((i) => (i.group === 'community' ? i.unread : !seen.has(i.key)));
+  // A reply counts until she has opened the list once (read_at is set on the server then).
+  return items.some((i) => (i.group === 'community' ? i.unread && !seen.has(i.key) : !seen.has(i.key)));
 }
 
 export const GROUP_LABEL = { you: 'For you', community: 'Community', ayna: 'From ayna' };

@@ -239,3 +239,6 @@ html body :is(#ay-x, .app-container.app-container.app-container) .qz-page .qz-ca
 /* the web card carries one sparkle sticker on its corner (decoration) */
 :is(#ds-o, .app-container):is(#ds-o, .app-container) .qz-card.ay-ob-value.is-web { position: relative; overflow: visible !important; }
 :is(#ds-o, .app-container):is(#ds-o, .app-container) .qz-card.ay-ob-value.is-web::after { content: ''; position: absolute; top: -22px; right: 28px; width: 54px; height: 54px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 50%; background: #f7badd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1.5c.7 5.6 4.9 9.8 10.5 10.5-5.6.7-9.8 4.9-10.5 10.5-.7-5.6-4.9-9.8-10.5-10.5C7.1 11.3 11.3 7.1 12 1.5z' fill='%233e2723'/%3E%3C/svg%3E") center / 24px no-repeat; transform: rotate(10deg); box-shadow: 3px 3px 0 #3e2723; pointer-events: none; }
+/* Website reveal sits on butter, not espresso: the lead line is ink there (it was butter on butter, Nov 10). */
+.app-container .ay-ob-ready.is-web .ay-ob-ready__lead.ay-ob-ready__lead { color: var(--o-ink, #3e2723) !important; }
+.app-container[data-theme='brand-dark'] .ay-ob-ready.is-web .ay-ob-ready__lead.ay-ob-ready__lead { color: #ffedac !important; }

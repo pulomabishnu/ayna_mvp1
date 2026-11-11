@@ -206,7 +206,7 @@ export default function AynaHomeScreen(props) {
           community={rundownCommunity}
           onOpenPost={onOpenCommunityPost}
           onRundownFinish={onRundownFinish}
-          onOpenFull={(item, o) => (o?.log ? logHere() : openDashboard(false))}
+          // Rundown details and the log open right here on Home (founder, Nov 10: no dead end behind Pro).
           homeLog
           moreHeading={false}
           renderViews={renderViews}
