@@ -18,6 +18,12 @@ const fmt = (iso, o) => at(iso).toLocaleDateString('en-US', { timeZone: 'UTC', .
 const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MARK_WORDS = { period: 'period logged', estimated: 'period expected, estimated', checkin: 'checked in' };
 
+const QUICK = [
+  { id: 'mood', label: 'Mood', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'] },
+  { id: 'energy', label: 'Energy', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'] },
+  { id: 'pain', label: 'Pain', values: [0, 1, 2, 3], options: ['None', 'Mild', 'Medium', 'Bad'] },
+  { id: 'sleep', label: 'Sleep', values: [1, 2, 3], options: ['Rough', 'Okay', 'Good'] },
+];
 const FLOWS = [['none', 'None'], ['spotting', 'Spotting'], ['light', 'Light'], ['medium', 'Medium'], ['heavy', 'Heavy']];
 
 export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle = null, estimate = null, coming = [], hormonalBC = false, onLog, onClose, onSaved = null, surface = 'app' }) {
@@ -66,6 +72,14 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const setFlow = (v) => {
     if (!canLogPicked) return;
     saveLogEntry(picked, { flow: pickedFlow === v ? null : v });
+    const next = readLog();
+    setOwnLog(next);
+    onSaved?.(next);
+    try { window.dispatchEvent(new CustomEvent(LOG_SAVED_EVENT)); } catch { /* old browser */ }
+  };
+  const saveField = (id, v) => {
+    if (!canLogPicked) return;
+    saveLogEntry(picked, { [id]: v });
     const next = readLog();
     setOwnLog(next);
     onSaved?.(next);
@@ -123,6 +137,19 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
                 </div>
               </div>
             )}
+            {/* Founder, Nov 11: "the log should be in the period and symptom log". Three taps for how she
+                feels; Home's For today turns them into what may help. */}
+            {canLogPicked && QUICK.map((q) => (
+              <div key={q.id} className="ay-mcal__flow ay-mcal__quick" role="radiogroup" aria-label={q.label}>
+                <p className="ay-mcal__flowh">{q.label}</p>
+                <div className="ay-mcal__seg">
+                  {q.values.map((v, i) => {
+                    const on = log?.[picked]?.[q.id] === v;
+                    return <button key={v} type="button" role="radio" aria-checked={on} className={on ? 'is-on' : undefined} onClick={() => saveField(q.id, on ? null : v)}>{q.options[i]}</button>;
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -142,7 +169,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
           </section>
         )}
 
-        {onLog && <button type="button" className="ay-mcal__log" onClick={() => { onClose(); onLog(); }}>Log symptoms today</button>}
+        {onLog && <button type="button" className="ay-mcal__log" onClick={() => { onClose(); onLog(); }}>More symptoms</button>}
       </section>
     </div>
   );

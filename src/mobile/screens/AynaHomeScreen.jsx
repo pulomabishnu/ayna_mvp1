@@ -22,6 +22,7 @@ import { comingUp } from '../../health/comingUp.js';
 import { flowRowsFromLog, readLog, sleepFromLog } from '../../health/dailyLog.js';
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
+import TodayPlan from '../../components/today/TodayPlan.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
 import '../ayna-home.css';
 import HealthRefreshPrompt from '../../components/health/HealthRefreshPrompt.jsx';
@@ -96,6 +97,20 @@ export default function AynaHomeScreen(props) {
     const estimate = rows.length ? buildInsights(rows, { today }).sections.find((s) => s.id === 'cycle')?.estimate || null : null;
     return { estimate, coming: comingUp(cycle, estimate, today, { hormonalBC: hbc, hasProducts: myProducts.length > 0 }) };
   }, [monthOpen, data, today, cycle, hbc, myProducts.length]);
+  // For today's insight: the first finding of her week. Sleep under her usual becomes a "Sleep better" topic.
+  const todayInsight = useMemo(() => {
+    const hl = highlights[0];
+    if (!hl) return null;
+    const sleepLow = highlights.find((x) => x.metric === 'sleep_minutes' && /under|less|short/i.test(x.title));
+    if (sleepLow) return { topic: 'sleep', line: sleepLow.title, metric: 'sleep_minutes', label: 'Sleep' };
+    return { topic: null, line: hl.title, metric: hl.metric, label: hl.label };
+  }, [highlights]);
+  // Things to add to her routine: her own matches (already cleared by the engine), minus what she has.
+  const todayPicks = useMemo(() => {
+    const mine = new Set(myProducts.map((p) => p.id));
+    return (suggestedEcosystemProducts || []).filter((p) => p?.id && !mine.has(p.id) && !omittedProducts?.[p.id]).slice(0, 6);
+  }, [suggestedEcosystemProducts, myProducts, omittedProducts]);
+  const [goalsAdded, setGoalsAdded] = useState([]);
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
   const [sheet, setSheet] = useState(null);
   const openMetric = (m) => { if (m === 'cycle' ? cycle : m && chartOf(m)) setSheet(m); else openDashboard(); };
@@ -107,7 +122,7 @@ export default function AynaHomeScreen(props) {
   // Home, in the order the founder ranked it (Oct 26 21:46): the hero (dials, Rundown bubble, streak),
   // then this week's highlights, then Your data / Your products, then one toggle. TodayFeed keeps safety
   // and care above all of this and hands in her 1 to 3 things for the Today view.
-  const renderViews = ({ things, count, hasCheckIn, plan }) => (
+  const renderViews = ({ things, count, hasCheckIn, flags = {} }) => (
     <>
       <HomeHighlights items={highlights} today={today} onOpen={openMetric} />
       <div data-tour="home-links">
@@ -121,7 +136,14 @@ export default function AynaHomeScreen(props) {
         // Home has no third copy of it; the full week is one tap away in Your data.
         routine={<RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} />}
         today={<>
-          {plan}
+          {/* Founder, Nov 11: For today is insights and actions (goals, matched products, things to
+              add to her routine) as a bento; the check-in itself lives in the period and symptom log. */}
+          <TodayPlan entry={dayLog?.[today] || null} pregnant={Boolean(flags.pregnant)} postCycle={Boolean(flags.postCycle)}
+            insight={todayInsight} picks={todayPicks} myProductIds={myProducts.map((p) => p.id)}
+            onOpenLog={() => setMonthOpen(true)} onOpenRead={(id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }}
+            onExplore={onBrowse ? (q) => onBrowse(q) : undefined} onOpenProduct={onOpenProduct} onAddToRoutine={props.onAddToEcosystem || null}
+            onAddGoal={onAddGoal ? (g) => { onAddGoal(g); setGoalsAdded((x) => [...x, g]); } : null} goalsAdded={goalsAdded}
+            onOpenInsight={todayInsight?.metric ? () => openMetric(todayInsight.metric) : null} />
           {things}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets

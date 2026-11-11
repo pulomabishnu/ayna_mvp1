@@ -42,6 +42,7 @@ beforeEach(() => {
   vi.setSystemTime(new Date(2026, 9, 25, 7, 0)); // before 8: the Rundown won't open on its own
   localStorage.clear();
   localStorage.setItem('ayna_tour_one_page_v1', '1'); // past the one-time move to the one-page tour
+  localStorage.setItem('ayna_tour_sheet_once_nov11', '1'); // past the Nov 11 once-for-everyone tour
   fakeLayout();
 });
 afterEach(() => {
@@ -58,6 +59,17 @@ describe('tips overlay', () => {
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
     expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
+  });
+
+  it('Nov 11: an existing account with tips off still gets the tour once on Home after the update', () => {
+    localStorage.removeItem('ayna_tour_sheet_once_nov11');
+    setTipsEnabled(false);
+    mountApp({ html: HOME });
+    wait(1000);
+    expect(document.querySelector('.ay-tour__all')).toBeTruthy();
+    act(() => [...document.querySelector('.ay-tour__all').querySelectorAll('button')].find((x) => x.textContent === 'Got it').click());
+    wait(3000);
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
   });
 
   it('on Home the whole tour opens once on one sheet; closing it ends it, no pop-ups after (Nov 10)', () => {

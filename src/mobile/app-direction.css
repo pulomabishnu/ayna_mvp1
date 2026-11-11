@@ -1132,3 +1132,4 @@
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-homewidgets__edit { border: 0 !important; background: none !important; box-shadow: none !important; min-height: 44px !important; padding: 0 !important; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hhl__card { background: rgba(255, 237, 172, .08) !important; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs { background: rgba(255, 237, 172, .1) !important; }
+.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products, .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products * { color: #ffedac !important; }

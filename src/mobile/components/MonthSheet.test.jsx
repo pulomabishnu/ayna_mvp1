@@ -23,12 +23,12 @@ const mount = (props) => {
 };
 
 describe('MonthSheet', () => {
-  it('shows how to log past periods with no period data, and one Log symptoms today button', () => {
+  it('shows how to log past periods with no period data, and one More symptoms button (mood, energy, pain and sleep are right in the sheet, Nov 11)', () => {
     const onLog = vi.fn();
     const onClose = vi.fn();
     const sheet = mount({ onLog, onClose });
     expect(sheet.textContent).toContain('Tap the first day of your last period');
-    const log = [...sheet.querySelectorAll('button')].filter((b) => b.textContent === 'Log symptoms today');
+    const log = [...sheet.querySelectorAll('button')].filter((b) => b.textContent === 'More symptoms');
     expect(log).toHaveLength(1);
     act(() => log[0].click());
     expect(onClose).toHaveBeenCalled();

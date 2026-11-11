@@ -35,21 +35,10 @@ describe('Today with ayna', () => {
     expect(host.textContent).toContain('Your log');
   });
 
-  it('single /home: For today opens with the three-tap check-in, and "Log flow, sleep and more" opens the full log', () => {
-    render({ compact: true, homeLog: true, renderViews: ({ things, plan }) => <div>{plan}{things}</div> });
-    expect(host.querySelector('.ay-plan')).toBeTruthy();
+  it('single /home: no extra "Your log" row (the log lives in the period and symptom log); it still opens inline when asked', () => {
+    render({ compact: true, homeLog: true, renderViews: ({ things }) => <div>{things}</div> });
     expect(host.querySelector('.ay-today__homelog-trigger')).toBeNull();
     expect(host.querySelector('.ay-today__log')).toBeNull();
-    act(() => host.querySelector('.ay-plan__row2 .ay-plan__link').click());
-    expect(host.querySelector('.ay-today__log')).toBeTruthy();
-    expect(host.textContent).toContain('Your log');
-  });
-
-  it('single /home: a tap in the check-in saves and shows what may help', () => {
-    render({ compact: true, homeLog: true, renderViews: ({ things, plan }) => <div>{plan}{things}</div> });
-    const energyLow = host.querySelectorAll('.ay-plan__row')[1].querySelector('button');
-    act(() => energyLow.click());
-    expect(host.textContent).toContain('For low energy today');
   });
 
   it('no check-in item: the log card shows on its own', () => {

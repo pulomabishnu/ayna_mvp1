@@ -65,6 +65,7 @@ const SURFACES = {
 const localToday = (d = new Date()) => localDayKey(d);
 const POLL_MS = 450;
 const ONE_PAGE_TOUR_KEY = 'ayna_tour_one_page_v1';
+export const TOUR_ONCE_KEY = 'ayna_tour_sheet_once_nov11';
 const STABLE_POLLS = 2;
 
 const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
@@ -161,6 +162,23 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       const sid = screen?.id || '';
       if (sinceRef.current.id !== sid) sinceRef.current = { id: sid, at: Date.now() };
       const upFor = Date.now() - sinceRef.current.at;
+      // Founder, Nov 11 ("the one-time tutorial is still not there"): accounts older than 3 days had
+      // tips switched off, so people who already had the app never saw the new tour. It opens once on
+      // Home for everyone after this update (per device), then only from Settings.
+      if (surface === 'app' && screen?.welcome && !base.onboarding && !base.rundownOpen && !base.foreignDialog && !document.querySelector('.ay-today__notify, .ay-upop')) {
+        let shown = true;
+        try { shown = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
+        if (!shown) {
+          pendingRef.current = pendingRef.current.key === 'once' ? { key: 'once', count: pendingRef.current.count + 1 } : { key: 'once', count: 1 };
+          if (pendingRef.current.count < STABLE_POLLS) return;
+          try { localStorage.setItem(TOUR_ONCE_KEY, '1'); } catch { /* blocked */ }
+          markWelcomeOffered(today);
+          if (p.enabled === null) setTipsEnabled(false);
+          openerRef.current = document.activeElement;
+          setSheet(true);
+          return;
+        }
+      }
       let decision = tourDecision({ screen, ...base });
       // After the page's own first tips: its parts (tips.js `within`) once their root is on the page,
       // then any tip of the page or its parts she hasn't been shown yet that has come on screen
@@ -185,7 +203,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         openerRef.current = document.activeElement;
         // Nov 10 (founder research: a short walkthrough right after sign-up, skippable): the app opens
         // the one-page tour itself, once; Skip or Got it closes it, and Settings has it again.
-        if (surface === 'app') { setTipsEnabled(false); setSheet(true); return; }
+        if (surface === 'app') { try { localStorage.setItem(TOUR_ONCE_KEY, '1'); } catch { /* blocked */ } setTipsEnabled(false); setSheet(true); return; }
         setRun({ kind: 'welcome' });
         return;
       }
