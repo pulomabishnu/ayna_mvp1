@@ -406,7 +406,10 @@ export default function ProductDetailScreen({
   // At most two fact chips by the price (founder, Oct 27); the rest are Product facts "Price details".
   const priceNotes = heroNotes(heroV.notes).keep.filter((n) => !said.includes(String(n).toLowerCase().replace(/ eligible$/, '')) && !(perUse && /per (tablet|capsule|softgel|gummy|unit)|a day/i.test(n))).slice(0, MAX_PRICE_CHIPS);
   // Sizes or options as chips under the price (the variants, else the options listed in the price).
-  const sizeChips = variantLabels.length ? variantLabels : (!perUse ? priceNotes : []);
+  // Nov 11 (founder: awkward spacing): a price note like "$0.44 per pad" sits with the price in the
+  // header card, not as a lone pill under the match line. Real size options still show as chips.
+  const sizeChips = variantLabels.length ? variantLabels : [];
+  const headerNote = !variantLabels.length && !perUse ? (priceNotes || []).join(' · ') : '';
   const askStarters = productAskStarters({ hasProfile: Boolean(quizAnswers), percent: matchState?.kind === 'pct' ? matchState.percent : null, kind: cupOrDisc(product), hasIud: hasIud(quizAnswers), hasSizes: variantLabels.length > 0 });
   const buyLink = (extra = '') => (shopAction ? <a className={`ay-pdp-buyrow__buy ayv-buy ayv-sticker ${extra}`.trim()} href={shopAction.href} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(shopAction.href) }); countBuyClick(product?.id); trackApp('product_buy_now_clicked', { ...productIdentity(product), category: product?.category, placement: extra ? 'summary_end' : shopAction.placement }); }}>{shopAction.label}<span aria-hidden="true"> ↗</span><span className="sr-only"> {shopAction.sr}</span></a> : null);
   const fitData = { details: quizAnswers ? matchDetails : null, hasProfile: Boolean(quizAnswers), onShowWhy: openWhyMatch };
@@ -465,6 +468,7 @@ export default function ProductDetailScreen({
             <h1>{shownName}</h1>
             {metaLine && <p className="ayv-metaline">{metaLine}</p>}
             <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
+            {headerNote && <p className="ay-pdp3-note">{headerNote}</p>}
           </div>
         </div>
 

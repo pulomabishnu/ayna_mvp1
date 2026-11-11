@@ -434,3 +434,16 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 .ayv-match__why { min-width: 0; overflow-wrap: anywhere; white-space: normal; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-chips { flex-wrap: wrap !important; max-width: 100%; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-scroll { overflow-x: hidden !important; overscroll-behavior-x: none; touch-action: pan-y pinch-zoom; }
+
+/* Nov 11 (founder on iPhone: "fix the spacing at the top and after the product pic, it looks awkward"):
+   the back, share and more buttons floated over the header card on phones with a notch (the card sat
+   64px down, the buttons below the status bar). The buttons are their own row now, the card sits 8px
+   under them, and the blocks under the card share one 12px rhythm. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-top { position: static !important; padding: max(12px, env(safe-area-inset-top)) 16px 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { margin: 8px 16px 0 !important; padding-top: 12px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 { gap: 12px !important; padding-top: 16px !important; margin-top: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2 .ayv-match { min-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-sizes { padding: 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy { gap: 8px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ay-pdp3-note { margin: 0 !important; font: 600 14px/1.3 var(--ayna-font-ui, 'Figtree'), sans-serif; opacity: .85; }
