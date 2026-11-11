@@ -1,0 +1,30 @@
+/* What's new for you (founder, Nov 11): one Wrapped-style card. Brand colours, one big stat,
+   photos, one primary button. Motion: a short rise, off under reduced motion. */
+.ay-upop { position: fixed; inset: 0; z-index: 2147481500; display: grid; place-items: end center; font-family: 'Figtree', system-ui, sans-serif; }
+.ay-upop__dim { position: absolute; inset: 0; background: rgba(30, 18, 15, .5); }
+.ay-upop__card {
+  position: relative; width: min(100%, 480px); max-height: min(86vh, 720px); overflow-y: auto; box-sizing: border-box;
+  padding: 24px 20px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 28px 28px 0 0;
+  background: #3e2723; color: #fff8dc; animation: ay-upop-in .28s cubic-bezier(.2, .8, .2, 1) both;
+}
+@media (min-width: 560px) { .ay-upop { place-items: center; } .ay-upop__card { border-radius: 28px; } }
+.ay-upop__x { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.ay-upop__x svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ay-upop__kicker { margin: 0 0 4px; font: 600 14px/1.2 'Figtree', sans-serif; letter-spacing: .02em; color: #f7badd; }
+.ay-upop__num { margin: 0; font: 700 96px/.9 'ayna Display', 'Figtree', sans-serif; letter-spacing: -.04em; color: #ffedac; }
+.ay-upop .ay-upop__card h2 { margin: 6px 0 4px; font: 700 28px/1.1 'ayna Display', 'Figtree', sans-serif; letter-spacing: -.02em; color: #fff8dc !important; outline: none; }
+.ay-upop__sub { margin: 0 0 16px; font: 500 15px/1.4 'Figtree', sans-serif; color: #f3e3c2; }
+.ay-upop__list { list-style: none; margin: 8px 0 20px; padding: 0; display: grid; gap: 4px; }
+.ay-upop__list > li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(255, 237, 172, .18); animation: ay-upop-in .3s ease calc(.08s + var(--i) * .06s) both; }
+.ay-upop__list > li.is-removed { opacity: .5; }
+.ay-upop__item { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; }
+.ay-upop__photo { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 14px; overflow: hidden; background: #fff8dc; color: #3e2723; font: 700 20px/1 'Figtree', sans-serif; }
+.ay-upop__photo img { width: 100%; height: 100%; object-fit: contain; }
+.ay-upop__name { display: grid; gap: 2px; min-width: 0; }
+.ay-upop__name b { font: 700 16px/1.25 'Figtree', sans-serif; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ay-upop__name small { font: 500 13px/1.3 'Figtree', sans-serif; color: #f3e3c2; }
+.ay-upop__remove { flex: none; min-height: 44px; padding: 0 4px; border: 0; background: none; color: #f3e3c2; font: 600 14px/1 'Figtree', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-upop__primary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; border: 0; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 17px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-upop :is(button):focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+@keyframes ay-upop-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-upop__card, .ay-upop__list > li { animation: none; } }

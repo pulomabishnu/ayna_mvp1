@@ -11,11 +11,10 @@ import { buildDashboard } from '../../health/dashboard.js';
 import { explainWeek, usesHormonalBC } from '../../health/weekInsights.js';
 import { localToday } from '../hooks/useHealthData.js';
 import HomeWidgets from '../../home/HomeWidgets.jsx';
-import WeekBento, { glanceCharts } from '../../components/today/WeekBento.jsx';
+import { glanceCharts } from '../../components/today/WeekBento.jsx';
 import { findingTitle, usualBand } from '../../health/dashView.js';
-import { takeaway } from '../../health/takeaway.js';
 import { logStreak } from '../../health/streak.js';
-import { HomeHero, HomeHighlights, HomeShortcuts, WeekLine, weekSentence } from '../components/HomeHero.jsx';
+import { HomeHero, HomeHighlights, HomeShortcuts } from '../components/HomeHero.jsx';
 import MetricSheet from '../components/MetricSheet.jsx';
 import MonthSheet from '../components/MonthSheet.jsx';
 import { buildInsights } from '../../health/insights.js';
@@ -100,9 +99,6 @@ export default function AynaHomeScreen(props) {
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
   const [sheet, setSheet] = useState(null);
   const openMetric = (m) => { if (m === 'cycle' ? cycle : m && chartOf(m)) setSheet(m); else openDashboard(); };
-  const weekBento = charts.length > 0 && (
-    <WeekBento variant="home" charts={charts} bandOf={bandOf} today={today} onOpen={(area, metric) => openMetric(metric)} />
-  );
   const firstName = String(authUser?.user_metadata?.first_name || '').split(' ')[0];
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
 
@@ -120,13 +116,14 @@ export default function AynaHomeScreen(props) {
       {/* Founder, Nov 10: the set-up steps live on You, not Home (too crowded here). */}
       <TodayViews
         todayCount={count}
-        initial={charts.length ? 'week' : 'today'}
-        week={weekBento ? <section className="ay-homeweek" aria-labelledby="ay-homeweek-h"><h2 id="ay-homeweek-h" className="sr-only">Your week</h2><WeekLine text={weekSentence(charts, takeaway)} />{weekBento}</section> : null}
+        initial="today"
+        // Founder, Nov 11 ("less repetitive"): the dials and highlights already show her week, so
+        // Home has no third copy of it; the full week is one tap away in Your data.
         routine={<RoutineTimeline cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} />}
         today={<>
           {things}
           {/* The check-in item already opens the log; the row is for days without one. */}
-          {!hasCheckIn && <div className="ay-tv__log"><span><b>Your log</b><small>Pain, flow, sleep, mood</small></span><button type="button" onClick={() => openDashboard(true)}>Check in</button></div>}
+          {!hasCheckIn && <div className="ay-tv__log"><span><b>Your log</b><small>Pain, flow, sleep, mood</small></span><button type="button" onClick={logHere}>Check in</button></div>}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets
             // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).

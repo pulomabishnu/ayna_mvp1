@@ -100,6 +100,7 @@ import MonthlyCheckinScreen from './screens/MonthlyCheckinScreen.jsx';
 import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import ReadyScreen from './screens/ReadyScreen.jsx';
+import UpdatePop from './components/UpdatePop.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import CompareScreen from './screens/CompareScreen.jsx';
 import SaveAuthSheet from '../components/save/SaveAuthSheet.jsx';
@@ -461,6 +462,8 @@ export default function MobileApp() {
   // 'more': the optional setup questions, opened from the reveal (ReadyScreen).
   const [intakeFlow, setIntakeFlow] = useState('auto');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
+  // What's new for you (founder, Nov 11): new picks as one Wrapped-style card.
+  const [updatePop, setUpdatePop] = useState(null);
   // A short note after the quiz ("1 new product added"), gone after a few seconds (founder, Nov 11: space).
   useEffect(() => {
     if (!ecosystemNotice) return undefined;
@@ -1249,6 +1252,7 @@ export default function MobileApp() {
     let label = needId;
     try { label = getSelectedNeeds(nextAnswers).find((n) => n.id === needId)?.phrase || needId; } catch { /* keep id */ }
     setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
+    if (added.length) setUpdatePop({ title: `${added.length} new ${added.length === 1 ? 'match' : 'matches'} for ${label}`, sub: 'Added to your products. Tap one to see why it fits, or take it out.', products: added });
     const supabase = getSupabaseClient();
     if (authUser && supabase && added.length) {
       upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false })
@@ -1513,6 +1517,7 @@ export default function MobileApp() {
         setEcosystemNotice(addedProducts.length
           ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing ecosystem stayed in place.`
           : 'No new strong matches this time. Your existing ecosystem stayed in place.');
+        if (addedProducts.length) setUpdatePop({ title: `${addedProducts.length} new ${addedProducts.length === 1 ? 'pick' : 'picks'} from your answers`, sub: 'Added to your products. Your existing ones stayed in place.', products: addedProducts });
       } else {
         setEcosystemNotice('');
       }
@@ -1794,6 +1799,14 @@ export default function MobileApp() {
         // You opens for everyone: signed out it says what an account keeps, and Settings still works.
         onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
       />}
+      <UpdatePop
+        update={updatePop}
+        onClose={() => setUpdatePop(null)}
+        onOpenProduct={(p) => { setUpdatePop(null); setOverlay({ type: 'product', item: p }); }}
+        onRemove={(p) => handleAddToEcosystem(p)}
+        inEcosystem={(id) => myProducts.some((p) => p.id === id)}
+        onSeeAll={() => { setUpdatePop(null); setOverlay(null); setScreen('ayna'); setHomeView('products'); }}
+      />
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">
           <span>{saveNudge === 'eco' ? 'Added to your routine on this phone. Sign in to keep it on every device.' : 'Saved on this phone. Sign in to keep your saves on every device.'}</span>
@@ -1946,7 +1959,9 @@ export default function MobileApp() {
           savedProducts={savedMap}
           onViewAlternative={handleViewAlternative}
           onBrowse={() => setScreen('browse')}
-          onGoEcosystem={() => setScreen(hasEcosystem ? 'eco' : 'ecointro')}
+          // Founder, Nov 11 ("buttons take you to the wrong pages"): Products opens Your products, the same
+          // page as Home's tile, not the old ecosystem intro.
+          onGoEcosystem={() => { setOverlay(null); setScreen('ayna'); setHomeView('products'); }}
           onOpenSaved={() => setScreen('saved')}
           personalizeWithData={personalizeWithData}
           onPersonalizeWithDataChange={setPersonalizeWithData}

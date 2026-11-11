@@ -509,7 +509,9 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         // Home's toggle (founder Oct 26): safety and care stay on top, always in view;
         // the 1 to 3 things for today become the toggle's first view, not a stack.
         const top = shown.filter((it) => PROTECTED.has(it.tier));
-        const rest = shown.filter((it) => !PROTECTED.has(it.tier));
+        // Founder, Nov 11 ("less repetitive"): on Home the Your log row is right below, so the
+        // separate "check in" card would say the same thing twice.
+        const rest = shown.filter((it) => !PROTECTED.has(it.tier) && !(homeLog && it.type === 'check_in'));
         const { done, total } = todayProgress(items, t);
         return <>
           {top.length > 0 && <ul className="ay-today__list is-compact is-protected" aria-label="Safety first">{tile(top)}</ul>}
