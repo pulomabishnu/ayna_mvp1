@@ -56,7 +56,7 @@ export function intendedUse(product) {
  */
 export function govEvidence(product) {
   const ev = evidenceLevel(product || {});
-  if (!ev.topGrade || !ev.level) return 'Not graded yet';
+  if (!ev.topGrade || !ev.level) return 'Sources on file';
   return ev.scope === 'type' ? ev.line : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`;
 }
 

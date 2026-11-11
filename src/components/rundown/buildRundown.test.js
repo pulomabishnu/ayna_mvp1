@@ -202,3 +202,13 @@ describe('Rundown weighted to last night and recent context (data -> action)', (
     expect(closing.followUps.map((f) => f.question)).toContain('Does this change my routine?');
   });
 });
+
+describe('today\'s pick from a signal fits her (Nov 11 audit)', () => {
+  it('rough sleep never brings a night-sweats product to someone without that need', async () => {
+    const { buildRundown } = await import('./buildRundown.js');
+    const today = '2026-11-11';
+    const embr = { product: { id: 'p-embr', name: 'Embr Wave 2' }, needId: 'vasomotor.night_sweats', percent: 72 };
+    const r = buildRundown({ today, log: { [today]: { day: today, sleep: 1 } }, matches: [embr], needs: [], memory: {} });
+    expect(JSON.stringify(r)).not.toContain('Embr Wave 2');
+  });
+});

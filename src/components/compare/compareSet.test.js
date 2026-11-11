@@ -24,9 +24,9 @@ describe('compareSetRows', () => {
   it('evidence only from .gov-graded rows', () => {
     for (const p of [a, b]) {
       const graded = gradedResearch(p.id).find((g) => g.strength !== 'none');
-      expect(govEvidence(p) === 'Not graded yet').toBe(!graded);
+      expect(govEvidence(p) === 'Sources on file').toBe(!graded);
     }
-    expect(govEvidence({ id: 'nope', evidenceStrength: 'strong' })).toBe('Not graded yet');
+    expect(govEvidence({ id: 'nope', evidenceStrength: 'strong' })).toBe('Sources on file');
   });
 
   it('intended use is the team line or the summary, no em dashes', () => {

@@ -395,13 +395,16 @@ export function buildRundown(input = {}) {
     const seenDays = (m) => shownOn(memory, `match:${m.product?.id}`, today, 30);
     const usable = matches.filter((m) => m?.product?.id && m.percent > 0);
     const order = (list) => [...list].sort((a, b) => (seenDays(a) > 0) - (seenDays(b) > 0) || (b.percent >= RUNDOWN_RULES.matchMinPercent) - (a.percent >= RUNDOWN_RULES.matchMinPercent) || (a.needSignal === 'weak') - (b.needSignal === 'weak') || b.percent - a.percent || seenDays(a) - seenDays(b));
+    // Nov 11 audit (a hot-flash wristband came up "For your sleep" for someone with no hot flashes):
+    // menopause-symptom products (vasomotor.*) come up only when she has that need or goal.
+    const fitsHer = (m) => !/^vasomotor\./.test(m.needId || '') || wanted.has(m.needId) || Boolean(goals[m.needId]);
     let pick = null;
     let because = null;
     for (const sig of signals) {
-      const hit = order(usable.filter((m) => sig.needs.includes(m.needId)))[0];
+      const hit = order(usable.filter((m) => sig.needs.includes(m.needId) && fitsHer(m) && m.needSignal !== 'weak'))[0];
       if (hit) { pick = hit; because = sig; break; }
     }
-    if (!pick) pick = order(usable.filter((m) => wanted.has(m.needId)))[0] || order(usable.filter((m) => goals[m.needId] && m.needSignal !== 'weak'))[0] || order(usable.filter((m) => m.percent >= RUNDOWN_RULES.matchMinPercent))[0] || null;
+    if (!pick) pick = order(usable.filter((m) => wanted.has(m.needId)))[0] || order(usable.filter((m) => goals[m.needId] && m.needSignal !== 'weak'))[0] || order(usable.filter((m) => m.percent >= RUNDOWN_RULES.matchMinPercent && fitsHer(m)))[0] || null;
     if (pick) {
       const title = because ? `For ${because.words}` : matchTitle(pick, decision?.debug?.needs || {}, goals);
       add({ key: `match:${pick.product.id}`, category: 'match', kind: 'match', kicker: seenDays(pick) > 0 ? 'Today\u2019s pick' : 'New for you today', title, because: because?.reason || null, match: pick, followUps: [`Why is ${pick.product.name} my match?`] });

@@ -305,3 +305,6 @@ html body .app-container.app-container .wx-askpage { padding-top: 32px; padding-
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) :is(.ay-askp-hello, .ay-askp-intro, .ay-askp-chips.is-rows .ay-askp-chip) { color: #ffedac !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble { background: #f7badd !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble * { color: #3e2723 !important; }
+/* Founder, Nov 11: the switch needs an outline so it reads as one control with two sides. */
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-filter { border: 1.5px solid #3e2723 !important; border-radius: 999px !important; padding: 3px !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-filter { border-color: #ffedac !important; }

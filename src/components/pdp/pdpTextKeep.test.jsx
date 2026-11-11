@@ -120,6 +120,8 @@ const RENAMED_LABELS = [
   'More clinical context', 'From the clinical guidance in the sources.',
   // Nov 11 declutter: the Share and Ask buttons left the action row (Share is in the top bar, Ask has its own row).
   'about this product', 'Ask about this product',
+  // Nov 11: never "not graded" anywhere (founder); the line reads "Sources on file".
+  'Not graded yet',
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

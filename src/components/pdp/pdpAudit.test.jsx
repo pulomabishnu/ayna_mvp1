@@ -142,12 +142,12 @@ describe('evidence: four labelled levels, the .gov-only grading rule kept (audit
     expect(levelLabel('people')).toBe('People’s experiences');
     expect(linkKind('https://doi.org/10.1016/S2468-2667(19)30111-2', 'Saalt').label).toBe('Peer-reviewed study');
   });
-  it('only .gov produces a grade: a peer-reviewed paper alone leaves the product "Not graded yet"', () => {
+  it('only .gov produces a grade: a peer-reviewed paper alone leaves the product "Sources on file"', () => {
     const ev = evidenceFor(full(SAALT));
     expect(ev.counts.peer).toBeGreaterThan(0);
     expect(ev.graded).toBe(false);
-    expect(ev.status).toBe('Not graded yet');
-    expect(ev.summary.startsWith('Not graded yet')).toBe(true);
+    expect(ev.status).toBe('Sources on file');
+    expect(ev.summary.startsWith('Sources on file')).toBe(true);
     const team = evidenceFor({ id: 'nope', name: 'X', evidenceStrength: 'strong' });
     expect(team.graded).toBe(false);
   });

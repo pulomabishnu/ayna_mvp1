@@ -52,7 +52,7 @@ export function levelOfLink(url, brand = '') {
  */
 export function evidenceFor(product, { m = null } = {}) {
   const empty = { gov: 0, peer: 0, brand: 0, people: 0, other: 0 };
-  if (!product) return { brand: '', counts: empty, links: { gov: [], peer: [], brand: [], people: [], other: [] }, graded: false, grade: null, status: 'Not graded yet', why: '', summary: 'Not graded yet' };
+  if (!product) return { brand: '', counts: empty, links: { gov: [], peer: [], brand: [], people: [], other: [] }, graded: false, grade: null, status: 'Sources on file', why: '', summary: 'Sources on file' };
   const model = m || buildEvidence(product);
   const brand = String(model?.brand || product.brand || '').trim();
   const urls = new Set();
@@ -73,12 +73,12 @@ export function evidenceFor(product, { m = null } = {}) {
   // Only .gov can produce a grade (founder rule, Oct 24): evidenceLevel grades from .gov pages only.
   const ev = evidenceLevel(product);
   const graded = Boolean(ev.topGrade && ev.level);
-  const status = graded ? (ev.scope === 'type' ? ev.word : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`) : 'Not graded yet';
+  const status = graded ? (ev.scope === 'type' ? ev.word : `${ev.word}${ev.need ? ` for ${ev.need}` : ''}`) : 'Sources on file'; // founder, Nov 11: never "not graded" anywhere
   const why = graded
     ? ev.line || `Graded by ayna from ${ev.source || 'a trusted health source'}.`
     : counts.gov > 0
       ? ''
-      : `No .gov source on file covers this ${product.category === 'cup' ? 'cup' : product.category === 'disc' ? 'disc' : 'product'} yet.`;
+      : ''; // never say what isn't on file (founder: "we need people to trust us")
   const parts = LEVELS.map((l) => (counts[l.id] ? levelCountWords(l.id, counts[l.id], brand) : '')).filter(Boolean);
   return { brand, counts, links, graded, grade: ev, status, why, summary: [status, ...parts].join(' · ') };
 }
