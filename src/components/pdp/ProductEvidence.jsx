@@ -477,9 +477,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
 
   const [tab, setTab] = useState(() => {
     // The app's card stack starts with every card down (founder, Nov 10); tapping one opens it.
-    if (layout === 'stack') return 'none';
-    if (typeof window === 'undefined' || !syncHash) return DEFAULT_TAB;
-    return resolveTarget(window.location.hash.slice(1))?.tab || DEFAULT_TAB;
+    if (typeof window === 'undefined' || !syncHash) return layout === 'stack' ? 'none' : DEFAULT_TAB;
+    // A link to a section (#reviews) opens that card; otherwise the stack starts with every card down.
+    return resolveTarget(window.location.hash.slice(1))?.tab || (layout === 'stack' ? 'none' : DEFAULT_TAB);
   });
   // The tab row sticks just under the website's header (the app has none above it).
   const [stickTop, setStickTop] = useState(0);

@@ -862,7 +862,7 @@ export default function ProductModal({
         <div className="ayv-body">
           {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}
           <div className="ayv-dk__tabs ayp-tabsarea pdp-head__info">
-            <ProductEvidence loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} extraRows={unlinkedStores.length ? [{ label: 'Also sold at', value: unlinkedStores.join(', ') }] : []} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} endCta={buyUrl && !isPrelaunch ? buyButton('ayv-sticker is-compact') : null} />
+            <ProductEvidence layout="stack" loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} extraRows={unlinkedStores.length ? [{ label: 'Also sold at', value: unlinkedStores.join(', ') }] : []} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} endCta={buyUrl && !isPrelaunch ? buyButton('ayv-sticker is-compact') : null} />
           </div>
         </div>
 
