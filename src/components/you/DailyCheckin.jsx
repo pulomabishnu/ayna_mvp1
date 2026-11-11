@@ -30,12 +30,13 @@ export default function DailyCheckin({ variant = 'web', userId = null }) {
 const POST_CYCLE_LABELS = { flow: 'Bleeding' };
 const POST_CYCLE_HIDDEN = new Set(['pms']);
 
-export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle', today: todayProp = null, headingId = 'wy-checkin-h', title = 'Today', noCycle = false, pregnant = false, onOpenRead = null, onExplore = null }) {
+export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle', today: todayProp = null, headingId = 'wy-checkin-h', title = 'Today', noCycle = false, pregnant = false, onOpenRead = null, onExplore = null, onAddGoal = null }) {
   const app = variant === 'app';
   const today = todayProp || todayKey();
   const todays = log[today] || {};
   const [more, setMore] = useState(() => todays.mood != null || todays.skin != null || todays.energy != null);
   const help = todayHelp(todays, { pregnant, postCycle: noCycle });
+  const [goalsAdded, setGoalsAdded] = useState({});
   const pick = (fieldId, value) => save(today, { [fieldId]: todays[fieldId] === value ? null : value });
   const loggedWeek = lastWeek(log, 'day', today).map((d) => ({ day: d.day, logged: Boolean(log[d.day] && LOG_FIELDS.some((f) => log[d.day][f.id] != null)) }));
   // "What kind of pain" sits right under Pain, only once she logged some pain.
@@ -72,6 +73,10 @@ export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle
                 <p className="ay-checkin__helplinks">
                   {h.read && onOpenRead && <button type="button" onClick={() => onOpenRead(h.read)}>Read more</button>}
                   {h.shop && onExplore && <button type="button" onClick={() => onExplore(h.shop)}>See products</button>}
+                  {/* Founder, Nov 11: "maybe it adds a goal to raise your mood": one tap adds it, and matches follow. */}
+                  {h.goal && onAddGoal && (goalsAdded[h.goal]
+                    ? <span className="ay-checkin__helpdone" role="status">Added to your goals</span>
+                    : <button type="button" onClick={() => { onAddGoal(h.goal); setGoalsAdded((g) => ({ ...g, [h.goal]: true })); }}>Make {h.goalLabel} a goal</button>)}
                 </p>
                 <p className="ay-checkin__helpsrc">Source: {h.sources.map((s, i) => <React.Fragment key={s.url}>{i ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></React.Fragment>)}</p>
               </section>

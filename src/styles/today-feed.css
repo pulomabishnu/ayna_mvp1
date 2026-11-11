@@ -105,3 +105,4 @@
 :is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helplinks:empty { display: none; }
 :is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpsrc { font-size: 12px !important; opacity: .85; }
 :is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpsrc a { color: inherit !important; text-decoration: underline; }
+:is(.app-container, .ayna-mobile):is(.app-container, .ayna-mobile) .ay-checkin__helpdone { display: inline-flex; align-items: center; min-height: 44px; font: 600 14px/1 var(--ay-sans, "Figtree"), sans-serif; }

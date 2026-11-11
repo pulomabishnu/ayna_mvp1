@@ -46,7 +46,7 @@ export default function AynaHomeScreen(props) {
     quizDraft = null, onResumeQuiz, onStartOverQuiz, onStartQuiz, onBrowse, lastQuizAnswers = null, quizAnswers = null, matchOpts, authUser = null,
     onOpenProduct, onEditIntakeStep, onRetake, onUpdateIntake, savedProducts = {}, onToggleSaved, onOpenWhyMatch, articles = [], onOpenArticle,
     rundownCommunity = [], onOpenCommunityPost, onRundownFinish, healthInsightRows = [], healthSummary = null, healthConnectedCount = 0, onOpenHealthData, onConnectHealth,
-    omittedProducts = {}, routineHave = {}, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
+    omittedProducts = {}, routineHave = {}, onAddGoal = null, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
   } = props;
   const goHome = () => onHomeView?.('home');
   // Founder, Nov 10 ("the period and symptom log doesn't take you anywhere"): logging is free and
@@ -207,6 +207,7 @@ export default function AynaHomeScreen(props) {
           onWhyMatch={onOpenWhyMatch}
           onOpenRead={(id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }}
           onExplore={onBrowse ? () => onBrowse() : undefined}
+          onAddGoal={onAddGoal}
           onSetUp={!hasProfile && !quizDraft ? onStartQuiz : undefined}
           community={rundownCommunity}
           onOpenPost={onOpenCommunityPost}

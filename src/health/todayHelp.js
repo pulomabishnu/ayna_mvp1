@@ -15,6 +15,8 @@ const MEDLINE_FATIGUE = { label: 'MedlinePlus: Fatigue', url: 'https://medlinepl
 export const TODAY_HELP = {
   pain: {
     id: 'pain',
+    goal: 'pain.menstrual_cramp',
+    goalLabel: 'period cramps',
     title: 'For pain today',
     tips: [
       'A heating pad on your lower belly, or a warm bath or shower, can ease period cramps. Wrap it in a towel and never fall asleep with it on.',
@@ -28,6 +30,8 @@ export const TODAY_HELP = {
   },
   mood: {
     id: 'mood',
+    goal: 'mood.low',
+    goalLabel: 'low mood',
     title: 'For a low mood today',
     tips: [
       'A 30-minute walk can lift your mood.',
@@ -41,6 +45,8 @@ export const TODAY_HELP = {
   },
   energy: {
     id: 'energy',
+    goal: 'energy.fatigue',
+    goalLabel: 'low energy',
     title: 'For low energy today',
     tips: [
       'Drink water through the day and eat balanced meals.',
@@ -54,6 +60,8 @@ export const TODAY_HELP = {
   },
   sleep: {
     id: 'sleep',
+    goal: 'sleep.trouble',
+    goalLabel: 'sleep',
     title: 'After a rough night',
     tips: [
       'Go to bed and wake up around the same time each day.',
@@ -67,6 +75,8 @@ export const TODAY_HELP = {
   },
   pms: {
     id: 'pms',
+    goal: 'cycle.pms',
+    goalLabel: 'PMS',
     title: 'For PMS today',
     tips: [
       'Regular aerobic activity, like a brisk walk, can ease PMS.',

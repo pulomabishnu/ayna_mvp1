@@ -375,7 +375,7 @@ function Item({ item, t, onOpenProduct, onAsk, onEditAnswers, onFindCare, checki
  * @param {{ variant: 'app'|'web', userId, intake, healthRows, cycle, hormonalBC, products, onOpenProduct, onAsk, onEditAnswers, onFindCare }} props
  */
 export default function TodayFeed({ variant = 'app', userId = null, intake = null, healthRows = [], cycle = null, hormonalBC = false, products = [], onOpenProduct, onAsk, onEditAnswers, onFindCare, onSaveToProfile = null,
-  saved = [], community = [], onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true, showHead = true,
+  saved = [], community = [], onAddGoal = null, onWhyMatch, onToggleSaved, onCompare, onOpenRead, onExplore, matchOpts = undefined, healthProfile = null, onSetUp, moreHeading = true, showHead = true,
   // The app's ayna home: a Community card's post, and the hand-off to the chat when the rundown ends.
   onOpenPost, onRundownFinish,
   // The app's Home (team sync, Oct 25): one phone screen. The Rundown card and
@@ -545,7 +545,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
             <span><b>Your log</b><small>Pain, flow, sleep and mood</small></span><span>{logOpen ? 'Close' : 'Check in'}</span>
           </button>
           {logOpen && <div id={checkinId} className="ay-today__log">
-            <DailyCheckinCard variant={variant} log={t.log} save={(...args) => { trackCheckin({ surface: eventSurface(), where: 'home' }); return t.saveLog(...args); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} pregnant={Boolean(t.pregnant)} onOpenRead={onOpenRead} onExplore={onExplore} />
+            <DailyCheckinCard variant={variant} log={t.log} save={(...args) => { trackCheckin({ surface: eventSurface(), where: 'home' }); return t.saveLog(...args); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} pregnant={Boolean(t.pregnant)} onOpenRead={onOpenRead} onExplore={onExplore} onAddGoal={onAddGoal} />
           </div>}
         </div>
       </>}
@@ -579,7 +579,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         </div>
       )}
       {showLog && !compact && <div id={checkinId} className="ay-today__log">
-        <DailyCheckinCard variant={variant} log={t.log} save={(...a) => { trackCheckin({ surface: eventSurface(), where: 'today' }); return t.saveLog(...a); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} pregnant={Boolean(t.pregnant)} onOpenRead={onOpenRead} onExplore={onExplore} />
+        <DailyCheckinCard variant={variant} log={t.log} save={(...a) => { trackCheckin({ surface: eventSurface(), where: 'today' }); return t.saveLog(...a); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} pregnant={Boolean(t.pregnant)} onOpenRead={onOpenRead} onExplore={onExplore} onAddGoal={onAddGoal} />
       </div>}
       {/* The top of Today ends here (rundown, 1 to 3 items, her log); the rest is below this line. */}
       {moreHeading && !compact && <h2 className="ay-today__more" id={`ay-today-more-${variant}`}>More for you</h2>}
