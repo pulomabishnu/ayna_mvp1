@@ -1,4 +1,4 @@
--- Anonymous Buy Now counter: how many times each product's Buy button was
+-- Anonymous Buy Now counter: how many times each product Buy button was
 -- clicked per day. Written for api/go.js. Idempotent: safe to re-run.
 -- NOT applied automatically; a founder runs it once in the Supabase SQL editor.
 -- Needs public.product_catalog (supabase/product_catalog.sql, already applied).
@@ -23,7 +23,7 @@ alter table public.buy_click_daily enable row level security;
 revoke all on public.buy_click_daily from anon, authenticated;
 grant all on public.buy_click_daily to service_role;
 
--- +1 for today. Unknown product ids are ignored, so made-up ids can't add rows.
+-- +1 for today. Unknown product ids are ignored, so made-up ids add no rows.
 create or replace function public.record_buy_click(p_product_id text)
 returns void
 language sql
@@ -33,7 +33,7 @@ as $$
   insert into public.buy_click_daily (product_id, day, clicks)
   select p_product_id, (now() at time zone 'utc')::date, 1
   where exists (select 1 from public.product_catalog where id = p_product_id)
-  on conflict (product_id, day) do update set clicks = public.buy_click_daily.clicks + 1;
+  on conflict (product_id, day) do update set clicks = public.buy_click_daily.clicks + 1
 $$;
 
 revoke all on function public.record_buy_click(text) from public, anon, authenticated;
