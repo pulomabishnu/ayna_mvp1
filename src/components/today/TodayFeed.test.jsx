@@ -35,16 +35,21 @@ describe('Today with ayna', () => {
     expect(host.textContent).toContain('Your log');
   });
 
-  it('single /home uses the compact phone feed and expands the saved log inline', () => {
-    render({ compact: true, homeLog: true, renderViews: ({ things }) => <div>{things}</div> });
-    const trigger = host.querySelector('.ay-today__homelog-trigger');
-    expect(trigger).toBeTruthy();
-    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  it('single /home: For today opens with the three-tap check-in, and "Log flow, sleep and more" opens the full log', () => {
+    render({ compact: true, homeLog: true, renderViews: ({ things, plan }) => <div>{plan}{things}</div> });
+    expect(host.querySelector('.ay-plan')).toBeTruthy();
+    expect(host.querySelector('.ay-today__homelog-trigger')).toBeNull();
     expect(host.querySelector('.ay-today__log')).toBeNull();
-    act(() => trigger.click());
-    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    act(() => host.querySelector('.ay-plan__more').click());
     expect(host.querySelector('.ay-today__log')).toBeTruthy();
     expect(host.textContent).toContain('Your log');
+  });
+
+  it('single /home: a tap in the check-in saves and shows what may help', () => {
+    render({ compact: true, homeLog: true, renderViews: ({ things, plan }) => <div>{plan}{things}</div> });
+    const energyLow = host.querySelectorAll('.ay-plan__row')[1].querySelector('button');
+    act(() => energyLow.click());
+    expect(host.textContent).toContain('For low energy today');
   });
 
   it('no check-in item: the log card shows on its own', () => {

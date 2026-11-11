@@ -16,7 +16,9 @@ describe('routine timeline: her ecosystem products are in it', () => {
     expect(html).toContain('Stick it to your underwear.');
     expect(html).not.toContain('Your routine shows here once you add products.');
   });
-  it('is still empty with no products', () => {
-    expect(renderToStaticMarkup(<RoutineTimeline products={[]} />)).toContain('Your routine shows here once you add products.');
+  it('with no products shows a sourced starter day, never an empty tab (founder, Nov 11)', () => {
+    const html = renderToStaticMarkup(<RoutineTimeline products={[]} />);
+    expect(html).toContain('Start with a simple day.');
+    expect(html).toContain('nhlbi.nih.gov');
   });
 });

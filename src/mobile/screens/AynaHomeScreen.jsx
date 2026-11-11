@@ -107,7 +107,7 @@ export default function AynaHomeScreen(props) {
   // Home, in the order the founder ranked it (Oct 26 21:46): the hero (dials, Rundown bubble, streak),
   // then this week's highlights, then Your data / Your products, then one toggle. TodayFeed keeps safety
   // and care above all of this and hands in her 1 to 3 things for the Today view.
-  const renderViews = ({ things, count, hasCheckIn }) => (
+  const renderViews = ({ things, count, hasCheckIn, plan }) => (
     <>
       <HomeHighlights items={highlights} today={today} onOpen={openMetric} />
       <div data-tour="home-links">
@@ -119,11 +119,10 @@ export default function AynaHomeScreen(props) {
         initial="today"
         // Founder, Nov 11 ("less repetitive"): the dials and highlights already show her week, so
         // Home has no third copy of it; the full week is one tap away in Your data.
-        routine={<RoutineTimeline cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} />}
+        routine={<RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} />}
         today={<>
+          {plan}
           {things}
-          {/* The check-in item already opens the log; the row is for days without one. */}
-          {!hasCheckIn && <div className="ay-tv__log"><span><b>Your log</b><small>Pain, flow, sleep, mood</small></span><button type="button" onClick={logHere}>Check in</button></div>}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets
             // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).

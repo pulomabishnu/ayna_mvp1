@@ -119,16 +119,42 @@ function ecosystemSteps(products, covered) {
     });
 }
 
-export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, onShop = null, emptyAction = null, max = 3, ecoMax = 4, ...source }) {
+const STARTER = [
+  { when: 'Morning', title: 'A 30-minute walk', why: 'Walking can boost your mood and your health.', src: { label: 'NIMH', url: 'https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health' } },
+  { when: 'Through the day', title: 'Water and balanced meals', why: 'Helps with tiredness.', src: { label: 'MedlinePlus', url: 'https://medlineplus.gov/ency/article/003088.htm' } },
+  { when: 'Evening', title: 'Same bedtime, phone away', why: 'A regular sleep schedule helps you sleep.', src: { label: 'NHLBI', url: 'https://www.nhlbi.nih.gov/health/insomnia/treatment' } },
+];
+
+export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, onShop = null, emptyAction = null, max = 3, ecoMax = 4, suggested = [], ...source }) {
   const { routines } = useRoutines(source);
   const list = routines.slice(0, max);
   const covered = new Set(list.flatMap((r) => r.start.filter((it) => it.kind === 'product').map((it) => String(it.product?.id))));
   const extras = ecosystemSteps(source.products, covered).slice(0, ecoMax);
   if (!list.length && !extras.length) {
+    // Founder, Nov 11 ("Routine needs to be severely updated"): never an empty tab. A starter day
+    // of habits with a .gov source each, then her own matches to try (they open the product page).
+    const picks = (Array.isArray(suggested) ? suggested : []).filter((p) => p?.id && !isMedicineProduct(p)).slice(0, 3);
     return (
-      <div className="ay-rtl is-empty" data-tour="routine">
-        <p>Your routine shows here once you add products.</p>
-        {emptyAction}
+      <div className="ay-rt2 is-starter" data-tour="routine">
+        <p className="ay-rt2__intro"><b>Start with a simple day.</b> Add products from your matches and ayna places them here by when you use them.</p>
+        <ol className="ay-rt2__list">
+          {STARTER.map((g) => (
+            <li key={g.when} className={`ay-rt2__group${isNow(g.when, cycle, new Date().getHours()) ? ' is-now' : ''}`}>
+              <p className="ay-rt2__when">{g.when}{isNow(g.when, cycle, new Date().getHours()) && <em>Now</em>}</p>
+              <ul><li className="ay-rt2__row"><div className="ay-rt2__main is-static">
+                <span className="ay-rt2__ic" aria-hidden="true"><HabitIcon title={g.title} /></span>
+                <span className="ay-rt2__txt"><small>Try</small><b>{g.title}</b><span>{g.why} <a href={g.src.url} target="_blank" rel="noopener noreferrer">{g.src.label}</a></span></span>
+              </div></li></ul>
+            </li>
+          ))}
+          {picks.length > 0 && (
+            <li className="ay-rt2__group">
+              <p className="ay-rt2__when">From your matches</p>
+              <ul>{picks.map((p) => <Row key={p.id} it={{ key: `pick:${p.id}`, kind: 'product', product: p, title: p.name, why: 'A match for you', how: howLine(p)?.text || null }} onOpenProduct={onOpenProduct} />)}</ul>
+            </li>
+          )}
+        </ol>
+        {emptyAction && <div className="ay-rt2__foot">{emptyAction}</div>}
       </div>
     );
   }

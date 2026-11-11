@@ -107,7 +107,32 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
 :is(.ayna-mobile, .app-container) .ay-rt2 .ay-rt2__txt span { font-size: 13px !important; }
 :is(.ayna-mobile, .app-container) .ay-rt2 :is(ul, ol, li) { border: 0; box-shadow: none; }
 :is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__txt > small { font: 700 11px/1.2 var(--ay-font-ui, Figtree, sans-serif) !important; letter-spacing: .05em !important; text-transform: uppercase !important; opacity: .65 !important; }
-:is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__group + .ay-rt2__group { border-top: 1px solid rgba(62, 39, 35, .12) !important; }
-:is(#rt1, html):is(#rt2, html):is(#rt3, html) body .ay-rt2 .ay-rt2__list { border: 1px solid rgba(62, 39, 35, .14) !important; }
+/* Nov 11: groups are separated by the rail, not rules. */
+/* Nov 11: the routine list sits on the page (no outline). */
 /* Nov 2 audit: no all-caps labels (design rules). Sentence case, normal tracking. */
 :is(#rt1, html):is(#rt2, html):is(#rt3, html):is(#rt4, html) body .ay-rt2 :is(.ay-rt2__when, .ay-rt2__txt > small, .ay-rt2__txt small, .ay-rt2__detail dt) { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; }
+
+/* Nov 11 redesign (founder: "Routine needs to be severely updated, use the inspo"). From her
+   "Individual Schedule" board: the time of day in a left rail with a thin line, each step a soft
+   filled tile on the right, the part of the day that applies now in pink. No outlined box. */
+.ay-rt2 .ay-rt2__list { padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; display: grid; gap: 4px; }
+.ay-rt2 .ay-rt2__group { position: relative; display: grid; grid-template-columns: 84px minmax(0, 1fr); column-gap: 12px; align-items: start; padding: 0 0 12px !important; border-top: 0 !important; box-shadow: none !important; margin-left: 0 !important; }
+.ay-rt2 .ay-rt2__group::before { content: ''; position: absolute; left: 6px; top: 26px; bottom: 4px; width: 1.5px; background: rgba(62, 39, 35, .18); }
+.ay-rt2 .ay-rt2__group:last-child::before { display: none; }
+.ay-rt2 .ay-rt2__when { flex-direction: column; align-items: flex-start !important; gap: 6px !important; margin: 14px 0 0 !important; padding-left: 18px; position: relative; font: 700 13px/1.25 var(--ay-font-ui, Figtree, sans-serif) !important; letter-spacing: 0 !important; text-transform: none !important; opacity: 1 !important; }
+.ay-rt2 .ay-rt2__when::before { content: ''; position: absolute; left: 1px; top: 3px; width: 12px; height: 12px; border-radius: 50%; background: #3e2723; }
+.ay-rt2 .ay-rt2__group.is-now .ay-rt2__when::before { background: #e0529c; box-shadow: 0 0 0 4px #f7badd; }
+.ay-rt2 .ay-rt2__group > ul { gap: 8px !important; }
+.ay-rt2 .ay-rt2__row { padding: 8px 12px; border-radius: 20px; background: rgba(62, 39, 35, .07); }
+.ay-rt2 .ay-rt2__group.is-now .ay-rt2__row { background: #f7badd; color: #3e2723; }
+.ay-rt2 .ay-rt2__main.is-static { cursor: default; }
+.ay-rt2 .ay-rt2__ic { border-radius: 50%; background: rgba(62, 39, 35, .1); }
+.ay-rt2 .ay-rt2__group.is-now .ay-rt2__ic:not(.is-thumb) { background: #3e2723; color: #f7badd; }
+.ay-rt2 .ay-rt2__txt b { white-space: normal !important; font-size: 16px !important; }
+.ay-rt2 .ay-rt2__txt span { white-space: normal !important; font-size: 14px !important; line-height: 1.4 !important; opacity: .85 !important; }
+.ay-rt2 .ay-rt2__txt span a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.ay-rt2 .ay-rt2__intro { margin: 4px 0 8px; font: 500 15px/1.45 var(--ay-font-ui, Figtree, sans-serif); }
+.ay-rt2 .ay-rt2__intro b { display: block; margin-bottom: 2px; font: 700 22px/1.2 'ayna Display', var(--ay-font-ui, Figtree, sans-serif); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rt2 .ay-rt2__row { background: rgba(255, 237, 172, .1); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rt2 .ay-rt2__group::before { background: rgba(255, 237, 172, .25); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-rt2 .ay-rt2__when::before { background: #ffedac; }

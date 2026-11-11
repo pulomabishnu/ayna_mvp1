@@ -1,3 +1,4 @@
+import TodayPlan from './TodayPlan.jsx';
 import { useEffect, useMemo, useState } from 'react';
 import { OPEN_LOG_EVENT } from './openLog.js';
 import { useToday } from '../../health/useToday.js';
@@ -431,6 +432,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
   // screen, the log opens from its "Check in" instead of also sitting below it.
   const checkInItem = items.some((it) => (it.actions || []).some((a) => a.id === 'open_check_in'));
   const [logOpen, setLogOpen] = useState(false);
+  const [planGoals, setPlanGoals] = useState([]);
   const [expandedItemId, setExpandedItemId] = useState(null);
   const showLog = !checkInItem || logOpen;
   const openCompactDetail = onOpenFull || (homeLog ? (item, opts = {}) => {
@@ -518,6 +520,10 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           {renderViews({
             count: Math.max(0, total - done),
             hasCheckIn: checkInItem,
+            // Founder, Nov 11: For today always gives her something: a three-tap check-in, then what may help.
+            plan: <TodayPlan entry={t.log?.[t.today] || null} today={t.today} save={(...a) => { trackCheckin({ surface: eventSurface(), where: 'home_plan' }); return t.saveLog(...a); }}
+              pregnant={Boolean(t.pregnant)} postCycle={Boolean(t.postCycle)} onOpenLog={() => setLogOpen(true)} onOpenRead={onOpenRead} onExplore={onExplore}
+              onAddGoal={onAddGoal ? (g) => { onAddGoal(g); setPlanGoals((x) => [...x, g]); } : null} goalsAdded={planGoals} />,
             // A stack of passes (founder Oct 26 22:52, 23:39): the others as title strips, the front card in full.
             things: rest.length > 0 || review
               ? <div data-tour="today-things"><CardDeck
@@ -527,7 +533,7 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
                   ...(review ? [{ key: 'review', title: 'How is it going?', node: review }] : []),
                 ]}
               /></div>
-              : <p className="ay-today__empty">{top.length ? 'Nothing else for today.' : t.decision.empty}</p>,
+              : null,
           })}
         </>;
       })()}
@@ -541,9 +547,10 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
           </div>
         )}
         <div className="ay-today__homelog">
-          <button type="button" className="ay-today__homelog-trigger" aria-expanded={logOpen} aria-controls={checkinId} onClick={() => setLogOpen((open) => !open)}>
+          {/* Home: the check-in is For today's first block and the hero's log row, so no third "Your log" row (Nov 11). */}
+          {(!renderViews || logOpen) && <button type="button" className="ay-today__homelog-trigger" aria-expanded={logOpen} aria-controls={checkinId} onClick={() => setLogOpen((open) => !open)}>
             <span><b>Your log</b><small>Pain, flow, sleep and mood</small></span><span>{logOpen ? 'Close' : 'Check in'}</span>
-          </button>
+          </button>}
           {logOpen && <div id={checkinId} className="ay-today__log">
             <DailyCheckinCard variant={variant} log={t.log} save={(...args) => { trackCheckin({ surface: eventSurface(), where: 'home' }); return t.saveLog(...args); }} saveState={t.saveState} today={t.today} headingId={`${checkinId}-h`} title="Your log" noCycle={Boolean(t.postCycle)} pregnant={Boolean(t.pregnant)} onOpenRead={onOpenRead} onExplore={onExplore} onAddGoal={onAddGoal} />
           </div>}
