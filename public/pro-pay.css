@@ -198,3 +198,7 @@ a.pro-cta { text-decoration: none; }
 .pro-ring { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
 .pro-ring-base { stroke: #3e2723; fill: none; }
 .pro-ring-dash { stroke: #f7badd; fill: none; }
+.pro-admin h3 { margin: 6px 0 0; font: 700 17px/1.2 var(--display); }
+.pro-admin select { min-height: 44px; border-radius: 10px; font: inherit; }
+.pro-admin-everyone { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.pro-admin-everyone button { justify-self: start; min-height: 44px; padding: 0 18px; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; }

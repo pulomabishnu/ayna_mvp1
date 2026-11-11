@@ -21,6 +21,7 @@ import HeroPrice from './pdp/HeroPrice.jsx';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
 import PdpIcon from './pdp/PdpIcon.jsx';
+import AskQuick from './pdp/AskQuick.jsx';
 import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
 import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from './pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../utils/analyticsEvents.js';
@@ -849,6 +850,8 @@ export default function ProductModal({
                   onAsk={onAskAyna ? () => setAskOpen(true) : null}
                   notForMe={onOmit && user ? <p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p> : null}
                 />
+                {/* Founder, Nov 11: "you can't see the Ask ayna buttons right away": three quick questions here. */}
+                {onAskAyna && <AskQuick name={displayName} hasProfile={Boolean(quizResults)} onAsk={onAskAyna} />}
                 {sizesLine}
                 <SaveFollowUpInline product={product} onCompare={onCompare} />
                 {matchState?.kind === 'quiz' && <div className="ayv-quizline">{matchRow}</div>}

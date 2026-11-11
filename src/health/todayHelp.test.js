@@ -9,6 +9,10 @@ describe('what may help today (founder, Nov 11)', () => {
     expect(todayHelp({ pain: 1, mood: 2, sleep: 3 })).toEqual([]);
     expect(todayHelp(null)).toEqual([]);
   });
+  it('gives period-pain tips for cramps, not for a headache', () => {
+    expect(todayHelp({ pain: 2, pain_where: 'cramps' }).map((h) => h.id)).toEqual(['pain']);
+    expect(todayHelp({ pain: 2, pain_where: 'head' })).toEqual([]);
+  });
   it('never gives period pain tips in pregnancy or after menopause', () => {
     expect(todayHelp({ pain: 3 }, { pregnant: true })).toEqual([]);
     expect(todayHelp({ pain: 3, pms: 2 }, { postCycle: true })).toEqual([]);

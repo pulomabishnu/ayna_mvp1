@@ -38,7 +38,10 @@ export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle
   const help = todayHelp(todays, { pregnant, postCycle: noCycle });
   const pick = (fieldId, value) => save(today, { [fieldId]: todays[fieldId] === value ? null : value });
   const loggedWeek = lastWeek(log, 'day', today).map((d) => ({ day: d.day, logged: Boolean(log[d.day] && LOG_FIELDS.some((f) => log[d.day][f.id] != null)) }));
-  const rows = LOG_FIELDS.filter((f) => (f.primary || more) && !(noCycle && POST_CYCLE_HIDDEN.has(f.id)))
+  // "What kind of pain" sits right under Pain, only once she logged some pain.
+  const painKnown = todays.pain != null && todays.pain >= 1;
+  const ordered = LOG_FIELDS.filter((f) => !f.follows).flatMap((f) => [f, ...LOG_FIELDS.filter((x) => x.follows === f.id)]);
+  const rows = ordered.filter((f) => (f.follows ? f.follows === 'pain' && painKnown : f.primary || more) && !(noCycle && POST_CYCLE_HIDDEN.has(f.id)))
     .map((f) => (noCycle && POST_CYCLE_LABELS[f.id] ? { ...f, label: POST_CYCLE_LABELS[f.id] } : f));
   return (
     <section className={app ? 'ay-you-section' : 'wy-sec'} aria-labelledby={headingId}>

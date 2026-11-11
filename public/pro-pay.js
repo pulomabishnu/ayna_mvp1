@@ -102,6 +102,8 @@
       invalid_plan: 'That plan is unavailable.',
       try_again_later: 'Too many checkout attempts. Please try again shortly.',
       forbidden: 'This action is not available for this account.',
+      user_not_found: 'No ayna account uses that email. Ask them to sign up first, then try again.',
+      invalid_user: 'That is not an email or account ID we recognize.',
       pro_temporarily_unavailable: 'ayna Pro is temporarily unavailable. Please try again.',
     };
     return messages[code] || 'Something went wrong. Please try again.';
@@ -162,6 +164,7 @@
   function renderStatus(data) {
     canBuy = true;
     adminBox.hidden = !data.isAdmin;
+    if (data.isAdmin) renderGates(data.gates !== false);
     statusBox.classList.remove('error', 'done');
     statusBox.replaceChildren();
 
@@ -284,17 +287,45 @@
   continueButton.addEventListener('click', () => checkout(selectedPlan));
   endButton.addEventListener('click', () => checkout(selectedPlan));
 
+  // Everyone switch (founder, Nov 11): turns every Pro lock off (or back on) for all accounts.
+  const gatesState = document.getElementById('pro-gates-state');
+  const gatesToggle = document.getElementById('pro-gates-toggle');
+  let gatesOn = true;
+  function renderGates(on) {
+    gatesOn = on;
+    if (!gatesState || !gatesToggle) return;
+    gatesState.textContent = on ? 'Pro locks are on: only Pro members and people you add below get Pro features.' : 'Everyone has every Pro feature right now. Nobody is charged.';
+    gatesToggle.textContent = on ? 'Give everyone ayna Pro' : 'Turn Pro locks back on';
+    gatesToggle.disabled = false;
+  }
+  gatesToggle?.addEventListener('click', async () => {
+    if (busy) return;
+    setBusy(true);
+    gatesToggle.disabled = true;
+    try {
+      const rules = await requestPro({ action: 'feature_gates_set', enabled: !gatesOn });
+      renderGates(rules.enabled !== false);
+      setStatus(rules.enabled === false ? 'Everyone has ayna Pro now.' : 'Pro locks are back on.');
+    } catch (error) {
+      setStatus(errorMessage(error.message), true);
+      gatesToggle.disabled = false;
+    } finally {
+      setBusy(false);
+    }
+  });
+
   adminForm?.addEventListener('submit', async event => {
     event.preventDefault();
     if (busy) return;
     const action = event.submitter?.value || 'focus_grant';
-    const userId = document.getElementById('pro-focus-user').value.trim();
+    const who = document.getElementById('pro-focus-user').value.trim();
+    const isId = /^[0-9a-f-]{36}$/i.test(who);
     const minutes = Number(document.getElementById('pro-focus-minutes').value || 60);
     setBusy(true);
-    setStatus(action === 'focus_revoke' ? 'Ending temporary Pro access…' : 'Granting temporary Pro access…');
+    setStatus(action === 'focus_revoke' ? 'Ending their Pro access…' : 'Giving them ayna Pro…');
     try {
-      const result = await requestPro({ action, userId, minutes });
-      setStatus(`Focus-group access updated. Expiration: ${new Date(result.expiresAt).toLocaleString()}.`);
+      const result = await requestPro(isId ? { action, userId: who, minutes } : { action, email: who, minutes });
+      setStatus(action === 'focus_revoke' ? `Ended for ${who}.` : `${who} has ayna Pro until ${new Date(result.expiresAt).toLocaleString()}.`);
     } catch (error) {
       setStatus(errorMessage(error.message), true);
     } finally {

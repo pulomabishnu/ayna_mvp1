@@ -27,7 +27,7 @@ const CLOCK_SKEW_MS = 5 * 60 * 1000;
 
 // Fields added after the table was made (energy, Nov 11). Until a person runs
 // supabase/daily_log_energy_2026-11-11.sql, the server leaves them out instead of failing.
-export const NEWER_LOG_FIELDS = ['energy'];
+export const NEWER_LOG_FIELDS = ['energy', 'pain_where'];
 const OLD_FIELDS = LOG_FIELD_IDS.filter((id) => !NEWER_LOG_FIELDS.includes(id));
 const columnsFor = (fields) => `day, ${fields.join(', ')}, field_at, updated_at`;
 const TRY_COLUMNS = 'id, kind, ref, need, intervention_kind, started_day, horizon_days, outcome, recorded_day, note, removed, updated_at';

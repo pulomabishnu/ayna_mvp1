@@ -44,9 +44,10 @@ export default async function handler(req, res) {
       try { status = await proStatus(admin, user.id); }
       catch (e) { if (!legacyPremium || req.method !== 'GET') throw e; status = { active: false, hasPurchase: false, launchAt: null, termEndsAt: null, temporaryUntil: null }; }
     }
-    const active = legacyPremium || status.active;
-    const offerOpen = config.enabled && isExpectedPaidTermStart(status.launchAt) && Date.parse(status.launchAt) > Date.now();
     const isAdmin = isAdminUser(user);
+    // Founder, Nov 11: team admins (ADMIN_EMAILS) always have every Pro feature.
+    const active = legacyPremium || status.active || isAdmin;
+    const offerOpen = config.enabled && isExpectedPaidTermStart(status.launchAt) && Date.parse(status.launchAt) > Date.now();
 
     if (req.method === 'GET') {
       // Which Read this week's free allowance went to (null if unused), so a
@@ -147,14 +148,28 @@ export default async function handler(req, res) {
 
     if (body.action === 'focus_grant' || body.action === 'focus_revoke') {
       if (!isAdmin) return res.status(403).json({ error: 'forbidden' });
-      if (!/^[0-9a-f-]{36}$/i.test(body.userId || '')) return res.status(400).json({ error: 'invalid_user' });
-      const minutes = Math.min(Math.max(Number(body.minutes) || 60, 1), 240);
+      // Focus group (Nov 11): enroll by email or account ID, for up to a week (Puloma's 1-week wearables trial).
+      let userId = String(body.userId || '').trim();
+      const email = String(body.email || '').trim().toLowerCase();
+      if (!userId && email) {
+        for (let page = 1; page <= 10 && !userId; page += 1) {
+          const { data: list, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+          if (listError) throw new Error('User lookup failed');
+          const found = (list?.users || []).find((u) => String(u.email || '').toLowerCase() === email);
+          if (found) userId = found.id;
+          if ((list?.users || []).length < 1000) break;
+        }
+        if (!userId) return res.status(404).json({ error: 'user_not_found' });
+      }
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) return res.status(400).json({ error: 'invalid_user' });
+      body.userId = userId;
+      const minutes = Math.min(Math.max(Number(body.minutes) || 60, 1), 7 * 24 * 60);
       const expiresAt = body.action === 'focus_revoke'
         ? new Date().toISOString()
         : new Date(Date.now() + minutes * 60000).toISOString();
       const { error: grantError } = await admin.from('pro_focus_grants').upsert({ user_id: body.userId, expires_at: expiresAt }, { onConflict: 'user_id' });
       if (grantError) throw new Error('Focus grant failed');
-      return res.status(200).json({ expiresAt });
+      return res.status(200).json({ expiresAt, userId });
     }
 
     if (body.action === 'cancel_renewal') {

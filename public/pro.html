@@ -175,16 +175,28 @@
 
     <section id="pro-admin" class="pro-admin" hidden>
       <h2>Focus-group access</h2>
-      <p>Admin only. Grant temporary Pro access without payment.</p>
-      <p><a href="/admin/pro">Manage Pro feature gates</a></p>
+      <p>Admin only. Team admins always have every Pro feature.</p>
+      <div class="pro-admin-everyone">
+        <h3>Everyone</h3>
+        <p id="pro-gates-state">Checking whether Pro locks are on…</p>
+        <button type="button" id="pro-gates-toggle" disabled>Give everyone ayna Pro</button>
+      </div>
       <form id="pro-focus-form">
-        <label>Participant account ID<input id="pro-focus-user" required pattern="[0-9a-fA-F-]{36}" /></label>
-        <label>Minutes<input id="pro-focus-minutes" type="number" min="1" max="240" value="60" /></label>
+        <h3>One person</h3>
+        <label>Their email (or account ID)<input id="pro-focus-user" required autocomplete="off" /></label>
+        <label>How long
+          <select id="pro-focus-minutes">
+            <option value="60">1 hour</option>
+            <option value="1440">1 day</option>
+            <option value="10080" selected>1 week (focus group trial)</option>
+          </select>
+        </label>
         <div class="pro-admin-actions">
-          <button type="submit" value="focus_grant">Grant temporary Pro</button>
-          <button type="submit" value="focus_revoke" class="secondary">End temporary Pro</button>
+          <button type="submit" value="focus_grant">Give ayna Pro</button>
+          <button type="submit" value="focus_revoke" class="secondary">End it now</button>
         </div>
       </form>
+      <p><a href="/admin/pro">More Pro feature settings</a></p>
     </section>
   </main>
 

@@ -11,6 +11,7 @@ import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
+import AskQuick from '../../components/pdp/AskQuick.jsx';
 import { SafetyLine, MatchLockup, PriceRow, AskPanel } from '../../components/pdp/PdpParts.jsx';
 import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from '../../components/pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
@@ -55,7 +56,7 @@ import { localMatchAnswer } from '../../utils/askMatch.js';
  * changed (mobile's own inline-style patterns instead of the desktop
  * pdp-* classes).
  */
-function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, matchOpts, starters = null }) {
+function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, matchOpts, starters = null, initialQuestion = '' }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -76,6 +77,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
   }, []);
 
   const suggestions = starters || productAskStarters({ hasProfile: Boolean(quizAnswers) });
+  // A quick question tapped on the page (AskQuick) is asked as soon as the sheet knows who she is.
+  const askedRef = useRef('');
 
   const ask = async (question) => {
     const q = String(question || '').trim();
@@ -122,6 +125,12 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
       setSending(false);
     }
   };
+
+  useEffect(() => {
+    if (!initialQuestion || session === undefined || askedRef.current === initialQuestion) return;
+    askedRef.current = initialQuestion;
+    ask(initialQuestion);
+  }, [initialQuestion, session]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="ay-pdp-ask" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -242,6 +251,7 @@ export default function ProductDetailScreen({
   const [photo, setPhoto] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
+  const [askQ, setAskQ] = useState('');
   const [compareOpen, setCompareOpen] = useState(false);
   const moreRef = useRef(null);
   const closeMore = () => { if (moreRef.current) moreRef.current.open = false; };
@@ -506,6 +516,8 @@ export default function ProductDetailScreen({
             </button>
           </div>
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
+          {/* Founder, Nov 11: Ask ayna right here, three quick questions. */}
+          <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
           {/* Founder, Nov 11: no "Before you spend $X" box on the product page. */}
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
@@ -595,8 +607,8 @@ export default function ProductDetailScreen({
       <AskPanel open={compareOpen} onClose={() => setCompareOpen(false)} variant="sheet" className="is-compare" sub="" title="Compare with similar">
         <ComparePanel product={product} others={related.compare} onOpen={(p) => { setCompareOpen(false); onOpenProduct(p); }} matchFor={matchFor} detailsFor={detailsFor} />
       </AskPanel>
-      <AskPanel open={askOpen} onClose={() => setAskOpen(false)} variant="sheet" title={`Ask about ${shownName}`}>
-        <AskAynaTab product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} matchOpts={matchOpts} starters={askStarters} />
+      <AskPanel open={askOpen} onClose={() => { setAskOpen(false); setAskQ(''); }} variant="sheet" title={`Ask about ${shownName}`}>
+        <AskAynaTab key={askQ || 'ask'} product={product} quizAnswers={quizAnswers} ecosystemProducts={ecosystemProducts} onRequireAuth={onRequireAuth} matchOpts={matchOpts} starters={askStarters} initialQuestion={askQ} />
       </AskPanel>
     </div>
   );

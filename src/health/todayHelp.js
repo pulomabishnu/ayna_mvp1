@@ -88,7 +88,9 @@ export function todayHelp(entry, { pregnant = false, postCycle = false } = {}) {
   if (!entry) return [];
   const out = [];
   // Pain in pregnancy goes through the triage questions on Today, never these tips.
-  if (!pregnant && !postCycle && entry.pain >= 2) out.push(TODAY_HELP.pain);
+  // Period-pain tips only for cramps or pelvic pain (or when she didn't say which kind).
+  const crampy = !entry.pain_where || ['cramps', 'pelvic', 'back'].includes(entry.pain_where);
+  if (!pregnant && !postCycle && entry.pain >= 2 && crampy) out.push(TODAY_HELP.pain);
   if (entry.mood === 1) out.push(TODAY_HELP.mood);
   if (!pregnant && !postCycle && entry.pms >= 2) out.push(TODAY_HELP.pms);
   if (entry.energy === 1) out.push(TODAY_HELP.energy);

@@ -43,6 +43,9 @@ export const LOG_FIELDS = [
   { id: 'skin', label: 'Skin', values: [1, 2, 3], options: ['Flared', 'Okay', 'Clear'], primary: false, better: 'higher' },
   // Founder, Nov 11: "add energy".
   { id: 'energy', label: 'Energy', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'], primary: false, better: 'higher' },
+  // Founder, Nov 11 ("for pain be more specific, ask about cramps or what kind of pain"). Shown
+  // right under Pain once she logs any pain; never on its own.
+  { id: 'pain_where', label: 'What kind of pain', values: ['cramps', 'back', 'head', 'pelvic', 'breast', 'other'], options: ['Cramps', 'Lower back', 'Headache', 'Pelvic', 'Breasts', 'Other'], primary: false, better: null, follows: 'pain' },
 ];
 export const LOG_FIELD_IDS = LOG_FIELDS.map((f) => f.id);
 const FIELD_BY_ID = Object.fromEntries(LOG_FIELDS.map((f) => [f.id, f]));

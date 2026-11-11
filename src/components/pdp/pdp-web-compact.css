@@ -43,3 +43,10 @@
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack.is-index { margin-top: 16px !important; }
   #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero { margin-bottom: 0 !important; }
 }
+
+/* Founder, Nov 11: the pink buy panel was overstimulating. Plain page colour, no box. */
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide { background: transparent !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important; }
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide::before { content: none !important; }
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide :is(.ayv-acts button, .ayv-acts a) { background: transparent !important; }
+
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__decide select { background-color: transparent !important; }

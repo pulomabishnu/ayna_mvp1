@@ -1,4 +1,5 @@
 /* global process */
+import { isAdminEmail } from './_admin.js';
 /**
  * Single source of truth for paid entitlement.
  *
@@ -16,6 +17,8 @@ export function isPremiumUser(user) {
  */
 export async function hasPremiumAccess(user, admin) {
   if (isPremiumUser(user)) return true;
+  // Team admins (ADMIN_EMAILS) always have every Pro feature (founder, Nov 11).
+  if (isAdminEmail(user?.email)) return true;
   // The purchase ledger is the source of truth whenever it exists. /api/pro,
   // the quiz-retake function and the playlist trigger all read it directly,
   // so this check must too, or a paying member shows "Pro active" but gets

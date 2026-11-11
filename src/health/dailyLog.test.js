@@ -50,7 +50,7 @@ describe('daily log entries', () => {
   });
 
   it('exposes seven fields with mood, skin and energy behind More', () => {
-    expect(LOG_FIELDS.map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy']);
+    expect(LOG_FIELDS.map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy', 'pain_where']);
     expect(LOG_FIELDS.filter((f) => f.primary).map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep']);
   });
 

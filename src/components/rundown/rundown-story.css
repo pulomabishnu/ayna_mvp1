@@ -172,3 +172,10 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-links span { font: 700 22px/1.2 var(--ay-font-display, inherit); animation: ay-rd-rise 420ms ease-out both; animation-delay: calc(var(--k) * 350ms + 120ms); }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-still :is(.ays-words > *, .ay-rd-art.is-date b, .ay-rd-links *, .ay-rd-links li::after) { animation: none; }
 @media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ays-words > *, .ay-rd-art.is-date b, .ay-rd-links *, .ay-rd-links li::after) { animation: none; } }
+
+/* Founder, Nov 11 ("so off-centred and just looks ugly"): the product, its evidence line and the
+   buttons sit in one centred column, on the app and the website. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-rd-product { justify-items: center !important; text-align: center; width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-rd-product > :first-child { width: min(100%, 300px) !important; max-width: 300px !important; justify-self: center !important; margin-inline: auto !important; text-align: left; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-rd-product > .ay-rd-actions { justify-content: center !important; justify-self: center !important; width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-rd-product > :not(:first-child):not(.ay-rd-actions) { justify-self: center !important; }
