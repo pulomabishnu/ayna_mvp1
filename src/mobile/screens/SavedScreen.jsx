@@ -31,7 +31,7 @@ export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOp
       <h2 id="ayna-saved-posts-h">Saved posts</h2>
       <ul>{savedPosts.posts.map((post) => { const line = postLine(post); return <li key={post.id}><button type="button" onClick={() => onOpenCommunityPost(post.id)}><small>Saved {line.kind.toLowerCase()}</small><span>{line.text}</span></button></li>; })}</ul>
     </section>}
-    {onOpenStartups && <button type="button" className="ayna-saved-startups" onClick={onOpenStartups}><span><b>Startups</b><small>Waitlists and new companies</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>}
+    {/* Nov 11 run-through (Puloma: "we can just get rid of the startups" on the cart page): removed here. */}
   </>;
 
   return <div className="ayna-fresh-saved ayna-saved-collection">
