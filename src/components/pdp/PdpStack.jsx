@@ -19,9 +19,10 @@ export default function PdpStack({ cards = [], initial = 'summary', active, onCh
   const [own, setOwn] = useState(initial);
   const open = active === undefined ? own : active;
   const setOpen = (id) => { if (active === undefined) setOwn(id); onChange?.(id); };
+  // Founder, Nov 11: tapping a tile takes her to the text it opened.
   const lift = () => window.requestAnimationFrame(() => {
     const el = document.querySelector('.ay-stack__body:not([hidden])');
-    if (el && el.getBoundingClientRect().top > window.innerHeight - 80) el.scrollIntoView({ block: 'nearest', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (el) el.scrollIntoView({ block: 'start', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   });
   // Nov 10 (founder: "they need to see it's there without scrolling", "maybe tabs"): the four
   // views are a 2x2 index of labelled tiles, all visible at once right under Buy, each with a
@@ -49,6 +50,13 @@ export default function PdpStack({ cards = [], initial = 'summary', active, onCh
       {cards.map((c) => (
         <div key={c.id} className="ay-stack__body" id={`ay-stack-${c.id}`} role="region" aria-label={c.title} data-open={c.id} hidden={c.id !== open || undefined}>
           <div className={`ay-stack__panel${c.panelClass ? ` ${c.panelClass}` : ''}`}>{c.body}</div>
+          {/* Small Back / Next at the end of each view, named for where they go (founder, Nov 11). */}
+          {(() => { const at = cards.findIndex((x) => x.id === c.id); const prevC = cards[at - 1]; const nextC = cards[at + 1]; return (prevC || nextC) ? (
+            <nav className="ay-stack__pager" aria-label="More about this product">
+              {prevC ? <button type="button" onClick={() => { setOpen(prevC.id); onOpen?.(prevC.id); lift(); }}><span aria-hidden="true">‹</span> {prevC.title}</button> : <span />}
+              {nextC ? <button type="button" onClick={() => { setOpen(nextC.id); onOpen?.(nextC.id); lift(); }}>{nextC.title} <span aria-hidden="true">›</span></button> : <span />}
+            </nav>
+          ) : null; })()}
         </div>
       ))}
     </section>

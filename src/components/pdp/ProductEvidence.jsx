@@ -63,6 +63,10 @@ const whyText = (w) => {
 // Text with tap-to-define words
 // ---------------------------------------------------------------------------
 const TermsCtx = React.createContext(null);
+// The product page's card stack shows sources as tap-to-open rows (founder, Nov 11: "a better way to
+// lay out the sources than scrolling for ten years"): title and where it is from, one-line finding;
+// tap for the full finding, ayna's note and the link. Every word is still there.
+const SourceRowsCtx = React.createContext(false);
 function Tx({ children }) {
   const plan = React.useContext(TermsCtx);
   const text = String(children ?? '');
@@ -208,6 +212,26 @@ function KindTag({ kind }) {
 function SourceBody({ s }) {
   const meta = [s.publisher || hostLabel(s.url), s.type, s.year].filter(Boolean);
   const why = whyText(s.why);
+  const rows = React.useContext(SourceRowsCtx);
+  if (rows) return (
+    <details className="ayq-srcrow">
+      <summary>
+        <span className="ayq-srcrow__text">
+          <span className="ayq-srcrow__title">{s.title}</span>
+          <span className="ayq-srcrow__meta">{meta.join(' · ')}{s.negative ? ' · Found no clear benefit' : ''}</span>
+          {s.summary && <span className="ayq-srcrow__peek">{s.summary}</span>}
+        </span>
+        <svg className="ayq-srcrow__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </summary>
+      <div className="ayq-srcrow__body">
+        {s.summary && <p className="ayq-src__finding"><Tx>{s.summary}</Tx></p>}
+        {s.altTitles?.length > 0 && <p className="ayq-src__note">Also listed as: {s.altTitles.join('; ')}</p>}
+        {why && <p className="ayq-src__note">ayna’s note: {why}</p>}
+        {(s.kind?.label || s.kind?.tier === 'credible') && <p className="ayq-src__tier"><KindTag kind={s.kind} /></p>}
+        <a className="ayq-src__go" href={s.url} target="_blank" rel="noopener noreferrer">Read the source<span aria-hidden="true"> ↗</span><span className="sr-only">: {s.title} (opens in a new tab)</span></a>
+      </div>
+    </details>
+  );
   return (
     <>
       <h4 className="ayq-src__title">{s.title}</h4>
@@ -1172,6 +1196,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     ].map((c) => ({ ...c, panelClass: `ayq-panel ayq-tp is-${c.id}` }));
     return (
       <TermsCtx.Provider value={plan}>
+        <SourceRowsCtx.Provider value>
         <div id="ay-tabs" className="ayq ayq--tabs ayv ayv--stack">
           {/* Binding safety rule: "When to get help now" is never collapsed and never behind a tab or card. */}
           {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
@@ -1180,6 +1205,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           </div>
           {afterOverview}
         </div>
+        </SourceRowsCtx.Provider>
       </TermsCtx.Provider>
     );
   }

@@ -111,3 +111,31 @@ html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step[open] .ayq-step__peek { display: none; }
 html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__body { padding: 0 2px 16px !important; font-size: 15px !important; line-height: 1.45 !important; }
 html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat), html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-xrows { border-color: rgba(255, 237, 172, .22) !important; }
+
+/* Nov 11: the open view scrolls to just under the page header; Back / Next sit small at its end. */
+.ay-stack.is-index .ay-stack__body { scroll-margin-top: 72px; }
+.ay-stack__pager { display: flex; justify-content: space-between; gap: 12px; margin: 10px 2px 0; }
+.ay-stack__pager button { all: unset; box-sizing: border-box; cursor: pointer; min-height: 40px; display: inline-flex; align-items: center; gap: 6px; padding: 0 4px; font: 600 14px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.ay-stack__pager button span { text-decoration: none; font-size: 18px; }
+.ay-stack__pager button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }
+/* Sources as rows: title, where it is from, a one-line finding; tap for the rest. */
+.ayq-srcrow { border-bottom: 1px solid rgba(62, 39, 35, .18); }
+.ayq-srcrow > summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 12px 2px; cursor: pointer; }
+.ayq-srcrow > summary::-webkit-details-marker { display: none; }
+.ayq-srcrow__text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ayq-srcrow__title { font: 700 15px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ayq-srcrow__meta { font: 500 13px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .8; }
+.ayq-srcrow__peek { font: 400 14px/1.35 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ayq-srcrow[open] .ayq-srcrow__peek { display: none; }
+.ayq-srcrow__chev { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+.ayq-srcrow[open] .ayq-srcrow__chev { transform: rotate(180deg); }
+.ayq-srcrow__body { padding: 0 2px 12px; display: grid; gap: 6px; }
+.ayq-srcrow__body p { margin: 0; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ayq-srcrow { border-color: rgba(255, 237, 172, .22); }
+/* In the stack the source "cards" are plain rows, not boxed cards. */
+.ay-stack__panel li.ayq-src:has(> .ayq-srcrow) { padding: 0 !important; margin: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; }
+.ay-stack__panel .ayq-srcgrid:has(.ayq-srcrow) { display: block !important; gap: 0 !important; }
+/* Literature view: one rhythm (Nov 11): no tall gap between the overview and ayna's evidence check. */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel :is(.ayq-gradebox, .ayq-evcheck) { margin-top: 12px !important; padding-top: 0 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel :is(.ayq-gradebox, .ayq-evcheck) > .ayq-subh:first-child { margin-top: 0 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-more { margin-bottom: 0 !important; padding-bottom: 0 !important; }
