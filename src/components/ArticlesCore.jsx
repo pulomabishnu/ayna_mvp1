@@ -1082,7 +1082,8 @@ export default function Articles({ initialArticleId, onOpenProduct, quizResults,
   const progressOf = (a) => progress[a.id] || 0;
   // Free accounts choose one Read a week (ProFeatureGate asks first); the Library shows which one.
   const proStatus = useProStatus(userId);
-  const freeReads = Boolean(userId) && proStatus.gates && !proStatus.active && !proStatus.checking;
+  // Every Read is free (team run-through, Nov 11): no weekly free-Read line.
+  const freeReads = false;
   const chosenRead = freeReads ? ARTICLES.find((a) => a.id === proStatus.weeklyRead) || null : null;
   const finished = ARTICLES.filter((a) => progressOf(a) >= 1).length;
   const keepReading = ARTICLES.filter((a) => progressOf(a) > 0 && progressOf(a) < 1);

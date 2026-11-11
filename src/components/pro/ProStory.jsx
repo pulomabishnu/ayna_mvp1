@@ -23,7 +23,6 @@ const PRO_STORY = [
   { id: 'dashboard', icon: 'dash', tone: 'ink', t: 'Your health dashboard', d: 'Cycle, sleep and activity, together in one place.', match: ['dashboard'] },
   { id: 'connect', icon: 'watch', tone: 'pink', t: 'Connect your health data', d: 'Apple Health, Health Connect and Oura. You choose what to share.', match: ['wearables', 'health'] },
   { id: 'deeper', icon: 'trend', tone: 'butter', t: 'Patterns over time', d: 'Deeper insights and trends, not single data points.', match: ['insights', 'tracking'] },
-  { id: 'reads', icon: 'book', tone: 'pink', t: 'Every Read', d: 'The whole Library, with sources. Free has one a week.', match: ['reads'] },
   { id: 'ask', icon: 'chat', tone: 'ink', t: '50 Ask ayna chats a month', d: 'Ten times the free plan.', match: ['ask'] },
   { id: 'more', icon: 'infinity', tone: 'butter', t: 'Fewer limits', d: 'Retake the quiz and make playlists whenever you want.', match: ['quiz', 'playlists'] },
 ];

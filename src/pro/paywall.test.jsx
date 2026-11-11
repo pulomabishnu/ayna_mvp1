@@ -14,10 +14,10 @@ const testflightQr = readFileSync(new URL('../../public/images/testflight-qr.svg
 
 describe('the one locked state', () => {
   it('frames the lock in the checker, names the feature and has one Get ayna Pro button and a quiet Not now', () => {
-    const html = renderToStaticMarkup(<ProLock feature="reads" />);
+    const html = renderToStaticMarkup(<ProLock feature="ask" />);
     expect(html).toContain('class="pro-frame"');
     expect(html).toContain('Included with ayna Pro');
-    expect(html).toContain('More ayna Reads');
+    expect(html).toContain('More Ask ayna');
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');
   });

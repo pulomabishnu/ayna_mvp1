@@ -42,7 +42,7 @@ export const PRO_SHORT = {
 export const PRO_GROUPS = [
   { id: 'connect', name: 'Connect your health data', promise: 'ayna learns from the cycle, sleep, activity and other signals you choose to share.', items: ['dashboard', 'wearables', 'health'] },
   { id: 'deeper', name: 'Go deeper', promise: 'Patterns and context over time, not single data points.', items: ['insights', 'tracking'] },
-  { id: 'limits', name: 'Fewer limits', promise: 'Use ayna as much as your needs change.', items: ['quiz', 'ask', 'reads', 'playlists'] },
+  { id: 'limits', name: 'Fewer limits', promise: 'Use ayna as much as your needs change.', items: ['quiz', 'ask', 'playlists'] },
 ];
 
 /** The groups with their features; `on` marks the feature she tapped. Evolving ones say so. */

@@ -14,7 +14,7 @@ function proWebUrl(feature = '') {
 const PERKS = [
   { t: 'Your health dashboard', for: ['dashboard'], icon: <><circle cx="12" cy="12" r="8" /><path d="M8.5 13.5l2-2 2 2 3-3.5" /></> },
   { t: 'Apple Health, Health Connect and Oura', for: ['wearables', 'health'], icon: <><rect x="7" y="6" width="10" height="12" rx="3" /><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3" /></> },
-  { t: 'Every Read and 50 Ask ayna chats a month', for: ['reads', 'ask'], icon: <><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" /></> },
+  { t: '50 Ask ayna chats a month', for: ['ask'], icon: <><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" /></> },
 ];
 
 const EXTRA = { t: 'Retake the quiz and make playlists anytime', for: [], icon: <><path d="M7 15.5c-2 0-3.5-1.6-3.5-3.5S5 8.5 7 8.5c3.5 0 6.5 7 10 7 2 0 3.5-1.6 3.5-3.5S19 8.5 17 8.5c-3.5 0-6.5 7-10 7Z" /></> };

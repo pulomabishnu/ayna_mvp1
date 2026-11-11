@@ -9,7 +9,6 @@ export const PRO_FEATURES = [
   { id: 'tracking', label: 'Advanced tracking', description: 'More detailed tracking over time, with trend insights, so you can understand changes and patterns instead of single data points.', stage: 'available' },
   { id: 'quiz', label: 'Unlimited personalization', description: 'Update your profile and retake the personalization quiz whenever your needs change. Free accounts can retake it once per month.', stage: 'available' },
   { id: 'ask', label: 'More Ask ayna', description: 'Up to 50 Ask ayna chats a month. Free accounts get 5 chats a month.', stage: 'available' },
-  { id: 'reads', label: 'More ayna Reads', description: 'Unlimited Reads. Free accounts get 1 Read per week.', stage: 'available' },
   { id: 'playlists', label: 'More playlists', description: 'Unlimited playlists. Free accounts can create 1 playlist.', stage: 'available' },
 ];
 

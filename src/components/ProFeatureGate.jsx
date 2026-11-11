@@ -164,5 +164,7 @@ function CheckedProFeatureGate({ feature, readId = '', title, onBack, onEcosyste
 }
 
 export default function ProFeatureGate(props) {
+  // Team run-through, Nov 11 (aligned): no paywall on health education. Every Read is free.
+  if (props.feature === 'reads') return props.children;
   return <CheckedProFeatureGate {...props} />;
 }

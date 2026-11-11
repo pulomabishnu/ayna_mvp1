@@ -66,7 +66,7 @@ describe('tips overlay', () => {
     expect(readTour().enabled).toBe(false);
     const sheet = document.querySelector('.ay-tour__all');
     expect(sheet.textContent).toContain('How ayna works');
-    expect(sheet.textContent).toContain('Health profile');
+    expect(sheet.textContent).toContain('Your quiz answers');
     act(() => [...sheet.querySelectorAll('button')].find((x) => x.textContent === 'Got it').click());
     expect(document.querySelector('.ay-tour__all')).toBeNull();
     wait(3000);

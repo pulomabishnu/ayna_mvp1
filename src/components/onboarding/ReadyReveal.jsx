@@ -215,7 +215,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
       {bleeding && <BleedingEvaluationNote className="ay-ob-ready__care" title={bleeding.title} note={{ ...bleeding, text: 'It should be checked promptly by an ob-gyn or your clinician.' }} />}
       {rows.length > 0 ? (
         <section className="ay-ob-needs" aria-labelledby="ay-ob-needs-h">
-          <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">{everydayBasics ? 'Nothing to fix? Start with the basics' : needRows.length ? 'What you asked for help with' : 'Your top picks'}</h2>
+          <h2 id="ay-ob-needs-h" className="ay-ob-needs__h">{everydayBasics ? 'Your personalized Shop is ready' : needRows.length ? 'What you asked for help with' : 'Your top picks'}</h2>
           <p>{everydayBasics ? 'Everyday picks for your stage, ranked by your answers and what you like. Add the ones you use and ayna suggests similar ones in your Daily Rundown.' : needRows.length ? 'OTC options for symptom management and support.' : matches.length ? 'Ranked by how well each fits your answers. Pick what you want help with to get more.' : 'Everyday picks for your stage, ranked by your answers. Add the ones you use to your ecosystem and ayna suggests similar ones in your Daily Rundown.'}</p>
           <ul className="ay-reveal-shelves">
             {rows.map((r, i) => {
@@ -271,6 +271,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             ? <button type="button" className="ay-ob-next__main" onClick={onCreateAccount}>{total === 0 ? 'Save my profile' : total === 1 ? 'Save my match' : `Save my ${total} matches`}<Arrow /></button>
             : <button type="button" className="ay-ob-next__main" onClick={onSeeToday}>{total > 1 ? `See all ${total} matches` : total === 1 ? 'See your match' : (variant === 'web' ? 'See my ecosystem' : 'Go to Home')}<Arrow /></button>}
         {!(total === 0 && (rows.length === 0 || basics.length > 0) && onExplore && ready && liveReady) && <small className="ay-ob-next__note">{onWatchWrapped && total > 0 ? (signedIn ? 'Your ayna Wrapped, then your matches.' : 'Your ayna Wrapped, then save them with a free account.') : !signedIn && onCreateAccount ? 'Free account, no card.' : 'They’re saved in Home.'}</small>}
+        {/* Team run-through, Nov 11: "nothing right now" still feels personal: one tap to her personalized Shop. */}
+        {everydayBasics && onExplore && <button type="button" className="ay-ob-next__link" onClick={onExplore}>See my personalized Shop</button>}
         {onWatchWrapped && total > 0 && (signedIn
           ? <button type="button" className="ay-ob-next__link" onClick={onSeeToday}>Skip to my matches</button>
           : onCreateAccount && <button type="button" className="ay-ob-next__link" onClick={onCreateAccount}>Skip, save my matches</button>)}

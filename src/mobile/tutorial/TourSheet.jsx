@@ -17,7 +17,7 @@ export const TOUR_SECTIONS = [
   { title: 'Your matches', items: [
     'Your products, in Home, lists every match by what it helps with.',
     'Tap any match to see why it fits you, what is in it and what people say.',
-    'Change your quiz answers anytime: Profile, then My health, then Health profile. Or ask ayna to add something.',
+    'Change your quiz answers anytime: Profile, then Your quiz answers. Or ask ayna to add something.',
   ] },
   { title: 'Shop', items: [
     'Search products, brands and care by need. Services, like clinics and apps, are a section inside Shop.',

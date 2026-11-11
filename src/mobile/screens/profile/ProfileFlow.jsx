@@ -547,7 +547,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
       ], SHOW_BOX_WAITLIST ? <BoxWaitlist variant="app" /> : null)}
       {group('profile', 'Your profile', [
         { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
-        signedIn && onEditProfile && { key: 'profile', icon: 'checkin', title: 'Health profile', sub: 'Symptoms, goals, life stage and preferences', value: `${profileFilledPct}%`, onClick: onEditProfile },
+        // Team run-through, Nov 11: "two ways to change your health profile" was confusing. Your quiz
+        // answers (on Profile) is the one way; this duplicate row is gone.
         showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
         { key: 'shopper', title: 'At a glance', sub: 'Your routine, brands and safety alerts', value: alerts, onClick: () => onOpen('shopper') },
       ])}
