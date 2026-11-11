@@ -20,7 +20,7 @@ export function isFounderEmail(email) {
   return INTERNAL_FOUNDER_EMAILS.has(String(email || '').trim().toLowerCase());
 }
 
-function hasPersistedInternalBrowserMarker() {
+export function hasPersistedInternalBrowserMarker() {
   if (typeof window === 'undefined') return false;
   try {
     return window.localStorage.getItem(INTERNAL_BROWSER_KEY) === 'founder';

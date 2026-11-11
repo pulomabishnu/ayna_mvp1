@@ -131,6 +131,16 @@ describe('countBuyClick (anonymous counter)', () => {
       store('granted');
       expect(counts()).toBe(false);
     });
+    it('never counts founder browsers or test phones', () => {
+      vi.stubGlobal('navigator', {});
+      const storage = {
+        getItem: (k) => (k === 'ayna_internal_analytics_v1' ? 'founder' : null),
+        setItem: () => {},
+      };
+      vi.stubGlobal('localStorage', storage);
+      vi.stubGlobal('window', { localStorage: storage });
+      expect(counts()).toBe(false);
+    });
     it('sends nothing after an account or app opt-out', () => {
       expect(buyCountingRefused({ ph: { get_explicit_consent_status: () => 'denied' }, nav: {} })).toBe(true);
       expect(buyCountingRefused({ ph: { get_explicit_consent_status: () => 'granted' }, nav: {} })).toBe(false);

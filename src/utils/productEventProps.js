@@ -1,6 +1,7 @@
 import posthog from 'posthog-js';
 import { apiUrl } from './apiUrl.js';
 import { getStoredConsent } from './analyticsConsent.js';
+import { hasPersistedInternalBrowserMarker } from './founderAnalytics.js';
 
 /**
  * Which product an event is about: id, name and brand.
@@ -61,6 +62,10 @@ export function countBuyClick(productId) {
   if (!GO_ID.test(id)) return;
   try {
     if (buyCountingRefused()) return;
+    // Founder browsers and test phones never count, on the site or in the
+    // app, so the daily totals are real visitors only (same marker that
+    // keeps founder traffic out of PostHog).
+    if (hasPersistedInternalBrowserMarker()) return;
     if (typeof fetch !== 'function') return;
     // Not sendBeacon: a beacon always carries the site's cookies (including
     // the analytics cookie). credentials: 'omit' sends none. keepalive lets
