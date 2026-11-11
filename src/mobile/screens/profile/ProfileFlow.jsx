@@ -3707,7 +3707,9 @@ export default function ProfileFlow({
   // "Notifications" row), so "back" has to return to wherever the user
   // actually came from, not a fixed screen.
   const [screenStack, setScreenStack] = useState(() => {
-    if (initialScreen) return ['hub', ...(initialScreen === 'healthInsights' ? ['healthData'] : []), initialScreen];
+    // Opened straight to a screen (Home > Your data > Connect, Health data from a product page):
+    // Back closes it and returns to where she was, never to the Profile tab (Puloma, Nov 11).
+    if (initialScreen) return [...(initialScreen === 'healthInsights' ? ['healthData'] : []), initialScreen];
     const sub = import.meta.env.DEV && new URLSearchParams(window.location.search).get('pscreen');
     return sub ? ['hub', sub] : ['hub'];
   });
@@ -3715,9 +3717,9 @@ export default function ProfileFlow({
   const pushScreen = (next) => setScreenStack((stack) => [...stack, next]);
   const initial = (name || 'Y').trim().charAt(0).toUpperCase() || 'Y';
 
-  const goBack = () => setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack));
+  const goBack = () => { if (screenStack.length <= 1 && initialScreen) { onClose?.(); return; } setScreenStack((stack) => (stack.length > 1 ? stack.slice(0, -1) : stack)); };
   // Edge swipe back through the stack, like every pushed screen in iOS.
-  const swipeBack = useEdgeSwipeBack(goBack, screenStack.length > 1);
+  const swipeBack = useEdgeSwipeBack(goBack, screenStack.length > 1 || Boolean(initialScreen));
 
   const own = ownAnswers !== undefined ? ownAnswers : quizAnswers;
   const profileFilledPct = getProfileCompletionPct(own?.fullHealthIntake || own);

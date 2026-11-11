@@ -62,10 +62,10 @@ export function AskPrompts({ groups = [], onPick }) {
       {tabs ? <PillTabs idBase={idBase} label="Suggested questions" tabs={groups.map((g) => ({ id: g.id, label: g.short || g.title }))} active={active} onChange={setPicked} className="ay-askp-filter" />
         : <h3 className="ay-askp-filter__one">{group.title}</h3>}
       {tabs && group.short && group.short !== group.title && <p className="ay-askp-filter__cap">{group.title}</p>}
-      <ul className="ay-askp-chips" {...(tabs ? { ...pillPanelProps(idBase, active, active), tabIndex: undefined } : {})}>
+      <ul key={active} className="ay-askp-chips is-rows" {...(tabs ? { ...pillPanelProps(idBase, active, active), tabIndex: undefined } : {})}>
         {group.prompts.map((p) => (
           <li key={p.question}>
-            <button type="button" className="ay-askp-chip" onClick={() => { haptic('selection'); if (p.action) p.action(); else onPick(p.question, p); }}>{p.question}</button>
+            <button type="button" className="ay-askp-chip" onClick={() => { haptic('selection'); if (p.action) p.action(); else onPick(p.question, p); }}><span>{p.question}</span><svg className="ay-askp-chip__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
           </li>
         ))}
       </ul>
@@ -215,7 +215,8 @@ export function AskStart({ name = '', intro = '', how = null, top = null, groups
     <div className="ay-askp-start is-calm">
       {/* Ask critique (Oct 27): a plain greeting and one line of context, no hero card, no sparkle. */}
       <div className="ay-askp-greet">
-        <h2 className="ay-askp-hello">{name ? `Hi ${name}` : 'Hi there'}</h2>
+        {/* Nov 11 (founder inspo "Hey, Cameron! What can I do for you?"): a big greeting and one question. */}
+        <h2 className="ay-askp-hello">{name ? `Hi ${name},` : 'Hi there,'}<span className="ay-askp-hello__q">what can ayna help with?</span></h2>
         <p className="ay-askp-intro">
           {intro}
           {how && <> <button type="button" className="ay-askp-howlink" aria-expanded={howOpen} aria-controls="ay-askp-how" onClick={() => setHowOpen((v) => !v)}>How Ask works</button></>}

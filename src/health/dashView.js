@@ -60,10 +60,11 @@ export function short(metric, v) {
   return metric === 'steps' ? Math.round(v).toLocaleString('en-US') : formatMetric(metric, v);
 }
 
-/** "6h 40m · usual 7h 32m"; the usual part only when she has one. */
+/** "6h 40m weekly avg · usual 7h 32m"; the usual part only when she has one.
+ *  Puloma, Nov 11 run-through: say it's the weekly average, not today. */
 export function valueWithUsual(chart) {
   if (!chart) return '';
-  const now = short(chart.metric, chart.week ?? chart.avg);
+  const now = `${short(chart.metric, chart.week ?? chart.avg)} weekly avg`;
   return chart.usual != null ? `${now} · usual ${short(chart.metric, chart.usual)}` : `${now} · still learning your usual`;
 }
 

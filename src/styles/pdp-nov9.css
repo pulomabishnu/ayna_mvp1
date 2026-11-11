@@ -13,7 +13,7 @@
 /* The checkered strip between sections reads as decoration: gone on product pages (footer keeps its own). */
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body :is(.ayp-strip, .ay-pdp-strip) { display: none !important; }
 /* Beats the id-weighted pdp.css rules (an :is() list counts as its strongest member). */
-html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html) .ay-urgent.is-fold { border: 1.5px solid currentColor !important; border-left-width: 1.5px !important; box-shadow: none !important; }
+html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html) .ay-urgent.is-fold { border: 0 !important; border-top: 1px solid currentColor !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important; box-shadow: none !important; } /* Nov 11: a rule above, not a box */
 /* Care notes on the website too: butter with an outline, first line plus "Read more" (Nov 9). */
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-carenote { background: #ffedac !important; color: #3e2723 !important; border: 1.5px solid #3e2723 !important; box-shadow: none !important; }
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html) body .ay-carenote__more summary { cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
@@ -60,3 +60,14 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 .ay-carebar__more p { margin: 6px 0 0; }
 [data-theme*="dark"] .ay-carebar { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .45); }
 [data-theme*="dark"] .ay-carebar__go { background: #ffedac; color: #3e2723 !important; }
+
+/* Nov 11 (founder: "stop putting things in boxes", brand colours only, not too much colour): on the
+   app product page, "When to get help now", the safety line, Compare and More like this sit on the
+   page with no outline; the action and Ask ayna buttons have no fill. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp :is(details.ay-urgent, .ay-urgent.is-fold, .ayv-safeline, .ay-pdp2-cmpbtn, .ay-pdp-morelist > li, .ay-pdp-morelist > li > button, .ay-urgent li) { border: 0 !important; box-shadow: none !important; background: transparent !important; border-radius: 0 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp :is(details.ay-urgent, .ayv-safeline, .ay-pdp2-cmpbtn) { padding-left: 0 !important; padding-right: 0 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-pdp3-pills > button > svg { background: transparent !important; padding: 8px !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-pdp3-pills > button.is-on > svg { background: #f7badd !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-askquick__row button { background: transparent !important; text-decoration: underline; text-underline-offset: 3px; padding: 0 6px !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-pdp-morelist { display: grid; gap: 12px; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-reads .ay-group > li { border: 0 !important; border-bottom: 1px solid #3e2723 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }

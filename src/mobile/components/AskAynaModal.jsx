@@ -279,7 +279,19 @@ export default function AskAynaModal({
     // "Hello" shows (QA M7). This runs after the home effect above, so it must
     // not push the empty list to its bottom.
     const asked = messages.some((m) => m.role === 'user');
-    if (open && list) list.scrollTo(asked && !home ? { top: list.scrollHeight, behavior: 'smooth' } : { top: 0 });
+    if (!open || !list) return;
+    if (!asked || home) { list.scrollTo({ top: 0 }); return; }
+    // Nov 11 run-through (Puloma: "the formatting is off"): it jumped to the bottom of a long answer.
+    // A new answer opens at her question and the start of the answer; her own message scrolls down.
+    const last = messages[messages.length - 1];
+    if (last && last.role !== 'user') {
+      const answers = list.querySelectorAll('.ay-askp-msg.is-ayna');
+      const answer = answers[answers.length - 1];
+      const prev = answer?.previousElementSibling;
+      const target = prev?.classList?.contains('is-user') ? prev : answer;
+      if (target) { list.scrollTo({ top: Math.max(0, list.scrollTop + target.getBoundingClientRect().top - list.getBoundingClientRect().top - 12), behavior: 'smooth' }); return; }
+    }
+    list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
     // Reopening preserves the existing scroll position.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);

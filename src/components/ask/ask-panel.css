@@ -276,3 +276,32 @@ html body .app-container.app-container .wx-askpage { padding-top: 32px; padding-
 .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > :nth-child(12) { animation-delay: 990ms; }
 @keyframes askp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-text > * { animation: none; } }
+
+/* ── Nov 11 Ask redesign (founder: "make Ask ayna better and prettier", inspo boards "Hey, Cameron! What
+   can I do for you?" and "Hello James"; Apple HIG; NN/g). Brand colours only. A big two-line greeting,
+   the topic switch as a plain track with the espresso pill, suggested questions as easy rows with an
+   arrow (not outlined pills), her question as an espresso bubble on the right, ayna's answer as text on
+   the page (no box). Motion: rows rise in one after another (180ms), answers fade up; off under
+   reduced motion. ── */
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-hello { margin: 4px 0 8px !important; font: 700 30px/1.1 'ayna Display', 'Figtree', sans-serif !important; letter-spacing: -.02em !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-hello__q { display: block; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-intro { font: 500 14px/1.45 'Figtree', sans-serif !important; color: #3e2723 !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-filter { border: 0 !important; background: transparent !important; box-shadow: none !important; margin-top: 16px !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows { display: grid !important; gap: 0 !important; margin: 8px 0 0 !important; padding: 0 !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows > li { animation: ay-askp-rise .18s ease both; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows > li:nth-child(2) { animation-delay: .04s; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows > li:nth-child(3) { animation-delay: .08s; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows > li:nth-child(n+4) { animation-delay: .12s; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows .ay-askp-chip { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important; min-height: 56px !important; padding: 14px 4px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; color: #3e2723 !important; font: 600 16px/1.35 'Figtree', sans-serif !important; text-align: left !important; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows .ay-askp-chip__go { flex: none; width: 36px; height: 36px; padding: 9px; box-sizing: border-box; border-radius: 50%; background: #f7badd; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s ease; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows .ay-askp-chip:hover .ay-askp-chip__go { transform: translateX(3px); }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-chips.is-rows .ay-askp-chip:focus-visible { outline: 3px solid #3e2723 !important; outline-offset: 2px !important; border-radius: 12px !important; }
+/* The conversation. */
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-ayna .ay-askp-bubble { border: 0 !important; border-radius: 0 !important; background: transparent !important; padding: 4px 0 !important; box-shadow: none !important; animation: ay-askp-rise .22s ease both; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble { background: #3e2723 !important; color: #ffedac !important; border: 0 !important; animation: ay-askp-rise .15s ease both; }
+.ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble * { color: #ffedac !important; }
+@keyframes ay-askp-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) :is(.ay-askp-chips.is-rows > li, .ay-askp-bubble) { animation: none !important; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) :is(.ay-askp-hello, .ay-askp-intro, .ay-askp-chips.is-rows .ay-askp-chip) { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble { background: #f7badd !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-msg.is-user .ay-askp-bubble * { color: #3e2723 !important; }

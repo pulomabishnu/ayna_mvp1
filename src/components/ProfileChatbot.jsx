@@ -272,9 +272,13 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     if (home && !sending) { if (box) box.scrollTop = 0; return; }
     const last = messages[messages.length - 1];
     if (box && last && last.role !== 'user') {
+      // Nov 11 run-through (Puloma: "the formatting is off"): it opened mid-answer. Her question and the
+      // start of the answer come into view (measured on screen; offsetTop pointed at the wrong parent).
       const answers = box.querySelectorAll('.ay-askp-msg.is-ayna');
-      const target = answers[answers.length - 1];
-      if (target) { box.scrollTo({ top: target.offsetTop - box.offsetTop - 8, behavior: 'smooth' }); return; }
+      const answer = answers[answers.length - 1];
+      const question = answer?.previousElementSibling?.classList?.contains('is-user') ? answer.previousElementSibling : null;
+      const target = question || answer;
+      if (target) { box.scrollTo({ top: Math.max(0, box.scrollTop + target.getBoundingClientRect().top - box.getBoundingClientRect().top - 12), behavior: 'smooth' }); return; }
     }
     // Scroll the conversation box only: scrollIntoView also moved the whole
     // page on /ask, so the page opened scrolled past its own title.

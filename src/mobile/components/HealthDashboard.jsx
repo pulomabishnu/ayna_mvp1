@@ -1,4 +1,5 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { LOG_SAVED_EVENT, flowRowsFromLog, readLog } from '../../health/dailyLog.js';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { AskContext } from '../askContext.js';
 import { dashboardContext } from '../utils/dashboardAsk.js';
@@ -31,7 +32,16 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
   const askHealth = useAskHealthPref(authUser?.id || null);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
   const today = localToday();
-  const week = useMemo(() => buildDashboard(health.insightRows || [], { days: 30, today }), [health.insightRows, today]);
+  // Eliz, Nov 11 run-through: "every time I go to Your data it doesn't show my cycle day". Periods she
+  // logs on ayna count here too (same as Home's dial), so the cycle shows without Apple Health.
+  const [logTick, setLogTick] = useState(0);
+  useEffect(() => {
+    const on = () => setLogTick((n) => n + 1);
+    window.addEventListener(LOG_SAVED_EVENT, on);
+    return () => window.removeEventListener(LOG_SAVED_EVENT, on);
+  }, []);
+  const rows = useMemo(() => { let log = {}; try { log = readLog(); } catch { /* storage blocked */ } return [...(health.insightRows || []), ...flowRowsFromLog(log)]; }, [health.insightRows, logTick]); // eslint-disable-line react-hooks/exhaustive-deps
+  const week = useMemo(() => buildDashboard(rows, { days: 30, today }), [rows, today]);
   const { sections } = health.insights;
   const ready = sections.filter((s) => s.status === 'ready');
   const estimate = sections.find((s) => s.id === 'cycle')?.estimate || null;
@@ -42,7 +52,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
       variant="app"
       userId={authUser?.id || null}
       intake={quizAnswers}
-      healthRows={health.insightRows || []}
+      healthRows={rows}
       cycle={week.cycle?.cycleDay ? week.cycle : null}
       hormonalBC={hormonalBC}
       products={feedProducts}
@@ -71,7 +81,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
       </div></div>
     );
   }
-  if (health.status === 'error' && !health.insightRows?.length) {
+  if (health.status === 'error' && !rows.length) {
     return (
       <div className="ay-hd">{todayFeed}<div className="ay-hd-empty" role="alert">
         <h2>We couldn't load your health data</h2>
@@ -98,7 +108,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
         connections={health.connected || []}
         onRefresh={() => health.refresh()}
         status={health.status}
-        rows={health.insightRows || []}
+        rows={rows}
         sections={sections}
         matchContext={health.matchContext}
         today={today}
