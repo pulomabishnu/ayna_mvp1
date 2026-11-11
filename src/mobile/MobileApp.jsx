@@ -1446,6 +1446,8 @@ export default function MobileApp() {
     onReadyCreateAccount: () => { authResumeRef.current = null; authReturnScreenRef.current = 'ready'; setAuthMode('signup'); setScreen('signin'); },
     onReadyBack: () => resumeQuizAtLastStep(),
     onReadyConnect: () => setScreen('connect'),
+    // Nothing matched yet (founder, Nov 10): Shop, to add what she uses or likes to her ecosystem.
+    onReadyExplore: () => { nav.onSeeMatches(); markOnboardingDone(); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); },
     readyConnected: Boolean(authUser && health.connected.length),
     readyMatchOpts: planMatchOpts,
     onMakeMorePersonal: () => { setIntakeFlow('more'); setScreen('quiz'); },
@@ -1637,6 +1639,17 @@ export default function MobileApp() {
     suggest: suggestOn ? { signedIn: Boolean(authUser?.id), hasProfile: Boolean(effectiveQuizAnswers), surface: suggestSurface } : null,
     // The ayna wordmark opens the landing, signed in or out (founder, Oct 27 01:13).
     onOpenLanding: openLanding,
+    // The updates bell (founder, Nov 10): what it needs, and where each item goes.
+    userId: authUser?.id || null,
+    quizAnswers: effectiveQuizAnswers || null,
+    theme: resolvedTheme,
+    onUpdate: (kind) => {
+      setAskAynaOpen(false); setOverlay(null);
+      if (kind === 'checkin') { setScreen('checkin'); return; }
+      if (kind === 'community' || kind === 'news') { setCommunitySeed(null); setScreen('community'); return; }
+      if (kind === 'signin') { openAuth('signin'); return; }
+      setHomeView(homeRoot); setScreenRaw(homeTarget);
+    },
   };
   const sheetValue = {
     open: (product) => { if (product?.id) setSheetProduct(product); },
@@ -1737,8 +1750,7 @@ export default function MobileApp() {
       {showTabBar && <MobileTabBar
         active={activeTab}
         onExplore={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
-        // Services: the Shop page with Services picked. Library: the reads.
-        onServices={() => { setAskAynaOpen(false); setOverlay(null); setBrowseQuery(''); setExploreSection('services'); setScreen('explore'); }}
+        // Services is a section inside Shop now (founder, Nov 10). Library: the reads.
         onLibrary={() => { setAskAynaOpen(false); setOverlay(null); setExploreSection('resources'); setScreen('library'); }}
         // Home always opens on its root (the dashboard, or the chat in the chat-first variant).
         // Signed out with nothing on this phone, Home is the landing (founder, Oct 27 01:10).

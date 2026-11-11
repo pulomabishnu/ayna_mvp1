@@ -49,6 +49,9 @@ export default function AynaHomeScreen(props) {
     omittedProducts = {}, routineHave = {}, onOpenSaved, onOpenCommunitySeed, recentAsks = [], readProgress = {},
   } = props;
   const goHome = () => onHomeView?.('home');
+  // Founder, Nov 10 ("the period and symptom log doesn't take you anywhere"): logging is free and
+  // happens right here on Home. It used to switch to the dashboard, which is behind ayna Pro.
+  const logHere = () => openTodayLog('app');
   const openDashboard = (thenLog = false) => { onHomeView?.('dashboard'); if (thenLog) setTimeout(() => openTodayLog('app'), 400); };
   const hasProfile = Boolean(lastQuizAnswers || quizAnswers);
   const hasProducts = hasEcosystem || myProducts.length > 0;
@@ -163,7 +166,7 @@ export default function AynaHomeScreen(props) {
               <h1 className="sr-only">Your products</h1>
               {quizDraft && onResumeQuiz
                 ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
-                : <EmptyState art="spark" title={lastQuizAnswers ? 'No strong matches yet' : 'Your products live here'} body={lastQuizAnswers ? 'Nothing passed the bar for your goals yet. Explore has everything, with your match on each product.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore products' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
+                : <EmptyState art="spark" title={lastQuizAnswers ? 'Build your ecosystem' : 'Your products live here'} body={lastQuizAnswers ? 'Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore Shop' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
               <LegalFooter />
             </div>}
         </div>
@@ -174,7 +177,7 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* The data is the hero (founder Oct 26 21:46): greeting, three dials, the Rundown bubble and her streak. */}
         <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} activity={chartOf('steps')}
-          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={() => openDashboard(true)} onMonth={() => setMonthOpen(true)} />
+          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={logHere} onMonth={() => setMonthOpen(true)} />
         {/* "Is this still right?" for an old safety answer (src/health/healthRefresh.js). */}
         {authUser && quizAnswers && onUpdateIntake && <HealthRefreshPrompt variant="app" quizResults={quizAnswers} onSave={onUpdateIntake} onUpdate={onEditIntakeStep || null} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}
@@ -203,7 +206,8 @@ export default function AynaHomeScreen(props) {
           community={rundownCommunity}
           onOpenPost={onOpenCommunityPost}
           onRundownFinish={onRundownFinish}
-          onOpenFull={(item, o) => openDashboard(Boolean(o?.log))}
+          onOpenFull={(item, o) => (o?.log ? logHere() : openDashboard(false))}
+          homeLog
           moreHeading={false}
           renderViews={renderViews}
           onLogged={onLogged}
@@ -212,7 +216,7 @@ export default function AynaHomeScreen(props) {
       </div>
       {monthOpen && monthData && (
         <MonthSheet today={today} rows={data.rows} log={dayLog} cycle={cycle} estimate={monthData.estimate} coming={monthData.coming} hormonalBC={hbc}
-          onLog={() => openDashboard(true)} onClose={() => setMonthOpen(false)} />
+          onLog={() => { setMonthOpen(false); logHere(); }} onClose={() => setMonthOpen(false)} />
       )}
       {sheet && (
         <MetricSheet metric={sheet} today={today} cycle={cycle} hormonalBC={hbc} bandOf={bandOf}

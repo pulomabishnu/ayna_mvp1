@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import BrandStrip from './ui/ay/BrandStrip.jsx';
 import { PlateName } from './cards/CardBits.jsx';
-import { SnapCarousel } from './ui/ay/index.js';
 import { useResearchState } from '../data/researchLoader';
 import ProductCard from './ProductCard';
 import { ALL_PRODUCTS, getProfileMatchPercentForProduct, getProductMatchDetailsForProduct } from '../data/products.js';
@@ -22,7 +21,7 @@ import HeroPrice from './pdp/HeroPrice.jsx';
 import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
 import PdpIcon from './pdp/PdpIcon.jsx';
-import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
+import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
 import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from './pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../utils/analyticsEvents.js';
 import { productAskStarters } from '../utils/productAsk';
@@ -52,6 +51,7 @@ import { productIdentity, countBuyClick } from '../utils/productEventProps.js';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
 import './pdp/pdp-nov6.css';
+import './pdp/pdp-web-compact.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
 import { ASK_SIGN_IN, ASK_MONTHLY_LIMIT, ASK_BURST_LIMIT, askLimitCode } from '../pro/askLimitCopy.js';
@@ -609,7 +609,7 @@ export default function ProductModal({
     <>
       {/* A size picker only when picking changes something here (price, link or photo);
           otherwise just say which sizes exist. */}
-      {choice.hasVariants && variantsMatter && (
+      {choice.hasVariants && variantsMatter && (product.variants || []).length > 1 && (
         <label className="ayp-variant">
           <span className="ayp-variant__label">Size or option</span>
           <select
@@ -622,8 +622,8 @@ export default function ProductModal({
           </select>
           <small>
             {sizeChosenOnAmazon
-              ? 'The Buy button opens this product on Amazon. Pick the same size there, and confirm current price and availability with the retailer.'
-              : 'The Buy button opens this exact option. Confirm current price and availability with the retailer.'}
+              ? 'Pick the same size on Amazon.'
+              : 'Buy opens this size.'}
           </small>
         </label>
       )}
@@ -858,8 +858,7 @@ export default function ProductModal({
           </div>
         </div>
 
-        {/* The facts that matter, as big numbers (Glossier's claims row, rebuilt as a bento). */}
-        <Highlights items={highlights} />
+        {/* The big-number row is gone (founder, Nov 10: overcrowded): pack size and FSA/HSA are in the meta line and price. */}
 
         <div className="ayv-body">
           {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}
@@ -894,15 +893,14 @@ export default function ProductModal({
         {relatedReads.length > 0 && (
           <section className="ay-section ayp-reads" aria-labelledby="pdp-reads-h">
             <h2 id="pdp-reads-h" className="ay-h2">Read about it</h2>
-            {/* Reads are a peeking snap carousel everywhere (Library featured, here). */}
-            <SnapCarousel label="Reads about this" size="card" className="ayp-reads__list ayp-reads__snap" items={relatedReads.map((r) => ({ key: r.id, node: (
-              <a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
+            {/* A short vertical list: nothing on the product page moves sideways (founder's rules, Nov 10). */}
+            <ul className="ayp-reads__rows">{relatedReads.slice(0, 3).map((r) => (
+              <li key={r.id}><a href={`/library/${r.id}`} onClick={(e) => { if (!onOpenRead || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return; e.preventDefault(); onOpenRead(r.id); }}>
                 <span className="ayp-reads__title">{r.title}</span>
                 {r.teaser && <span className="ayp-reads__teaser">{r.teaser}</span>}
-                <span className="ayp-reads__mark"><EvidenceMark level="gov" />Checked against trusted health sources</span>
-                <span className="ayp-reads__go" aria-hidden="true">→</span>
-              </a>
-            ) }))} />
+                <span className="ayp-reads__go" aria-hidden="true">›</span>
+              </a></li>
+            ))}</ul>
           </section>
         )}
 

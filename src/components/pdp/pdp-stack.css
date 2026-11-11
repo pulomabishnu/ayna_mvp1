@@ -31,3 +31,83 @@
 .ay-stack__card, .ay-stack__card.is-open { transform: none !important; transition: none !important; }
 .ay-stack__panel { animation: none !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink { border-color: #ffedac; }
+
+/* Nov 10, second pass (founder: "we need them to see it so they know it's there if they don't scroll"):
+   an index, not a stack. All four tiles show at once in a 2x2 grid (brown, pink, pink, brown so
+   the colours checker across rows); the open tile gets a thick ring; its content opens below. */
+.ay-stack.is-index { margin: 12px 0 8px; }
+.ay-stack__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.ay-stack__grid.is-3 > :first-child { grid-column: 1 / -1; }
+.ay-stack.is-index .ay-stack__card { margin: 0 !important; padding: 0 !important; box-shadow: none !important; border-radius: 18px; }
+.ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(3) { background: #f7badd; color: #3e2723; }
+.ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) { background: #3e2723; color: #ffedac; }
+.ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(3) .ay-stack__ic svg { stroke: #f7badd; }
+.ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) .ay-stack__ic svg { stroke: #3e2723; }
+.ay-stack.is-index .ay-stack__head { min-height: 72px; padding: 10px 12px; gap: 10px; align-items: center; }
+.ay-stack.is-index .ay-stack__head:focus-visible { border-radius: 16px; }
+.ay-stack__txt { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.ay-stack.is-index .ay-stack__head b { font: 700 15px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-stack.is-index .ay-stack__tag { font: 600 13px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .92; }
+.ay-stack.is-index .ay-stack__ic { width: 30px; height: 30px; }
+.ay-stack.is-index .ay-stack__card.is-open { box-shadow: 0 0 0 3px #fff8dc, 0 0 0 5.5px #3e2723 !important; }
+.ay-stack.is-index .ay-stack__body { padding: 8px 0 0; }
+.ay-stack.is-index .ay-stack__panel { border: 1.5px solid #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) { background: #4a302a; color: #ffedac; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) .ay-stack__ic svg { stroke: #4a302a; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__card.is-open { box-shadow: 0 0 0 3px #3e2723, 0 0 0 5.5px #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__panel { border-color: rgba(255, 237, 172, .5); }
+
+/* The summary reads like a well-set article page (founder, Nov 10: "all the information, easy to
+   read, and if you don't want to read it you don't have to"): bold lead line first, then each
+   section as a heading with its content right there. No accordions, no "Read more". Skim the
+   headings, or read on. Reading column capped near 68 characters; 16px body, 1.55 line height. */
+.ay-stack__panel .ayv-sec--lead { margin: 0 0 4px; }
+.ay-stack__panel .ayv-oneline { font: 700 18px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif !important; margin: 0 0 8px !important; max-width: 68ch; }
+.ay-stack__panel .ayv-lead-more { font: 400 16px/1.55 var(--ay-font-ui, 'Figtree'), sans-serif; max-width: 68ch; }
+.ay-stack__panel .ayv-lead-more p { margin: 0 0 10px; }
+.ay-stack__panel .ayv-xrows { display: block; margin: 0; padding: 0; border: 0; }
+.ay-stack__panel .ayq-step.is-flat { display: block; margin: 0; padding: 16px 0 4px; border: 0; border-top: 1px solid rgba(62, 39, 35, .18); background: none !important; border-radius: 0; }
+.ay-stack__panel .ayq-step.is-flat:first-child { margin-top: 12px; }
+.ay-stack__panel .ayq-step__flath { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 8px; font: 700 17px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; color: inherit; }
+.ay-stack__panel .ayq-step.is-flat .ayq-step__meta { font: 600 13px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .8; }
+.ay-stack__panel .ayq-step.is-flat .ayq-step__body { padding: 0 !important; margin: 0; max-width: 68ch; font-size: 16px; line-height: 1.55; }
+.ay-stack__panel .ayq-step.is-flat .ayq-step__body > section { padding: 0 !important; background: none !important; border: 0 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__panel .ayq-step.is-flat { border-top-color: rgba(255, 237, 172, .22); }
+/* The lead line on the plain panel (Nov 6 removed its box). The website's tab style still painted
+   its text butter, so it vanished on the butter panel; here it is ink, larger, and bold. */
+html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead :is(p, span, b, .ayv-oneline, .ayv-lead-more) { color: #3e2723 !important; }
+html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead { padding: 0 0 4px !important; }
+html body :is([data-theme='dark'], [data-theme='brand-dark']) #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead :is(p, span, b, .ayv-oneline, .ayv-lead-more) { color: #ffedac !important; }
+html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead .ayv-lead-more, html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead .ayv-lead-more :is(p, span) { font: 400 16px/1.55 var(--ay-font-ui, 'Figtree'), sans-serif !important; letter-spacing: 0 !important; }
+html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayv-sec--lead .ayv-oneline { font: 700 19px/1.35 var(--ay-font-ui, 'Figtree'), sans-serif !important; }
+html body #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack__panel .ayq-step.is-flat:first-child { margin-top: 8px !important; }
+
+/* Spacing (founder, Nov 10: "spaced out bad"): one rhythm in the summary. 8px from a heading to its
+   content, 6px between list items, 24px between sections, 1.45 line height for list text. */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step.is-flat { padding: 20px 0 0 !important; margin: 20px 0 0 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step.is-flat:first-child { margin-top: 16px !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step__flath { margin: 0 0 8px !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step.is-flat .ayq-step__body { font-size: 15px !important; line-height: 1.45 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-leadin { margin: 0 0 4px !important; font: 700 13px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif !important; letter-spacing: .02em; opacity: .85; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-leadin.ayv-sub { margin-top: 14px !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-list { display: grid !important; gap: 6px !important; margin: 0 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-list > li { padding: 2px 0 !important; gap: 10px !important; line-height: 1.45 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-list > li :is(.ayq-p, .ayv-lr__rest, .ayv-lr__lead) { line-height: 1.45 !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-list .ayv-mark { margin-top: 2px !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-steps { display: grid !important; gap: 8px !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-steps > li { padding: 0 !important; line-height: 1.45 !important; }
+
+/* Second pass (founder, Nov 10: "dropdowns ... people should have the option to click on it"):
+   the sections are tap-to-open rows again, each showing a one-line preview while closed, so she
+   sees what is inside without it taking her whole screen. Plain divider rows, not filled bars. */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-xrows { margin-top: 12px !important; border-top: 1px solid rgba(62, 39, 35, .18); }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) { margin: 0 !important; padding: 0 !important; background: none !important; border: 0 !important; border-bottom: 1px solid rgba(62, 39, 35, .18) !important; border-radius: 0 !important; box-shadow: none !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__sum { display: grid !important; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; min-height: 56px; padding: 12px 2px !important; background: none !important; border: 0 !important; border-radius: 0 !important; cursor: pointer; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__sum .ayq-step__text { grid-column: 1; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__sum .ayq-step__h { font: 700 16px/1.3 var(--ay-font-ui, 'Figtree'), sans-serif !important; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__sum .ayq-step__meta { font: 600 13px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif !important; opacity: .8; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__sum .ayq-step__chev { grid-column: 2; grid-row: 1 / span 2; background: none !important; width: 20px; height: 20px; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step__peek { grid-column: 1; font: 500 14px/1.35 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step[open] .ayq-step__peek { display: none; }
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat) > .ayq-step__body { padding: 0 2px 16px !important; font-size: 15px !important; line-height: 1.45 !important; }
+html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayq-step:not(.is-flat), html body :is([data-theme='dark'], [data-theme='brand-dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) .ay-stack__panel .ayv-xrows { border-color: rgba(255, 237, 172, .22) !important; }

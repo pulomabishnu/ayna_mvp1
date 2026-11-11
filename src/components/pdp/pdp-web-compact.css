@@ -1,0 +1,45 @@
+/* Website product page on a phone (founder, Nov 10: "make it look like the app", "see it without
+   scrolling"): the photo sits beside the name like the app's header card, so price, match, Buy and
+   the four section tiles fit on the first screen. Desktop keeps its two columns. */
+@media (max-width: 759px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk.ayv-dk { display: grid !important; grid-template-columns: 104px minmax(0, 1fr); gap: 12px 14px; align-items: center; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk > .ayv-dk__decide { display: contents !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk > .ayv-dk__gallery { grid-column: 1; grid-row: 1; width: 104px; min-width: 0; margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk > .ayv-dk__decide > .ayv-ident { grid-column: 2; grid-row: 1; margin: 0 !important; display: grid; gap: 4px; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk > .ayv-dk__decide > :not(.ayv-ident) { grid-column: 1 / -1; min-width: 0; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery :is(.ay-gal__zoom, .ay-gal__dots, .ay-gal__thumbs) { display: none !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__gallery :is(.ay-gal, .ay-gal__open, .ayp-plate) { width: 104px !important; height: 104px !important; min-height: 0 !important; aspect-ratio: 1 !important; border-radius: 16px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-ident .ayv-brand { margin: 0 !important; font: 700 12px/1.2 var(--ay-sans, 'Figtree'), sans-serif !important; letter-spacing: .06em; text-transform: uppercase; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-ident h1 { margin: 0 !important; font-size: 22px !important; line-height: 1.15 !important; overflow-wrap: anywhere; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-ident .ayv-metaline { margin: 0 !important; font-size: 13px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-buy__section { margin-top: 0 !important; gap: 10px !important; }
+  /* Size picker: a quiet field, not a pink slab. */
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-variant { gap: 6px !important; margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-variant select { min-height: 48px !important; height: 48px !important; background-color: transparent !important; border: 1.5px solid currentColor !important; font-size: 16px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-variant small { display: none !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-safeline { padding: 10px 12px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-safeline__body { font-size: 15px !important; line-height: 1.4 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body { margin-top: 4px !important; }
+  /* The photo tile is exactly 104px, so it never runs under the name. */
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery { grid-column: 1; grid-row: 1; width: 104px !important; max-width: 104px !important; margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery :is(.ay-gal, .ay-gal__stage) { width: 104px !important; max-width: 104px !important; height: 104px !important; min-height: 0 !important; margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayp-gallery :is(img, picture) { max-width: 100% !important; max-height: 100% !important; object-fit: contain !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk .ayv-quizline { margin: 0 !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-body, #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-dk__tabs, #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv--stack { margin-top: 0 !important; padding-top: 0 !important; }
+}
+/* The four tiles on a narrow phone: smaller icon so the names fit on one line. */
+@media (max-width: 420px) {
+  .ay-stack.is-index .ay-stack__head { padding: 10px; gap: 8px; }
+  .ay-stack.is-index .ay-stack__ic { width: 26px; height: 26px; }
+  .ay-stack.is-index .ay-stack__ic svg { width: 15px; height: 15px; }
+}
+/* Read about it: a plain list of up to three (nothing moves sideways). */
+.ayp-reads__rows { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.ayp-reads__rows a { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; padding: 14px 16px; border: 1.5px solid currentColor; border-radius: 16px; color: inherit; text-decoration: none; }
+.ayp-reads__rows .ayp-reads__title { font: 700 16px/1.3 var(--ay-sans, 'Figtree'), sans-serif; }
+.ayp-reads__rows .ayp-reads__teaser { grid-column: 1; font: 500 14px/1.4 var(--ay-sans, 'Figtree'), sans-serif; opacity: .85; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ayp-reads__rows .ayp-reads__go { grid-column: 2; grid-row: 1 / span 2; font-size: 22px; }
+@media (max-width: 759px) {
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-stack.is-index { margin-top: 16px !important; }
+  #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ayv-hero { margin-bottom: 0 !important; }
+}

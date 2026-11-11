@@ -418,11 +418,23 @@ function StickyTabs({ tabs, active, onChange, stickTop, swipe = false }) {
 }
 
 /** A progressive-disclosure step inside a tab (closed until she asks for it). */
-function Step({ id, title, meta = '', children, open = false, className = '' }) {
+function Step({ id, title, meta = '', children, open = false, className = '', flat = false, peek = '' }) {
+  // Flat (the product page's summary, Nov 10): every section shows, a heading and its content,
+  // nothing to tap open. Skim the headings and bold lines, or read on; no "Read more".
+  if (flat) {
+    return (
+      <section id={id} className={`ayq-step ayq-anchor is-flat${className ? ` ${className}` : ''}`} aria-labelledby={`${id}-h`}>
+        <h3 id={`${id}-h`} className="ayq-step__flath"><span>{title}</span>{meta && <span className="ayq-step__meta">{meta}</span>}</h3>
+        <div className="ayq-step__body">{children}</div>
+      </section>
+    );
+  }
   return (
     <details id={id} className={`ayq-step ayq-anchor${className ? ` ${className}` : ''}`} open={open || undefined}>
       <summary className="ayq-step__sum">
         <span className="ayq-step__text"><span className="ayq-step__h">{title}</span>{meta && <span className="ayq-step__meta">{meta}</span>}</span>
+        {/* A one-line preview while closed (founder, Nov 10: see what's inside without opening it). */}
+        {peek && <span className="ayq-step__peek">{peek}</span>}
         <PdpIcon name="chevron" size={20} className="ayq-step__chev" />
       </summary>
       <div className="ayq-step__body">{children}</div>
@@ -832,7 +844,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const howBody = (m.how || adds('how').length) ? (
     <>
       {m.how?.intro && <p className="ayq-p ayq-intro"><Tx>{m.how.intro}</Tx></p>}
-      {m.how && <ShowAll items={m.how.steps} n={2} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
+      {m.how && <ShowAll items={m.how.steps} n={layout === 'stack' ? 99 : 2} label="steps" className="ayv-steps" render={(st, i) => <><span className="ayv-steps__n" aria-hidden="true">{i + 1}</span><span className="ayq-p"><Tx>{st}</Tx></span></>} />}
       {/* The listing footer only when the intro does not already name the source. */}
       {m.how && !m.how.source && m.how.fromListing && !/\b(per|listing|instructions|according)\b/i.test(m.how.intro || '') && <p className="ayq-meta">{FROM_LISTING}.</p>}
       {m.how && (m.how.source || m.how.faq) && (
@@ -921,6 +933,8 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   // stays visible. Every line is still on the page (closed rows keep their text in the DOM).
   const insideTitle = m.isDigital ? 'What’s included' : isDevice ? 'What it’s made of' : 'What’s in it';
   const count = (n, one, many) => (n ? plural(n, one, many) : '');
+  const peekOn = layout === 'stack';
+  const peekText = (t) => { const x = String(t || '').replace(/\*\*|__|\[|\]\([^)]*\)/g, '').replace(/\s+/g, ' ').trim(); return x.length > 90 ? `${x.slice(0, 88).replace(/\s+\S*$/, '')}…` : x; };
   const whoBody = (whoL.yes.length > 0 || whoL.no.length > 0) && (
     <>
       {whoL.yes.length > 0 && <p className="ayv-leadin">Good for:</p>}
@@ -972,7 +986,9 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
         <section id="ay-sum-about" className="ayq-anchor ayv-sec ayv-sec--lead" aria-label="What it is">
           {lead && <p className={`ayv-oneline${String(lead).length > 140 ? ' is-long' : ''}`}><Tx>{brandVoice(lead, m.brand || glance?.brand)}</Tx></p>}
           {/* Glance first (founder, Oct 26 16:54): the one line shows; the team's full write-up is one tap away. */}
-          {m.summary.length > 0 && <ReadMore label="Read more" className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></ReadMore>}
+          {m.summary.length > 0 && (layout === 'stack'
+            ? <div className="ayq-prose ayv-lead-more"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></div>
+            : <ReadMore label="Read more" className="ayq-prose"><Paras list={m.summary.filter((x) => !(teamShort && x.startsWith(leadParts.used)))} /></ReadMore>)}
         </section>
       )}
       {statItems.length >= 2 && (
@@ -987,14 +1003,14 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   );
   const xrowsEl = (
     <div className="ayv-xrows">
-      {whoBody && <Step id="ay-sum-who" title="Who it’s for" meta={count(whoL.yes.length + whoL.no.length, 'point')} className="ayv-xrow"><section className="ayv-xbody">{whoBody}</section></Step>}
+      {whoBody && <Step id="ay-sum-who" title="Who it’s for" meta={count(whoL.yes.length + whoL.no.length, 'point')} className="ayv-xrow" peek={peekOn ? peekText(whoL.yes[0] || whoL.no[0]) : ''}><section className="ayv-xbody">{whoBody}</section></Step>}
       {insideBody && <Step id="ay-sum-details" title={insideTitle} meta={chips ? count(chips.length, m.isDigital ? 'item' : 'ingredient') : ''} className="ayv-xrow"><section className="ayv-xbody">{insideBody}</section></Step>}
-      {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow"><section className="ayv-xbody">{howBody}</section></Step>}
-      {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow"><section className="ayv-xbody">{factsBody}</section></Step>}
+      {howBody && <Step id="ay-sum-how" title="How to use" meta={m.how ? count(m.how.steps.length, 'step') : ''} className="ayv-xrow" peek={peekOn && m.how ? peekText(m.how.steps[0]) : ''}><section className="ayv-xbody">{howBody}</section></Step>}
+      {factsBody && <Step id="ay-sum-facts" title="Product facts" meta={count(keyFacts.length, 'fact')} className="ayv-xrow" peek={peekOn ? peekText(keyFacts.slice(0, 2).map((f) => `${f.label}: ${f.value}`).join(' · ')) : ''}><section className="ayv-xbody">{factsBody}</section></Step>}
       <Step id="ay-sum-evidence" title="Evidence" meta={evx.status} className="ayv-xrow"><section className="ayv-xbody">{evidenceBody}</section></Step>
       {/* Safety facts is one more row (founder, Oct 27 15:54: "why is the safety thing in the middle of it").
           "When to get help now" sits before the tabs, always open (UrgentSigns below). */}
-      {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety"><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
+      {safetyFactsBody && <Step id="ay-sum-safety" title="Safety facts" meta={count(safetyItems.length, 'note')} className="ayv-xrow is-safety" peek={peekOn ? peekText(safetyItems[0]?.text) : ''}><section className="ayv-xbody">{safetyFactsBody}</section></Step>}
     </div>
   );
   const sideEl = (askSlot || endCta) ? (
@@ -1144,13 +1160,15 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
   const activeTab = TAB_ORDER.includes(tab) ? tab : DEFAULT_TAB;
 
   if (layout === 'stack') {
-    const revTag = bigRating ? `${bigRating.value} ★` : '';
+    // Rating plus how many it is from (a 5.0 from one review is not a 4.8 from 1,800).
+    const revTag = bigRating ? `${bigRating.value} of 5${bigRating.count ? ` from ${Number(bigRating.count).toLocaleString('en-US')}` : ''}` : '';
     const cards = [
-      { id: 'summary', title: TAB_LABELS.summary, body: <div className="ayq-sum ayv-read">{summaryLead}</div> },
+      // Everything about the product lives in the summary card (founder, Nov 10: no second list under the cards).
+      { id: 'summary', title: TAB_LABELS.summary, peek: 'Fit, use and safety', body: <div className="ayq-sum ayv-read">{summaryLead}{xrowsEl}</div> },
       // No empty cards (founder, Nov 10: don't point at what we don't have): Clinical shows when a clinician has written.
-      ...(expertBody ? [{ id: 'clinical', title: TAB_LABELS.clinical, body: clinicalBody }] : []),
-      { id: 'literature', title: TAB_LABELS.literature, tag: evTotal > 0 ? plural(evTotal, 'source') : '', body: literatureBody },
-      { id: 'reviews', title: TAB_LABELS.reviews, tag: revTag, body: reviewsTab },
+      ...(expertBody ? [{ id: 'clinical', title: TAB_LABELS.clinical, peek: 'From a clinician', body: clinicalBody }] : []),
+      { id: 'literature', title: TAB_LABELS.literature, peek: evTotal > 0 ? plural(evTotal, 'source') : 'What studies show', body: literatureBody },
+      { id: 'reviews', title: TAB_LABELS.reviews, peek: revTag || 'What people say', body: reviewsTab },
     ].map((c) => ({ ...c, panelClass: `ayq-panel ayq-tp is-${c.id}` }));
     return (
       <TermsCtx.Provider value={plan}>
@@ -1159,10 +1177,6 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
           {urgent.length > 0 && <UrgentSigns product={product} flags={urgent} compact />}
           <div id="ay-pt">
             <PdpStack cards={cards} active={tab} onChange={(id) => setTab(id || 'none')} />
-          </div>
-          <div className="ayq-sum ayv-read ayv-sum2 ayv-stack-rest">
-            <div className="ayv-sum2__main">{xrowsEl}</div>
-            {sideEl}
           </div>
           {afterOverview}
         </div>

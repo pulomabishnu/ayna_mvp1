@@ -17,20 +17,23 @@ export const TOUR_SECTIONS = [
   { title: 'Your matches', items: [
     'Your products, in Home, lists every match by what it helps with.',
     'Tap any match to see why it fits you, what is in it and what people say.',
-    'Change your quiz answers anytime: You, then My health, then Health profile. Or ask ayna to add something.',
+    'Change your quiz answers anytime: Profile, then My health, then Health profile. Or ask ayna to add something.',
   ] },
-  { title: 'Shop and Services', items: [
-    'Search products, brands and care by need. Each one shows how well it fits you.',
+  { title: 'Shop', items: [
+    'Search products, brands and care by need. Services, like clinics and apps, are a section inside Shop.',
+    'Each one shows how well it fits you.',
     'Tap Compare to see 2 to 4 products side by side.',
   ] },
-  { title: 'Ask ayna', items: [
-    'Ask anything, type or use the mic. ayna answers from your profile and checked sources.',
+  { title: 'At the top', items: [
+    'Ask ayna: ask anything, type or use the mic. ayna answers from your profile and checked sources.',
+    'The cart holds everything you save.',
+    'The bell shows replies, your monthly check-in and answers worth checking again.',
   ] },
   { title: 'Community and Library', items: [
     'Questions, reviews and playlists from members. Post anonymously if you like.',
     'Reads by symptom, product or topic.',
   ] },
-  { title: 'You', items: [
+  { title: 'Profile', items: [
     'Your profile, saved products, health data and Settings.',
     'Settings has this tour again, and page tips if you want them.',
   ] },

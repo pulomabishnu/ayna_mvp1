@@ -11,16 +11,19 @@
  * /explore/resources. The /ask and /you addresses still work.
  */
 export const MAIN_TABS = [
+  // Founder, Nov 10: "shop library community profile", with Ask ayna, the cart
+  // and the updates bell at the top. Services is a section inside Shop now
+  // (/explore/services still works); Home stays the raised centre button.
   { key: 'explore', label: 'Shop', href: '/explore', icon: 'shop' },
-  { key: 'services', label: 'Services', href: '/explore/services', icon: 'services' },
+  { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
   { key: 'today', label: 'Home', href: '/home', icon: 'home', center: true },
   { key: 'community', label: 'Community', href: '/community' },
-  { key: 'library', label: 'Library', href: '/explore/resources', icon: 'library' },
+  { key: 'profile', label: 'Profile', href: '/you', icon: 'profile' },
 ];
 
 // Desktop reading order starts with Home; the mobile centre button keeps its place.
-// Library is in the website footer, not the desktop header (founder, Nov 4: the header is crowded).
-export const WEB_TOP_TABS = ['today', 'explore', 'services', 'community']
+// Desktop: Home, Shop, Library, Community; Profile is the round button at the right (founder, Nov 10).
+export const WEB_TOP_TABS = ['today', 'explore', 'library', 'community']
   .map((key) => MAIN_TABS.find((tab) => tab.key === key));
 
 /**
@@ -33,10 +36,10 @@ export const WEB_TOP_TABS = ['today', 'explore', 'services', 'community']
  */
 export const APP_TABS = [
   { key: 'explore', label: 'Shop', icon: 'shop' },
-  { key: 'services', label: 'Services', icon: 'services' },
+  { key: 'library', label: 'Library', icon: 'library' },
   { key: 'home', label: 'Home', icon: 'home', center: true },
   { key: 'community', label: 'Community' },
-  { key: 'library', label: 'Library', icon: 'library' },
+  { key: 'profile', label: 'Profile', icon: 'profile' },
 ];
 
 /**

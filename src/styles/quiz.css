@@ -640,3 +640,7 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
   html body .app-container .aq.aq--web .aq-answer :is(.aq-chip, .aq-row) { min-height: 52px; font-size: 14px; }
   html body .app-container .aq.aq--web .aq-cta { max-width: none; }
 }
+/* Nov 10 (founder screenshot): the picked side of Leave out / Should be was brown text on the brown
+   fill, so "Should be" vanished. The picked side always reads in the on-fill colour. */
+.ayna-mobile .aq .ip-avoid-tabs button.is-on.is-want, .ayna-mobile .aq .ip-avoid-tabs button.is-on.is-avoid,
+.aq .ip-avoid-tabs button.is-on.is-want.is-on, .aq .ip-avoid-tabs button.is-on.is-avoid.is-on { color: var(--aq-on-fill) !important; }

@@ -1,0 +1,70 @@
+/* The updates bell (founder, Nov 10) and its list. Same round outlined button as the
+   cart beside it; a pink dot when something is new. The list is a bottom sheet on a
+   phone and a panel under the header on a wide screen. No emojis, no counts that
+   shout, one tap per item. */
+.ay-bell {
+  position: relative; display: inline-grid; place-items: center; flex: none;
+  width: 44px; height: 44px; min-width: 44px; padding: 0 !important; box-sizing: border-box;
+  border-radius: 50%; background: transparent; color: inherit; cursor: pointer;
+}
+/* The bell carries the cart's class (ay-header-heart / ay-nav__heart), so the two always match. */
+.ay-bell svg { width: 22px; height: 22px; }
+.ay-bell:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.ay-bell__dot {
+  position: absolute; top: 6px; right: 7px; width: 10px; height: 10px; border-radius: 50%;
+  background: #e0529c; box-shadow: 0 0 0 2px var(--ay-bell-ring, #fff8dc); pointer-events: none;
+}
+.ayna-mobile[data-theme='dark'] .ay-bell { --ay-bell-ring: #3e2723; }
+.ayna-mobile .ay-header-actions .ay-bell svg { width: 22px !important; height: 22px !important; fill: none !important; stroke: currentColor !important; }
+.app-container[data-theme='brand-dark'] .ay-bell { --ay-bell-ring: #3e2723; }
+
+.ay-updates {
+  --u-bg: #fffaf0; --u-ink: #3e2723; --u-sub: #5d4037; --u-line: rgba(62, 39, 35, .14); --u-hover: #fff1c7;
+  position: fixed; inset: 0; z-index: 2147482000; font-family: 'Figtree', system-ui, sans-serif;
+}
+.ay-updates[data-theme='dark'] { --u-bg: #3e2723; --u-ink: #fff8dc; --u-sub: #f3e3c2; --u-line: rgba(255, 237, 172, .2); --u-hover: #4a302a; }
+.ay-updates__dim { position: absolute; inset: 0; background: rgba(30, 18, 15, .38); }
+.ay-updates__panel {
+  position: absolute; left: 0; right: 0; bottom: 0; max-height: min(78vh, 640px); display: flex; flex-direction: column;
+  background: var(--u-bg); color: var(--u-ink); border-radius: 20px 20px 0 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px); box-shadow: 0 -8px 30px rgba(30, 18, 15, .18);
+}
+@media (min-width: 760px) {
+  .ay-updates__dim { background: transparent; }
+  .ay-updates__panel { left: auto; right: 24px; top: 72px; bottom: auto; width: 380px; max-height: min(70vh, 560px); border-radius: 16px; border: 1.5px solid var(--u-line); box-shadow: 0 12px 32px rgba(30, 18, 15, .16); }
+}
+.ay-updates__head { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px 20px; }
+.ay-updates .ay-updates__head h2 { margin: 0; font: 700 20px/1.2 'ayna Display', 'Figtree', system-ui, sans-serif; color: var(--u-ink) !important; outline: none; }
+.ay-updates__x { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; color: var(--u-ink); border-radius: 50%; cursor: pointer; }
+.ay-updates__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ay-updates__x:focus-visible, .ay-updates__item:focus-visible, .ay-updates__foot button:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
+.ay-updates__body { overflow-y: auto; padding: 0 12px 16px; overscroll-behavior: contain; }
+.ay-updates__group + .ay-updates__group { margin-top: 8px; }
+.ay-updates .ay-updates__group h3 { margin: 12px 8px 4px; font: 700 13px/1.3 'Figtree', system-ui, sans-serif; letter-spacing: .02em; color: var(--u-sub) !important; }
+.ay-updates__group ul { list-style: none; margin: 0; padding: 0; }
+.ay-updates__item {
+  width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer;
+  padding: 12px 8px; border: 0; border-bottom: 1px solid var(--u-line); background: transparent; color: var(--u-ink); border-radius: 0; font: inherit;
+}
+.ay-updates__group li:last-child .ay-updates__item { border-bottom: 0; }
+.ay-updates__item:hover { background: var(--u-hover); }
+.ay-updates__text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ay-updates__title { font: 600 16px/1.35 'Figtree', system-ui, sans-serif; }
+.ay-updates__item.is-unread .ay-updates__title { font-weight: 700; }
+.ay-updates__item.is-unread .ay-updates__title::before { content: ''; display: inline-block; width: 8px; height: 8px; margin: 0 8px 1px 0; border-radius: 50%; background: #e0529c; vertical-align: middle; }
+.ay-updates__sub { font: 500 14px/1.4 'Figtree', system-ui, sans-serif; color: var(--u-sub); }
+.ay-updates__when { font: 500 13px/1.3 'Figtree', system-ui, sans-serif; color: var(--u-sub); }
+.ay-updates__act { flex: none; font: 700 14px/1 'Figtree', system-ui, sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+.ay-updates__empty { margin: 24px 8px 28px; display: grid; gap: 4px; font: 500 15px/1.45 'Figtree', system-ui, sans-serif; color: var(--u-sub); }
+.ay-updates__empty b { color: var(--u-ink); font-size: 17px; }
+.ay-updates__foot { margin: 12px 8px 0; font: 500 14px/1.45 'Figtree', system-ui, sans-serif; color: var(--u-sub); }
+.ay-updates__foot button { border: 0; background: none; padding: 8px 2px; color: var(--u-ink); font: 700 14px/1 'Figtree', system-ui, sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* The cart (founder, Nov 10): the heart button's shape, with a cart mark. Its count stays. */
+.ay-header-heart.is-cart svg, .ay-nav__heart.is-cart svg { fill: none !important; stroke-linecap: round; }
+
+/* Website under 900px: Profile is a tab in the bottom bar (founder, Nov 10), so the header
+   keeps only Ask ayna, the cart and the bell. Desktop keeps the round profile button. */
+@media (max-width: 899px) {
+  html body .app-container .ay-nav__actions .ay-nav__account:not(.is-landing-guest) :is(.ay-avatar, .ay-nav__profile) { display: none !important; }
+}

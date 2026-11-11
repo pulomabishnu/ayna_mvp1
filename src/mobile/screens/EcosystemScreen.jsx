@@ -264,7 +264,9 @@ export default function EcosystemScreen({
   const picksForYou = [...sections.flatMap((sct) => sct.picks || []), ...worthALook].filter((p, i, arr) => p?.id && !myIds.has(p.id) && arr.findIndex((x) => x.id === p.id) === i);
   const savedList = Object.values(savedProducts || {}).filter((p) => p?.id && p.name);
   const pctFor = (p) => { if (!quizAnswers) return null; const d = scoreFor(p, quizAnswers); return d?.percent > 0 && (d.matchStatus || 'scored') === 'scored' ? shownMatchPercent(d.percent) : null; };
-  const hasAnything = currentProducts.length > 0 || sections.some((s) => s.picks?.length);
+  // Founder, Nov 10: Home said "2 in your ecosystem" while this said "No strong matches". Anything she
+  // added herself counts too, so the empty message never shows over products she has.
+  const hasAnything = currentProducts.length > 0 || myProducts.length > 0 || sections.some((s) => s.picks?.length);
 
   const checkin = <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>;
 
@@ -372,7 +374,7 @@ export default function EcosystemScreen({
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
-        ? <EmptyState compact art="search" tone="pink" title="No strong matches yet" body="Nothing in the catalog fits your answers well enough yet. Change an answer, or browse Explore by need." actionLabel={onRetake ? 'Edit my answers' : undefined} onAction={onRetake} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
+        ? <EmptyState compact art="search" tone="pink" title="Build your ecosystem" body="Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown." actionLabel="Explore Shop" onAction={() => onBrowse?.()} secondaryLabel={onRetake ? 'Edit my answers' : undefined} onSecondary={onRetake} />
         // Name what is missing (You audit P3): with health data connected it is the products, not everything.
         : healthConnectedCount > 0
           ? <EmptyState compact art="search" tone="pink" title="No products yet" body="Your health data is connected. Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
@@ -448,7 +450,7 @@ export default function EcosystemScreen({
           </div>
           {shelf && shelf.shortBy > 0 && shelf.picks.length > 0 && <p className="ay-shelf2-note">{onlyNote(shelf.picks.length, section.phrase)}</p>}
           {empty && <div className="ay-shelf2-empty">
-            <p>No strong matches for {section.phrase} yet.</p>
+            <p>Nothing for {section.phrase} yet. Shop has every option, with your match on each.</p>
             <button type="button" onClick={() => onBrowse?.(shortNeedLabel(section.label))}>Explore {shortNeedLabel(section.label).toLowerCase()}</button>
           </div>}
           {!section.products.length && shown.length > 0 && <p className="ay-shelf2-note">Nothing here yet. <button type="button" className="eco-link" onClick={() => setView('picks')}>See {shown.length} suggestion{shown.length === 1 ? '' : 's'}</button></p>}

@@ -5,27 +5,23 @@ import { MAIN_TABS, APP_TABS, APP_TABS_CHAT_FIRST, APP_EXPLORE_SECTIONS, AYNA_HO
 const vercel = JSON.parse(fs.readFileSync(new URL('../../../vercel.json', import.meta.url), 'utf8'));
 
 describe('main tabs (founder, Oct 24 2026)', () => {
-  it('are Shop, Services, Home, Community, Library, in that order (founder, Oct 26; Today renamed Home 21:45)', () => {
-    expect(MAIN_TABS.map((t) => t.label)).toEqual(['Shop', 'Services', 'Home', 'Community', 'Library']);
+  it('are Shop, Library, Home, Community, Profile (founder, Nov 10: Services moved inside Shop)', () => {
+    expect(MAIN_TABS.map((t) => t.label)).toEqual(['Shop', 'Library', 'Home', 'Community', 'Profile']);
     // The keys stay, so routes, analytics and CSS keep working.
-    expect(MAIN_TABS.map((t) => t.key)).toEqual(['explore', 'services', 'today', 'community', 'library']);
-    // Shop is the old Explore page (same key and address); Services and Library are its other pages.
-    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/services', '/home', '/community', '/explore/resources']);
-    expect(MAIN_TABS.find((t) => t.label === 'Shop').key).toBe('explore');
-    // Ask ayna and You moved to the top bar (the Ask button and the round profile button).
-    expect(MAIN_TABS.some((t) => t.key === 'ask' || t.key === 'profile')).toBe(false);
+    expect(MAIN_TABS.map((t) => t.key)).toEqual(['explore', 'library', 'today', 'community', 'profile']);
+    expect(MAIN_TABS.map((t) => t.href)).toEqual(['/explore', '/explore/resources', '/home', '/community', '/you']);
+    expect(MAIN_TABS.some((t) => t.key === 'services' || t.key === 'ask')).toBe(false);
   });
-  it('the app has the same five tabs as the website, with the bag, calendar-check and book icons', () => {
+  it('the app has the same five tabs as the website', () => {
     expect(APP_TABS.map((t) => t.label)).toEqual(MAIN_TABS.map((t) => t.label));
-    expect(APP_TABS.map((t) => t.key)).toEqual(['explore', 'services', 'home', 'community', 'library']);
+    expect(APP_TABS.map((t) => t.key)).toEqual(['explore', 'library', 'home', 'community', 'profile']);
     expect(APP_TABS.find((t) => t.key === 'explore').icon).toBe('shop');
-    expect(APP_TABS.find((t) => t.key === 'services').icon).toBe('services');
     expect(APP_TABS.find((t) => t.key === 'library').icon).toBe('library');
-    // Home is the raised centre button (founder Oct 26 21:45: "make it stand out").
     expect(APP_TABS.find((t) => t.key === 'home')).toMatchObject({ label: 'Home', icon: 'home', center: true });
-    expect(APP_TABS.some((t) => t.key === 'ask' || t.key === 'profile')).toBe(false);
-    // The chat-first Home for the focus group names the first tab "ayna".
-    expect(APP_TABS_CHAT_FIRST.map((t) => t.label)).toEqual(['Shop', 'Services', 'ayna', 'Community', 'Library']);
+    // Ask ayna stays at the top, with the cart and the updates bell.
+    expect(APP_TABS.some((t) => t.key === 'ask' || t.key === 'services')).toBe(false);
+    expect(APP_TABS_CHAT_FIRST.map((t) => t.label)).toEqual(['Shop', 'Library', 'ayna', 'Community', 'Profile']);
+    // Services is still a section inside Shop.
     expect(APP_EXPLORE_SECTIONS.map((s) => s.label)).toEqual(['For you', 'Needs', 'Products', 'Services', 'Reads']);
     expect(AYNA_HOME_VIEWS.map((v) => v.label)).toEqual(['Chat', 'Products', 'My dashboard']);
   });

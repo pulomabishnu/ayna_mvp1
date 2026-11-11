@@ -193,7 +193,8 @@ import { toast } from './utils/toast';
 import { setDarkAccentSwap } from './utils/darkAccentSwap.js';
 import { recordProductView } from './utils/recentActivity';
 import GlobalToast from './components/v3/GlobalToast';
-import { MAIN_TABS, TabIcon, AskMark, ProfileMark } from './components/nav/tabs.jsx';
+import { MAIN_TABS, TabIcon, AskMark, ProfileMark, CartMark } from './components/nav/tabs.jsx';
+import UpdatesBell from './components/updates/UpdatesBell.jsx';
 import { WEB_TOP_TABS, YOU_SECTIONS, YOU_SECTION_ALIASES } from './components/nav/mainTabs.js';
 import { trackLandingCta, landingCtaCopy, CTA_COPY } from './utils/funnelEvents.js';
 import YouTabs from './components/you/YouTabs.jsx';
@@ -215,8 +216,8 @@ import { stampFactUpdates } from './matching/factFreshness.js';
 const WEB_TAB_VIEWS = {
   // The web Home is the app-style dashboard at /home. Today stays a separate daily check-in page.
   today: ['home', 'welcome', 'hero'],
-  explore: ['explore', 'explore-topics', 'discovery', 'product'],
-  services: ['explore-services'],
+  // Services is a section inside Shop (founder, Nov 10).
+  explore: ['explore', 'explore-topics', 'explore-services', 'discovery', 'product'],
   library: ['articles'],
   ask: ['ask'],
   community: ['community'],
@@ -2670,12 +2671,28 @@ function App() {
                 <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
               </button>
             )}
-            {/* Focus group, Oct 26: Saved was hard to find. A labelled heart with the count opens Saved (You > Saved). */}
+            {/* The cart (founder, Nov 10: "ask ayna, cart and a bell"): what she saved, with the count. Opens You > Saved. */}
             {!FOCUSED_FLOW_VIEWS.includes(currentView) && (
-              <a href="/you/saved" className={`ay-nav__heart${savedCount ? ' has-saved' : ''}`} aria-label={savedCount ? `Saved, ${savedCount} ${savedCount === 1 ? 'product' : 'products'}` : 'Saved'} aria-current={currentView === 'you' && youSection === 'saved' ? 'page' : undefined} {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2Z" /></svg>
+              <a href="/you/saved" className={`ay-nav__heart is-cart${savedCount ? ' has-saved' : ''}`} aria-label={savedCount ? `Cart, ${savedCount} saved ${savedCount === 1 ? 'product' : 'products'}` : 'Cart, your saved products'} aria-current={currentView === 'you' && youSection === 'saved' ? 'page' : undefined} {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>
+                <CartMark />
                 {savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{savedCount > 99 ? '99+' : savedCount}</span>}
               </a>
+            )}
+            {/* Updates bell (founder, Nov 10): replies, check-ins, answers to re-check, ayna news. */}
+            {!FOCUSED_FLOW_VIEWS.includes(currentView) && !(!user && ['welcome', 'hero'].includes(currentView)) && (
+              <UpdatesBell
+                className="ay-nav__heart"
+                userId={user?.id || null}
+                quizAnswers={quizResults || null}
+                theme={themeAttr === 'brand-dark' ? 'dark' : 'light'}
+                onGo={(kind) => {
+                  setShowAccountMenu(false);
+                  if (kind === 'checkin') { setShowCheckin(true); return; }
+                  if (kind === 'community' || kind === 'news') { setCurrentView('community'); return; }
+                  if (kind === 'signin') { setPendingAction('stay'); pendingActionRef.current = 'stay'; setShowAuthModal(true); return; }
+                  mainTabGo.today();
+                }}
+              />
             )}
             {/* Phones hide the menu links, so signed-out visitors on the landing get Pricing here. */}
             {!user && ['welcome', 'hero'].includes(currentView) && <a href="/pro" className="ay-nav__pricing">Pricing</a>}

@@ -17,7 +17,7 @@ describe('navTabFor', () => {
     expect(navTabFor('explore')).toBe('explore');
     expect(navTabFor('browse')).toBe('explore');
     // Today · Shop · Services · Community · Library (founder, Oct 26): Shop keeps the 'explore' key.
-    expect(navTabFor('explore', null, { section: 'services' })).toBe('services');
+    expect(navTabFor('explore', null, { section: 'services' })).toBe('explore');
     expect(navTabFor('explore', null, { section: 'products' })).toBe('explore');
     expect(navTabFor('library')).toBe('library');
     expect(navTabFor('explore', null, { section: 'resources' })).toBe('library');

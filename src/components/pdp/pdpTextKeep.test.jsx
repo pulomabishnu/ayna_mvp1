@@ -45,6 +45,9 @@ function renders(product) {
 
 // UI labels the redesign renamed or folded into a new control (never product text).
 const RENAMED_LABELS = [
+  // Nov 10 (founder: no "Read more", all steps show; Ask lives in the action pills, not a box in the summary).
+  // Controls and Ask starters, not product information.
+  /^Show all \d+ steps$/, 'Read more', 'Who is this good for?', 'Anything I should know before using it?', 'How does this compare with another option?', 'ayna\u2019s answers are educational, not medical advice.', "ayna's answers are educational, not medical advice.",
   // Nov 10 (founder: "don't say also at Amazon, just say we may earn a commission, stop overcrowding"):
   // the app's Buy block is the button and the one disclosure line.
   /^Price checked /, 'NatureMade.com', 'ayna may earn a commission from Amazon.', 'Return policy', /Amazon’s return policy/,

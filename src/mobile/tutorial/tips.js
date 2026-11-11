@@ -130,8 +130,9 @@ export const SCREENS = [
     within: 'home',
     root: '[data-tour="home"] [data-tour="saved-heart"]',
     tips: [
-      { id: 'saved-heart', anchor: '[data-tour="home"] [data-tour="saved-heart"]', text: 'Everything you save is under the heart.' },
-      { id: 'profile-button', anchor: '[data-tour="home"] [data-tour="profile-button"]', text: 'Tap here for your profile and Settings.' },
+      { id: 'saved-heart', anchor: '[data-tour="home"] [data-tour="saved-heart"]', text: 'Everything you save is in your cart.' },
+      { id: 'updates-bell', anchor: '[data-tour="home"] [data-tour="updates-bell"]', text: 'Replies, check-ins and changes to your matches show up under the bell.' },
+      { id: 'profile-button', anchor: '.ayna-bottom-nav [data-tab-target="profile"]', text: 'Your profile and Settings are here.' },
     ],
   },
   {
@@ -338,7 +339,8 @@ export const WEB_SCREENS = [
     within: ['home', 'explore', 'services', 'community', 'library'],
     root: '.app-nav-wrap .ay-nav__heart',
     tips: [
-      { id: 'saved-heart', anchor: '.app-nav-wrap .ay-nav__heart', text: 'Everything you save is under the heart.' },
+      { id: 'saved-heart', anchor: '.app-nav-wrap .ay-nav__heart', text: 'Everything you save is in your cart.' },
+      { id: 'updates-bell', anchor: '.app-nav-wrap .ay-bell', text: 'Replies, check-ins and changes to your matches show up under the bell.' },
       { id: 'profile-button', anchor: '.app-nav-wrap .ay-avatar', text: 'Tap here for your profile and Settings.' },
     ],
   },

@@ -105,7 +105,7 @@ describe('safety line: under the button, calm, personalised (audit P0 #3, 7.5)',
     for (const html of pages) {
       const buy = html.indexOf('ayv-buy');
       const safe = html.indexOf('class="ayv-safeline"');
-      const tabs = html.includes('role="tablist"') ? html.indexOf('role="tablist"') : html.indexOf('class="ay-stack"');
+      const tabs = html.includes('role="tablist"') ? html.indexOf('role="tablist"') : html.indexOf('class="ay-stack is-index"');
       expect(buy).toBeGreaterThan(-1);
       expect(safe).toBeGreaterThan(buy);
       expect(safe).toBeLessThan(tabs);
@@ -227,11 +227,11 @@ describe('decision block contents (audit 13.1, 14)', () => {
   it('website: name, match, price with cost per cycle, one sticker button, disclosure, safety line, actions, in that order; no fact chips, no pinned buy bar, no "No link yet"', () => {
     const html = renderToStaticMarkup(<ProductModal product={byId(SAALT)} quizResults={IUD_PROFILE} onToggleSaved={() => {}} onAskAyna={() => {}} />);
     const at = (needle) => html.indexOf(needle);
-    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ay-stack"'];
+    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ay-stack is-index"'];
     const pos = order.map(at);
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).toMatch(/≈ \$0\.24 a cycle if it lasts 10 years/);
-    expect((html.slice(0, at('class="ay-stack"')).match(/ayv-sticker/g) || []).length).toBe(1);
+    expect((html.slice(0, at('class="ay-stack is-index"')).match(/ayv-sticker/g) || []).length).toBe(1);
     expect(html).not.toMatch(/ayq-badges/);
     expect(html).not.toMatch(/ayv-stickybuy/);
     expect(html).not.toMatch(/No link yet/);
@@ -240,7 +240,7 @@ describe('decision block contents (audit 13.1, 14)', () => {
     const html = renderToStaticMarkup(<ProductDetailScreen product={byId('p-tampontribe-menstrual-cup')} quizAnswers={IUD_PROFILE} />);
     // Critique Oct 27: one action row (Buy, Save, Ask) with the disclosure under it, the safety line, then the
     // tabs; the highlights are the 2x2 stat grid at the top of ayna summary.
-    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ay-pdp3-pills"', 'class="ayv-safeline"', 'class="ay-stack"', 'class="ayv-stats"'];
+    const order = ['<h1', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ay-pdp3-pills"', 'class="ayv-safeline"', 'class="ay-stack is-index"', 'class="ayv-stats"'];
     const pos = order.map((n) => html.indexOf(n));
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).not.toMatch(/We may earn a commission<\/span><span aria-hidden="true">\+/);
