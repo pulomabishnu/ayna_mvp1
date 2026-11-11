@@ -6,7 +6,6 @@ import { ALL_PRODUCTS, getProductMatchDetailsForProduct } from '../../data/produ
 import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
-import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
@@ -254,7 +253,6 @@ export default function ProductDetailScreen({
   const [seenProductId, setSeenProductId] = useState(product?.id);
   if (product?.id !== seenProductId) {
     setSeenProductId(product?.id);
-    setPartnerOpen(false);
     setPhoto(0);
     setZoomOpen(false);
     setAskOpen(false);
@@ -337,7 +335,6 @@ export default function ProductDetailScreen({
   const categoryLabel = cardKind({ category });
   // One source of truth for where she buys (pdp/buyModel, the website's rule).
   const buy = buyModel(product, { brand, name: displayName(product) });
-  const isPartner = isPartnerBrandItem(product);
   // Same information architecture as the website's product page
   // (components/pdp/ProductEvidence): ayna's summary, At a glance, then the
   // Clinical opinion / Scientific literature / Reviews / Safety / How to use /

@@ -9,7 +9,7 @@ import { formatPrice, shownPriceText } from '../../utils/formatPrice.js';
 import { displayName } from '../utils/displayName.js';
 import { SheetMatch } from './ProductQuick.jsx';
 import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow } from '../../components/pdp/PdpParts.jsx';
-import { costPerUse, highlightsFor, matchBreakdownFor, alsoAt, retailerOf } from '../../components/pdp/decision.js';
+import { costPerUse, highlightsFor, matchBreakdownFor, retailerOf } from '../../components/pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { IN_ROUTINE } from '../../utils/routineCopy.js';
@@ -108,7 +108,6 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const still = reduceMotion();
   const perUse = costPerUse(product);
   const highlights = highlightsFor(product, glance);
-  const others = alsoAt(buy?.rows);
   // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
   const breakdown = details ? matchBreakdownFor(product, details) : null;
   const buyLink = (extra = '') => (buy?.url ? <a className={`ay-pquick__buy ayv-buy ayv-sticker ${extra}`.trim()} href={buy.url} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(buy.url) }); trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'sheet_summary_end' : 'product_sheet' }); }}>{buy.label || 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a> : null);
@@ -139,9 +138,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ayv-actions" data-tour="quick-actions">{buyLink()}</div>
             {buy?.url && (
               <p className="ay-pquick__leave ayv-fine ayv-disclose">
-                <span>{buy.partner ? 'ayna partner. We may earn a commission.' : 'ayna may earn a commission.'}</span>
-                {buy.checked && <span>{buy.checked}</span>}
-                {others.length > 0 && <span>Also at {others.map((r, i) => <span key={r.url}>{i > 0 && ', '}<a href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(r.url) })}>{r.name}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</span>}
+                <span>ayna may earn a commission.</span>
               </p>
             )}
             <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />

@@ -10,7 +10,7 @@ import { whyLine } from '../utils/whyLine';
 import '../styles/match-ui.css';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { resolveProductImage, isPlaceholderProductImage } from '../utils/resolveProductImage';
-import { isPartnerBrandItem, isPrelaunchPartnerItem, getPartnerDisclosureText } from '../utils/partnerBrands';
+import { isPrelaunchPartnerItem } from '../utils/partnerBrands';
 import { handleImageErrorWithRetry } from '../utils/imageRetry';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { renderMarkdownLite } from '../utils/renderMarkdownLite';
@@ -23,7 +23,7 @@ import { ProductAsk } from './passport/ProductSections';
 import ProductEvidence from './pdp/ProductEvidence';
 import PdpIcon from './pdp/PdpIcon.jsx';
 import { EvidenceMark, SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow, AskPanel } from './pdp/PdpParts.jsx';
-import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, alsoAt, retailerOf } from './pdp/decision.js';
+import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from './pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../utils/analyticsEvents.js';
 import { productAskStarters } from '../utils/productAsk';
 import { hasIud, cupOrDisc, keyFormat } from './pdp/pdpParts.js';
@@ -394,7 +394,6 @@ export default function ProductModal({
   const displayName = String(choice.displayName || product?.name || '').replace(/\s*\u2014\s*/g, ', ');
   // A card's match pill can open the page straight on Why this match.
   const [showWhy, setShowWhy] = useState(() => takeProductTabIf('why'));
-  const [showDisclosure, setShowDisclosure] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [photo, setPhoto] = useState(0);
@@ -475,7 +474,6 @@ export default function ProductModal({
   const sizeChosenOnAmazon = choice.hasVariants && product ? buyGoesToAmazonListing(product, choice.variant) : false;
   const variantsMatter = Boolean(product?.variants?.some((v) => v?.priceLabel || (v?.url && !sizeChosenOnAmazon)));
   const isAmazonBuyLink = isAmazonUrl(buyUrl);
-  const isPartner = isPartnerBrandItem(product);
   const isPrelaunch = isPrelaunchPartnerItem(product);
 
   const aynaData = useMemo(
@@ -651,19 +649,12 @@ export default function ProductModal({
     : <p className="ayp-buy__note">No buy link yet.</p>);
   // The disclosure, directly under the button (audit 7.9, 15 Disclosure): commission · price date ·
   // "Also at" only for live links · the return policy. Always visible, never collapsed.
-  const others = alsoAt(buy?.rows);
   // Stores on file without a link are not a dead row by the button; they stay in Key facts as "Also sold at".
   const unlinkedStores = (buy?.rows || []).filter((r) => !r.url).map((r) => r.name);
   const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
-      <p className="ayp-buy__fine ayv-fine ayv-disclose">
-        <span>{isPartner ? 'ayna partner. We may earn a commission.' : isAmazonBuyLink ? 'ayna may earn a commission from Amazon.' : 'ayna may earn a commission.'}</span>
-        {buy?.checked && <span>{buy.checked}</span>}
-        {others.length > 0 && <span>Also at {others.map((r, i) => <React.Fragment key={r.url}>{i > 0 && ', '}<a className="ayp-textlink" href={r.url} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product.id, retailer: retailerOf(r.url) }); posthog.capture('product_retailer_clicked', { productId: product.id, retailer: r.name }); }}>{r.name}{r.price ? ` · ${r.price}` : ''}<span className="sr-only"> (opens in a new tab)</span></a></React.Fragment>)}</span>}
-        {isAmazonBuyLink && <span><a className="ayp-textlink" href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GKM69DUUYKQWKWX7" target="_blank" rel="noopener noreferrer">Return policy<span className="sr-only">: Amazon’s return policy (opens in a new tab)</span></a></span>}
-        {isPartner && <span><button type="button" className="ayp-textlink" aria-expanded={showDisclosure} onClick={() => setShowDisclosure((v) => !v)}>{showDisclosure ? 'Less' : 'How partnerships work'}</button></span>}
-      </p>
-      {isPartner && showDisclosure && <p className="ayp-buy__fine ayp-buy__disclosure">{getPartnerDisclosureText(product)}</p>}
+      {/* Founder, Nov 10: one disclosure line, nothing else crowding Buy (same as the app). */}
+      <p className="ayp-buy__fine ayv-fine ayv-disclose"><span>ayna may earn a commission.</span></p>
     </>
   ) : null;
 
