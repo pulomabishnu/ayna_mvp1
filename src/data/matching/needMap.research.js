@@ -6990,5 +6990,35 @@ export default [
   "reviewer": "research",
   "reviewed": "2026-11-05",
   "grade_status": "verified"
+ },
+ {
+  "product": "p-cora-the-simply-soothing-heat-patch",
+  "need": "pain.menstrual_cramp",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus lists heat on the lower belly as home care for period pain.",
+  "source_url": "https://medlineplus.gov/ency/article/003150.htm",
+  "reviewer": "research",
+  "reviewed": "2026-11-10"
+ },
+ {
+  "product": "p-rael-extra-coverage-heating-patch",
+  "need": "pain.menstrual_cramp",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus lists heat on the lower belly as home care for period pain.",
+  "source_url": "https://medlineplus.gov/ency/article/003150.htm",
+  "reviewer": "research",
+  "reviewed": "2026-11-10"
+ },
+ {
+  "product": "p-nomisk-maia-for-periods",
+  "need": "pain.menstrual_cramp",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "MedlinePlus lists heat on the lower belly as home care for period pain.",
+  "source_url": "https://medlineplus.gov/ency/article/003150.htm",
+  "reviewer": "research",
+  "reviewed": "2026-11-10"
  }
 ];
