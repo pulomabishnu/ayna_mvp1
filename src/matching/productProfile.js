@@ -1668,6 +1668,7 @@ export function buildProductProfile(product) {
   const profile = {
     product_id: product.id || null,
     name: product.name || '',
+    tags: [...f.tags],
     category: f.cat,
     type: f.type,
     health_need_relevance,

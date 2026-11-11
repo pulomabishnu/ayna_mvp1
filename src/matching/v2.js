@@ -47,6 +47,8 @@ export const V2 = {
   // (1 point = 1%, up to 20), not the small cap: it is about her body, not a preference.
   experienceDownCap: 0.2,
   ecosystemFloor: 0.5,
+  // Nov 10: a secondary fit this strong (v1 score) can be the one "something different" pick.
+  discoveryFloor: 30,
   partialFloor: 0.3, // Nov 4 (founder: empty shelves): a secondary use with a C grade (about 0.31) shows as a Partial match when nothing better fits
   strongFloor: 0.75,
   // Strong needs HIGH confidence (score.js confidenceLevel: 0.75+), Nov 2 review:
@@ -534,8 +536,13 @@ function typeKey(pp, needId) {
   // Nov 9 (founder: "for cramps it gives me 3 heating pads"): heat and TENS are different kinds
   // even when the catalog files both under one category, so a shelf mixes them.
   const n = String(pp.name || '').toLowerCase();
-  if (/heat(ing)?\b|heatwrap|thermacare|self-heating|warm(ing)? (pad|wrap|patch)/.test(n)) return 'heat';
-  if (/\btens\b|elaris|livia/.test(n)) return 'tens';
+  // Nov 10 (live cramps shelf: Elaris, Beurer and Pixie were three TENS units): the tags count too,
+  // so a TENS unit whose name doesn't say "TENS" is still one.
+  const tags = (pp.tags || []).map((t) => String(t).toLowerCase());
+  if (/\btens\b|elaris|livia/.test(n) || tags.includes('tens')) return 'tens';
+  // A plug-in heating pad and a stick-on heat patch or wrap are different kinds of help.
+  if (/patch|heatwrap|wrap|thermacare|self-heating|air-activated/.test(n) && /heat|warm|thermacare/.test(n)) return 'heat:patch';
+  if (/heat(ing)?\b|warm(ing)? pad/.test(n)) return 'heat:pad';
   return cat === 'supplement' || cat === 'menopause' ? `supplement:${needId}` : cat || 'other';
 }
 const round3 = (x) => Math.round(x * 1000) / 1000;
@@ -565,6 +572,7 @@ export function buildEcosystemV2(up, products, options = {}) {
 
   const priceRule = defaultPriceRule(up);
   const candidates = []; // { pp, results: Map(needId -> { r, v2 }) }
+  const discoveryPool = []; // { pp, needId, x }: secondary fits under the shelf bar
   const seen = new Set();
   const profileById = new Map();
   for (const p of products || []) {
@@ -586,7 +594,14 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (!r.safety.eligible || r.filtered || r.restricted || !r.explainable) continue;
       // v1's ingested-product floors stay as a safety net (e.g. "PMS" in a name alone never qualifies).
       const q = qualificationForEcosystem(r, pp, 50);
-      if (q.effectiveScore < q.floor) continue;
+      if (q.effectiveScore < q.floor) {
+        // Below the shelf bar but a real, safe, secondary fit: kept only for "something different to try".
+        if (q.effectiveScore >= V2.discoveryFloor) {
+          const scored = withV2Score(pp, r, needIds, userKey, signals, up);
+          if (scored.v2.fit >= V2.partialFloor) discoveryPool.push({ pp, needId: n.id, x: { r: scored, v2: scored.v2, partial: true } });
+        }
+        continue;
+      }
       const scored = withV2Score(pp, r, needIds, userKey, signals, up);
       const { v2 } = scored;
       if (v2.fit < V2.partialFloor) continue;
@@ -740,7 +755,9 @@ export function buildEcosystemV2(up, products, options = {}) {
       const same = chosen.filter((x) => x.home.needId === home.needId && typeKey(x.pp, home.needId) === tk);
       // One heat product per shelf (founder, Nov 9 prep call: "one heating pad and then something
       // different"; earlier the same day: "always these and the ThermaCare").
-      if (same.length >= (tk === 'heat' ? 1 : filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
+      if (same.length >= (tk.startsWith('heat') ? 1 : filling ? V2.minShelf : V2.maxPerTypePerNeed)) continue;
+      // Nov 10 (founder: "variety, discovery"): a second of a kind only when no new kind qualifies.
+      if (same.length && newTypeLeft(home.needId)) continue;
       const fmt = (c.pp.formats || []).join();
       const varied = (same.every((x) => (x.pp.formats || []).join() !== fmt) ? 2 : 0) + (same.every((x) => x.pp.brand?.key !== brand) ? 1 : 0);
       const option = { c, home, isUniversal, varied };
@@ -750,6 +767,39 @@ export function buildEcosystemV2(up, products, options = {}) {
     }
     if (!best) break;
     take(best);
+  }
+  // Something different to try (founder, Nov 10: "these are all machines, I want options of different
+  // cool things"): each need she picked herself gets one more pick of a kind its shelf doesn't have,
+  // when one is safe for her and fits at least partly. It shows as a partial match, never a strong one.
+  for (const n of needs) {
+    if (isWeak(n.id) || ['legacy', 'inferred', 'life_stage'].includes(n.source)) continue;
+    const have = chosen.filter((x) => x.home.needId === n.id);
+    // Never past the picks she asked for (one chosen means one shown).
+    if (!have.length || have.length >= needCap(n.id)) continue;
+    const types = typesByNeed.get(n.id) || new Set();
+    let pick = null;
+    const pool = [...candidates, ...discoveryPool.filter((d) => d.needId === n.id).map((d) => ({ pp: d.pp, results: new Map([[n.id, d.x]]) }))];
+    for (const c of pool) {
+      if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) continue;
+      const x = c.results.get(n.id);
+      if (!x || types.has(typeKey(c.pp, n.id))) continue;
+      // Only something our research ties to this need (a primary or secondary use on file).
+      const row = REVIEWED.get(`${c.pp.product_id}|${n.id}`);
+      if (!row || !['primary', 'secondary'].includes(row.strength)) continue;
+      const brand = c.pp.brand?.key;
+      if (brand && have.some((y) => y.pp.brand?.key === brand)) continue;
+      if (!pick || x.v2.fit > pick.home.v2.fit) pick = { c, home: { needId: n.id, ...x }, isUniversal: false, discovery: true };
+    }
+    if (pick) take(pick);
+  }
+  // Is there still a full-fit candidate of a kind this need doesn't have yet?
+  function newTypeLeft(needId) {
+    const have = typesByNeed.get(needId) || new Set();
+    return candidates.some((c) => {
+      if (chosen.some((x) => x.pp.product_id === c.pp.product_id)) return false;
+      const x = c.results.get(needId);
+      return x && !x.partial && x.v2.fit >= V2.ecosystemFloor && !have.has(typeKey(c.pp, needId));
+    });
   }
   function take(pick) {
     chosen.push({ pp: pick.c.pp, home: pick.home, results: pick.c.results });
@@ -802,7 +852,7 @@ export function buildEcosystemV2(up, products, options = {}) {
     // so the first cards she sees are different kinds of help. Same picks, same percents.
     const ranked = homed.sort((a, b) => b.home.v2.rankKey - a.home.v2.rankKey);
     const seenTypes = new Set();
-    const leads = ranked.filter((x) => { const k = typeKey(x.pp, shelf.needId); if (seenTypes.has(k)) return false; seenTypes.add(k); return true; });
+    const leads = ranked.filter((x) => { const k = typeKey(x.pp, shelf.needId).split(':')[0]; if (seenTypes.has(k)) return false; seenTypes.add(k); return true; });
     const picks = [...leads, ...ranked.filter((x) => !leads.includes(x))]
       .map((x) => ({
         ...x.home.r,

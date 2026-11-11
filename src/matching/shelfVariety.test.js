@@ -12,3 +12,17 @@ describe('shelf variety', () => {
     if (names.length > 1) expect(heat(names[0]) && heat(names[1])).toBe(false);
   });
 });
+
+describe('something different to try (Nov 10)', () => {
+  const q = (sup, extra = {}) => ({ age: '27', allergyStatus: 'No', takesCurrent: 'No', safetyConcern: 'No', diagnosisSelections: ['None that I know of'], lifeStageSelections: ['I get periods regularly'], supportSelections: sup, personalizationCompleted: true, ...extra });
+  it('a cramps shelf is not all devices: it holds at least three different kinds', () => {
+    const shelf = getEcosystemSeedFromQuiz(q(['Cramps or period pain'])).shelves.find((s) => s.needId === 'pain.menstrual_cramp');
+    const cats = new Set(shelf.picks.map((p) => ALL_PRODUCTS.find((x) => x.id === p.productId)?.category));
+    expect(shelf.picks.length).toBeGreaterThanOrEqual(3);
+    expect(cats.size).toBeGreaterThanOrEqual(2);
+  });
+  it('one pick chosen still means one pick', () => {
+    const shelf = getEcosystemSeedFromQuiz(q(['Cramps or period pain'], { recommendedProductsPerArea: 1, recommendationCountTouched: true })).shelves.find((s) => s.needId === 'pain.menstrual_cramp');
+    expect(shelf.picks.length).toBe(1);
+  });
+});
