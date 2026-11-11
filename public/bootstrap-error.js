@@ -2,6 +2,11 @@
 // inline scripts. textContent/replaceChildren ensure an error message is never
 // interpreted as HTML.
 window.onerror = function onAynaBootError(msg, url, line, col, err) {
+  // Only a failure to start the app: never after it has booted, never for noise that is not ours.
+  if (window.__aynaBooted) return false;
+  var text = String(msg || '');
+  if (/ResizeObserver loop|^Script error\.?$/i.test(text)) return false;
+  if (url && typeof url === 'string' && url.indexOf(window.location.origin) !== 0) return false;
   var root = document.getElementById('root');
   if (!root) return false;
 

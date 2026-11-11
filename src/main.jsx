@@ -38,7 +38,7 @@ import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
-import { appErrorProperties } from './utils/errorAnalytics'
+import { appErrorProperties, redactErrorMessage } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { applyConsentTier } from './utils/essentialAnalytics'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
@@ -412,6 +412,30 @@ function mobileLoadingBackground() {
 }
 
 installNoEmDash(document.body)
+// Nov 11 (site showed "Something went wrong" over a working page): the boot-error handler in
+// public/bootstrap-error.js is only for errors before the app starts. From here on React's
+// ErrorBoundary handles real crashes, so a stray error (a browser extension, a third-party script,
+// a ResizeObserver loop notice) can never wipe the page.
+window.__aynaBooted = true;
+if (window.onerror && window.onerror.name === 'onAynaBootError') window.onerror = null;
+// Errors outside React (click handlers, timers) are reported once each, so we can see and fix them.
+const seenUncaught = new Set();
+window.addEventListener('error', (e) => {
+  try {
+    const m = String(e?.message || '');
+    if (/ResizeObserver loop|^Script error\.?$/i.test(m) || seenUncaught.has(m) || seenUncaught.size > 20) return;
+    seenUncaught.add(m);
+    posthog.capture('app_error_uncaught', { errorMessage: redactErrorMessage(m), source: String(e?.filename || '').split('/').pop().slice(0, 80), line: e?.lineno || null });
+  } catch { /* analytics unavailable */ }
+});
+window.addEventListener('unhandledrejection', (e) => {
+  try {
+    const m = String(e?.reason?.message || e?.reason || '');
+    if (seenUncaught.has(m) || seenUncaught.size > 20) return;
+    seenUncaught.add(m);
+    posthog.capture('app_error_uncaught', { errorMessage: redactErrorMessage(m), kind: 'promise' });
+  } catch { /* analytics unavailable */ }
+});
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
