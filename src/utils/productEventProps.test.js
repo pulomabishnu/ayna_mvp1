@@ -2,7 +2,7 @@
 // for visitors who turned analytics on; the Buy Now counter sends only an id.
 import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { productIdentity, countBuyClick } from './productEventProps.js';
+import { productIdentity, countBuyClick, buyCountingRefused } from './productEventProps.js';
 import { cleanProps, trackCardViewed, setAnalyticsClient } from './analyticsEvents.js';
 import { sanitizeEventPayload } from './analyticsSanitize.js';
 import { applyConsentTier } from './essentialAnalytics.js';
@@ -102,6 +102,48 @@ describe('countBuyClick (anonymous counter)', () => {
     vi.stubGlobal('fetch', vi.fn(() => { throw new Error('x'); }));
     expect(() => countBuyClick('p-monistat-7')).not.toThrow();
   });
+  describe('consent: Keep off stops even anonymous counting', () => {
+    const store = (decision) => vi.stubGlobal('localStorage', {
+      getItem: () => (decision ? JSON.stringify({ decision, timestamp: new Date().toISOString() }) : null),
+      setItem: () => {},
+    });
+    const counts = () => {
+      const fetchMock = vi.fn(() => Promise.resolve());
+      vi.stubGlobal('fetch', fetchMock);
+      countBuyClick('p-monistat-7');
+      return fetchMock.mock.calls.length === 1;
+    };
+
+    it('counts for visitors who have not chosen yet, and after Turn on', () => {
+      vi.stubGlobal('navigator', {});
+      store(null);
+      expect(counts()).toBe(true);
+      store('granted');
+      expect(counts()).toBe(true);
+    });
+    it('sends nothing after Keep off', () => {
+      vi.stubGlobal('navigator', {});
+      store('denied');
+      expect(counts()).toBe(false);
+    });
+    it('sends nothing with Global Privacy Control, even after Turn on', () => {
+      vi.stubGlobal('navigator', { globalPrivacyControl: true });
+      store('granted');
+      expect(counts()).toBe(false);
+    });
+    it('sends nothing after an account or app opt-out', () => {
+      expect(buyCountingRefused({ ph: { get_explicit_consent_status: () => 'denied' }, nav: {} })).toBe(true);
+      expect(buyCountingRefused({ ph: { get_explicit_consent_status: () => 'granted' }, nav: {} })).toBe(false);
+      expect(buyCountingRefused({ ph: { get_explicit_consent_status: () => { throw new Error('x'); } }, nav: {} })).toBe(false);
+    });
+  });
+
+  it('the Privacy Policy and Consumer Health Data notice say so', () => {
+    const sentence = 'Unless you choose Keep off, we count Buy clicks per product per day, without any information about who clicked.';
+    expect(src('../components/PrivacyPolicy.jsx')).toContain(sentence);
+    expect(src('../../public/consumer-health-data.html')).toContain(sentence);
+  });
+
   it('ignores missing or malformed ids', () => {
     const fetchMock = vi.fn(() => Promise.resolve());
     vi.stubGlobal('fetch', fetchMock);

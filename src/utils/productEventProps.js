@@ -1,4 +1,6 @@
+import posthog from 'posthog-js';
 import { apiUrl } from './apiUrl.js';
+import { getStoredConsent } from './analyticsConsent.js';
 
 /**
  * Which product an event is about: id, name and brand.
@@ -33,16 +35,32 @@ export function productIdentity(product) {
 const GO_ID = /^[a-z0-9][a-z0-9_.:-]{0,79}$/i;
 
 /**
+ * Whether this visitor said no to counting: "Keep off" in the banner, an
+ * account/app opt-out (PostHog's explicit "denied"), or Global Privacy
+ * Control. The banner promises Keep off stops even anonymous counting, so
+ * the Buy counter follows the same rule as the anonymous pageview tier
+ * (essentialAnalytics.js applyConsentTier). Undecided and "Turn on" count.
+ */
+export function buyCountingRefused({ ph = posthog, nav = typeof navigator !== 'undefined' ? navigator : undefined } = {}) {
+  try { if (nav?.globalPrivacyControl === true) return true; } catch { /* ignore */ }
+  if (getStoredConsent() === 'denied') return true;
+  try { if (ph?.get_explicit_consent_status?.() === 'denied') return true; } catch { /* ignore */ }
+  return false;
+}
+
+/**
  * Anonymous Buy Now counter: tells /api/go "one Buy click on this product".
- * Only the product id is sent: no cookie, no account, no analytics id. It
- * runs for every visitor (consent or not) because it records nothing about
- * the person, only a daily total per product. Fire-and-forget: the Buy link
- * opens the seller whatever happens here.
+ * Only the product id is sent: no cookie, no account, no analytics id, so
+ * it runs before a consent choice and after Turn on. Nothing is sent after
+ * Keep off, an account opt-out, or with Global Privacy Control
+ * (buyCountingRefused). Fire-and-forget: the Buy link opens the seller
+ * whatever happens here.
  */
 export function countBuyClick(productId) {
   const id = String(productId || '');
   if (!GO_ID.test(id)) return;
   try {
+    if (buyCountingRefused()) return;
     if (typeof fetch !== 'function') return;
     // Not sendBeacon: a beacon always carries the site's cookies (including
     // the analytics cookie). credentials: 'omit' sends none. keepalive lets
