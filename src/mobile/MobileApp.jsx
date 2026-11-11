@@ -461,6 +461,12 @@ export default function MobileApp() {
   // 'more': the optional setup questions, opened from the reveal (ReadyScreen).
   const [intakeFlow, setIntakeFlow] = useState('auto');
   const [ecosystemNotice, setEcosystemNotice] = useState('');
+  // A short note after the quiz ("1 new product added"), gone after a few seconds (founder, Nov 11: space).
+  useEffect(() => {
+    if (!ecosystemNotice) return undefined;
+    const t = window.setTimeout(() => setEcosystemNotice(''), 5000);
+    return () => window.clearTimeout(t);
+  }, [ecosystemNotice]);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [resettingEcosystem, setResettingEcosystem] = useState(false);
   const [authMode, setAuthMode] = useState('signup');

@@ -46,3 +46,17 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 [data-theme='dark'] .ay-bigbuy { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .45); }
 [data-theme='dark'] .ay-bigbuy__alts button { border-color: rgba(255, 237, 172, .35); }
 [data-theme='dark'] .ay-bigbuy__acts button { border-color: #ffedac; }
+
+/* Slim care bar (Nov 11): one row, inside the page gutter, Find care as a small pill. */
+.ay-carebar { margin: 8px 16px 12px; padding: 10px 12px; border: 1.5px solid #3e2723; border-radius: 16px; background: #fff8dc; color: #3e2723; font-family: var(--ayna-font-ui, 'Figtree'), sans-serif; }
+.ay-carebar__row { display: flex; align-items: center; gap: 10px; }
+.ay-carebar__icon { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #f7badd; }
+.ay-carebar__icon svg { width: 16px; height: 16px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-carebar__row p { flex: 1; min-width: 0; margin: 0; font: 600 14px/1.35 var(--ayna-font-ui, 'Figtree'), sans-serif; color: inherit; }
+.ay-carebar__go { flex: none; display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac !important; font: 700 14px/1 var(--ayna-font-ui, 'Figtree'), sans-serif; text-decoration: none; cursor: pointer; }
+.ay-carebar__more { margin: 6px 0 0 38px; font: 500 14px/1.4 var(--ayna-font-ui, 'Figtree'), sans-serif; }
+.ay-carebar__more summary { cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.ay-carebar__more summary::-webkit-details-marker { display: none; }
+.ay-carebar__more p { margin: 6px 0 0; }
+[data-theme*="dark"] .ay-carebar { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .45); }
+[data-theme*="dark"] .ay-carebar__go { background: #ffedac; color: #3e2723 !important; }

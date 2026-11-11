@@ -272,7 +272,7 @@ export default function EcosystemScreen({
 
   // Founder, Nov 9 ("take this out"): the pink panel with five care links is now the small
   // butter care note: one line, Read more, Find care. Still always shown, never behind a tab.
-  const careBlock = careFirst && seed && <CareNote className="ay-care-banner" lines={['You said something may be urgent. Reach a clinician first.', ...notes.filter((n) => !/may be urgent/i.test(n))]} prominent findCareHref={firstCareLink(seed.care)?.href} />;
+  const careBlock = careFirst && seed && <CareNote compact lines={['Something you said may be urgent. Reach a clinician first.', ...notes.filter((n) => !/may be urgent/i.test(n))]} findCareHref={firstCareLink(seed.care)?.href} />;
 
   // Calm care note: one combined sentence, placed after her first shelf. The
   // life-stage note moves to "For you" as a clearer card (see lifeStageFix).
