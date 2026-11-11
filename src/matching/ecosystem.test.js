@@ -139,7 +139,8 @@ describe('ordering and tie-breaks', () => {
     const b = shelf(buildEcosystem(communityFirst, ALL_PRODUCTS, { picksPerNeed: 10 }), 'pain.menstrual_cramp');
     // p-viboos-heating-pad joined the catalog on main and is direct cramp relief too.
     // Nov 2: Popmask's self-heating cramp patches (founder's sheet) are direct relief too.
-    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating', 'p-viboos-heating-pad', 'p-popmask-big-hug-self-heating-patches'];
+    // Nov 11: TensCare Ova+ (FDA-cleared for menstrual cramps, founder's cramp list) is direct relief too.
+    const direct = ['p-sootheher-elaris-pod', 'p-thermacare', 'p-portable-heating', 'p-viboos-heating-pad', 'p-popmask-big-hug-self-heating-patches', 'p-tenscare-ova-plus-period-pain-relief'];
     expect(ids(a)[0]).toBe('p-sootheher-elaris-pod');
     expect(ids(b)[0]).not.toBe('p-sootheher-elaris-pod');
     // Direct cramp relief stays above secondary options under either ranking.

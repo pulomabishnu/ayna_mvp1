@@ -5422,5 +5422,88 @@ export const NOV_2026_PRODUCTS = [
       "sourceLabel": "Topicals: product page"
     },
     "optionsNote": "Options: Full Size 30 ml, Jumbo, Mini, Trial Size."
+  },
+  {
+    "id": "p-tenscare-ova-plus-period-pain-relief",
+    "name": "Ova+ Period Pain Relief",
+    "brand": "TensCare",
+    "category": "cramp-relief",
+    "type": "physical",
+    "internal": false,
+    "healthFunctions": [
+      "cramp-relief",
+      "pain-relief"
+    ],
+    "tags": [
+      "cramps",
+      "tens",
+      "drug-free",
+      "device"
+    ],
+    "price": "$51 (brand page in USD, Nov 2026)",
+    "whereToBuy": [
+      "TensCare"
+    ],
+    "url": "https://tenscare.co.uk/products/ova-plus-tens-unit-for-menstrual-cramps",
+    "whereToBuyLinks": {
+      "TensCare": "https://tenscare.co.uk/products/ova-plus-tens-unit-for-menstrual-cramps"
+    },
+    "summary": "A small, rechargeable TENS unit made for period pain. Two pads go on the skin and it sends gentle electrical pulses. The FDA cleared it (K230926) for temporary relief of menstrual cramp pain when used with an over-the-counter pain reliever.",
+    "safety": {
+      "fdaStatus": "FDA 510(k) cleared, K230926 (Ova+, TensCare Ltd, Dec 15 2023): Mode 0 for temporary relief of pain associated with dysmenorrhea (menstrual cramps) when used with over-the-counter pain medication.",
+      "sideEffects": "Do not use with a heart pacemaker or a heart rhythm problem, with epilepsy, in the first three months of pregnancy, on the abdomen later in pregnancy, or while driving or operating machinery."
+    },
+    "clinicianOpinionSource": "brand",
+    "clinicianAttribution": "Product details are TensCare's, from its product page and a UK retailer listing (read Nov 11 2026). Regulatory status from the FDA 510(k) summary K230926.",
+    "warnings": [
+      "Do not use if you have a heart pacemaker or a heart rhythm problem.",
+      "Do not use if you have epilepsy.",
+      "Do not use in the first three months of pregnancy, or on the abdomen later in pregnancy.",
+      "Pain that is new, severe or not explained should be checked by a clinician; TENS can mask it."
+    ],
+    "verificationLinks": {
+      "doctor": {
+        "links": []
+      },
+      "scientific": {
+        "links": [
+          {
+            "url": "https://www.accessdata.fda.gov/cdrh_docs/pdf23/K230926.pdf",
+            "label": "FDA 510(k) K230926: Ova+"
+          }
+        ]
+      },
+      "community": {
+        "links": []
+      }
+    },
+    "integrations": [],
+    "badges": [],
+    "addedFrom": "founder cramp list, Nov 11 2026 (Ameera)",
+    "researchSources": [
+      {
+        "url": "https://tenscare.co.uk/products/ova-plus-tens-unit-for-menstrual-cramps",
+        "what": "name, price (USD shown to US visitors), photo"
+      },
+      {
+        "url": "https://www.accessdata.fda.gov/cdrh_docs/pdf23/K230926.pdf",
+        "what": "FDA clearance and indications"
+      },
+      {
+        "url": "https://healthandcare.co.uk/tensnmes/tenscare-ova-plus-period-pain-menstrual-cramp-reliever.html",
+        "what": "what's in the box, contraindications"
+      }
+    ],
+    "image": "https://tenscare.co.uk/cdn/shop/products/Ova-Period-Pain-Relief-Pain-Relief-TensCare-Ltd.jpg",
+    "howToUse": {
+      "intro": "Per TensCare and the FDA clearance:",
+      "steps": [
+        "Stick the two pads on clean, dry skin where the cramps are.",
+        "Turn it on, choose the period pain mode and raise the strength until it feels strong but comfortable.",
+        "The FDA clearance is for use alongside an over-the-counter pain reliever."
+      ],
+      "sourceUrl": "https://www.accessdata.fda.gov/cdrh_docs/pdf23/K230926.pdf",
+      "sourceLabel": "FDA 510(k) K230926"
+    }
   }
 ];
