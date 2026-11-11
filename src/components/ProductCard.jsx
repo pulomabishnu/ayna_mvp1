@@ -95,7 +95,7 @@ export default function ProductCard({
     onOpen(product);
   };
   return (
-    <article onClick={openFromCard} data-pid={product.id} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()} style={style}>
+    <article onClick={openFromCard} data-pid={product.id} data-pname={product.name || undefined} data-pbrand={product.brand || undefined} className={`ay-pcard${inEcosystem ? ' is-in-eco' : ''}${isSaved ? ' is-saved' : ''}${hasMatch ? ' has-fit' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()} style={style}>
       {/* The square photo panel: the product on a light ground, a thin rule around it. */}
       <div className={`ay-pcard__photo${bulk ? ' is-seal-crop' : ''}`}>
         {tile || <ProductTileImage product={product} alt={productImageAlt(product)} letterNode={<PlateName product={product} />} />}

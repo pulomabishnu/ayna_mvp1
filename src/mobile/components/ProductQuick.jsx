@@ -5,6 +5,7 @@ import { ADD_TO_ROUTINE, IN_ROUTINE } from '../../utils/routineCopy.js';
 import { HEART_PATH } from '../utils/heart.js';
 import { holdLine } from '../../utils/matchState.js';
 import { trackApp } from '../utils/appAnalytics.js';
+import { productIdentity, countBuyClick } from '../../utils/productEventProps.js';
 
 // Shared by the product sheet and the Rundown's product cards. No stylesheet
 // here (the Rundown is shared with the website); the app's look is in
@@ -28,7 +29,7 @@ export function ProductQuickActions({ product, saved, onToggleSaved, inRoutine, 
   return (
     <div className={`ay-pquick${compact ? ' is-compact' : ''}`} data-tour="quick-actions">
       <div className={`ay-pquick__row${big ? ' ayv-actions' : ''}`}>
-        {buyUrl && <a className={`ay-pquick__buy${big ? ' ayv-buy' : ''}`} href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement })}>{label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a>}
+        {buyUrl && <a className={`ay-pquick__buy${big ? ' ayv-buy' : ''}`} href={buyUrl} target="_blank" rel="noopener noreferrer" onClick={() => { countBuyClick(product?.id); trackApp('product_buy_now_clicked', { ...productIdentity(product), category: product?.category, placement }); }}>{label}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a>}
         {onToggleSaved && <button type="button" className={`ay-pquick__save${saved ? ' is-on' : ''}`} aria-pressed={saved} onClick={() => onToggleSaved(product)} aria-label={saved ? `Saved. Remove ${product?.name} from Saved` : `Save ${product?.name}`}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill={saved ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={HEART_PATH} /></svg>
           <span>{saved ? 'Saved' : 'Save'}</span>

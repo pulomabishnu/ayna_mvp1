@@ -48,6 +48,7 @@ import { getAppSessionId } from '../utils/conversationId';
 import { productHref } from '../utils/productRoute';
 import { hostLabel } from '../utils/verificationLinks';
 import posthog from 'posthog-js';
+import { productIdentity, countBuyClick } from '../utils/productEventProps.js';
 import '../styles/verify-content.css';
 import './pdp/pdp.css';
 import './pdp/pdp-nov6.css';
@@ -587,8 +588,9 @@ export default function ProductModal({
         // Never let the purchase-feedback queue block opening the retailer.
         try { recordRetailerVisit(product, choice.variant); } catch { /* ignore */ }
         trackPdpRetailerClicked({ surface: eventSurface(), product_id: product.id, retailer: retailerOf(buyUrl) });
+        countBuyClick(product.id);
         posthog.capture('product_buy_now_clicked', {
-          productId: product.id,
+          ...productIdentity(product),
           category: product.category,
           destination: buyUrl,
           variantId: choice.variant?.id,

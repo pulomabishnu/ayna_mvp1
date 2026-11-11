@@ -12,6 +12,7 @@ import { SafetyLine, MatchLockup, PriceRow, Highlights, ActionsRow } from '../..
 import { costPerUse, highlightsFor, matchBreakdownFor, alsoAt, retailerOf } from '../../components/pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { trackApp } from '../utils/appAnalytics.js';
+import { productIdentity, countBuyClick } from '../../utils/productEventProps.js';
 import { IN_ROUTINE } from '../../utils/routineCopy.js';
 import { buyModel } from '../../components/pdp/buyModel.js';
 import { heroPriceView, MAX_PRICE_CHIPS } from '../../components/pdp/heroPrice.js';
@@ -111,7 +112,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
   const others = alsoAt(buy?.rows);
   // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
   const breakdown = details ? matchBreakdownFor(product, details) : null;
-  const buyLink = (extra = '') => (buy?.url ? <a className={`ay-pquick__buy ayv-buy ayv-sticker ${extra}`.trim()} href={buy.url} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(buy.url) }); trackApp('product_buy_now_clicked', { productId: product?.id, category: product?.category, placement: extra ? 'sheet_summary_end' : 'product_sheet' }); }}>{buy.label || 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a> : null);
+  const buyLink = (extra = '') => (buy?.url ? <a className={`ay-pquick__buy ayv-buy ayv-sticker ${extra}`.trim()} href={buy.url} target="_blank" rel="noopener noreferrer" onClick={() => { trackPdpRetailerClicked({ surface: eventSurface(), product_id: product?.id, retailer: retailerOf(buy.url) }); countBuyClick(product?.id); trackApp('product_buy_now_clicked', { ...productIdentity(product), category: product?.category, placement: extra ? 'sheet_summary_end' : 'product_sheet' }); }}>{buy.label || 'Buy'}<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens the seller’s site)</span></a> : null);
 
   const node = (
     <div ref={rootRef} className={`ay-psheet-layer${still ? ' is-still' : ''}${full ? ' is-full' : ''}`} data-product-sheet="">
