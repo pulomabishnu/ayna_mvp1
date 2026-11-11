@@ -37,7 +37,8 @@ const FITS = {
   pms: /pms|bloat|premenstrual|cycle support/i,
 };
 const textOf = (p) => `${p?.name || ''} ${p?.category || ''} ${p?.subcategory || ''} ${(p?.needs || p?.concerns || []).join?.(' ') || ''} ${p?.description || ''}`;
-const TONES = ['is-ink', 'is-pink', 'is-butter', 'is-wash'];
+// Brand colours only (founder, Nov 11: "stay on branding"): espresso and pink, alternating.
+const TONES = ['is-ink', 'is-pink'];
 
 function Icon({ d }) { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d={d} /></svg>; }
 
@@ -105,7 +106,7 @@ export default function TodayPlan({
   if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: 'Log today', line: 'Mood, pain, energy, period', go: onOpenLog });
   topics.slice(0, 3).forEach((h) => tiles.push({ key: h.id, icon: ICONS[h.id] || ICONS.steady, title: SHORT[h.id] || h.title, line: h.fromData || h.tips[0], go: () => setOpen(h.id) }));
   if (insight && !insight.topic && onOpenInsight) tiles.push({ key: 'data', icon: ICONS.data, title: insight.label, line: insight.line, go: onOpenInsight });
-  if (picks.length) tiles.push({ key: 'picks', icon: ICONS.picks, title: 'For your routine', line: `${Math.min(3, picks.length)} picks that fit you`, thumbs: picks.slice(0, 2), go: () => setOpen('picks') });
+  if (picks.length) tiles.push({ key: 'picks', icon: ICONS.picks, title: 'New products for you', line: `${Math.min(3, picks.length)} suggestions that fit you`, thumbs: picks.slice(0, 2), go: () => setOpen('picks') });
   if (logged && onOpenLog) tiles.push({ key: 'relog', icon: ICONS.log, title: 'Your log', line: 'Add or change today', go: onOpenLog });
 
   const h = topics.find((x) => x.id === open);
@@ -147,8 +148,8 @@ export default function TodayPlan({
       </Sheet>
 
       <Sheet open={open === 'picks'} onClose={() => setOpen(null)} labelledBy="ay-tp-picks-h">
-        <p className="ay-tp-sheet__kicker">For your routine</p>
-        <h2 id="ay-tp-picks-h">Picks that fit what you told ayna</h2>
+        <p className="ay-tp-sheet__kicker">New products for you</p>
+        <h2 id="ay-tp-picks-h">Suggestions that fit what you told ayna</h2>
         <ProductRows products={picks.slice(0, 3)} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />
         {onExplore && <button type="button" className="ay-tp-link" onClick={() => { setOpen(null); onExplore(''); }}>Explore Shop</button>}
       </Sheet>

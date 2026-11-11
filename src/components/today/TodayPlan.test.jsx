@@ -8,7 +8,7 @@ describe('For today bento (founder, Nov 11)', () => {
   it('nothing logged: Log today first, then her routine picks', () => {
     const html = renderToStaticMarkup(<TodayPlan entry={null} picks={[cup]} onOpenLog={() => {}} />);
     expect(html).toContain('Log today');
-    expect(html).toContain('For your routine');
+    expect(html).toContain('New products for you');
   });
   it('a log brings topics: low energy and pain become tiles', () => {
     const html = renderToStaticMarkup(<TodayPlan entry={{ energy: 1, pain: 2 }} picks={[]} />);

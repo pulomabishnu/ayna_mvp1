@@ -1121,15 +1121,15 @@
    they carry their own strip and nothing scrolls under the clock. */
 .ayna-mobile .ayna-fresh-profile-overlay::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--d-page, #ffedac); z-index: 5; pointer-events: none; }
 
-/* Nov 11 Home pass (founder: "stop putting things in boxes", "use hierarchy", inspo boards):
-   cards are soft fills, not outlines. Highlights and Your products sit on a light brown wash,
-   the Today / Routine switch is a filled track like the check-in rows, Edit is a plain link. */
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hhl__card { border: 0 !important; background: rgba(62, 39, 35, .07) !important; box-shadow: none !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile { border: 0 !important; box-shadow: none !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products { color: #3e2723 !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products * { color: #3e2723 !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs { border: 0 !important; background: rgba(62, 39, 35, .08) !important; box-shadow: none !important; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-homewidgets__edit { border: 0 !important; background: none !important; box-shadow: none !important; min-height: 44px !important; padding: 0 !important; }
-.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hhl__card { background: rgba(255, 237, 172, .08) !important; }
-.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs { background: rgba(255, 237, 172, .1) !important; }
-.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products, .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products * { color: #ffedac !important; }
+/* Nov 11 Home pass (founder: "stop putting things in boxes", "stay on branding", "charts shouldn't be
+   on pink"): brand colours only (espresso #3e2723, pink #f7badd, butter #ffedac). Highlights sit on the
+   page with no box; Your products is a pink tile; the Today / Routine switch is a pink track with the
+   espresso pill; Edit is a plain link. */
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hhl__card { border: 0 !important; background: transparent !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile { border: 0 !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products { background: #f7badd !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products, .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hsc__tile.is-products * { color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs { border: 0 !important; background: #f7badd !important; box-shadow: none !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs :is(button, [role=tab]):not([aria-selected='true']) { color: #3e2723 !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-tv .ayk-tabs :is(button, [role=tab])[aria-selected='true'] { background: #3e2723 !important; color: #ffedac !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-homewidgets__edit { border: 0 !important; background: none !important; box-shadow: none !important; min-height: 44px !important; padding: 0 !important; }
