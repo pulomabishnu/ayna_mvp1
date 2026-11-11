@@ -4,7 +4,7 @@
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile {
   position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 72px; min-width: 0;
   padding: 10px 10px 10px 14px !important; border: 1.5px solid var(--d-ink, #3e2723) !important; border-radius: 18px !important;
-  background: #fff8dc !important; color: #3e2723 !important; text-align: left; cursor: pointer; box-shadow: none !important; overflow: hidden;
+  background: transparent !important; color: #3e2723 !important; text-align: left; cursor: pointer; box-shadow: none !important; overflow: hidden;
 }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile.is-wide { grid-column: 1 / -1; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .al-tile.is-foryou { background: #f7badd !important; }

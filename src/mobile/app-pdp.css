@@ -380,7 +380,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp, #ay-pdp .ay-pdp3-head, #ay-pdp .ay-pdp-passport { overflow-x: clip; touch-action: pan-y pinch-zoom; }
 #ay-pdp .ay-pdp-morelist { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
 #ay-pdp .ay-pdp-morelist li { margin: 0; padding: 0; }
-#ay-pdp .ay-pdp-morelist button { all: unset; box-sizing: border-box; width: 100%; min-height: 76px; display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border: 1.5px solid #3e2723; border-radius: 18px; background: #fff8dc; color: #3e2723; cursor: pointer; }
+#ay-pdp .ay-pdp-morelist button { all: unset; box-sizing: border-box; width: 100%; min-height: 76px; display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border: 1.5px solid #3e2723; border-radius: 18px; background: transparent; color: #3e2723; cursor: pointer; }
 #ay-pdp .ay-pdp-morelist button:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
 #ay-pdp .ay-pdp-morelist__img { position: relative; isolation: isolate; flex: none; width: 56px; height: 56px; border-radius: 12px; overflow: hidden; background: #fff; display: grid; place-items: center; }
 #ay-pdp .ay-pdp-morelist__img :is(img, picture) { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; padding: 6px !important; object-fit: contain !important; }
@@ -398,7 +398,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { padding-top: 64px; align-items: flex-start; }
 /* Nov 10 (founder: header "looks awkward"): one tidy card, photo and text centered beside each
    other, tight even spacing, nothing floating (inspo: soft rounded data cards). */
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { margin: 64px 16px 0; padding: 12px; gap: 14px; align-items: center; border: 1.5px solid #3e2723; border-radius: 24px; background: #fff8dc; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { margin: 64px 16px 0; padding: 12px; gap: 14px; align-items: center; border: 1.5px solid #3e2723; border-radius: 24px; background: transparent; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero { width: 104px; border-radius: 16px; border: 0; background: #fff; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { display: grid; gap: 4px; align-content: center; padding: 0 !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id > * { margin: 0 !important; padding: 0 !important; }

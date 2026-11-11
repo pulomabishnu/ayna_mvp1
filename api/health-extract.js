@@ -2,11 +2,11 @@
 /**
  * Read health numbers from ONE screenshot so the person can review them.
  *
- * OFF unless HEALTH_IMAGE_EXTRACTION=anthropic. It sends a health image to a
- * third-party processor (Anthropic), which is a new purpose for that
- * processor; the founders/counsel should confirm the processor terms cover it
- * and the privacy policy says so before switching it on. Until then the app
- * falls back to "type it in".
+ * ON by default since Nov 11 2026 (founder Ameera approved: "just do what is best"). It sends
+ * a health image to Anthropic only after she taps "Read it" on a screen that says so; the
+ * privacy policy and the consumer health data notice name screenshot reading. To switch it
+ * off without a deploy, set HEALTH_IMAGE_EXTRACTION=off in Vercel; the app then offers
+ * "type it in".
  *
  *   GET  -> { enabled }
  *   POST { mediaType, data (base64), declaredApp } -> { candidates: [...] }
@@ -24,7 +24,7 @@ import { cleanRow, METRICS } from '../src/health/metrics.js';
 
 const MEDIA = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
 const MAX_BASE64 = 7 * 1024 * 1024;
-export const extractionEnabled = () => String(process.env.HEALTH_IMAGE_EXTRACTION || '').toLowerCase() === 'anthropic';
+export const extractionEnabled = () => !['off', 'false', '0', 'no'].includes(String(process.env.HEALTH_IMAGE_EXTRACTION || '').trim().toLowerCase());
 
 const SYSTEM = `You read numbers off a screenshot of a health or fitness app. Return ONLY JSON:
 {"values":[{"metric":"<id>","day":"YYYY-MM-DD","value":<number>}]}

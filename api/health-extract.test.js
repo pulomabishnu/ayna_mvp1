@@ -26,7 +26,8 @@ describe('/api/health-extract (screenshots)', () => {
     expect(calls.anthropic).toHaveLength(0);
   });
 
-  it('is off by default and says so; nothing is sent anywhere', async () => {
+  it('when switched off: says so; nothing is sent anywhere', async () => {
+    vi.stubEnv('HEALTH_IMAGE_EXTRACTION', 'off');
     expect((await run(mockReq({ method: 'GET' }))).body).toEqual({ enabled: false });
     const r = await run(mockReq({ body: { mediaType: 'image/png', data: 'AAAA' } }));
     expect(r.body.error).toBe('extraction_disabled');
@@ -50,5 +51,16 @@ describe('/api/health-extract (screenshots)', () => {
   it('parser mistakes are caught: garbage output yields nothing', () => {
     expect(candidatesFromModel('not json at all')).toEqual([]);
     expect(candidatesFromModel('{"values":[{"metric":"sleep_minutes","day":"2026-10-01","value":99999}]}')).toEqual([]);
+  });
+});
+
+describe('on by default (founder, Nov 11)', () => {
+  it('is on with no setting and off only when set to off', async () => {
+    const { extractionEnabled } = await import('./health-extract.js');
+    vi.stubEnv('HEALTH_IMAGE_EXTRACTION', '');
+    expect(extractionEnabled()).toBe(true);
+    vi.stubEnv('HEALTH_IMAGE_EXTRACTION', 'off');
+    expect(extractionEnabled()).toBe(false);
+    vi.unstubAllEnvs();
   });
 });
