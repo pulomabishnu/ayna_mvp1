@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { identifyAccount, resolveAccountAnalyticsId, isoWeek, ageBucket, opaqueAccountKey } from './analyticsIdentity.js';
+import { identifyAccount, recordNewAccount, resolveAccountAnalyticsId, isoWeek, ageBucket, opaqueAccountKey } from './analyticsIdentity.js';
 
 function memStorage() { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k), clear: () => m.clear() }; }
 function fakeSupabase(rows = []) {
@@ -24,7 +24,7 @@ function fakePosthog() {
 }
 const U = { id: '11111111-1111-1111-1111-111111111111', email: 'a@example.com', created_at: '2026-10-17T12:00:00Z', email_confirmed_at: '2026-10-17T12:01:00Z', app_metadata: { provider: 'google' } };
 
-beforeEach(() => { globalThis.window = { localStorage: memStorage(), sessionStorage: memStorage() }; });
+beforeEach(() => { globalThis.window = { localStorage: memStorage(), sessionStorage: memStorage() }; vi.stubGlobal('fetch', vi.fn(() => Promise.resolve())); vi.stubGlobal('localStorage', memStorage()); vi.stubGlobal('navigator', {}); });
 
 describe('analytics identity', () => {
   it('reuses the id stored on the account, on any device', async () => {
@@ -81,5 +81,36 @@ describe('analytics identity', () => {
     expect(ageBucket(0.5)).toBe('<1d');
     expect(ageBucket(45)).toBe('30-89d');
     vi.restoreAllMocks();
+  });
+});
+
+describe('recordNewAccount (signed_up undercount fix, 2026-11-11)', () => {
+  const NEW = { id: '22222222-2222-2222-2222-222222222222', created_at: '2026-11-11T12:00:00Z', email_confirmed_at: null, identities: [{ id: 'x' }], app_metadata: { provider: 'email' }, user_metadata: {} };
+  it('fires at email sign-up, before the code is verified, and counts account_created', () => {
+    const ph = fakePosthog();
+    expect(recordNewAccount(ph, NEW, { method: 'email' })).toBe(true);
+    expect(ph.calls).toEqual([['capture', 'signed_up', { method: 'email', referral_source: 'linkedin.com' }]]);
+    const [url, init] = globalThis.fetch.mock.calls[0];
+    expect(url).toBe('/api/step');
+    expect(init.body).toBe('{"s":"account_created","pl":"web"}');
+  });
+  it('once per account: verifying the code an hour later does not send it again', async () => {
+    const ph = fakePosthog();
+    recordNewAccount(ph, NEW, { method: 'email' });
+    await identifyAccount(ph, fakeSupabase(), { ...NEW, email_confirmed_at: '2026-11-11T13:00:00Z' }, { now: Date.parse('2026-11-11T12:10:00Z') });
+    expect(ph.calls.filter((c) => c[1] === 'signed_up')).toHaveLength(1);
+    expect(globalThis.fetch.mock.calls.filter((c) => c[1].body.includes('account_created'))).toHaveLength(1);
+  });
+  it('an email that already has an account is not a new account', () => {
+    const ph = fakePosthog();
+    expect(recordNewAccount(ph, { ...NEW, identities: [] }, { method: 'email' })).toBe(false);
+    expect(ph.calls).toHaveLength(0);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+  it('Google/Apple/phone accounts still record at their first sign-in', async () => {
+    const ph = fakePosthog();
+    const phone = { ...NEW, id: '33333333-3333-3333-3333-333333333333', identities: undefined, app_metadata: { provider: 'phone' } };
+    await identifyAccount(ph, fakeSupabase(), phone, { now: Date.parse('2026-11-11T12:05:00Z') });
+    expect(ph.calls.find((c) => c[1] === 'signed_up')[2]).toMatchObject({ method: 'phone' });
   });
 });

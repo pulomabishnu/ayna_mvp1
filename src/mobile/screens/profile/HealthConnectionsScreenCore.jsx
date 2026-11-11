@@ -16,6 +16,7 @@ import HealthUploadScreen from './HealthUploadScreen.jsx';
 import HealthRecordsScreen from './HealthRecordsScreen.jsx';
 import './health-connections.css';
 import HealthMatchToggle from '../../../components/health/HealthMatchToggle.jsx';
+import { countJourneyStep } from '../../../utils/journeyStep.js';
 
 /**
  * Health data (You -> Health data). Real connections only: a source is
@@ -277,6 +278,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
           if (first instanceof HealthApiError && first.status && first.status < 500 && first.status !== 0) throw first;
           await step('save_connection', connectDeviceSource(apiSource, selected, Capacitor.getPlatform()), 30000);
         }
+        countJourneyStep('health_connected'); // anonymous daily count (journeyStep.js)
         try { posthog.capture('health_connection_succeeded', { provider: apiSource }); } catch { /* ignore */ }
         // Connected. Reloading the list and reading her data happen in the
         // background, so the button never waits on them.

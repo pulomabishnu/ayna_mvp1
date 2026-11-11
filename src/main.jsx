@@ -14,6 +14,7 @@ import './styles/delight.css'
 import { installDelight } from './utils/delightRuntime.js'
 import { installMotion } from './utils/motion.js'
 import { markPerf } from './utils/perfTimings.js'
+import { countLanded } from './utils/journeyStep.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
 // web entry chunk even though the web only ever shows it on /mobile-preview.
@@ -436,6 +437,8 @@ window.addEventListener('unhandledrejection', (e) => {
     posthog.capture('app_error_uncaught', { errorMessage: redactErrorMessage(m), kind: 'promise' });
   } catch { /* analytics unavailable */ }
 });
+// Anonymous journey step counter: one "landed" per visit (journeyStep.js).
+try { countLanded() } catch { /* never blocks the page */ }
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>

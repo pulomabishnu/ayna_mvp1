@@ -1,4 +1,5 @@
 import posthog from 'posthog-js';
+import { countJourneyStep } from './journeyStep.js';
 
 /**
  * Where visitors drop off (founder, Nov 3: "track friction, where they drop
@@ -32,6 +33,9 @@ export function setFunnelClient(c) { client = c || posthog; }
 
 export function trackLandingCta(cta, surface = 'web', copy = null) {
   if (!CTAS.has(cta)) return;
+  // The main "Sign up free" button also feeds the anonymous journey counter
+  // (journeyStep.js), which runs before a consent choice; this event doesn't.
+  if (cta === 'sign_up_free') countJourneyStep('sign_up_free_clicked');
   try { client.capture('landing_cta_clicked', { cta, surface: SURFACES.has(surface) ? surface : 'web', ...(CTA_COPY[copy] ? { copy } : {}) }); } catch { /* never blocks */ }
 }
 

@@ -155,6 +155,7 @@ import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';
 import { localToday } from '../utils/localDate.js';
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from '../utils/analyticsEvents.js';
+import { countJourneyStep } from '../utils/journeyStep.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 import { proDoor, retakeDoor } from '../pro/proDoor.js';
@@ -1435,6 +1436,8 @@ export default function MobileApp() {
         return;
       }
       // Not saved as her answers yet: first the optional health step, then her plan.
+      // Anonymous daily count, new quiz only (same rule as quiz_started).
+      if (intakeMode === 'new') countJourneyStep('quiz_completed');
       trackApp('intake_completed', {
         concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0,
         mode: intakeMode,

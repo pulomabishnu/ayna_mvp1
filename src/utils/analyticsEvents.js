@@ -1,5 +1,6 @@
 import posthog from 'posthog-js';
 import { localDayKey, localDaysBetween } from './localDate.js';
+import { countJourneyStep } from './journeyStep.js';
 
 /**
  * Retention and sales tracking (all-pages brief v3, "Retention and sales").
@@ -96,6 +97,7 @@ const seen = new Set();
 export function trackQuizStarted({ surface, signed_in = false } = {}) {
   store.set(K_QUIZ, String(Date.now()));
   trackEvent(EVENTS.QUIZ_STARTED, { surface, signed_in });
+  countJourneyStep('quiz_started'); // anonymous daily count (journeyStep.js)
 }
 
 /** First match on screen, once per device. */

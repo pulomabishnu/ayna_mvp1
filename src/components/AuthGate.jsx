@@ -5,6 +5,8 @@ import { devPreviewOn } from '../utils/devPreview.js';
 import { CODE_COPY, EMAIL_CODE_LENGTH, SMS_CODE_LENGTH, cleanCode, codeErrorText, isEmailNotConfirmed, verifyEmailCode } from '../utils/authCodes.js';
 import { savePendingVerification, readPendingVerification, clearPendingVerification } from '../utils/pendingVerification.js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
+import posthog from 'posthog-js';
+import { recordNewAccount } from '../utils/analyticsIdentity.js';
 import { stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
 import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, acknowledgementLead, LEGAL_LINKS, consentMetadata, markAskHeardAbout } from '../utils/signupConsent.js';
@@ -260,6 +262,8 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         if (error) throw error;
         // "Where did you hear about us?" comes after sign-up, optional.
         if (data.user?.identities?.length !== 0) markAskHeardAbout();
+        // The account exists now, verified or not: count it (signed_up + account_created).
+        recordNewAccount(posthog, data.user, { method: 'email' });
         if (data.user?.identities?.length === 0) {
           setError('An account with this email already exists. Sign in instead.');
           setMode('signin');

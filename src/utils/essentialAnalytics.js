@@ -4,7 +4,7 @@
  * Two tiers of PostHog capture on the website and in the app:
  *
  * 1. ESSENTIAL (everyone who has not made a choice yet): an anonymous count of
- *    page visits and app errors, so the founders can tell whether people reach
+ *    page visits, app errors and new accounts (signed_up, method only), so the founders can tell whether people reach
  *    the site and whether it is broken. posthog-js runs in cookieless mode
  *    (`cookieless_mode: 'on_reject'` in main.jsx): no cookies, no local or
  *    session storage, no analytics ID. PostHog's servers derive a daily-rotating
@@ -23,7 +23,12 @@
  * 45-105 to 1-10. That looked exactly like the site going down.
  */
 
-export const ESSENTIAL_EVENTS = new Set(['$pageview', '$pageleave', 'app_error']);
+export const ESSENTIAL_EVENTS = new Set(['$pageview', '$pageleave', 'app_error', 'signed_up']);
+
+// PostHog's cookieless placeholder id. Every anonymous event carries this,
+// never an account's analytics id: if the visitor is signed in (identify ran)
+// but hasn't chosen, the event still can't be tied to her account.
+export const COOKIELESS_ID = '$posthog_cookieless';
 
 // Top-level sections of the site. Before opt-in, a page address is reduced
 // to one of these (/product/monistat-7?q=yeast#symptoms -> /product); any
@@ -54,6 +59,8 @@ const KEEP = new Set([
 ]);
 // app_error's own coarse fields (built by appErrorProperties, message redacted).
 const KEEP_FOR_ERRORS = new Set(['errorName', 'errorMessage', 'component', 'view', 'isChunkLoadError']);
+// signed_up keeps only how the account was made (email / google / apple / phone).
+const KEEP_FOR_SIGNUP = new Set(['method']);
 
 /** '/product/monistat-7?q=x#y' -> '/product'; unknown sections -> '/other'. */
 export function sectionPath(pathname) {
@@ -90,7 +97,7 @@ export function essentialProperties(event) {
   const props = event?.properties || {};
   const out = {};
   for (const [key, value] of Object.entries(props)) {
-    if (KEEP.has(key) || (event.event === 'app_error' && KEEP_FOR_ERRORS.has(key))) out[key] = value;
+    if (KEEP.has(key) || (event.event === 'app_error' && KEEP_FOR_ERRORS.has(key)) || (event.event === 'signed_up' && KEEP_FOR_SIGNUP.has(key))) out[key] = value;
   }
   if ('$current_url' in props) out.$current_url = sectionUrl(props.$current_url);
   if ('$pathname' in props) out.$pathname = sectionPath(props.$pathname);
@@ -114,7 +121,8 @@ export function applyConsentTier(event, { optedIn, gpc, stored }) {
   if (optedIn) return event;
   if (gpc || stored === 'denied') return null;
   if (!ESSENTIAL_EVENTS.has(event.event)) return null;
-  const out = { ...event, properties: essentialProperties(event) };
+  const out = { ...event, properties: { ...essentialProperties(event), distinct_id: COOKIELESS_ID, $cookieless_mode: true } };
+  if ('distinct_id' in out) out.distinct_id = COOKIELESS_ID;
   // No person profile in the essential tier ($initial_referrer and the like).
   delete out.$set;
   delete out.$set_once;
