@@ -66,3 +66,27 @@
 .al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__cover { aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--ay-r-md, 16px); }
 .al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__cover > * { width: 100%; height: 100%; object-fit: cover; }
 .al-grid.al-grid--ed > .al-item.is-wide .ay-rcard__title { font-size: 19px !important; }
+
+/* Nov 10 (founder: "this really needs help"): calmer featured read, no sideways rails, tidy lines. */
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__thumb { aspect-ratio: 16 / 9 !important; max-height: 200px; overflow: hidden; border-radius: 20px; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__thumb img { object-position: center 35%; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__title { font-size: 22px !important; line-height: 1.2 !important; margin: 6px 0 0 !important; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__link { text-decoration: none !important; color: inherit; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__line { font-size: 15px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 6px; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__credit { font-size: 13px; opacity: .8; margin-top: 6px; }
+.ayna-mobile .al-feature .ay-rcard.is-feature .ay-rcard__sources { display: none !important; }
+.ayna-mobile .al-ed__pair { display: none !important; }
+/* Topic chips wrap instead of scrolling sideways. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayk-chiprow.al-topics--v9 { flex-wrap: wrap !important; overflow: visible !important; white-space: normal !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.ayna-mobile .al-rows { margin: 8px 0 0; }
+/* The active tab is shown by its pink pill, not a box: no mouse-click focus box on the bottom bar. */
+.ayna-mobile .ayna-bottom-nav :is(button, a):focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; }
+/* Topic lists: compact rows (small cover, topic and time, title), three per topic, See all opens the rest. */
+.ayna-mobile .al-rows { display: grid; gap: 10px; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row { grid-template-columns: 72px minmax(0, 1fr) !important; gap: 12px !important; align-items: center !important; padding: 8px !important; border: 1.5px solid currentColor; border-radius: 18px; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row .ay-rcard__thumb { width: 72px !important; aspect-ratio: 1 / 1 !important; border-radius: 12px; overflow: hidden; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row :is(.ay-rcard__line, .ay-rcard__credit, .ay-rcard__sources) { display: none !important; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row .ay-rcard__topic { font-size: 13px !important; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row .ay-rcard__title { font-size: 16px !important; margin: 0 !important; }
+html body .ayna-mobile .al-rows .ay-rcard__link { text-decoration: none !important; color: inherit !important; }
+html body .ayna-mobile .al-rows .ay-rcard.is-row .ay-rcard__thumb :is(span, p, b, strong, div) { font-size: 11px !important; line-height: 1.15 !important; word-break: normal !important; overflow-wrap: normal !important; hyphens: none !important; }

@@ -55,7 +55,8 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
   const grid = (items) => <div className="al-grid al-grid--ed">{items.map((a, i) => tile(a, false, i === 0 || (i === items.length - 1 && (items.length - 1) % 2 === 1)))}</div>;
   const row = (id, label, items, extra = null, topicId = null, total = items.length) => items.length > 0 && <section className="al-shelf" key={id} aria-labelledby={`al-${id}-h`}>
     <div className="al-shelf__head"><h2 id={`al-${id}-h`}>{sentence(label)}</h2>{extra || (topicId && <button type="button" className="al-seeall" onClick={() => setTopic(topicId)}>See all {total}</button>)}</div>
-    <div className="al-row">{items.map((a) => tile(a, true))}</div>
+    {/* Nov 10 (founder: one page, nothing sideways): a short list, not a sideways rail; See all opens the topic. */}
+    <div className="al-rows">{items.slice(0, 3).map((a) => <ReadCard key={a.id} article={a} layout="row" headingLevel={3} progress={progressOf(a)} onOpen={() => onOpenArticle?.(a)} />)}</div>
   </section>;
 
   let body;
