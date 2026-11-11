@@ -47,7 +47,7 @@ function renders(product) {
 const RENAMED_LABELS = [
   // Nov 10 (founder: "don't say also at Amazon, just say we may earn a commission, stop overcrowding"):
   // the app's Buy block is the button and the one disclosure line.
-  /^Price checked /, 'NatureMade.com',
+  /^Price checked /, 'NatureMade.com', 'ayna may earn a commission from Amazon.', 'Return policy', /Amazon’s return policy/,
   // Nov 9 (founder: "using words like .gov sources, no"): plain wording, "trusted health sources".
   /\.gov/,
   // Nov 6 (founder: "is this stuff necessary … hard to read"): provenance filler removed on purpose.

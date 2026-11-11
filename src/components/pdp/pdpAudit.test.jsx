@@ -46,9 +46,15 @@ describe('tabs: ayna summary first and open (audit P0 #4, 7.16)', () => {
     expect(cards).toEqual(TAB_ORDER);
     expect(html).not.toMatch(/ay-stack__card[^"]*is-open/);
   });
-  it('website and app sheet render the summary tab first and selected', () => {
+  it('the website uses the same card stack as the app (Nov 10)', () => {
+    const html = renderToStaticMarkup(<ProductModal product={byId(SAALT)} />);
+    const cards = [...html.matchAll(/class="ay-stack__card[^"]*"[^>]*data-card="([^"]+)"/g)].map((m) => m[1]);
+    expect(cards[0]).toBe('summary');
+    expect(cards).toEqual(TAB_ORDER.filter((t) => cards.includes(t)));
+  });
+  it('the app sheet renders the summary tab first and selected', () => {
     const p = byId(SAALT);
-    for (const html of [renderToStaticMarkup(<ProductModal product={p} />), renderToStaticMarkup(<ProductSheet product={p} onClose={() => {}} />)]) {
+    for (const html of [renderToStaticMarkup(<ProductSheet product={p} onClose={() => {}} />)]) {
       const tabs = tabsOf(html);
       expect(tabs.map((t) => t.id)).toEqual(TAB_ORDER);
       expect(tabs[0].selected).toBe(true);
@@ -221,11 +227,11 @@ describe('decision block contents (audit 13.1, 14)', () => {
   it('website: name, match, price with cost per cycle, one sticker button, disclosure, safety line, actions, in that order; no fact chips, no pinned buy bar, no "No link yet"', () => {
     const html = renderToStaticMarkup(<ProductModal product={byId(SAALT)} quizResults={IUD_PROFILE} onToggleSaved={() => {}} onAskAyna={() => {}} />);
     const at = (needle) => html.indexOf(needle);
-    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'role="tablist"'];
+    const order = ['<h1', 'class="ayv-metaline"', 'class="ayv-pricerow"', 'ayv-sticker', 'ayv-disclose', 'class="ayv-safeline"', 'class="ayv-acts"', 'class="ay-stack"'];
     const pos = order.map(at);
     pos.forEach((x, i) => { expect(x, order[i]).toBeGreaterThan(-1); if (i) expect(x, order[i]).toBeGreaterThan(pos[i - 1]); });
     expect(html).toMatch(/≈ \$0\.24 a cycle if it lasts 10 years/);
-    expect((html.slice(0, at('role="tablist"')).match(/ayv-sticker/g) || []).length).toBe(1);
+    expect((html.slice(0, at('class="ay-stack"')).match(/ayv-sticker/g) || []).length).toBe(1);
     expect(html).not.toMatch(/ayq-badges/);
     expect(html).not.toMatch(/ayv-stickybuy/);
     expect(html).not.toMatch(/No link yet/);
