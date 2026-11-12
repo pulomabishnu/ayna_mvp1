@@ -534,18 +534,11 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
               /></div>
               : null,
           })}
+          {/* Founder, Nov 12: one care card, the full one (what to do, why, sources, Find care); no
+              short box above it saying the same thing. */}
           {later.length > 0 && (
-            <ul className="ay-today__list is-compact is-care-note" aria-label="Worth checking">
-              {later.map((item) => (
-                <li key={item.id} className="ay-today__note-row">
-                  <button type="button" className="ay-today__note-main" onClick={() => { t.opened(item); openCompactDetail?.(item); }}>
-                    <b>{item.title}</b>{item.reason && <span>{item.reason}</span>}
-                  </button>
-                  {(item.actions || []).some((a) => a.id === 'get_care') && (onFindCare
-                    ? <button type="button" className="ay-today__note-go" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
-                    : <a className="ay-today__note-go" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
-                </li>
-              ))}
+            <ul className="ay-today__list is-care-full" aria-label="Worth checking">
+              {later.map((item) => <Item key={item.id} item={item} t={t} onOpenProduct={onOpenProduct} onAsk={onAsk} onEditAnswers={onEditAnswers} onFindCare={onFindCare} checkinId={checkinId} onOpenLog={() => setLogOpen(true)} onOutcome={onOutcome} />)}
             </ul>
           )}
         </>;

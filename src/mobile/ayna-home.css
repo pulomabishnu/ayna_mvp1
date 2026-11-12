@@ -226,3 +226,6 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-bottom-nav.is-4-tabs { grid-t
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__note-main b { font: 700 15px/1.25 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__note-main span { font: 500 13px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__note-go { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac !important; font: 700 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: none; white-space: nowrap; cursor: pointer; }
+/* The full care card on Home: no "Today" label (Nov 12). */
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-care-full { margin: 8px 0 16px !important; padding: 0 !important; }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-care-full .ay-today__kicker { display: none !important; }
