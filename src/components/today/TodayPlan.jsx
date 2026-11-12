@@ -103,6 +103,13 @@ export default function TodayPlan({
   }, []);
   const [draft, setDraft] = useState({ text: '', perWeek: 5 });
   const [goalOpen, setGoalOpen] = useState(null);
+  // Founder, Nov 12 ("do we have to use boxes?"): two layouts to compare before picking one.
+  //   'bento'    the tiles as they were
+  //   'open'     one card (goals); everything else sits on the page as rows (NN/g: lists beat cards
+  //              for similar items people scan)
+  //   'timeline' the day as one line: Now, Your goals, For you today
+  const layout = (() => { try { return localStorage.getItem('ayna_today_layout') || 'open'; } catch { return 'open'; } })();
+  const when = (label) => (layout === 'timeline' ? <p className="ay-tp-when">{label}</p> : null);
   const saveGoal = (g) => {
     const next = addGoal(g);
     setGoals(next);
@@ -144,7 +151,7 @@ export default function TodayPlan({
   const h = topics.find((x) => x.id === open);
   const products = h ? fits(h) : [];
   return (
-    <section className="ay-tp" aria-label="For today">
+    <section className={`ay-tp is-${layout}`} aria-label="For today">
       {today && (() => {
         // Nov 11 (founder: "make the today cooler"): the inspo's day rail. This week, today in pink,
         // a dot under each day she logged. Tap today to log.
@@ -164,6 +171,7 @@ export default function TodayPlan({
           </div>
         );
       })()}
+      {today && when('Now')}
       {today && (
         // Inspo ("Hello Alex! How are you feeling today?"): one tap logs her mood for today.
         <div className="ay-tp-feel">
@@ -182,6 +190,7 @@ export default function TodayPlan({
         </div>
       )}
 
+      {today && when('Your goals')}
       {today && (() => {
         // Inspo ("Today's Progress"): one dark card, rings that fill toward her own target.
         const rows = goals.map((g) => ({ g, w: weekFor(g, log, today) }));
@@ -197,27 +206,32 @@ export default function TodayPlan({
           );
         }
         return (
-          <div className="ay-tp-goals">
+          // Founder, Nov 12: smaller, no pill buttons; the header opens all her goals.
+          <div className="ay-tp-goals is-compact">
             <div className="ay-tp-goals__top">
-              <div><p className="ay-tp-goals__k">Your goals this week</p><h3>{onTrack ? `${onTrack} of ${rows.length} on track` : `${rows.length} ${rows.length === 1 ? 'goal' : 'goals'}`}</h3></div>
-              <button type="button" className="ay-tp-goals__all" onClick={() => setOpen('goals')}>See all</button>
+              <button type="button" className="ay-tp-goals__head" onClick={() => setOpen('goals')} aria-label={`Your goals: ${onTrack} of ${rows.length} on track this week. Open your goals`}>
+                <b>Your goals<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></b>
+                <span>{onTrack} of {rows.length} on track this week</span>
+              </button>
+              {goals.length < MAX_GOALS && <button type="button" className="ay-tp-goals__add" onClick={() => setOpen('addgoal')}>+ Add</button>}
             </div>
             <ul className="ay-tp-goals__list">{rows.slice(0, 3).map(({ g, w }) => (
               <li key={g.id}>
                 <button type="button" className="ay-tp-goals__row" onClick={() => { setGoalOpen(g.id); setOpen('goal'); }}>
                   <svg className="ay-tp-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
-                  <span><b>{g.text}</b><small>{w.count} of {w.of} days{w.met ? '. Done for the week' : ''}</small></span>
+                  <b>{g.text}</b>
+                  <small>{w.count}/{w.of}</small>
                 </button>
                 <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => setGoals(toggleDone(g.id, today))}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
                 </button>
               </li>
             ))}</ul>
-            {goals.length < MAX_GOALS && <button type="button" className="ay-tp-goals__add" onClick={() => setOpen('addgoal')}>+ Add a goal</button>}
           </div>
         );
       })()}
 
+      {when('For you today')}
       <ul className={`ay-tp-grid is-${tiles.length}`}>
         {tiles.map((t, k) => (
           <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`} style={{ '--k': k }}>
@@ -226,6 +240,7 @@ export default function TodayPlan({
               <b>{t.title}</b>
               <span className="ay-tp-tile__line">{t.line}</span>
               {t.thumbs && <span className="ay-tp-tile__thumbs" aria-hidden="true">{t.thumbs.map((p) => <span key={p.id}><ProductTileImage product={p} alt="" letterNode={<span>{(p.brand || p.name || '?').slice(0, 1)}</span>} /></span>)}</span>}
+              <svg className="ay-tp-tile__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
           </li>
         ))}

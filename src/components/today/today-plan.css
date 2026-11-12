@@ -233,3 +233,78 @@
 .ay-fb__msg { min-height: 120px; padding: 12px 16px !important; line-height: 1.45 !important; resize: vertical; }
 .ay-fb__note { margin: 12px 0 0; font: 500 13px/1.4 'Figtree', sans-serif; }
 .ay-fb__err { margin: 8px 0 0; font: 600 14px/1.4 'Figtree', sans-serif; }
+/* Founder, Nov 12: "Add a goal" doesn't need to be a big pill. A small text link. */
+.ay-tp-goals .ay-tp-goals__add { display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; padding: 0; border: 0; border-radius: 0; background: transparent; color: #ffedac; font: 600 15px/1 'Figtree', sans-serif; text-decoration: underline; text-underline-offset: 4px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals .ay-tp-goals__add { background: transparent; color: #3e2723; }
+
+/* ---- Nov 12: two box-free layouts to compare (founder: "do we have to use boxes?") ----
+   NN/g (Cards component): lists beat cards for similar items people scan; cards add borders for
+   nothing. So: one card at most (her goals), everything else as rows on the page. */
+.ay-tp-tile__go { display: none; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-grid { grid-template-columns: 1fr; gap: 0; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-grid > li { grid-column: auto; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile,
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile:is(.is-pink, .is-plain, .is-ink, .is-butter, .is-wash) { background: transparent !important; border: 0 !important; border-radius: 0; border-bottom: 1.5px solid #3e2723 !important; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-grid > li:last-child { border-bottom: 0 !important; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile > button { grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: 14px; row-gap: 2px; align-items: center; min-height: 76px; padding: 14px 0; color: #3e2723 !important; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__ic { grid-row: 1 / span 2; width: 40px; height: 40px; margin: 0; background: #3e2723 !important; color: #ffedac !important; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile b { grid-column: 2; font-size: 17px; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__line { grid-column: 2; font-size: 14px; -webkit-line-clamp: 1; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__thumbs { display: none; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__go { display: block; grid-column: 3; grid-row: 1 / span 2; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-feel { padding: 4px 0 8px; border: 0; background: transparent; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-feel__q { font-size: 26px; }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-feel__row button { min-height: 64px; border: 0; background: rgba(62, 39, 35, .08); }
+.ay-tp:is(.is-open, .is-timeline) .ay-tp-feel__row button.is-on { background: #f7badd; }
+.ay-tp.is-open .ay-tp-goals { margin: 8px 0 4px; }
+
+/* Timeline (inspo "Task Schedule"): one line down the day, a dot and a label per moment. */
+.ay-tp.is-timeline { position: relative; padding-left: 26px; }
+.ay-tp.is-timeline::before { content: ''; position: absolute; left: 7px; top: 112px; bottom: 24px; width: 1.5px; background: #3e2723; }
+.ay-tp.is-timeline .ay-tp-week { margin-left: -26px; }
+.ay-tp-when { position: relative; margin: 14px 0 6px; font: 700 13px/1 'Figtree', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #3e2723; }
+.ay-tp-when::before { content: ''; position: absolute; left: -24px; top: -1px; width: 14px; height: 14px; border-radius: 50%; background: #f7badd; border: 1.5px solid #3e2723; box-sizing: border-box; }
+.ay-tp.is-timeline .ay-tp-goals { border-radius: 20px; }
+
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp:is(.is-open, .is-timeline) .ay-tp-tile { border-bottom-color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp:is(.is-open, .is-timeline) .ay-tp-tile > button { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__ic { background: #ffedac !important; color: #3e2723 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp:is(.is-open, .is-timeline) .ay-tp-feel__row button { background: rgba(255, 237, 172, .12); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-timeline::before { background: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-when { color: #ffedac; }
+
+/* Nov 12 (founder: "spacing's a bit off", "does See all have to be a circle", "make it smaller"):
+   a compact goals card, one even rhythm (24px between sections, 16px inside). */
+.ay-tp.is-open > * + * { margin-top: 24px; }
+.ay-tp.is-open .ay-tp-week, .ay-tp.is-open .ay-tp-feel, .ay-tp.is-open .ay-tp-goals, .ay-tp.is-open .ay-tp-grid { margin-bottom: 0; }
+.ay-tp.is-open .ay-tp-feel { padding: 0; }
+.ay-tp.is-open .ay-tp-feel__q { margin: 0 0 12px; font-size: 24px; }
+.ay-tp.is-open .ay-tp-grid { margin-top: 16px; }
+.ay-tp.is-open .ay-tp-tile > button { padding: 12px 0; min-height: 68px; }
+.ay-tp-goals.is-compact { padding: 8px 16px 8px; border-radius: 20px; }
+.ay-tp-goals.is-compact .ay-tp-goals__top { align-items: center; gap: 8px; }
+.ay-tp-goals__head { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) 20px; grid-template-rows: auto auto; column-gap: 8px; align-items: center; min-height: 52px; padding: 6px 0; border: 0; background: transparent; color: #ffedac; text-align: left; cursor: pointer; }
+.ay-tp-goals__head b { font: 700 18px/1.2 'ayna Display', 'Figtree', sans-serif; }
+.ay-tp-goals__head span { grid-column: 1; font: 500 14px/1.3 'Figtree', sans-serif; }
+.ay-tp-goals__head svg { grid-column: 2; grid-row: 1 / span 2; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ay-tp-goals.is-compact .ay-tp-goals__add { margin: 0; min-height: 44px; padding: 0 4px; font-size: 15px; }
+.ay-tp-goals.is-compact .ay-tp-goals__list { gap: 0; margin: 0; border-top: 1px solid rgba(255, 237, 172, .3); }
+.ay-tp-goals.is-compact .ay-tp-goals__list li + li { border-top: 1px solid rgba(255, 237, 172, .3); }
+.ay-tp-goals.is-compact .ay-tp-goals__row { grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; min-height: 52px; }
+.ay-tp-goals.is-compact .ay-tp-goals__row b { font-size: 16px; }
+.ay-tp-goals.is-compact .ay-tp-goals__row small { font: 600 14px/1 'Figtree', sans-serif; }
+.ay-tp-goals.is-compact .ay-tp-ring { width: 28px; height: 28px; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick { width: 36px; height: 36px; border-width: 1.5px; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick svg { width: 18px; height: 18px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals__head { color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact :is(.ay-tp-goals__list, .ay-tp-goals__list li + li) { border-color: rgba(62, 39, 35, .25); }
+/* One rhythm: 24px between the sections of the open layout. */
+.ay-tp.is-open .ay-tp-week { margin: 0 0 24px !important; }
+.ay-tp.is-open .ay-tp-feel { margin: 0 0 24px !important; }
+.ay-tp.is-open .ay-tp-goals { margin: 0 0 16px !important; }
+.ay-tp.is-open .ay-tp-grid { margin: 0 0 24px !important; }
+.ay-tp-goals__head { display: block; }
+.ay-tp-goals__head b { display: inline-flex; align-items: center; gap: 4px; }
+.ay-tp-goals__head span { display: block; margin-top: 2px; }
+.ay-tp-goals__head svg { width: 18px; height: 18px; }
+.ay-tp.is-open .ay-tp-feel__q { margin: 0 0 14px !important; }
