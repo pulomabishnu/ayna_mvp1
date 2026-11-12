@@ -16,7 +16,7 @@ import { resolveDaily, series } from '../../health/dedupe.js';
 import { estimatePhase, PHASE_SOURCES } from '../../health/phase.js';
 
 export const DATA_RULES = {
-  maxDataCards: 4,
+  maxDataCards: 3, // focus group Nov 11: shorter rundown
   periodMinPast: 2, // earlier periods needed for "days left"
   periodLen: { min: 2, max: 10 }, // a logged period counted toward her usual
   periodMergeGap: 2, // bleeding days this close are one period (one missed log)

@@ -25,7 +25,7 @@ import './story/wrapped-story.css';
 const DURATION = 5200;
 
 function Photo({ product }) {
-  return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback style={{ position: 'absolute', inset: 0 }} />} />;
+  return <ProductTileImage product={product} imgStyle={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '12%' }} letterNode={<ProductImageFallback product={product} style={{ position: 'absolute', inset: 0 }} />} />;
 }
 
 // Counts up from 0 when the slide opens (respects reduced motion).
@@ -203,7 +203,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <ul className={`ay-wr-needs is-n${Math.min(byArea.length, 4)}`}>{byArea.slice(0, 4).map((a, i) => (
               <li key={a.label} role="group" aria-label={a.label} style={{ '--d': `${i * 120}ms` }}>
                 <p className="ay-wr-needs__head"><b>{a.label}</b><span><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</span></p>
-                <div className="ay-wr-needs__row">{a.items.slice(0, 3).map((p) => <span key={p.id}>{tapPlate(p, 'ay-wr-needs__plate')}</span>)}</div>
+                <div className="ay-wr-needs__row">{a.items.slice(0, 3).map((p) => <span key={p.id}>{tapPlate(p, 'ay-wr-needs__plate')}<small className="ay-wr-needs__name">{p.brand || p.name}</small></span>)}</div>
               </li>
             ))}</ul>
             <p className="ay-wr-tip">Tap a product to see it.</p>

@@ -3065,3 +3065,12 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 /* Nov 5 (founder): "69% match · For period care · See why" on one line. */
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) button.ayv-match:not(.is-hold) { flex-wrap: nowrap !important; max-width: 100%; }
 :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet) button.ayv-match:not(.is-hold) .ayv-match__why { flex: 0 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Focus group, Nov 11: in the product chat she had to scroll back up to find Close. The title and
+   Close stay pinned at the top of the sheet while the answers scroll. */
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__head {
+  position: sticky; top: -20px; z-index: 3; margin: -20px -20px 0; padding: 16px 20px 10px;
+  background: inherit; border-bottom: 1.5px solid currentColor;
+}
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__box > .ayv-ask2__grab + .ayv-ask2__head { margin-top: -8px; }
+:is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__close { min-width: 44px; min-height: 44px; border: 1.5px solid currentColor; border-radius: 50%; }

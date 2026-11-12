@@ -697,7 +697,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   const positiveMentions = freeText.positive_product_history.map((p) => ({ raw: p.name, key: normalizeBrand(p.name), normalized: normalizeName(p.name), weight: p.weight }));
 
   const fsaRaw = intake.fsaHsaAnswer || '';
-  const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[fsaRaw] || intake.fsaHsa || null;
+  const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure', 'I\'m not in the US': 'outside_us' }[fsaRaw] || intake.fsaHsa || null;
 
   // The quiz pre-fills 3 (EMPTY); only a number she actually chose overrides the default of 5
   // (50-profile run, Nov 4: every shelf stopped at 3). Legacy saves without the flag keep their number unless it is the prefill.
@@ -792,7 +792,7 @@ export function buildUserProfile(intakeInput, options = {}) {
     budget: budgetState,
     brands: trustedBrands.length ? 'answered' : brandOpenness === 'No preference' ? 'explicit_no' : brandOpenness ? 'answered' : 'skipped',
     values: shouldBe.length || leaveOut.length ? 'answered' : arr(intake.avoidIngredients).includes('No preference') ? 'explicit_no' : 'skipped',
-    fsaHsa: fsaHsa === 'unsure' ? 'not_sure' : fsaHsa === 'none' ? 'explicit_no' : fsaHsa ? 'answered' : 'skipped',
+    fsaHsa: fsaHsa === 'unsure' ? 'not_sure' : fsaHsa === 'none' || fsaHsa === 'outside_us' ? 'explicit_no' : fsaHsa ? 'answered' : 'skipped',
     trust: touched ? 'answered' : 'skipped',
   };
   // Profile completeness: share of the core questions answered (any

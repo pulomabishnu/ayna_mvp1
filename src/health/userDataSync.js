@@ -8,6 +8,7 @@
  * own. Nothing here logs values or sends them to analytics.
  */
 import { addDays, applyLogSync, dirtyLogEntries, logOwner, setLogOwner, todayKey } from './dailyLog.js';
+import { setGoalsOwner } from './myGoals.js';
 import { applyTriesSync, dirtyTries, setTriesOwner } from './outcomes.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { apiUrl } from '../utils/apiUrl.js';
@@ -61,6 +62,7 @@ export async function syncUserData({
 } = {}) {
   setLogOwner(userId || null, storage);
   setTriesOwner(userId || null, storage);
+  setGoalsOwner(userId || null, storage);
   if (!userId) return { status: 'signed_out' };
   if (!force && readRetryAt(storage) > now) return { status: 'waiting' };
   const token = await getToken().catch(() => null);

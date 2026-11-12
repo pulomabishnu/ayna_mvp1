@@ -21,6 +21,13 @@ const RULES = [
   { test: /^(mood\.|stress\.|anxiety)/, field: 'mood', good: (v) => v >= 2, unit: 'good-mood days', topic: 'mood' },
   { test: /^cycle\.pms/, field: 'pms', good: (v) => v <= 1, unit: 'easy PMS days', topic: 'pms' },
 ];
+const TOPIC_RULE = Object.fromEntries(RULES.map((r) => [r.topic, r]));
+/** Was this logged day a good day for the topic? null when that field wasn't logged. */
+export function goodDay(topic, entry) {
+  const r = TOPIC_RULE[topic];
+  const v = r && entry ? entry[r.field] : null;
+  return v == null ? null : r.good(v);
+}
 const LOG_FIELDS = ['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy'];
 
 /** @returns {{ id, label, good, logged, of, unit, topic, line }} */

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { todayHelp, TODAY_HELP, productsForTopic } from '../../health/todayHelp.js';
-import { goalsProgress } from '../../health/goalProgress.js';
+import { todayHelp, TODAY_HELP, productsForTopic, announceLogChange } from '../../health/todayHelp.js';
+import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, topicFor } from '../../health/myGoals.js';
+import { saveLogEntry, readLog } from '../../health/dailyLog.js';
 import ProductTileImage from '../ProductTileImage.jsx';
 import './today-plan.css';
 
@@ -27,7 +28,6 @@ const ICONS = {
   log: 'M12 5v14M5 12h14',
   picks: 'M6 7h12l-1 13H7zM9 7a3 3 0 0 1 6 0',
   data: 'M4 19V9M10 19V5M16 19v-7M22 19H2',
-  goals: 'M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z',
 };
 const SHORT = { pain: 'Ease cramps', sleep: 'Sleep better', energy: 'More energy', mood: 'Lift your mood', pms: 'Ease PMS', steady: 'Keep it up' };
 // Which of her matched products fit each topic (name, category and needs text).
@@ -92,8 +92,31 @@ function ProductRows({ products, inRoutine, onOpenProduct, onAddToRoutine }) {
 export default function TodayPlan({
   entry = null, pregnant = false, postCycle = false, insight = null, picks = [], myProductIds = [],
   onOpenLog, onOpenRead, onExplore, onAddGoal, goalsAdded = [], onOpenProduct, onAddToRoutine, onOpenInsight,
-  goals = [], log = {}, today = null,
+  log = {}, today = null, name = '', onLogSaved = null,
 }) {
+  // Her own goals (focus group Nov 11): set on Home, progress this week, products for each.
+  const [goals, setGoals] = useState(() => { try { return readGoals(); } catch { return []; } });
+  useEffect(() => {
+    const on = () => { try { setGoals(readGoals()); } catch { /* storage blocked */ } };
+    window.addEventListener(GOALS_CHANGED_EVENT, on);
+    return () => window.removeEventListener(GOALS_CHANGED_EVENT, on);
+  }, []);
+  const [draft, setDraft] = useState({ text: '', perWeek: 5 });
+  const [goalOpen, setGoalOpen] = useState(null);
+  const saveGoal = (g) => {
+    const next = addGoal(g);
+    setGoals(next);
+    // A preset (or her words naming one) also tells the matcher, so her matches follow her goal.
+    const preset = GOAL_PRESETS.find((x) => x.topic === (g.topic === undefined ? topicFor(g.text) : g.topic));
+    if (preset && onAddGoal && !goalsAdded.includes(preset.needId)) onAddGoal(preset.needId);
+    setDraft({ text: '', perWeek: 5 });
+    setOpen('goals');
+  };
+  const feel = (v) => {
+    if (!today) return;
+    const on = log?.[today]?.mood === v;
+    try { saveLogEntry(today, { mood: on ? null : v }); announceLogChange(today); onLogSaved?.(readLog()); } catch { /* storage blocked */ }
+  };
   const [open, setOpen] = useState(null);
   const [added, setAdded] = useState([]);
   const inRoutine = (id) => myProductIds.includes(id) || added.includes(id);
@@ -107,12 +130,6 @@ export default function TodayPlan({
   const fits = (h) => picks.filter((p) => FITS[h.id]?.test(textOf(p))).slice(0, 3);
 
   const tiles = [];
-  // Your goals (founder + Puloma, Nov 11): this week's progress on each goal, from her own log.
-  const progress = today ? goalsProgress(goals, log, today) : [];
-  if (progress.length) {
-    const best = [...progress].sort((a, b) => b.good - a.good)[0];
-    tiles.push({ key: 'goals', icon: ICONS.goals, title: 'Your goals', line: best.logged ? `${best.label}: ${best.good} of 7 days` : `${progress.length} ${progress.length === 1 ? 'goal' : 'goals'}. Log today to see progress.`, rings: progress.slice(0, 3), go: () => setOpen('goals') });
-  }
   if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: 'Log today', line: 'Mood, pain, energy, period', go: onOpenLog });
   topics.slice(0, 3).forEach((h) => tiles.push({ key: h.id, icon: ICONS[h.id] || ICONS.steady, title: SHORT[h.id] || h.title, line: h.fromData || h.tips[0], go: () => setOpen(h.id) }));
   if (insight && !insight.topic && onOpenInsight) tiles.push({ key: 'data', icon: ICONS.data, title: insight.label, line: insight.line, go: onOpenInsight });
@@ -128,14 +145,86 @@ export default function TodayPlan({
   const products = h ? fits(h) : [];
   return (
     <section className="ay-tp" aria-label="For today">
+      {today && (() => {
+        // Nov 11 (founder: "make the today cooler"): the inspo's day rail. This week, today in pink,
+        // a dot under each day she logged. Tap today to log.
+        const d0 = new Date(`${today}T12:00:00`);
+        const days = Array.from({ length: 7 }, (_, k) => { const d = new Date(d0); d.setDate(d0.getDate() - ((d0.getDay() + 6) % 7) + k); const id = d.toLocaleDateString('en-CA'); return { id, dow: d.toLocaleDateString('en-US', { weekday: 'narrow' }), n: d.getDate(), isToday: id === today, logged: ['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy'].some((f) => log?.[id]?.[f] != null), future: id > today }; });
+        const count = days.filter((d) => d.logged).length;
+        return (
+          <div className="ay-tp-week">
+            <p className="ay-tp-week__head"><b>{d0.toLocaleDateString('en-US', { weekday: 'long' })}</b><span>{count ? `Logged ${count} ${count === 1 ? 'day' : 'days'} this week` : 'Your week'}</span></p>
+            <ol className="ay-tp-week__rail">{days.map((d, k) => (
+              <li key={d.id} className={`${d.isToday ? 'is-today' : ''}${d.future ? ' is-future' : ''}`} style={{ '--k': k }}>
+                {d.isToday && onOpenLog
+                  ? <button type="button" onClick={onOpenLog} aria-label={`Today, ${d.n}. ${d.logged ? 'Logged. Change your log' : 'Log today'}`}><small>{d.dow}</small><b>{d.n}</b><i className={d.logged ? 'is-on' : ''} /></button>
+                  : <span aria-label={`${d.n}${d.logged ? ', logged' : ''}`}><small>{d.dow}</small><b>{d.n}</b><i className={d.logged ? 'is-on' : ''} /></span>}
+              </li>
+            ))}</ol>
+          </div>
+        );
+      })()}
+      {today && (
+        // Inspo ("Hello Alex! How are you feeling today?"): one tap logs her mood for today.
+        <div className="ay-tp-feel">
+          <p className="ay-tp-feel__q">{name ? `Hi ${name}, how are you feeling today?` : 'How are you feeling today?'}</p>
+          <div className="ay-tp-feel__row" role="radiogroup" aria-label="Your mood today">
+            {[[1, 'Low', 'M8 16.5c2.2-2 5.8-2 8 0'], [2, 'Okay', 'M8 15h8'], [3, 'Good', 'M8 14c2.2 2.6 5.8 2.6 8 0']].map(([v, label, mouth]) => {
+              const on = log?.[today]?.mood === v;
+              return (
+                <button key={v} type="button" role="radio" aria-checked={on} className={on ? 'is-on' : ''} onClick={() => feel(v)}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><circle cx="9" cy="10" r="1" className="is-eye" /><circle cx="15" cy="10" r="1" className="is-eye" /><path d={mouth} /></svg>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {today && (() => {
+        // Inspo ("Today's Progress"): one dark card, rings that fill toward her own target.
+        const rows = goals.map((g) => ({ g, w: weekFor(g, log, today) }));
+        const onTrack = rows.filter((r) => r.w.met).length;
+        if (!rows.length) {
+          return (
+            <div className="ay-tp-goals is-empty">
+              <p className="ay-tp-goals__k">Your goals</p>
+              <h3>What do you want to work on?</h3>
+              <div className="ay-tp-goals__presets">{GOAL_PRESETS.slice(0, 4).map((p) => <button key={p.topic} type="button" onClick={() => saveGoal({ text: p.text, topic: p.topic })}>{p.text}</button>)}</div>
+              <button type="button" className="ay-tp-goals__own" onClick={() => setOpen('addgoal')}>Set your own goal</button>
+            </div>
+          );
+        }
+        return (
+          <div className="ay-tp-goals">
+            <div className="ay-tp-goals__top">
+              <div><p className="ay-tp-goals__k">Your goals this week</p><h3>{onTrack ? `${onTrack} of ${rows.length} on track` : `${rows.length} ${rows.length === 1 ? 'goal' : 'goals'}`}</h3></div>
+              <button type="button" className="ay-tp-goals__all" onClick={() => setOpen('goals')}>See all</button>
+            </div>
+            <ul className="ay-tp-goals__list">{rows.slice(0, 3).map(({ g, w }) => (
+              <li key={g.id}>
+                <button type="button" className="ay-tp-goals__row" onClick={() => { setGoalOpen(g.id); setOpen('goal'); }}>
+                  <svg className="ay-tp-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
+                  <span><b>{g.text}</b><small>{w.count} of {w.of} days{w.met ? '. Done for the week' : ''}</small></span>
+                </button>
+                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => setGoals(toggleDone(g.id, today))}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+                </button>
+              </li>
+            ))}</ul>
+            {goals.length < MAX_GOALS && <button type="button" className="ay-tp-goals__add" onClick={() => setOpen('addgoal')}>+ Add a goal</button>}
+          </div>
+        );
+      })()}
+
       <ul className={`ay-tp-grid is-${tiles.length}`}>
-        {tiles.map((t) => (
-          <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`}>
+        {tiles.map((t, k) => (
+          <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`} style={{ '--k': k }}>
             <button type="button" onClick={t.go}>
               <span className="ay-tp-tile__ic"><Icon d={t.icon} /></span>
               <b>{t.title}</b>
               <span className="ay-tp-tile__line">{t.line}</span>
-              {t.rings && <span className="ay-tp-rings" aria-hidden="true">{t.rings.map((g) => <svg key={g.id} viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" className="ay-tp-ring__bg" /><circle cx="18" cy="18" r="15" className="ay-tp-ring__fg" style={{ strokeDasharray: `${(g.good / 7) * 94.25} 94.25` }} /></svg>)}</span>}
               {t.thumbs && <span className="ay-tp-tile__thumbs" aria-hidden="true">{t.thumbs.map((p) => <span key={p.id}><ProductTileImage product={p} alt="" letterNode={<span>{(p.brand || p.name || '?').slice(0, 1)}</span>} /></span>)}</span>}
             </button>
           </li>
@@ -147,7 +236,7 @@ export default function TodayPlan({
           <p className="ay-tp-sheet__kicker">{h.title}</p>
           <h2 id="ay-tp-h">{h.fromData || h.tips[0]}</h2>
           {h.fromData && <p className="ay-tp-sheet__lead">{h.tips[0]}</p>}
-          {h.goal && onAddGoal && <button type="button" className="ay-tp-goal" disabled={goalsAdded.includes(h.goal)} onClick={() => onAddGoal(h.goal)}>{goalsAdded.includes(h.goal) ? 'Added to your goals' : `Make ${h.goalLabel} a goal`}</button>}
+          {h.goal && (() => { const p = GOAL_PRESETS.find((x) => x.needId === h.goal); const has = p && goals.some((g) => g.topic === p.topic); return p && <button type="button" className="ay-tp-goal" disabled={has} onClick={() => saveGoal({ text: p.text, topic: p.topic })}>{has ? 'In your goals' : `Make ${h.goalLabel} a goal`}</button>; })()}
           {products.length > 0 && <>
             <h3>Matches that may help</h3>
             <ProductRows products={products} inRoutine={inRoutine} onOpenProduct={onOpenProduct} onAddToRoutine={addToRoutine} />
@@ -163,35 +252,43 @@ export default function TodayPlan({
         </>}
       </Sheet>
 
-      <Sheet open={open === 'goals'} onClose={() => setOpen(null)} labelledBy="ay-tp-goals-h">
-        <p className="ay-tp-sheet__kicker">This week, from your log</p>
+      <Sheet open={open === 'addgoal'} onClose={() => setOpen(null)} labelledBy="ay-tp-add-h">
+        <p className="ay-tp-sheet__kicker">Your goals</p>
+        <h2 id="ay-tp-add-h">Set a goal</h2>
+        <p className="ay-tp-sheet__lead">Pick one or write your own. Tick it on the days you do it; for sleep, pain, energy, mood and PMS, good days in your log count too.</p>
+        <div className="ay-tp-goals__presets is-sheet">{GOAL_PRESETS.filter((p) => !goals.some((g) => g.topic === p.topic)).map((p) => (
+          <button key={p.topic} type="button" className={draft.text === p.text ? 'is-on' : ''} onClick={() => setDraft((d) => ({ ...d, text: p.text, topic: p.topic }))}>{p.text}</button>
+        ))}</div>
+        <label className="ay-tp-goalform__label" htmlFor="ay-tp-goal-text">Or in your words</label>
+        <input id="ay-tp-goal-text" className="ay-tp-goalform__input" type="text" maxLength={60} placeholder="e.g. Walk 20 minutes" value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value, topic: undefined }))} />
+        <p className="ay-tp-goalform__label" id="ay-tp-goal-week">How many days a week?</p>
+        <div className="ay-tp-goalform__seg" role="radiogroup" aria-labelledby="ay-tp-goal-week">{[3, 5, 7].map((n) => (
+          <button key={n} type="button" role="radio" aria-checked={draft.perWeek === n} className={draft.perWeek === n ? 'is-on' : ''} onClick={() => setDraft((d) => ({ ...d, perWeek: n }))}>{n === 7 ? 'Every day' : `${n} days`}</button>
+        ))}</div>
+        <button type="button" className="ay-tp-goal ay-tp-goal--wide" disabled={!draft.text.trim() || goals.length >= MAX_GOALS} onClick={() => saveGoal(draft)}>{goals.length >= MAX_GOALS ? `Up to ${MAX_GOALS} goals` : 'Save goal'}</button>
+      </Sheet>
+
+      <Sheet open={open === 'goals' || open === 'goal'} onClose={() => { setOpen(null); setGoalOpen(null); }} labelledBy="ay-tp-goals-h">
+        <p className="ay-tp-sheet__kicker">This week</p>
         <h2 id="ay-tp-goals-h">Your goals</h2>
-        <ul className="ay-tp-goals">
-          {progress.map((g) => {
-            const help = g.topic ? TODAY_HELP[g.topic] : null;
-            const prods = g.topic ? productsForTopic(g.topic, picks, 2) : [];
-            return (
-              <li key={g.id}>
-                <div className="ay-tp-goal__row">
-                  <svg className="ay-tp-goal__ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="ay-tp-ring__bg" /><circle cx="18" cy="18" r="15" className="ay-tp-ring__fg" style={{ strokeDasharray: `${(g.good / 7) * 94.25} 94.25` }} /></svg>
-                  <div><b>{g.label}</b><span>{g.line}</span></div>
-                  <em aria-label={`${g.good} of 7 days`}>{g.good}<small>/7</small></em>
-                </div>
-                {help && <p className="ay-tp-goal__tip">{help.tips[0]}</p>}
-                {prods.length > 0 && <ProductRows products={prods} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />}
-              </li>
-            );
-          })}
-        </ul>
-        {onOpenLog && <button type="button" className="ay-tp-goal ay-tp-goal--wide" onClick={() => { setOpen(null); onOpenLog(); }}>Log today</button>}
-        {onAddGoal && (() => {
-          const have = new Set(goals.map((g) => g.id));
-          const more = ['sleep', 'energy', 'mood', 'pain', 'pms'].map((k) => TODAY_HELP[k]).filter((h) => h?.goal && !have.has(h.goal) && !goalsAdded.includes(h.goal));
-          return more.length > 0 && <>
-            <h3>Add a goal</h3>
-            <div className="ay-tp-addgoals">{more.map((h) => <button key={h.goal} type="button" onClick={() => onAddGoal(h.goal)}>{SHORT[h.id] || h.goalLabel}</button>)}</div>
-          </>;
-        })()}
+        <ul className="ay-tp-goallist">{goals.filter((g) => open === 'goals' || g.id === goalOpen).map((g) => {
+          const w = today ? weekFor(g, log, today) : { count: 0, of: g.perWeek, doneToday: false };
+          const help = g.topic ? TODAY_HELP[g.topic] : null;
+          const prods = g.topic ? productsForTopic(g.topic, picks, 2) : [];
+          return (
+            <li key={g.id}>
+              <div className="ay-tp-goallist__row">
+                <svg className="ay-tp-ring is-big" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
+                <div><b>{g.text}</b><span>{w.count} of {w.of} days this week</span></div>
+                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => setGoals(toggleDone(g.id, today))}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
+              </div>
+              {help && <p className="ay-tp-goallist__tip">{help.tips[0]}</p>}
+              {prods.length > 0 && <ProductRows products={prods} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />}
+              <button type="button" className="ay-tp-link ay-tp-goallist__rm" onClick={() => { setGoals(removeGoal(g.id)); if (open === 'goal') setOpen(null); }}>Remove goal</button>
+            </li>
+          );
+        })}</ul>
+        {open === 'goals' && goals.length < MAX_GOALS && <button type="button" className="ay-tp-goal ay-tp-goal--wide" onClick={() => setOpen('addgoal')}>Add a goal</button>}
       </Sheet>
 
       <Sheet open={open === 'picks'} onClose={() => setOpen(null)} labelledBy="ay-tp-picks-h">

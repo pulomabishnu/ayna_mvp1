@@ -1,4 +1,5 @@
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
+import { openFeedback } from '../../components/FeedbackSheet.jsx';
 import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
 import DailyCheckin from '../../../components/you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from '../../../components/you/BoxWaitlist.jsx';
@@ -1769,7 +1770,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
   const groups = [
     ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', keywords: 'theme text size notifications personalization health data ask ayna suggestions tips', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', keywords: 'sms phone alerts reminders', onClick: onOpenTexts }] : [])]],
     ['About', 'pink', [{ icon: 'how', title: 'How it works', keywords: 'matching evidence recommendations', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', keywords: 'team company', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', keywords: 'partners companies', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', keywords: 'college university', href: CAMPUS_RESOURCES_URL }]],
-    ['Account', 'mint', [{ icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
+    ['Account', 'mint', [{ icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Send app feedback', keywords: 'feedback bug broken beta testflight', onClick: () => openFeedback() }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
   ];
   const normalizedQuery = query.trim().toLowerCase();
   const matchesQuery = (text) => !normalizedQuery || String(text || '').toLowerCase().includes(normalizedQuery);

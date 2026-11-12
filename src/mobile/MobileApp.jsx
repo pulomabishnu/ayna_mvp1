@@ -104,6 +104,7 @@ import CommunityScreen from './screens/CommunityScreen.jsx';
 import QuizConnectScreen from './screens/QuizConnectScreen.jsx';
 import ReadyScreen from './screens/ReadyScreen.jsx';
 import UpdatePop from './components/UpdatePop.jsx';
+import FeedbackSheet from './components/FeedbackSheet.jsx';
 import PlanScreen from './screens/PlanScreen.jsx';
 import CompareScreen from './screens/CompareScreen.jsx';
 import SaveAuthSheet from '../components/save/SaveAuthSheet.jsx';
@@ -1864,6 +1865,7 @@ export default function MobileApp() {
         // You opens for everyone: signed out it says what an account keeps, and Settings still works.
         onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
       />}
+      <FeedbackSheet authUser={realAuthUser || null} />
       <UpdatePop
         update={updatePop}
         onClose={() => setUpdatePop(null)}

@@ -25,8 +25,13 @@ export const CATEGORY_RANK = {
 };
 export const CATEGORIES = Object.keys(CATEGORY_RANK);
 // Ranking heuristics, not clinical thresholds.
+// Her sleep from a ring and her sleep from her log are one topic (focus group Nov 11: "sleep and
+// steps again" on the "what changed" card right after the sleep and steps cards).
+const topicBase = (t) => String(t || '').replace(/_(minutes|steady|hours|score)$/, '').replace(/^(heart|resting_heart|hr|rhr).*/, 'heart');
+const sameTopic = (a, b) => topicBase(a) === topicBase(b);
+
 export const RUNDOWN_RULES = {
-  maxContentCards: 8,
+  maxContentCards: 5, // focus group Nov 11: 10 pages was too long, she checked out on page 5
   maxDataCards: DATA_RULES.maxDataCards,
   rotateCategories: ['education', 'saved', 'community', 'win'], // not two days running (the daily pick is every day, founder Nov 9)
   patternRepeatDays: 3, // a pattern card shows at most 2 of any 3 days
@@ -450,18 +455,27 @@ export function buildRundown(input = {}) {
   for (let k = kept.length - 1; k >= 0; k -= 1) {
     const c = kept[k];
     if (!['change', 'data'].includes(c.category) || !c.topic) continue;
-    if (kept.slice(0, k).some((x) => ['change', 'data'].includes(x.category) && x.topic === c.topic)) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
+    if (kept.slice(0, k).some((x) => ['change', 'data'].includes(x.category) && sameTopic(x.topic, c.topic))) { skipped.push({ key: c.key, why: 'same_topic' }); kept.splice(k, 1); }
   }
   // Nov 9 (founder: "put check in at the end, don't waste things on checking in"): the one-tap
   // check-in comes last, after everything she came for, and does not take a content slot.
   const checkins = kept.filter((c) => c.kind === 'checkin').slice(0, 1);
   const body = kept.filter((c) => c.kind !== 'checkin');
   const protectedCards = body.filter((c) => c.protected);
-  const rest = body.filter((c) => !c.protected).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length));
+  const room = Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length);
+  const pool = body.filter((c) => !c.protected);
+  const rest = pool.slice(0, room);
+  // The daily pick always makes the cut (a shorter rundown still ends on something to try).
+  const pick = pool.find((c) => c.category === 'match');
+  if (pick && room > 0 && !rest.includes(pick)) rest.splice(rest.length - 1, 1, pick);
   // Founder, Nov 11: a daily ayna fact, near the end; it never takes a content slot.
   const fact = factFor(today);
-  const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily ayna fact', title: fact.text, sources: [fact.source], basisLine: `From ${fact.source.label}.` };
-  const content = [...protectedCards, ...rest, ...(protectedCards.length || rest.length ? [factCard] : []), ...checkins];
+  const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily ayna fact', title: fact.text, body: 'A general health fact for everyone. It is not about you or your data.', sources: [fact.source], basisLine: `From ${fact.source.label}.` };
+  // Focus group, Nov 11 (10 pages was too long): the fact and the check-in only fill spare room,
+  // so the whole rundown is at most opening + 5 + the end.
+  const main = [...protectedCards, ...rest];
+  const extras = [...(main.length ? [factCard] : []), ...checkins].slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - main.length));
+  const content = [...main, ...extras];
   if (!content.length) return { cards: [], skipped };
   const opening = { key: `opening:${today}`, category: 'frame', kind: 'opening', kicker: 'Your daily rundown', title: `Your ${weekday(today)} rundown`, body: 'Here is your health in 60 seconds.' };
   // End of the rundown: Ask follow-ups about the cards she just saw (max 3).

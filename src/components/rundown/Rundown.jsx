@@ -58,6 +58,11 @@ export default function Rundown({
 }) {
   const [memory, setMemory] = useState(() => { setRundownOwner(userId); return readRundownMemory(); });
   const [open, setOpen] = useState(null); // 'daily' | 'weekly' | null
+  // Focus group, Nov 11: the page count changed under her ("9 of 10", then "9 of 9") because each
+  // card she saw was written to memory and the rundown rebuilt without it. While it is open, build
+  // from the memory as it was when she opened it; "Not useful" still hides a card in the story.
+  const [memAtOpen, setMemAtOpen] = useState(memory);
+  if (!open && memAtOpen !== memory) setMemAtOpen(memory);
   const catalogReady = useCatalogReady();
   const today = t.today;
 
@@ -130,9 +135,9 @@ export default function Rundown({
   }, [products, saved, intake, catalogReady, healthProfile, matchOpts]);
   const daily = useMemo(() => buildRundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
-    matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory, hasProfile: Boolean(intake), needLabels,
+    matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory: memAtOpen, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memory, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memAtOpen, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 

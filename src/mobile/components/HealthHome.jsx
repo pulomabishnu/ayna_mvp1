@@ -216,7 +216,9 @@ export default function HealthHome({
   // Your data's empty dial row: one way to connect a watch or ring.
   onConnect = null,
 }) {
-  const [tab, setTab] = useState('summary');
+  // Her tab survives the page re-mounting (a refresh, a timeout): Nov 11 focus group.
+  const [tab, setTabState] = useState(() => { try { return sessionStorage.getItem('ayna_dash_tab') || 'summary'; } catch { return 'summary'; } });
+  const setTab = (t) => { setTabState(t); try { sessionStorage.setItem('ayna_dash_tab', t); } catch { /* storage blocked */ } };
   const [range, setRange] = useState('month');
   const [added, setAdded] = useState({});
   const [rundownShown, setRundownShown] = useState(false);
@@ -587,7 +589,7 @@ export default function HealthHome({
       {routineWorking}
       {goals.length > 0 && (
         <section className="ay-db-card" aria-labelledby="ay-db-goals-title">
-          <h2 id="ay-db-goals-title" className="ay-db-h2">Your goals</h2>
+          <h2 id="ay-db-goals-title" className="ay-db-h2">What your products cover</h2>
           <GoalList goals={goals} onOpenProduct={onOpenProduct} />
           <p className="ay-db-muted">Marks show ayna&rsquo;s reading of the research for that goal. Open a product for the studies.</p>
         </section>

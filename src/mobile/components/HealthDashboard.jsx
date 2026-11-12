@@ -73,7 +73,9 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
       </div>
     );
   }
-  if (health.status === 'loading') {
+  // Focus group, Nov 11: a background refresh swapped the page for a skeleton and back, which threw
+  // her from Routine to Summary. With data already on screen, a refresh keeps the page.
+  if (health.status === 'loading' && !rows.length) {
     return (
       <div className="ay-hd">{todayFeed}<div className="ay-hh-skeleton" role="status" aria-busy="true">
         <span className="sr-only">Loading your health data</span>

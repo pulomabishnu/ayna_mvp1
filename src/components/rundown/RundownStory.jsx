@@ -210,13 +210,16 @@ function Body({ card, h, done }) {
       return <ul className="ay-rd-lines">{card.lines.map((l) => <li key={l}>{l}</li>)}</ul>;
     case 'closing':
       // The questions live on their own last card now (founder, Oct 27 13:51): this one only says goodbye.
-      return (
+      return (<>
+        {h.recap?.length > 0 && <ol className="ay-rd-recap">{h.recap.map(({ c, k }, j) => (
+          <li key={c.key}><button type="button" onClick={() => h.goTo(k)}><i>{j + 1}</i><span>{c.kicker ? `${c.kicker}: ` : ''}{String(c.title || '').length > 48 ? `${String(c.title).slice(0, 46)}…` : c.title}</span></button></li>
+        ))}</ol>}
         <span className="ay-rd-actions">
           {h.remindTomorrow && <button type="button" className="ay-rd-primary" onClick={h.remindTomorrow}>Remind me tomorrow</button>}
           {h.explore && <button type="button" className="ay-rd-link" onClick={h.explore}>Explore for you</button>}
           {!h.hasAsk && <button type="button" className="ay-rd-link" onClick={h.close}>Done</button>}
         </span>
-      );
+      </>);
     case 'ask':
       // Ask ayna as the last card: 2 or 3 questions from the cards she just saw.
       // A tap opens Ask with that question; that is the way into Ask from here.
@@ -324,9 +327,15 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   if (!card) return null;
 
   const hide = (c, reason) => { onNotUseful(c, reason); setHidden((s) => ({ ...s, [c.key]: true })); setMsg('Thanks. You will see less like this.'); };
+  // Focus group, Nov 11: the end said "6 things" after 10 pages. The count is now every page she
+  // went through between the opening and the end, and the end lists them so she knows what they were.
+  const recap = list.map((c, k) => ({ c, k })).filter(({ c }) => !['opening', 'closing', 'ask'].includes(c.kind));
+  const content = recap.length;
   const h = {
     list,
     hasAsk: Boolean(askCard),
+    recap,
+    goTo: (k) => setI(k),
     next: () => go(1),
     close,
     checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
@@ -358,7 +367,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   // Nov 11 (founder: "better than Spotify Wrapped"): Wrapped's colour-per-card rhythm in our three
   // colours. The opening and closing are pink, her data espresso, everything else butter.
   const surface = ['opening', 'closing'].includes(card.kind) ? 'is-pink' : isData || card.category === 'safety' || card.kind === 'ask' ? 'is-espresso' : 'is-butter';
-  const content = list.filter((c) => c.category !== 'frame').length;
+
   // One action on the glance: the card's own (Body), else Ask why / See data.
   const oneAction = isData && !card.check && !card.flowAsk
     ? (dataAsk ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button>

@@ -245,7 +245,7 @@ describe('optional answers (spec)', () => {
   });
 
   it('options match the spec lists', () => {
-    expect(FSA_HSA).toEqual(['FSA', 'HSA', 'Both', 'No', 'Not sure']);
+    expect(FSA_HSA).toEqual(['FSA', 'HSA', 'Both', 'No', 'Not sure', 'I\'m not in the US']);
     expect(PRODUCT_FORMATS).toContain('No preference');
     expect(AVOID_GROUPS.want.map((v) => AVOID_LABELS[v] || v)).toEqual(['Unscented', 'Organic', 'Vegan', 'Cruelty-free', 'Minimal ingredients', 'Sensitive-skin friendly', 'Reusable', 'Eco-friendly', 'Pregnancy considerations', 'Black-owned', 'Brown-owned']);
     expect(AVOID_GROUPS.avoid).toEqual(['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners']);

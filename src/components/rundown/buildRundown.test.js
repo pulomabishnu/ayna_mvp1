@@ -119,10 +119,9 @@ describe('Daily Rundown', () => {
 
   it('never more than the content cap (safety excepted)', () => {
     const r = buildRundown({ ...fromFixture(), matches: [{ product: { id: 'p1', name: 'P' }, percent: 90, needId: 'pain.menstrual_cramp' }], saved: [{ id: 's1', name: 'S' }], reads: true, community: [{ id: 'c1', title: 'Heat or ibuprofen first?', count: 12 }] });
-    // The one-tap check-in sits after the content and does not take a slot (founder, Nov 9).
-    // The daily ayna fact (founder, Nov 11) doesn't take a slot either.
-    expect(r.cards.filter((c) => c.kind !== 'checkin' && !c.key.startsWith('fact:')).length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards);
-    expect(r.cards.filter((c) => c.key.startsWith('fact:'))).toHaveLength(1);
+    // Focus group, Nov 11 ("10 pages was too long"): everything between the opening and the end,
+    // the daily fact and the check-in included, fits in the cap.
+    expect(r.cards.length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards);
     const ci = r.cards.findIndex((c) => c.kind === 'checkin');
     if (ci >= 0) expect(ci).toBe(r.cards.length - 2);
   });

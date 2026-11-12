@@ -101,27 +101,135 @@
 .ay-tp .ay-tp-tile.is-plain > button { padding-left: 16px; padding-right: 16px; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain { border-color: #ffedac; }
 
-/* Your goals (Nov 11): small progress rings like the inspo's activity rings; the sheet lists each goal
-   with its ring, "3/7", one tip and matched products. Brand colours only. */
-.ay-tp-rings { display: flex; gap: 6px; margin-top: 6px; }
-.ay-tp-rings svg, .ay-tp-goal__ring { width: 36px; height: 36px; transform: rotate(-90deg); }
-.ay-tp-ring__bg { fill: none; stroke: currentColor; stroke-width: 4; opacity: .2; }
-.ay-tp-ring__fg { fill: none; stroke: #3e2723; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray .6s cubic-bezier(.2, .8, .2, 1); }
-.ay-tp .ay-tp-tile.is-pink .ay-tp-ring__fg { stroke: #3e2723; }
-.ay-tp-goals { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 16px; }
-.ay-tp-goal__row { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 12px; }
-.ay-tp-goal__row .ay-tp-goal__ring { width: 44px; height: 44px; }
-.ay-tp-sheet .ay-tp-goal__ring .ay-tp-ring__fg { stroke: #3e2723; }
-.ay-tp-goal__row b { display: block; font: 700 16px/1.25 'Figtree', sans-serif; }
-.ay-tp-goal__row span { display: block; font: 500 14px/1.35 'Figtree', sans-serif; }
-.ay-tp-goal__row em { font: 700 24px/1 'ayna Display', 'Figtree', sans-serif; font-style: normal; }
-.ay-tp-goal__row em small { font-size: 14px; }
-.ay-tp-goal__tip { margin: 8px 0 0 56px; font: 500 14px/1.45 'Figtree', sans-serif; }
-.ay-tp-goals .ay-tp-prods { margin-left: 56px; }
-.ay-tp-goal--wide { width: 100%; justify-content: center; margin-top: 20px; }
-.ay-tp-addgoals { display: flex; flex-wrap: wrap; gap: 8px; }
-.ay-tp-addgoals button { min-height: 40px; padding: 0 16px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goal__ring .ay-tp-ring__fg { stroke: #f7badd; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-addgoals button { border-color: #ffedac; color: #ffedac; }
-@media (prefers-reduced-motion: reduce) { .ay-tp-ring__fg { transition: none; } }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-ring__fg { stroke: #f7badd; }
+/* Nov 11 (founder: "make the today cooler"): the inspo's day rail above the bento, and the tiles
+   rise in one after another and press down on tap. Brand colours only. */
+.ay-tp-week { margin: 0 0 14px; }
+.ay-tp-week__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.ay-tp-week__head b { font: 700 28px/1 'ayna Display', 'Figtree', sans-serif; letter-spacing: -0.02em; color: #3e2723; }
+.ay-tp-week__head span { font: 500 14px/1.2 'Figtree', sans-serif; color: #3e2723; }
+.ay-tp-week__rail { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ay-tp-week__rail li { margin: 0; padding: 0; animation: ay-tp-pop 420ms cubic-bezier(.2, .9, .3, 1.2) both; animation-delay: calc(var(--k, 0) * 40ms); }
+.ay-tp-week__rail li::before { content: none; }
+.ay-tp-week__rail :is(button, span) {
+  display: grid; justify-items: center; gap: 4px; width: 100%; min-height: 64px; padding: 8px 0; box-sizing: border-box;
+  border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: inherit;
+}
+.ay-tp-week__rail button { cursor: pointer; }
+.ay-tp-week__rail small { font: 600 12px/1 'Figtree', sans-serif; }
+.ay-tp-week__rail b { font: 700 17px/1 'Figtree', sans-serif; }
+.ay-tp-week__rail i { width: 6px; height: 6px; border-radius: 50%; background: transparent; }
+.ay-tp-week__rail i.is-on { background: #3e2723; }
+.ay-tp-week__rail .is-today :is(button, span) { background: #3e2723; color: #ffedac; transform: translateY(-3px); box-shadow: 0 3px 0 #f7badd; }
+.ay-tp-week__rail .is-today i.is-on { background: #f7badd; }
+.ay-tp-week__rail .is-future :is(button, span) { border-style: dashed; }
+.ay-tp-grid > li { animation: ay-tp-rise 480ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(120ms + var(--k, 0) * 70ms); }
+.ay-tp-tile > button { transition: transform 140ms ease; }
+.ay-tp-tile > button:active { transform: scale(.97); }
+.ay-tp-tile__ic { transition: transform 300ms cubic-bezier(.2, .9, .3, 1.4); }
+.ay-tp-tile > button:hover .ay-tp-tile__ic { transform: rotate(-8deg) scale(1.06); }
+@keyframes ay-tp-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes ay-tp-pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-week__head :is(b, span) { color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-week__rail :is(button, span) { border-color: #ffedac; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-week__rail i.is-on { background: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-week__rail .is-today :is(button, span) { background: #ffedac; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-week__rail .is-today i.is-on { background: #3e2723; }
+@media (prefers-reduced-motion: reduce) { .ay-tp-grid > li, .ay-tp-week__rail li { animation: none; } .ay-tp-tile > button, .ay-tp-tile__ic { transition: none; } }
+
+/* Nov 11 (focus group + inspo): "How are you feeling today?" one-tap mood, and her own goals in one
+   dark progress card (inspo "Today's Progress"). Brand colours only. */
+.ay-tp-feel { margin: 0 0 12px; padding: 16px; border: 1.5px solid #3e2723; border-radius: 24px; background: #ffedac; }
+.ay-tp-feel__q { margin: 0 0 12px; font: 700 22px/1.15 'ayna Display', 'Figtree', sans-serif; letter-spacing: -0.01em; color: #3e2723; }
+.ay-tp-feel__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.ay-tp-feel__row button {
+  display: grid; justify-items: center; gap: 6px; min-height: 76px; padding: 10px 4px; border: 1.5px solid #3e2723; border-radius: 18px;
+  background: transparent; color: #3e2723; font: 600 15px/1 'Figtree', sans-serif; cursor: pointer; transition: transform 140ms ease, background-color 160ms ease;
+}
+.ay-tp-feel__row button:active { transform: scale(.95); }
+.ay-tp-feel__row svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.ay-tp-feel__row svg .is-eye { fill: currentColor; stroke: none; }
+.ay-tp-feel__row button.is-on { background: #f7badd; }
+.ay-tp-feel__row button.is-on svg { animation: ay-tp-bob 500ms cubic-bezier(.2, .9, .3, 1.4); }
+@keyframes ay-tp-bob { 0% { transform: scale(.7) rotate(-10deg); } 100% { transform: none; } }
+
+.ay-tp-goals { margin: 0 0 12px; padding: 18px 16px 14px; border-radius: 24px; background: #3e2723; color: #ffedac; }
+.ay-tp-goals__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.ay-tp-goals__k { margin: 0 0 4px; font: 600 14px/1.2 'Figtree', sans-serif; color: #ffedac; }
+.ay-tp-goals h3 { margin: 0; font: 700 24px/1.1 'ayna Display', 'Figtree', sans-serif; letter-spacing: -0.01em; color: #ffedac; }
+.ay-tp-goals__all { min-height: 40px; padding: 0 14px; border: 1.5px solid #ffedac; border-radius: 999px; background: transparent; color: #ffedac; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-tp-goals__list { display: grid; gap: 4px; margin: 14px 0 0; padding: 0; list-style: none; }
+.ay-tp-goals__list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; margin: 0; padding: 0; }
+.ay-tp-goals__list li::before { content: none; }
+.ay-tp-goals__row { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 12px; min-height: 52px; padding: 0; border: 0; background: transparent; color: #ffedac; text-align: left; cursor: pointer; }
+.ay-tp-goals__row b { display: block; font: 700 16px/1.25 'Figtree', sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-tp-goals__row small { display: block; font: 500 14px/1.3 'Figtree', sans-serif; }
+.ay-tp-ring { width: 40px; height: 40px; transform: rotate(-90deg); }
+.ay-tp-ring.is-big { width: 48px; height: 48px; }
+.ay-tp-ring circle { fill: none; stroke-width: 4.5; }
+.ay-tp-ring .is-bg { stroke: rgba(255, 237, 172, .25); }
+.ay-tp-ring .is-fg { stroke: #f7badd; stroke-linecap: round; transition: stroke-dasharray .7s cubic-bezier(.2, .8, .2, 1); }
+.ay-tp-goals__tick { display: grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid #ffedac; border-radius: 50%; background: transparent; color: #ffedac; cursor: pointer; transition: transform 160ms ease, background-color 160ms ease; }
+.ay-tp-goals__tick svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .35; }
+.ay-tp-goals__tick.is-on { background: #f7badd; border-color: #f7badd; color: #3e2723; transform: scale(1.04); }
+.ay-tp-goals__tick.is-on svg { opacity: 1; }
+.ay-tp-goals__add, .ay-tp-goals__own { margin-top: 10px; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #ffedac; color: #3e2723; font: 700 15px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-tp-goals__presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.ay-tp-goals__presets button { min-height: 40px; padding: 0 14px; border: 1.5px solid #ffedac; border-radius: 999px; background: transparent; color: #ffedac; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-tp-goals__presets.is-sheet button { border-color: #3e2723; color: #3e2723; }
+.ay-tp-goals__presets.is-sheet button.is-on { background: #3e2723; color: #ffedac; }
+
+/* In the sheets (butter): espresso rings, the form. */
+.ay-tp-sheet .ay-tp-ring .is-bg { stroke: rgba(62, 39, 35, .2); }
+.ay-tp-sheet .ay-tp-ring .is-fg { stroke: #3e2723; }
+.ay-tp-sheet .ay-tp-goals__tick { border-color: #3e2723; color: #3e2723; }
+.ay-tp-sheet .ay-tp-goals__tick.is-on { background: #f7badd; border-color: #3e2723; }
+.ay-tp-goallist { display: grid; gap: 18px; margin: 8px 0 16px; padding: 0; list-style: none; }
+.ay-tp-goallist > li { margin: 0; padding: 0 0 14px; border-bottom: 1.5px solid #3e2723; }
+.ay-tp-goallist > li::before { content: none; }
+.ay-tp-goallist__row { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.ay-tp-goallist__row b { display: block; font: 700 17px/1.25 'Figtree', sans-serif; }
+.ay-tp-goallist__row span { display: block; font: 500 14px/1.35 'Figtree', sans-serif; }
+.ay-tp-goallist__tip { margin: 10px 0 0 60px; font: 500 15px/1.45 'Figtree', sans-serif; }
+.ay-tp-goallist .ay-tp-prods { margin-left: 60px; }
+.ay-tp-goallist__rm { margin: 8px 0 0 60px; }
+.ay-tp-goalform__label { display: block; margin: 18px 0 8px; font: 700 15px/1.2 'Figtree', sans-serif; color: #3e2723; }
+.ay-tp-goalform__input { width: 100%; min-height: 48px; padding: 0 16px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 16px; background: #fff8dc; color: #3e2723; font: 500 16px/1 'Figtree', sans-serif; }
+.ay-tp-goalform__seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 3px; border: 1.5px solid #3e2723; border-radius: 999px; }
+.ay-tp-goalform__seg button { min-height: 42px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 600 15px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-tp-goalform__seg button.is-on { background: #3e2723; color: #ffedac; }
+.ay-tp-goal:disabled { opacity: 1; }
+
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-feel { background: transparent; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-feel :is(.ay-tp-feel__q, .ay-tp-feel__row button) { color: #ffedac; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-feel__row button.is-on { background: #f7badd; color: #3e2723; border-color: #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals { background: #ffedac; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals :is(h3, .ay-tp-goals__k, .ay-tp-goals__row) { color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals :is(.ay-tp-goals__all, .ay-tp-goals__tick, .ay-tp-goals__presets button) { border-color: #3e2723; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals .ay-tp-ring .is-bg { stroke: rgba(62, 39, 35, .2); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals .ay-tp-ring .is-fg { stroke: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals :is(.ay-tp-goals__add, .ay-tp-goals__own) { background: #3e2723; color: #ffedac; }
+@media (prefers-reduced-motion: reduce) { .ay-tp-feel__row button.is-on svg { animation: none; } .ay-tp-ring .is-fg { transition: none; } }
+/* The app's global heading rules win over plain classes: force the goals card and feeling headings. */
+.ay-tp-goals h3 { color: #ffedac !important; font: 700 24px/1.1 'ayna Display', 'Figtree', sans-serif !important; margin: 0 !important; }
+.ay-tp-goals.is-empty h3 { font-size: 22px !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals h3 { color: #3e2723 !important; }
+/* Dark sheets are espresso: the form flips to butter lines and text. */
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet :is(.ay-tp-goalform__label, .ay-tp-goallist__row) { color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goals__presets.is-sheet button { border-color: #ffedac; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goals__presets.is-sheet button.is-on { background: #ffedac; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goalform__seg { border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goalform__seg button { color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goalform__seg button.is-on { background: #ffedac; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goalform__input { background: transparent; border-color: #ffedac; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-ring .is-bg { stroke: rgba(255, 237, 172, .25); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-ring .is-fg { stroke: #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goals__tick { border-color: #ffedac; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goals__tick.is-on { color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goallist > li { border-color: #ffedac; }
+/* Beta feedback (focus group, Nov 11). */
+.ay-fb-pill { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 16px; min-height: 44px; padding: 0 16px; border: 1.5px dashed #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-fb-pill svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-fb-pill { border-color: #ffedac; color: #ffedac; }
+.ay-fb__msg { min-height: 120px; padding: 12px 16px !important; line-height: 1.45 !important; resize: vertical; }
+.ay-fb__note { margin: 12px 0 0; font: 500 13px/1.4 'Figtree', sans-serif; }
+.ay-fb__err { margin: 8px 0 0; font: 600 14px/1.4 'Figtree', sans-serif; }

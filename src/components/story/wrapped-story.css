@@ -330,3 +330,5 @@ html body .ay-wr .ay-wr-nums dd { margin: 0; font: 600 16px/1.35 var(--ay-font-u
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card__needs li { margin: 0; padding: 6px 10px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; color: #3e2723; font: 600 13px/1 var(--s-ui); }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card__needs li::before { content: none; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card__needs li { width: fit-content; }
+/* Focus group, Nov 11: a logo alone didn't say what it was; the brand sits under each photo. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-needs__name { display: block; margin-top: 6px; font: 600 13px/1.2 var(--s-ui); color: var(--s-fg); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

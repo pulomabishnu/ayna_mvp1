@@ -238,7 +238,8 @@ export const AVOID_INGREDIENTS = [
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
   'Sensitive skin', 'Unscented', 'No preference',
 ];
-export const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure'];
+// Focus group, Nov 11: FSA/HSA are US accounts; people outside the US need their own answer.
+export const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure', 'I\'m not in the US'];
 
 export const AVOID_PAIRS = { Fragrance: 'Fragrance-free', Dyes: 'Dye-free', Parabens: 'Paraben-free', Sulfates: 'Sulfate-free', Latex: 'Latex-free' };
 // Same values as AVOID_INGREDIENTS, grouped so "Fragrance" (leave out) and "Vegan" (should be) don't read as one list.
@@ -288,7 +289,7 @@ export const EMPTY = {
 // (see below), so reconstruction is lossless for everything listed here;
 // fsaHsa is the one field buildSnapshot maps to a different slug, so it
 // gets a real reverse-lookup instead of a passthrough.
-export const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure' };
+export const FSA_HSA_REVERSE = { fsa: 'FSA', hsa: 'HSA', both: 'Both', none: 'No', unsure: 'Not sure', outside_us: 'I\'m not in the US' };
 export const RESUMABLE_PASSTHROUGH_FIELDS = [
   'age', 'lifeStage', 'lifeStageSelections', 'lifeStageOther', 'zipcode',
   'supportSelections', 'supportOtherText', 'vasomotorTimingSelections',
@@ -661,7 +662,7 @@ export function buildSnapshot(intake) {
 
   const productPreferences = [...new Set((intake.avoidIngredients || []).map((x) => PREFERENCE_MAP[x]).filter(Boolean))];
   const preferredProductTypes = [...new Set((intake.preferredFormats || []).map((x) => FORMAT_TO_LEGACY[x]).filter(Boolean))];
-  const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure' }[intake.fsaHsaAnswer] || '';
+  const fsaHsa = { FSA: 'fsa', HSA: 'hsa', Both: 'both', No: 'none', 'Not sure': 'unsure', 'I\'m not in the US': 'outside_us' }[intake.fsaHsaAnswer] || '';
 
   return {
     age: normalizeAge(intake.age),
@@ -1021,7 +1022,7 @@ export function getIntakeSteps(intake) {
     opt({ id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' }),
     ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [opt({ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like, in our shop or not. We show them first when they fit what you need.', type: 'trustedBrands' })] : []),
     opt({ id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Preferences, not allergies. Leave out removes products with those ingredients. Should be favors products that match.', type: 'avoidIngredients' }),
-    opt({ id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'If you have a pre-tax health account, we can point out products that are usually eligible.', type: 'fsa' }),
+    opt({ id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'US pre-tax health accounts: a Flexible Spending Account (FSA) or Health Savings Account (HSA). If you have one, we can point out products that are usually eligible. Outside the US? Pick "I\'m not in the US".', type: 'fsa' }),
     opt({ id: 'trust', section: 'trust', title: 'What matters most?', subtitle: 'When choosing a product', info: 'Drag to rank what you trust most. Skip it and we use ayna’s default: evidence first.', type: 'trust' }),
     opt({ id: 'anythingElse', section: 'trust', title: 'Anything else?', type: 'textarea', info: 'Anything else you want us to keep in mind, like a goal, a budget limit or a product you love.' }),
   ];

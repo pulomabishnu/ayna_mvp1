@@ -172,8 +172,8 @@ describe('in the rundown', () => {
     const decision = { items: [{ id: 'care:x', tier: 'care', level: 'prompt', title: 'Get this checked', body: 'b' }, { id: 'fu:1', type: 'follow_up', title: 'How did heat go?' }] };
     const r = buildRundown({ today: TODAY, decision, log, healthRows });
     const content = r.cards.slice(1, -1);
-    expect(content.map((c) => c.category).slice(0, 6)).toEqual(['safety', 'data', 'data', 'data', 'data', 'goal']);
-    expect(content.slice(1, 5).map((c) => c.kind)).toEqual(['period', 'sleep', 'steps', 'delta']);
+    expect(content.map((c) => c.category).slice(0, 5)).toEqual(['safety', 'data', 'data', 'data', 'goal']); // 3 data cards (focus group Nov 11: shorter)
+    expect(content.slice(1, 4).map((c) => c.kind)).toEqual(['period', 'sleep', 'steps']);
     expect(r.cards.at(-1).followUps.map((f) => f.question)).toEqual(['What should I tell my clinician?', 'What can help on day 3 of my period?', 'Why was my sleep shorter last night?']);
     noDash(r.cards);
   });
