@@ -67,7 +67,7 @@ describe('tips overlay', () => {
     mountApp({ html: HOME });
     wait(1000);
     expect(document.querySelector('.ay-tour__all')).toBeTruthy();
-    act(() => [...document.querySelector('.ay-tour__all').querySelectorAll('button')].find((x) => x.textContent === 'Got it').click());
+    act(() => [...document.querySelector('.ay-tour__all').querySelectorAll('button')].find((x) => x.textContent === 'Skip').click());
     wait(3000);
     expect(document.querySelector('.ay-tour__all')).toBeNull();
   });
@@ -78,8 +78,11 @@ describe('tips overlay', () => {
     expect(readTour().enabled).toBe(false);
     const sheet = document.querySelector('.ay-tour__all');
     expect(sheet.textContent).toContain('How ayna works');
-    expect(sheet.textContent).toContain('Your quiz answers');
-    act(() => [...sheet.querySelectorAll('button')].find((x) => x.textContent === 'Got it').click());
+    // Nov 12: a tour you play, one step at a time, starting with the quiz; Skip ends it.
+    expect(sheet.textContent).toContain('Tell ayna what you want help with');
+    act(() => [...sheet.querySelectorAll('button')].find((x) => x.textContent === 'Cramps').click());
+    expect(document.querySelector('.ay-tour__all').textContent).toContain('That is the quiz');
+    act(() => [...document.querySelectorAll('.ay-tour__all button')].find((x) => x.textContent === 'Skip').click());
     expect(document.querySelector('.ay-tour__all')).toBeNull();
     wait(3000);
     expect(dialog()).toBeNull();
@@ -121,7 +124,10 @@ describe('tips overlay', () => {
     mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
     wait(2000);
     const sheet = document.querySelector('.ay-tour__all');
-    expect(sheet?.textContent).toContain('Start with the quiz');
+    expect(sheet?.textContent).toContain('Tell ayna what you want help with');
+    // Play it to the end: the last button takes her into the quiz.
+    for (let k = 0; k < 4; k += 1) act(() => [...document.querySelectorAll('.ay-tour__all button')].find((x) => x.textContent === 'Next').click());
+    expect(document.querySelector('.ay-tour__go').textContent).toBe('Take the quiz');
     act(() => document.querySelector('.ay-tour__go').click());
     act(() => root.unmount()); root = null; app.remove();
     mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });

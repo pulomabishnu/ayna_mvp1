@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { readTour, setTipsEnabled, TOUR_EVENT } from './tourStore.js';
 import { ASK_SUGGEST_EVENT, readSuggestHidden, writeSuggestHidden } from '../../components/nav/askSuggestions.js';
 import TourSheet from './TourSheet.jsx';
+import PlayTour from './PlayTour.jsx';
 import './settings-search.css';
 
 /**
@@ -83,7 +84,7 @@ export default function TipsSettings({ renderSwitch, variant = 'app' }) {
         </div>
         <p className="ay-tips-set__status" role="status">{status}</p>
       </section>
-      {sheet && <TourSheet theme={theme()} onClose={() => setSheet(false)} />}
+      {sheet && <PlayTour theme={theme()} onClose={() => setSheet(false)} />}
     </>
   );
 }

@@ -193,7 +193,7 @@
 .ay-tp-goallist .ay-tp-prods { margin-left: 60px; }
 .ay-tp-goallist__rm { margin: 8px 0 0 60px; }
 .ay-tp-goalform__label { display: block; margin: 18px 0 8px; font: 700 15px/1.2 'Figtree', sans-serif; color: #3e2723; }
-.ay-tp-goalform__input { width: 100%; min-height: 48px; padding: 0 16px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 16px; background: #fff8dc; color: #3e2723; font: 500 16px/1 'Figtree', sans-serif; }
+.ay-tp-goalform__input { width: 100%; min-height: 48px; padding: 0 16px; box-sizing: border-box; border: 1.5px solid #3e2723; border-radius: 16px; background: transparent; color: #3e2723; font: 500 16px/1 'Figtree', sans-serif; }
 .ay-tp-goalform__seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; padding: 3px; border: 1.5px solid #3e2723; border-radius: 999px; }
 .ay-tp-goalform__seg button { min-height: 42px; border: 0; border-radius: 999px; background: transparent; color: #3e2723; font: 600 15px/1 'Figtree', sans-serif; cursor: pointer; }
 .ay-tp-goalform__seg button.is-on { background: #3e2723; color: #ffedac; }

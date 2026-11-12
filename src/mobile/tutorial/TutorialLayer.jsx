@@ -6,6 +6,7 @@ import { tourDecision, tipsToShow, rundownSettled, screensFor, avoidFor, partsOf
 import { readTour, setTourOwner, setTipsEnabled, markScreenSeen, markTipsSeen, markWelcomeOffered, markOffNoteShown } from './tourStore.js';
 import { topDialog, usableAnchor, currentScreen, partPresent, visibleAvoidRects, placeBubble, EDGE } from './tourDom.js';
 import TourSheet from './TourSheet.jsx';
+import PlayTour from './PlayTour.jsx';
 import './tutorial.css';
 import { localDayKey } from '../../utils/localDate.js';
 
@@ -281,6 +282,13 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     return () => { window.clearTimeout(t); window.removeEventListener('keydown', onKey, true); document.removeEventListener('pointerdown', onDown, true); };
   }, [run, end, surface]);
 
+  // The app plays the tour (Nov 12); on the signed-out landing its last button starts the quiz.
+  if (sheet && surface === 'app') {
+    const start = document.querySelector(cfg.host)?.dataset?.screen === 'landing'
+      ? () => { const b = document.querySelector('[data-tour="landing-start"] button, [data-tour="landing-start"]'); (b?.tagName === 'BUTTON' ? b : [...document.querySelectorAll('button')].find((x) => /sign up free|take (the|your) quiz/i.test(x.textContent)))?.click(); }
+      : null;
+    return <PlayTour theme={theme} onClose={() => setSheet(false)} onStartQuiz={start} />;
+  }
   if (sheet) return <TourSheet theme={theme} onClose={() => setSheet(false)} />;
   if (!run) {
     // After "Turn off tips": say where to turn them back on, for a few seconds.
