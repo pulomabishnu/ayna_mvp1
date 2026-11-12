@@ -5,10 +5,12 @@ import TodayPlan from './TodayPlan.jsx';
 
 const cup = { id: 'p-a', name: 'Heat patch', brand: 'Warm', category: 'cramp relief' };
 describe('For today bento (founder, Nov 11)', () => {
-  it('nothing logged: Log symptoms first (open layout, Nov 12), then her routine picks', () => {
-    const html = renderToStaticMarkup(<TodayPlan entry={null} picks={[cup]} onOpenLog={() => {}} />);
-    expect(html).toContain('Log symptoms');
-    expect(html).toContain('Add to your routine');
+  it('Nov 12 (founder: "too crowded"): no log row; today\'s new picks with photos instead', () => {
+    const html = renderToStaticMarkup(<TodayPlan entry={null} picks={[cup]} onOpenLog={() => {}} today="2026-11-12" />);
+    expect(html).not.toContain('Log symptoms');
+    expect(html).not.toContain('ay-tp-week');
+    expect(html).toContain('New from ayna today');
+    expect(html).toContain('Heat patch');
   });
   it('a log brings topics: low energy and pain become tiles', () => {
     const html = renderToStaticMarkup(<TodayPlan entry={{ energy: 1, pain: 2 }} picks={[]} />);
@@ -29,7 +31,8 @@ describe('For today bento (founder, Nov 11)', () => {
 describe('one routine suggestion from her data (founder, Nov 11)', () => {
   it('picks the product that fits what came up first', () => {
     const iron = { id: 'p-iron', name: 'Iron bisglycinate', category: 'iron supplement' };
-    const html = renderToStaticMarkup(<TodayPlan entry={{ energy: 1 }} picks={[cup, iron]} />);
-    expect(html).toContain('Iron bisglycinate. For low energy.');
+    const html = renderToStaticMarkup(<TodayPlan entry={{ energy: 1 }} picks={[cup, iron]} today="2026-11-12" />);
+    // The pick that fits today's low energy leads the daily picks.
+    expect(html.indexOf('Iron bisglycinate')).toBeLessThan(html.indexOf('Heat patch'));
   });
 });

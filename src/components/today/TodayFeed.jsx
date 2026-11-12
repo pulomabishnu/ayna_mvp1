@@ -114,7 +114,7 @@ function CompactItem({ item, t, onAsk, onFindCare, onOpenFull, onOutcome, wide =
         {!tel && acts.some((a) => a.id === 'get_care') && (onFindCare
           ? <button type="button" className="ay-today__primary" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
           : <a className="ay-today__primary" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
-        {full && !outcomes.length && !fields.length && <button type="button" className="ay-today__primary is-quiet" onClick={() => full()}>{primaryLabel}</button>}
+        {full && !outcomes.length && !fields.length && <button type="button" className={keep && primaryLabel === 'More' ? 'ay-today__text' : 'ay-today__primary is-quiet'} onClick={() => full()}>{keep && primaryLabel === 'More' ? 'Read more' : primaryLabel}</button>}
         {why && <button type="button" className="ay-today__text" onClick={why}>Ask ayna about this</button>}
       </div>
     </li>
@@ -508,7 +508,10 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
         }
         // Home's toggle (founder Oct 26): safety and care stay on top, always in view;
         // the 1 to 3 things for today become the toggle's first view, not a stack.
-        const top = shown.filter((it) => PROTECTED.has(it.tier));
+        // Founder, Nov 12 ("do we need this? maybe at the bottom"): only urgent care stays on top;
+        // a "get this checked" note moves under For today, as one slim line with Find care.
+        const top = shown.filter((it) => PROTECTED.has(it.tier) && it.level === 'urgent');
+        const later = shown.filter((it) => PROTECTED.has(it.tier) && it.level !== 'urgent');
         // Founder, Nov 11 ("less repetitive"): on Home the Your log row is right below, so the
         // separate "check in" card would say the same thing twice.
         const rest = shown.filter((it) => !PROTECTED.has(it.tier) && !(homeLog && it.type === 'check_in'));
@@ -531,6 +534,20 @@ export default function TodayFeed({ variant = 'app', userId = null, intake = nul
               /></div>
               : null,
           })}
+          {later.length > 0 && (
+            <ul className="ay-today__list is-compact is-care-note" aria-label="Worth checking">
+              {later.map((item) => (
+                <li key={item.id} className="ay-today__note-row">
+                  <button type="button" className="ay-today__note-main" onClick={() => { t.opened(item); openCompactDetail?.(item); }}>
+                    <b>{item.title}</b>{item.reason && <span>{item.reason}</span>}
+                  </button>
+                  {(item.actions || []).some((a) => a.id === 'get_care') && (onFindCare
+                    ? <button type="button" className="ay-today__note-go" onClick={() => { t.opened(item); onFindCare(item); }}>Find care</button>
+                    : <a className="ay-today__note-go" href={HRSA_FIND_CARE} target="_blank" rel="noopener noreferrer" onClick={() => t.opened(item)}>Find care<span className="sr-only"> (opens in a new tab)</span></a>)}
+                </li>
+              ))}
+            </ul>
+          )}
         </>;
       })()}
       {compact && homeLog && <>

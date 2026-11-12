@@ -372,3 +372,36 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact .ay-tp-goals__tick:not(.is-on) { color: #3e2723; border-color: #3e2723; }
 .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic svg { stroke: #ffedac !important; fill: none !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic svg { stroke: #3e2723 !important; }
+
+/* ---- Nov 12 (founder: "way too overcrowded and repetitive", "new products ayna recommends daily") ----
+   For today is now four calm parts: a one-line mood check, her goals, today's new picks, two tips. */
+.ay-tp.is-open .ay-tp-feel { display: grid; gap: 10px; }
+.ay-tp.is-open .ay-tp-feel__q { margin: 0 !important; font: 700 20px/1.2 'ayna Display', 'Figtree', sans-serif !important; }
+.ay-tp.is-open .ay-tp-feel__row button { grid-auto-flow: column; justify-content: center; align-items: center; min-height: 48px; gap: 8px; padding: 0 8px; border-radius: 999px; font-size: 15px; }
+.ay-tp.is-open .ay-tp-feel__row svg { width: 22px; height: 22px; }
+
+.ay-tp-goals.is-empty.is-compact { padding: 14px 16px 16px; }
+.ay-tp-goals__head.is-static { cursor: default; min-height: 0; padding: 0; }
+.ay-tp-goals.is-empty.is-compact .ay-tp-goals__presets { margin-top: 12px; gap: 8px; }
+.ay-tp-goals.is-empty.is-compact .ay-tp-goals__presets button { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.ay-tp-goals.is-empty.is-compact .ay-tp-goals__presets button.is-own { border-style: dashed; }
+
+/* New from ayna today: three product photos, the newest thing on the page. */
+.ay-tp-daily { margin: 0 0 24px; }
+.ay-tp-daily__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.ay-tp-daily__head h3 { margin: 0 !important; font: 700 18px/1.2 'ayna Display', 'Figtree', sans-serif !important; color: #3e2723 !important; }
+.ay-tp-daily__head span { font: 500 13px/1.2 'Figtree', sans-serif; color: #3e2723; }
+.ay-tp-daily__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.ay-tp-daily__row li { margin: 0; padding: 0; min-width: 0; }
+.ay-tp-daily__row li::before { content: none; }
+.ay-tp-daily__card { display: grid; gap: 4px; width: 100%; padding: 0; border: 0; background: transparent; color: #3e2723; text-align: left; cursor: pointer; }
+.ay-tp-daily__img { position: relative; display: grid; place-items: center; aspect-ratio: 1; border: 1.5px solid #3e2723; border-radius: 16px; background: #fff; overflow: hidden; }
+.ay-tp-daily__img img { width: 84%; height: 84%; object-fit: contain; }
+.ay-tp-daily__img i { position: absolute; top: 6px; left: 6px; padding: 3px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 11px/1.2 'Figtree', sans-serif; font-style: normal; border: 1.5px solid #3e2723; }
+.ay-tp-daily__card small { margin-top: 4px; font: 500 12px/1.2 'Figtree', sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ay-tp-daily__card b { font: 700 14px/1.25 'Figtree', sans-serif; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ay-tp-daily__card:active .ay-tp-daily__img { transform: scale(.97); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-daily__head :is(h3, span) { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-daily__card { color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-daily__img { border-color: #ffedac; }
+.ay-tp-goallist__sub { margin: 12px 0 0 60px; font: 700 14px/1.2 'Figtree', sans-serif; }

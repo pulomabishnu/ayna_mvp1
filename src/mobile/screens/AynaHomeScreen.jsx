@@ -143,12 +143,13 @@ export default function AynaHomeScreen(props) {
             insight={todayInsight} picks={todayPicks} myProductIds={myProducts.map((p) => p.id)}
             onOpenLog={() => setMonthOpen(true)} onOpenRead={(id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }}
             onExplore={onBrowse ? (q) => onBrowse(q) : undefined} onOpenProduct={onOpenProduct} onAddToRoutine={props.onAddToEcosystem || null}
-            onAddGoal={onAddGoal ? (g) => { onAddGoal(g); setGoalsAdded((x) => [...x, g]); } : null} goalsAdded={goalsAdded}
+            onAddGoal={onAddGoal ? (g, opts) => { onAddGoal(g, opts); setGoalsAdded((x) => [...x, g]); } : null} goalsAdded={goalsAdded}
             onOpenInsight={todayInsight?.metric ? () => openMetric(todayInsight.metric) : null}
             log={dayLog} today={today} name={firstName} onLogSaved={setDayLog} />
           {/* Focus group, Nov 11: TestFlight's feedback is hidden; a visible way to tell us. */}
           <button type="button" className="ay-fb-pill" onClick={() => openFeedback()}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z" /></svg>Something off? Send feedback</button>
-          {things}
+          {/* Founder, Nov 12 ("way too overcrowded"): For today is the plan above; the extra deck of
+              cards under it is gone. Safety and care still show above For today. */}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets
             // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).

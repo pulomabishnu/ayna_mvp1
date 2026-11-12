@@ -1299,7 +1299,9 @@ export default function MobileApp() {
   // "Add to my goals" on a health-data suggestion (You -> Health, Ecosystem):
   // the goal is added exactly as if she had picked it in the quiz, and the
   // new matches for it join her ecosystem. Nothing is added without the tap.
-  const handleAddGoal = (needId) => {
+  // quiet (Home goals, Nov 12): only tell the matcher about the goal. Nothing is added to her
+  // products behind her back and no pop-up; the goal's own sheet shows the picks to add herself.
+  const handleAddGoal = (needId, { quiet = false } = {}) => {
     if (!lastQuizAnswers) {
       setEcosystemNotice('Take the quiz first, then you can add goals from your health data.');
       return false;
@@ -1307,6 +1309,11 @@ export default function MobileApp() {
     const nextAnswers = addNeedToAnswers(lastQuizAnswers, needId);
     if (nextAnswers === lastQuizAnswers) return false;
     let added = [];
+    if (quiet) {
+      updateSession({ lastQuizAnswers: nextAnswers });
+      saveHealthIntakeForCurrentUser(nextAnswers?.fullHealthIntake || nextAnswers).catch(() => {});
+      return true;
+    }
     try {
       const ids = new Set(myProducts.map((p) => p.id));
       added = seedEcosystemFromAnswers(nextAnswers, behaviorFrom({ omitted: omittedProducts })).filter((p) => p.needId === needId && !ids.has(p.id));
