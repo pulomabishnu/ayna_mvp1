@@ -96,3 +96,7 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic { background: #ffedac !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__ic * { color: #3e2723 !important; }
 .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__thumbs > span, .ay-tp .ay-tp-tile.is-plain .ay-tp-tile__thumbs > span * { color: #3e2723 !important; }
+/* Founder, Nov 11 (later): the plain tiles get an outline so each reads as one tappable box. */
+.ay-tp .ay-tp-tile.is-plain { border: 1.5px solid #3e2723; }
+.ay-tp .ay-tp-tile.is-plain > button { padding-left: 16px; padding-right: 16px; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain { border-color: #ffedac; }
