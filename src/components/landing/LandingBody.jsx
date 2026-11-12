@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { openProPaywall } from '../../pro/paywall.js';
+import { countJourneyStep } from '../../utils/journeyStep.js';
 import { useRecommendationViews } from '../../utils/recommendationAnalytics';
 import { isPlainLeftClick } from '../../utils/productRoute';
 import { getWeeklyTrendingLineup } from '../../utils/trendingLineup';
@@ -343,7 +344,7 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
   const month = PLANS.find((x) => x.id === 'month');
   const closed = offerOpen === false && offerEnded();
   // The sheet opens right here with the plan she tapped (signed out, it asks her to sign in first).
-  const getPro = (plan) => { if (!openProPaywall({ feature: '', featureName: '', plan })) window.location.assign('/pro'); };
+  const getPro = (plan, step) => { countJourneyStep(step); if (!openProPaywall({ feature: '', featureName: '', plan })) window.location.assign('/pro'); };
   return (
     <section className="lb-close" aria-label="ayna Pro and get started">
       <div className="lb-wrap">
@@ -354,15 +355,15 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
             <p className="lb-p">{pro ? 'Your dashboard, every Read and up to 50 Ask ayna chats a month.' : 'Matches, safety notes and evidence stay free. Pro adds:'}</p>
             <ul className="lb-adds">{PRO_ADDS.map((a) => <li key={a.t}><Icon k={a.icon} />{a.t}</li>)}</ul>
             <span className="lb-pro__acts">
-              {!pro && !closed && <button type="button" className="lb-pill is-butter" onClick={() => getPro('year')}>Get ayna Pro<Arrow /></button>}
-              <a className="lb-more" href={pro ? '/health-data' : '/pro'}>{pro ? 'Connect health data' : 'See what Pro includes'}<Arrow /></a>
+              {!pro && !closed && <button type="button" className="lb-pill is-butter" onClick={() => getPro('year', 'cta_get_pro')}>Get ayna Pro<Arrow /></button>}
+              <a className="lb-more" href={pro ? '/health-data' : '/pro'} onClick={pro ? undefined : () => countJourneyStep('cta_see_pro')}>{pro ? 'Connect health data' : 'See what Pro includes'}<Arrow /></a>
             </span>
           </div>
           {!pro && closed && <p className="lb-p">The Early Access offer has ended. See ayna Pro for current pricing.</p>}
           {!pro && !closed && (
             <div className="lb-prices">
-              <button type="button" className="lb-price is-pink" onClick={() => getPro('year')} aria-label={`Yearly, ${year.price} the first year, then ${year.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Yearly</small><em>{year.badge}</em></span><b>{year.price}</b><span>first year, then {year.regular}</span></button>
-              <button type="button" className="lb-price is-light" onClick={() => getPro('month')} aria-label={`Monthly, ${month.price} the first month, then ${month.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Monthly</small></span><b>{month.price}</b><span>first month, then {month.regular}</span></button>
+              <button type="button" className="lb-price is-pink" onClick={() => getPro('year', 'cta_pro_yearly')} aria-label={`Yearly, ${year.price} the first year, then ${year.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Yearly</small><em>{year.badge}</em></span><b>{year.price}</b><span>first year, then {year.regular}</span></button>
+              <button type="button" className="lb-price is-light" onClick={() => getPro('month', 'cta_pro_monthly')} aria-label={`Monthly, ${month.price} the first month, then ${month.regular}. Get ayna Pro`}><span className="lb-price__top"><small>Monthly</small></span><b>{month.price}</b><span>first month, then {month.regular}</span></button>
               <p className="lb-terms">Pro unlocks right away. Your paid term starts {PAID_TERM_STARTS}. Cancel anytime.</p>
             </div>
           )}

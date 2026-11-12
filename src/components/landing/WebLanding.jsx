@@ -15,6 +15,11 @@ import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
 import './landing-story.css';
 import { wideRainCols } from './rainData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
+import { countJourneyStep } from '../../utils/journeyStep.js';
+
+/* Anonymous daily count for a landing button (journeyStep.js), then its action.
+   Keeps a missing handler missing, so optional links still hide. */
+const tap = (step, fn) => (typeof fn === 'function' ? (...a) => { countJourneyStep(step); return fn(...a); } : fn);
 
 /* The website's / (founder, Oct 27 10:40: "i liked how we had the website
  * ... optimize it for web"). The v2 website home is back, desktop-first, with
@@ -71,40 +76,43 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
   const { active: pro, offerOpen } = useProStatus(signedIn ? userId : null);
   const home = Boolean(signedIn && hasProfile && onGoHome);
   const cta = home
-    ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: onGoHome }
+    ? { label: 'Go to your Home', slide: 'Slide to go to your Home', go: tap('cta_go_home', onGoHome) }
     // Founder, Nov 4: a quiz already started merges into the one slider (no separate "Finish your quiz" box).
     : quizDraft && onResumeQuiz
-      ? { label: 'Finish your free quiz', slide: 'Slide to finish your free quiz', go: () => { trackLandingCta('finish_quiz', 'web', 'Finish your free quiz'); onResumeQuiz(); } }
+      ? { label: 'Finish your free quiz', slide: 'Slide to finish your free quiz', go: () => { countJourneyStep('cta_finish_quiz'); trackLandingCta('finish_quiz', 'web', 'Finish your free quiz'); onResumeQuiz(); } }
       : { label: 'Sign up free', slide: 'Sign up free', go: () => { trackLandingCta('sign_up_free', 'web', 'Sign up free'); onStartQuiz?.(); } }; // founder's brief (Nov 9 again): Sign up free, app and website
+  // "Sign up free" sits in five places; each is counted as its own step (cta_signup_<place>).
+  const signUp = !home && !(quizDraft && onResumeQuiz);
+  const ctaAt = (place) => (signUp ? { ...cta, go: () => { countJourneyStep(`cta_signup_${place}`); cta.go(); } } : cta);
   const draftLine = !home && quizDraft && onResumeQuiz ? (
     <p className="wl-draft">
       {quizDraft.requiredDone ? 'Your answers are saved.' : `Question ${quizDraft.index} of ${quizDraft.total}, saved.`}
-      {onStartQuizOver && <> <button type="button" className="wl-draft__over" onClick={onStartQuizOver}>Start over</button></>}
+      {onStartQuizOver && <> <button type="button" className="wl-draft__over" onClick={tap('cta_start_over', onStartQuizOver)}>Start over</button></>}
     </p>
   ) : null;
   return (
     <div id="ay-landing" className="ed ed-home hm hm-uq wl" ref={pageRef}>
-      <Hero cta={cta} onSearch={onSearch} banner={home || draftLine ? null : heroBanner} draftLine={draftLine} />
-      <BrandBar onOpen={onViewWaitlist} />
+      <Hero cta={ctaAt('hero')} onSearch={tap('cta_search', onSearch)} banner={home || draftLine ? null : heroBanner} draftLine={draftLine} />
+      <BrandBar onOpen={tap('cta_brands', onViewWaitlist)} />
       {/* Nov 6 (founder: high-converting order): the problem in her words, then how ayna solves it. */}
-      <div className="lb lb-top">{!home && <Problem cta={cta} />}</div>
+      <div className="lb lb-top">{!home && <Problem cta={ctaAt('problem')} />}</div>
       {/* Nov 4 (founder): the walkthrough on the iPhone, right under the hero. */}
-      <HowItWorksDemo onStart={cta.go} startLabel={cta.label} onViewHowItWorks={onViewHowItWorks} />
+      <HowItWorksDemo onStart={ctaAt('demo').go} startLabel={cta.label} onViewHowItWorks={tap('cta_how_we_match', onViewHowItWorks)} />
       {/* Under the falling pictures: the original website's sections (founder, Oct 27 19:18: keep the
           raining pictures and widgets, and use the original website for the rest). */}
       {/* Below the hero (./LandingBody.jsx): one calm butter page, then one espresso close. */}
       <div className="lb">
         {/* Nov 4 (founder: "it's just boxes"): the feature bento is gone; the iPhone walkthrough above says it. */}
-        <Picks tone="t-pink" onOpenProduct={onOpenProduct} onViewDiscovery={onViewDiscovery} picks={Array.isArray(personalPicks) ? personalPicks : null} />
+        <Picks tone="t-pink" onOpenProduct={tap('cta_product_card', onOpenProduct)} onViewDiscovery={tap('cta_see_all_products', onViewDiscovery)} picks={Array.isArray(personalPicks) ? personalPicks : null} />
         {rest && <>
-          <Testimonials cta={home ? null : cta} />
-          <Proof tone="t-butter" onViewArticles={onViewArticles} />
-          <ReadsAndCommunity tone="t-pink" onViewArticle={onViewArticle} onViewArticles={onViewArticles} onViewCommunity={onViewCommunity} posts={communityPosts} />
-          <Founders tone="t-butter" onViewAbout={onViewAbout} />
+          <Testimonials cta={home ? null : ctaAt('testimonials')} />
+          <Proof tone="t-butter" onViewArticles={tap('cta_sources', onViewArticles)} />
+          <ReadsAndCommunity tone="t-pink" onViewArticle={tap('cta_read_article', onViewArticle)} onViewArticles={tap('cta_library', onViewArticles)} onViewCommunity={tap('cta_community', onViewCommunity)} posts={communityPosts} />
+          <Founders tone="t-butter" onViewAbout={tap('cta_meet_us', onViewAbout)} />
           <Faq />
         </>}
       </div>
-      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={cta} />}
+      {rest && <ProAndEnd pro={pro === true} offerOpen={offerOpen} cta={ctaAt('end')} />}
       <div className="wl-note"><MedicalNote className="wl-note__p" /></div>
     </div>
   );

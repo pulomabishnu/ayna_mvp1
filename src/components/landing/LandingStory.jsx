@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motionOff } from '../../utils/motion.js';
+import { countJourneyStep } from '../../utils/journeyStep.js';
 import { BETA_QUOTES, LANDING_FAQ, PAINS } from './landingData.js';
 import './landing-story.css';
 
@@ -96,7 +97,7 @@ export function Faq() {
         <div className="ls-faq__side">
           <p className="ls-kick">Before you start</p>
           <h2 id="ls-faq-h" className="lb-h2 ls-h">Questions, answered</h2>
-          <p className="ls-faq__more">Something else? <a href="/contact">Ask us</a></p>
+          <p className="ls-faq__more">Something else? <a href="/contact" onClick={() => countJourneyStep('cta_faq_ask_us')}>Ask us</a></p>
         </div>
         <ul className="ls-faq__list">
           {LANDING_FAQ.map((f, i) => {

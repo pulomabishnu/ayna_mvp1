@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { countJourneyStep, isFirstLoadOfVisit, countLanded, resetLandedForTests } from './journeyStep.js';
+import { countJourneyStep, isFirstLoadOfVisit, countLanded, resetLandedForTests, LANDING_CTA_STEPS } from './journeyStep.js';
 
 const src = (p) => readFileSync(new URL(p, import.meta.url), 'utf8');
 const store = (decision, extra = {}) => {
@@ -92,5 +92,25 @@ describe('every step is wired on the website and in the app', () => {
     expect(src('./analyticsIdentity.js')).toMatch(/countJourneyStep\('account_created'\)/);
     expect(src('../components/AuthGate.jsx')).toMatch(/recordNewAccount\(posthog, data\.user/);
     expect(src('../mobile/hooks/useSupabaseAuth.js')).toMatch(/recordNewAccount\(posthog, data\.user/);
+  });
+  it('every landing button step is used somewhere on the landing page or its top bar', () => {
+    const code = ['../App.jsx', '../components/landing/WebLanding.jsx', '../components/landing/LandingBody.jsx', '../components/landing/LandingStory.jsx'].map(src).join('\n');
+    for (const step of LANDING_CTA_STEPS) {
+      const place = step.match(/^cta_signup_(hero|problem|demo|testimonials|end)$/);
+      if (place) expect(code, step).toContain(`ctaAt('${place[1]}')`);
+      else expect(code, step).toContain(`'${step}'`);
+    }
+  });
+  it('a landing button follows the same skip rules', () => {
+    vi.stubGlobal('navigator', {});
+    store(null);
+    expect(sent(() => countJourneyStep('cta_signup_topbar')).map(([, o]) => JSON.parse(o.body))).toEqual([{ s: 'cta_signup_topbar', pl: 'web' }]);
+    store('denied');
+    expect(sent(() => countJourneyStep('cta_signup_topbar'))).toHaveLength(0);
+    store(null, { ayna_internal_analytics_v1: 'founder' });
+    expect(sent(() => countJourneyStep('cta_signup_topbar'))).toHaveLength(0);
+    vi.stubGlobal('navigator', { globalPrivacyControl: true });
+    store('granted');
+    expect(sent(() => countJourneyStep('cta_signup_topbar'))).toHaveLength(0);
   });
 });

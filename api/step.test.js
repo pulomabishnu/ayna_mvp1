@@ -6,7 +6,7 @@ import { JOURNEY_STEPS as CLIENT_STEPS } from '../src/utils/journeyStep.js';
 import { mockReq, mockRes } from './_test-helpers.js';
 
 const fakeDb = (result = { error: null }) => ({ rpc: vi.fn(async () => result) });
-const sql = readFileSync(new URL('../supabase/journey_step_daily_2026-11-11.sql', import.meta.url), 'utf8');
+const sql = readFileSync(new URL('../supabase/journey_step_daily_ctas_2026-11-11.sql', import.meta.url), 'utf8');
 afterEach(() => setStepAdminForTests(null));
 
 describe('readStep', () => {
@@ -22,11 +22,17 @@ describe('readStep', () => {
       expect(readStep({ body }), body).toBeNull();
     }
   });
-  it('the site, the API and the SQL list the same six steps', () => {
+  it('the site, the API and the SQL list the same steps', () => {
     expect([...CLIENT_STEPS]).toEqual(JOURNEY_STEPS);
     const list = JOURNEY_STEPS.map((s) => `'${s}'`).join(', ');
     expect(sql.split(list).length - 1).toBe(2); // table check + function guard
     expect(sql).toContain("('web', 'ios_app', 'android_app')");
+  });
+  it('accepts every landing button step', () => {
+    for (const s of ['cta_signup_topbar', 'cta_signup_hero', 'cta_signup_end', 'cta_faq_ask_us']) {
+      expect(readStep({ body: { s, pl: 'web' } }), s).toEqual({ step: s, platform: 'web' });
+    }
+    expect(readStep({ body: { s: 'cta_made_up', pl: 'web' } })).toBeNull();
   });
 });
 
@@ -72,6 +78,9 @@ describe('journey_step_daily SQL', () => {
     const cols = table.split('\n').map((l) => l.trim().split(/\s+/)[0]).filter((c) => c && c !== 'primary');
     expect(cols).toEqual(['day', 'step', 'platform', 'count']);
     expect(sql).toContain('enable row level security');
+    // Works on a fresh database and on one that already ran the first file: the step check is replaced, rows kept.
+    expect(sql).toContain('drop constraint if exists journey_step_daily_step_check');
+    expect(sql).not.toMatch(/drop table|truncate|delete from/i);
     expect(sql).toContain('revoke all on public.journey_step_daily from anon, authenticated');
     expect(sql).toContain('revoke all on function public.record_journey_step(text, text) from public, anon, authenticated');
   });
