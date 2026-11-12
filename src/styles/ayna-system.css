@@ -166,7 +166,7 @@
 }
 .app-container[data-theme='brand-dark'] {
   --ay-page: #3e2723;
-  --ay-group: #4a312c;
+  --ay-group: #3e2723;
   --ay-text: #ffedac;
   --ay-text-2: rgba(255, 237, 172, .8);
   --ay-hairline: rgba(255, 237, 172, .18);
@@ -596,7 +596,7 @@
 .app-container .ay-band--espresso { --band: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac; --ay-hairline: rgba(255, 237, 172, .22); --ay-hover: rgba(255, 237, 172, .1); --ay-focus: #ffedac; --ay-feature-bg: #ffedac; --ay-feature-fg: #3e2723; --ay-press-shadow: var(--ay-sticker); --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; --ed-hairline: rgba(255, 237, 172, .22); --ed-page: #3e2723; color: #ffedac; }
 /* brand dark: the page is espresso, so the espresso band turns butter */
 .app-container[data-theme='brand-dark'] .ay-band--espresso { --band: #ffedac; --ay-text: #3e2723; --ay-text-2: #3e2723; --ay-outline-color: #3e2723; --legacy-outline: 1.5px solid #3e2723; --ay-hairline: rgba(62, 39, 35, .3); --ay-hover: rgba(62, 39, 35, .08); --ay-focus: #3e2723; --ay-feature-bg: #3e2723; --ay-feature-fg: #ffedac; --ay-press-shadow: var(--ay-sticker); --ed-text: #3e2723; --ed-text-2: #3e2723; --ed-outline: #3e2723; --ed-hairline: rgba(62, 39, 35, .3); --ed-page: #ffedac; color: #3e2723; }
-.app-container[data-theme='brand-dark'] .ay-band--butter { --band: #4a312c; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ay-band--butter { --band: #3e2723; --ay-text: #ffedac; --ay-text-2: rgba(255, 237, 172, .86); --ay-outline-color: #ffedac; --legacy-outline: 1.5px solid #ffedac; --ed-text: #ffedac; --ed-text-2: rgba(255, 237, 172, .86); --ed-outline: #ffedac; color: #ffedac; }
 /* Calm band (founder Oct 27 11:40): signed-in page heads are the page colour in both themes (butter in light,
    espresso in dark) with espresso / butter text, closed by a 1.5px wavy rule instead of a coloured band edge. */
 html body .app-container.app-container .ay-band--calm { --band: var(--ay-calm-page) !important; --ay-text: var(--ay-calm-fg) !important; --ay-text-2: var(--ay-calm-fg-muted) !important; --ay-fg: var(--ay-calm-fg); --ay-fg-muted: var(--ay-calm-fg-muted); --ay-outline-color: var(--ay-calm-line) !important; --legacy-outline: var(--ay-calm-border) !important; --ay-border-ink: var(--ay-calm-border); --ay-fill-ink: var(--ay-calm-fg); --ay-on-ink: var(--ay-calm-page); --ay-hairline: var(--ay-calm-track) !important; --ay-hover: var(--ay-calm-soft) !important; --ay-focus: var(--ay-calm-fg) !important; --ay-feature-bg: var(--ay-calm-fg) !important; --ay-feature-fg: var(--ay-calm-page) !important; --ed-text: var(--ay-calm-fg) !important; --ed-text-2: var(--ay-calm-fg-muted) !important; --ed-outline: var(--ay-calm-line) !important; --ed-hairline: var(--ay-calm-track) !important; --ed-page: var(--ay-calm-page) !important; color: var(--ay-calm-fg) !important; }

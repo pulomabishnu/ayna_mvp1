@@ -28,7 +28,9 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
     ? { label: 'Go to your Home', slide: 'Go to your Home', go: onGoHome }
     : draft
       ? { label: 'Finish your free quiz', slide: 'Finish your free quiz', go: onResumeQuiz }
-      : { label: 'Sign up free', slide: 'Sign up free', go: () => { trackLandingCta('sign_up_free', 'app'); onStartQuiz?.(); } };
+      // Nov 12 (founder: "you decide, research it"): the button says what happens next (it starts the
+      // quiz, it doesn't ask for an account), and the line under it removes the fear of a sign-up wall.
+      : { label: 'Take the 1-minute quiz', slide: 'Take the 1-minute quiz', go: () => { trackLandingCta('sign_up_free', 'app'); onStartQuiz?.(); } };
   return (
     <div id="ay-landing" className="alx">
       <section className="alx__band" aria-labelledby="alx-title">
@@ -40,7 +42,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
         <div className="alx__head">
           <div className="alx__copy">
             <h1 id="alx-title" className="alx__title">Women’s health products, <span>matched to you.</span></h1>
-            <p className="alx__one">Take a 1-minute quiz. See what fits and why.</p>
+            <p className="alx__one">Answer a few questions. See what fits your body, and why.</p>
           </div>
         </div>
       </section>
@@ -48,6 +50,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
       <div className="alx__act">
         {banner && <div className="alx__banner">{banner}</div>}
         <SlideToStart className="alx__sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="ink" />
+        {!home && !draft && <p className="alx__free">Free. See your top matches before you sign up.</p>}
         {draft && <p className="alx__draft">{draft.requiredDone ? 'Your answers are saved.' : `Question ${draft.index} of ${draft.total}, saved.`}{onStartQuizOver && <> <button type="button" className="alx__draft-over" onClick={onStartQuizOver}>Start over</button></>}</p>}
         {!signedIn && onBrowse && <button type="button" className="alx__link" onClick={() => onBrowse()}>Explore first</button>}
       </div>

@@ -329,3 +329,11 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--db-deep); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small.is-period::before { background: #f7badd; box-shadow: inset 0 0 0 1px rgba(62, 39, 35, .35); }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-phaseline-labels small.is-ovulation::before { background: var(--db-blue); }
+
+/* Nov 12 (founder: brand colours only, solid): the "your usual" band on every chart is solid pink,
+   not see-through espresso; the 7/30/90 switch is outlined, not tinted. The line sits on top. */
+html body :is(.ayna-mobile, .app-container, .ay-msheet) :is(rect, path, polygon).ay-db-band { fill: #f7badd !important; opacity: 1 !important; }
+html body :is(.ayna-mobile, .app-container, .ay-msheet) :is(i, span, div).ay-db-band { background: #f7badd !important; opacity: 1 !important; }
+html body :is(.ayna-mobile, .app-container, .ay-msheet) .ay-db-rangebar-track { background: #f7badd !important; }
+html body :is(.ayna-mobile, .app-container, .ay-msheet) .ay-db-range { background: transparent !important; box-shadow: inset 0 0 0 1.5px currentColor !important; }
+html body :is(.ayna-mobile, .app-container) .wb-spark .ay-db-band { fill: #f7badd !important; opacity: 1 !important; }

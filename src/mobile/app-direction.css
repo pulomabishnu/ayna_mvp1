@@ -32,8 +32,8 @@
   --ayna-bg: var(--d-page);
 }
 .ayna-mobile:is(#ay,.ayna-mobile)[data-theme='dark'] {
-  --d-page: #2e1c18;
-  --d-group: #4a312c;
+  --d-page: #3e2723;
+  --d-group: #3e2723;
   --d-ink: #ffedac;
   --d-ink-2: rgba(255, 237, 172, .78);
   --d-hair: rgba(255, 237, 172, .16);

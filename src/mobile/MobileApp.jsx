@@ -1670,7 +1670,10 @@ export default function MobileApp() {
   commitPendingQuizRef.current = nav.onSeeMatches;
 
   // The chat is the Ask ayna tab (all-pages brief, Oct 25), so the tab bar stays under it.
-  const showTabBar = !['quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
+  // Nov 12 audit: signed out on the landing, one action (the quiz) and "Explore first"; no five-tab
+  // bar competing with it (Hick's law). The bar appears once she explores or has an account.
+  const landingFocus = (screen === 'landing' || emptyHome) && !authUser;
+  const showTabBar = !landingFocus && !['quiz', 'building', 'reveal', 'signin', 'checkin', 'connect', 'plan', 'ready'].includes(screen) && (!overlay || ['profile', 'profile-auth', 'product', 'article', 'why-match'].includes(overlay.type));
   // Deep round 2: the tab bar stays on drilled-in screens (product, read, why
   // this match), as in iOS; tapping a tab pops back to that tab's root.
   // Reads ranked from her app answers (personalReads.js): matching reads

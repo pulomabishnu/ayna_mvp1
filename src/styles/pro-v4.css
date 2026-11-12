@@ -11,7 +11,7 @@
   color: var(--pro-fg); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
 }
 :is(#ayp1, html):is(#ayp2, html):is(#ayp3, html) body :is([data-theme='dark'], [data-theme='brand-dark']) :is(.pro-gate, .pro-lock, .pro-lock-fold, .pro-sheet) {
-  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: #4a312c;
+  --pro-fg: #ffedac; --pro-fg-muted: rgba(255, 237, 172, .82); --pro-bg: #3e2723; --pro-deep: #3e2723;
   --pro-line: #ffedac; --pro-shadow: #ffedac; --pro-rule: rgba(255, 237, 172, .2);
   --pro-fill: #ffedac; --pro-on-fill: #3e2723; --pro-hl: rgba(247, 186, 221, .45);
 }

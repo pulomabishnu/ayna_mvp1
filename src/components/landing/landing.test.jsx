@@ -40,7 +40,7 @@ const text =(html) => html.replace(/<[^>]+>/g, ' ');
 describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    expect(text(out)).toContain('Sign up free');
+    expect(text(out)).toContain('Take the 1-minute quiz');
     expect(out).toContain('matched to you'); // Nov 4: same promise as the website
     // A quiz already started: the one button finishes it, with a small line (no second box).
     const draft = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 3, total: 7 }} onResumeQuiz={() => {}} onStartQuizOver={() => {}} />);
@@ -48,7 +48,7 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
     expect(text(draft)).toContain('Question 3 of 7, saved.');
     expect(draft).not.toContain('Continue my quiz');
     // Still on question 1: nothing to finish, the normal button.
-    expect(text(renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 1, total: 7 }} onResumeQuiz={() => {}} />))).toContain('Sign up free');
+    expect(text(renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 1, total: 7 }} onResumeQuiz={() => {}} />))).toContain('Take the 1-minute quiz');
     const home = renderToStaticMarkup(<AppLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     expect(text(home)).toContain('Go to your Home');
   });

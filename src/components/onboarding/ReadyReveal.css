@@ -672,3 +672,16 @@ html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-
   color: inherit !important; font: 600 16px/1 var(--o-sans, 'Figtree'), sans-serif;
 }
 html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-ob-ready.ay-ob-ready:not(.is-web) .ay-ob-back::after { content: 'Back to quiz'; }
+
+/* Nov 12: her top three matches before the account ask. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 4px 0 20px; padding: 0; list-style: none; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__top li { display: grid; gap: 6px; margin: 0; padding: 0; min-width: 0; animation: ay-pz-rise 520ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 120ms + 150ms); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__top li::before { content: none; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__top .ay-ob-match__plate { width: 100%; aspect-ratio: 1; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topname { font: 600 13px/1.25 var(--o-sans, 'Figtree', sans-serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__toppct { justify-self: start; padding: 4px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1 var(--o-sans, 'Figtree', sans-serif); }
+@keyframes ay-pz-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { html body .ay-pz .ay-pz__top li { animation: none; } }
+/* Brand colours only (Nov 12): the two choices are outlined in butter, not a see-through wash. */
+html body :is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container) .ay-pz .ay-pz__list :is(li, li > button) { background: transparent !important; }
+html body :is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container) .ay-pz .ay-pz__list li { box-shadow: inset 0 0 0 1.5px currentColor !important; border-radius: 20px !important; padding: 0 14px !important; }

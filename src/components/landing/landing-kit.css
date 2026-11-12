@@ -63,10 +63,10 @@ html.ay-motion-paused .lk-rain__run { animation-play-state: paused; }
 /* ---- on espresso (an espresso band, or dark mode): a soft see-through layer.
    Each packshot on a small rounded butter tile (its white would show on
    espresso); the shapes in pink and butter outlines. ---- */
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: rgba(255, 237, 172, .75); }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 16px; background: #ffedac; overflow: hidden; isolation: isolate; padding: 8%; outline: 1.5px solid rgba(255, 237, 172, .55); outline-offset: 4px; }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: .7; }
-:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: .8; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) { --lk-field: transparent; --lk-fg: #ffedac; --lk-line: #ffedac; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod__in { border-radius: 16px; background: #fff; overflow: hidden; isolation: isolate; padding: 8%; outline: 1.5px solid #ffedac; outline-offset: 4px; }
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-prod { opacity: 1; } /* Nov 12: full colour; the photos sit in their own strip, never behind the words */
+:is(.lk-rainbox--ink, :is([data-theme='dark'], [data-theme='brand-dark']) .lk-rainbox) .lk-w { opacity: 1; }
 
 /* ---- the hero search: wide, butter, espresso outline ---- */
 .lsx-search { position: relative; display: flex; align-items: center; width: 100%; max-width: 560px; }

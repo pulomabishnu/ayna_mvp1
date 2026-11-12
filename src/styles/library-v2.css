@@ -169,7 +169,7 @@ html body .app-container.app-container.app-container.app-container .lb {
 /* dark: the site swaps pink and sky by itself; espresso surfaces lift off the page */
 html body .app-container.app-container.app-container.app-container[data-theme='brand-dark'] .lb {
   --lb-shadow: none;
-  & .lb-tone--pelvic, & .lb-band { --band: #4a312c; }
+  & .lb-tone--pelvic, & .lb-band { --band: #3e2723; }
   & .lb-toc, & .lb-care { border-color: var(--lb-butter); }
   & .lb-tab { border-color: var(--lb-butter); background: var(--lb-butter); color: var(--lb-esp) !important; }
 }

@@ -9,7 +9,7 @@
   --sb-page: var(--ay-page, #ffedac);
 }
 .ayna-mobile { --sb-ink: var(--ayna-heading, #3e2723); --sb-line: var(--ayna-heading, #3e2723); --sb-tab: #f7badd; --sb-page: var(--ayna-bg, #ffedac); }
-.ayna-mobile[data-theme='dark'] { --sb-tab: #4a312c; }
+.ayna-mobile[data-theme='dark'] { --sb-tab: #3e2723; }
 
 /* ---- Die-cut need stickers ---- */
 .ay-needstickers { display: flex; gap: 14px; margin: 20px 0 0; padding: 6px 4px 10px; list-style: none; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }

@@ -706,7 +706,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 .ed.ed-page--toned .ed-principles li:nth-child(4n+4) > b { background: #ffedac; }
 .ed.ed-page--toned .ed-principles li > :not(b) { padding-inline: 16px; }
 .app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-principles li:nth-child(4n+3) > b { background: #ffedac; color: #3e2723; }
-.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-principles li:nth-child(4n+4) > b { background: #4a312c; color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-principles li:nth-child(4n+4) > b { background: #3e2723; color: #ffedac; }
 @media (max-width: 767px) { .ed.ed-page--toned .ed-principles { grid-template-columns: 1fr; gap: 14px; } .ed.ed-page--toned .ed-principles li:nth-child(even) { padding-left: 0 !important; border-left: 1.5px solid var(--ed-outline) !important; } }
 .ed .ed-story__polaroid { margin: 24px 12px 0; }
 .ed .ed-story .ed-story__polaroid img { aspect-ratio: 4 / 5; border-radius: 2px; }
@@ -723,7 +723,7 @@ html body .app-container.app-container[data-theme='brand-dark'] .ed .ed-field :i
 .ed.ed-page--toned .ed-hiw li:nth-child(3) .ed-hiw__n { background: #3e2723; color: #ffedac; }
 .ed.ed-page--toned .ed-hiw li:nth-child(4) .ed-hiw__n { background: #ffedac; }
 .app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-hiw li:nth-child(3) .ed-hiw__n { background: #ffedac; color: #3e2723; }
-.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-hiw li:nth-child(4) .ed-hiw__n { background: #4a312c; color: #ffedac; }
+.app-container[data-theme='brand-dark'] .ed.ed-page--toned .ed-hiw li:nth-child(4) .ed-hiw__n { background: #3e2723; color: #ffedac; }
 .ed.ed-page--toned .ed-hiw li::after { content: ''; position: absolute; top: -16px; right: 14px; width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid #3e2723; transform: rotate(8deg); background: var(--ic) center / 26px 26px no-repeat, #ffedac; }
 .ed.ed-page--toned .ed-hiw li:nth-child(1) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5h16v11H9l-5 4z'/%3E%3C/svg%3E"); }
 .ed.ed-page--toned .ed-hiw li:nth-child(2) { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233e2723' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5h18l-7 8v6l-4-2v-4z'/%3E%3C/svg%3E"); }

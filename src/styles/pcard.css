@@ -25,7 +25,7 @@
 }
 @media (prefers-reduced-motion: reduce) { :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard { transition: none; } :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard:hover { transform: none !important; } }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard {
-  --pc-ink: #ffedac; --pc-muted: rgba(255, 237, 172, .78); --pc-bg: #2b1a16; --pc-line: #ffedac; --pc-shadow: rgba(255, 237, 172, .9);
+  --pc-ink: #ffedac; --pc-muted: rgba(255, 237, 172, .78); --pc-bg: #3e2723; --pc-line: #ffedac; --pc-shadow: rgba(255, 237, 172, .9);
   --pc-photo-rule: rgba(255, 237, 172, .3);
 }
 /* The square photo panel */

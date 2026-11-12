@@ -112,9 +112,9 @@
 /* ---------- dark: espresso canvas, butter type, sky and rose swap ---------- */
 .ayna-mobile.ayna-mobile.ayna-mobile[data-theme='dark'] {
   color-scheme: dark;
-  --r-canvas: #2e1c18;             /* espresso, one step deeper for the page */
+  --r-canvas: #3e2723;             /* espresso, one step deeper for the page */
   --r-surface: var(--b-espresso);
-  --r-surface-2: #4a302a;
+  --r-surface-2: #3e2723;
   --r-ink: var(--b-butter);
   --r-ink-2: rgba(255, 237, 172, .78);
   --r-ink-3: rgba(255, 237, 172, .68);
@@ -157,3 +157,18 @@
 .ayna-mobile.ayna-mobile h3 { font-size: calc(var(--ay-size-h2, 20px) * var(--ayna-text-scale, 1)); font-weight: 500; line-height: 1.15; }
 .ayna-mobile.ayna-mobile :is(p, li, label, input, textarea, select, button) { font-family: var(--f-ui); }
 .ayna-mobile.ayna-mobile .ayna-shared-wordmark { font-family: var(--f-logo) !important; font-weight: 800 !important; letter-spacing: -0.04em; color: var(--r-ink) !important; }
+
+/* Nov 12 (founder: espresso only in dark mode): cards are no longer a see-through butter wash on a
+   darker brown; the page and cards are both espresso, and cards are drawn with a 1.5px butter line. */
+:is(.ayna-mobile, .app-container):is([data-theme='dark'], [data-theme='brand-dark']) :is(.ay-db-card, .ay-dials, .ay-hsc__tile.is-data, .ay-wx-group, .ay-db-tile) {
+  background: #3e2723 !important; box-shadow: inset 0 0 0 1.5px #ffedac !important;
+}
+:is(.ayna-mobile, .app-container):is([data-theme='dark'], [data-theme='brand-dark']) .ay-suggest__icon.is-product { background: #f7badd !important; color: #3e2723 !important; }
+/* Same, with the ID-weight the dashboard's own rules use. */
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] :is(.ay-db-card, .ay-dials, .ay-hsc__tile.is-data, .ay-wx-group, .ay-db-tile, .ay-hh-streak, .ay-stack__card) {
+  background: #3e2723 !important; box-shadow: inset 0 0 0 1.5px #ffedac !important;
+}
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) :is(rect, path, polygon).ay-db-band { fill: #f7badd !important; opacity: 1 !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) :is(i, span).ay-db-band { background: #f7badd !important; opacity: 1 !important; }
+
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh__band { background: #3e2723 !important; box-shadow: none !important; }

@@ -272,7 +272,7 @@
   padding: 9px 9px 10px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink) !important;
   box-shadow: none !important; overflow: visible !important; transition: transform .14s var(--ease-out, ease-out), box-shadow .14s var(--ease-out, ease-out);
 }
-.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-pc { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); }
+.ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile)[data-theme='dark'] .ay-pc { --pc-ink: #ffedac; --pc-bg: #3e2723; --pc-soft: rgba(255, 237, 172, .78); }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc:has(.ay-pc-main:active) { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--pc-ink) !important; }
 @media (prefers-reduced-motion: reduce) { .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc { transition: none; transform: none !important; } }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-pc-main { display: flex !important; flex-direction: column; gap: 10px; flex: 1; padding: 0 !important; border: 0 !important; background: none !important; color: inherit !important; text-align: left; }

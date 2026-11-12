@@ -24,7 +24,7 @@
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-espresso,
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays)[data-theme='dark'] {
   --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: rgba(255, 237, 172, .8); --s-line: #ffedac;
-  --s-panel: #4a312c; --s-track: rgba(255, 237, 172, .2); --s-btn: #ffedac; --s-on-btn: #3e2723;
+  --s-panel: #3e2723; --s-track: rgba(255, 237, 172, .2); --s-btn: #ffedac; --s-on-btn: #3e2723;
 }
 
 /* the frame: the whole screen on a phone */

@@ -105,7 +105,7 @@
 
 /* ---------- Round 5b: "ayna at a glance" is the hero (same order as the website) ---------- */
 .ayna-mobile .ay-pdp-safetyflag { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--legacy-ink); border-radius: 999px; background: var(--legacy-pink); color: var(--legacy-ink); font: 500 15px/1.45 var(--ay-font-ui); cursor: pointer; }
-.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { color: #2e1c18; border-color: var(--legacy-pink); }
+.ayna-mobile[data-theme='dark'] .ay-pdp-safetyflag { color: #3e2723; border-color: var(--legacy-pink); }
 .ayna-mobile .ay-pdp-safetyflag strong { font-weight: 600; }
 .ayna-mobile .ay-pdp-safetyflag span:last-child { text-decoration: underline; text-underline-offset: 3px; }
 .ayna-mobile .ay-pdp-passport { gap: 48px; margin-top: 24px; }
@@ -123,7 +123,7 @@
 .ayna-mobile .ay-pdp-askcard { grid-template-columns: minmax(0, 1fr); }
 .ayna-mobile .ay-pdp-askcard .ay-pdp-ask { min-width: 0; }
 .ayna-mobile .ay-pdp-askcard .ay-pdp-ask button:not([type='submit']) { max-width: 100%; white-space: normal; line-height: 1.3; }
-.ayna-mobile[data-theme='dark'] .ay-pdp-askcard .ay-pdp-ask > div:last-child { color: #2e1c18 !important; opacity: .75; }
+.ayna-mobile[data-theme='dark'] .ay-pdp-askcard .ay-pdp-ask > div:last-child { color: #3e2723 !important; opacity: .75; }
 
 /* ==== merged from mobile/app-pdp.css ==== */
 /* App product page: the shared research block (components/pdp/ProductEvidence,
@@ -200,8 +200,8 @@
   --pdp-card-shadow: #3e2723;
 }
 .ayna-mobile[data-theme='dark'] #ay-pdp {
-  --pdp-page-bg: #2e1c18;
-  --pdp-compare-bg: #2e1c18;
+  --pdp-page-bg: #3e2723;
+  --pdp-compare-bg: #3e2723;
   --pdp-card-line: rgba(255, 237, 172, .5);
   --pdp-card-shadow: rgba(255, 237, 172, .12);
 }
@@ -389,7 +389,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp .ay-pdp-morelist__txt b { font: 700 16px/1.25 var(--ayna-font-ui, 'Figtree'), sans-serif; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 #ay-pdp .ay-pdp-morelist__txt small { font: 500 14px/1.3 var(--ayna-font-ui, 'Figtree'), sans-serif; opacity: .85; }
 #ay-pdp .ay-pdp-morelist svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.ayna-mobile[data-theme='dark'] #ay-pdp .ay-pdp-morelist button { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .55); }
+.ayna-mobile[data-theme='dark'] #ay-pdp .ay-pdp-morelist button { background: #3e2723; color: #ffedac; border-color: rgba(255, 237, 172, .55); }
 /* Readability: card names and panel text a step larger and full-strength ink. */
 #ay-pdp .ay-stack__head b { font-size: 18px; }
 #ay-pdp .ay-stack__panel { font-size: 16px; line-height: 1.5; }
@@ -407,7 +407,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-metaline { font: 500 13px/1.3 var(--ayna-font-ui, 'Figtree'), sans-serif !important; opacity: .8; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-pricerow { margin-top: 2px !important; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-pricerow__main { font: 700 20px/1.1 var(--ayna-font-ui, 'Figtree'), sans-serif !important; }
-.ayna-mobile[data-theme='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { background: #4a302a; border-color: rgba(255, 237, 172, .55); }
+.ayna-mobile[data-theme='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { background: #3e2723; border-color: rgba(255, 237, 172, .55); }
 /* The block under the card sits close and evenly spaced. */
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head + .ayq-sheet { margin-top: 0 !important; padding-top: 14px !important; display: grid; gap: 12px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head + .ayq-sheet > * { margin-top: 0 !important; margin-bottom: 0 !important; }

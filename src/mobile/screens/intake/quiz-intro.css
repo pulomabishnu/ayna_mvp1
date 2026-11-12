@@ -30,7 +30,7 @@
 .ayna-mobile[data-theme='dark'] .qi,
 .app-container[data-theme='dark'] .qi {
   --qi-ink: #ffedac;
-  --qi-paper: #4a302a;
+  --qi-paper: #3e2723;
   --qi-soft: rgba(255, 237, 172, .72);
   --qi-shadow: none;
   --qi-scrim: rgba(62, 39, 35, .6);

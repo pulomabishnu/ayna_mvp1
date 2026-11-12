@@ -11,6 +11,7 @@ import { whyLine } from '../../utils/whyLine.js';
 import { bleedingCareNote, showableAsPick } from '../../utils/bleedingCare.js';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
+import { productImageOverride } from '../../data/productImageOverrides.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
 import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
@@ -167,6 +168,26 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {onBack && <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back to quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>}
         {/* Inspo: the big stat number (heart-rate and wellness dashboards), not a highlighter. */}
         <p className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></p>
+        {/* Nov 12 (research: show the personal result before the account ask; Funnelfox web2app
+            patterns, "result before the gate"): her top three, real photos and match, right here. */}
+        {(() => {
+          const top = matches.filter((m) => !m.hold).map((m) => ({ ...m, pc: pctFor(m.product) })).sort((a, b) => (b.pc ?? -1) - (a.pc ?? -1)).slice(0, 3);
+          if (!top.length) return null;
+          return (
+            <ul className="ay-pz__top" aria-label="Your top matches">
+              {top.map((m, k) => {
+                const { pc } = m;
+                return (
+                  <li key={m.product.id} style={{ '--i': k }}>
+                    <MatchPlate src={productImageOverride(m.product) || safeProductImageSrc(m.product.image)} product={m.product} />
+                    <span className="ay-pz__topname">{m.product.name}</span>
+                    {pc != null && <span className="ay-pz__toppct">{pc}% match</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          );
+        })()}
         <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
         <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect ? 1 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">

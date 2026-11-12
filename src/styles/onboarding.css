@@ -1,6 +1,6 @@
 /* First run, reveal, "What ayna knows" and "Not useful" (app and website).
    Palette only: butter #ffedac, pink #f7badd, sky #769ebe, espresso #3e2723
-   (plus the existing group butter #f7badd and the app's dark page #2e1c18).
+   (plus the existing group butter #f7badd and the app's dark page #3e2723).
    Fonts: ayna Display titles, Figtree body. Matte, no shadows. */
 
 :is(.ayna-mobile, .app-container, .ay-why) :is(.ay-ob-ready, .ay-ob-value, .ay-know, .ay-nu, .ay-ob-empty, .ay-qc-uses, .ip-why, .ay-matchfb) {
@@ -9,7 +9,7 @@
   --o-serif: 'ayna Display', var(--f-display, serif); --o-sans: 'Figtree', var(--f-ui, sans-serif);
 }
 :is(.ayna-mobile[data-theme='dark'], .app-container:is([data-theme='dark'], [data-theme='brand-dark']), html:is([data-ay-theme='dark'], [data-ay-theme='brand-dark']) .ay-why) :is(.ay-ob-ready, .ay-ob-value, .ay-know, .ay-nu, .ay-ob-empty, .ay-qc-uses, .ip-why, .ay-matchfb) {
-  --o-page: #2e1c18; --o-group: rgba(255, 237, 172, .08); --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .78); --o-hair: rgba(255, 237, 172, .16);
+  --o-page: #3e2723; --o-group: rgba(255, 237, 172, .08); --o-ink: #ffedac; --o-soft: rgba(255, 237, 172, .78); --o-hair: rgba(255, 237, 172, .16);
 }
 
 /* Shared buttons */

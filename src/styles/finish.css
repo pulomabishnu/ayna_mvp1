@@ -42,7 +42,7 @@ html body:has(.ayna-mobile)::after { display: none !important; }
 /* P2-1 (final layout pass): photos wait on tinted paper (the img box's own
    background), then settle in once loaded. Nothing is hidden before load. */
 .app-container img[data-ph] { background-color: #ffedac; }
-.app-container:is([data-theme='brand-dark'], [data-theme='dark']) img[data-ph] { background-color: #4a312c; }
+.app-container:is([data-theme='brand-dark'], [data-theme='dark']) img[data-ph] { background-color: #3e2723; }
 .app-container img[data-ph][data-loaded] { background-color: transparent; animation: ay-ph-in var(--t-base, 240ms) var(--ease-out, ease-out) both; }
 @keyframes ay-ph-in { from { opacity: .35; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .app-container img[data-ph][data-loaded] { animation: none; } }

@@ -66,7 +66,13 @@ export function QuizFrame({
     ro?.observe(el.firstElementChild || el);
     return () => { window.clearTimeout(t); el.removeEventListener('scroll', read); window.removeEventListener('resize', read); ro?.disconnect(); };
   }, [stepKey, sub]);
-  const pct = progress ? Math.max(4, Math.min(100, (progress.now / Math.max(1, progress.total)) * 100)) : 0;
+  // Nov 12 audit: when an answer adds follow-up questions the total grows ("3 of 4" then "4 of 6"),
+  // and the bar used to jump backwards. Moving forward it never shrinks; going Back it can.
+  const rawPct = progress ? Math.max(4, Math.min(100, (progress.now / Math.max(1, progress.total)) * 100)) : 0;
+  const pctRef = useRef({ pct: 0, now: 0 });
+  const forward = progress && progress.now > pctRef.current.now;
+  const pct = forward ? Math.max(rawPct, pctRef.current.pct) : rawPct;
+  useEffect(() => { if (progress) pctRef.current = { pct, now: progress.now }; });
   return (
     <div className={`aq aq--${surface}${className ? ` ${className}` : ''}`} data-step={stepKey} data-sub={sub || undefined} data-direction={direction} {...rootProps}>
       <div className="aq-col">

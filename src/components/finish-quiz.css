@@ -95,7 +95,7 @@
 .fq-row__bar { height: 6px; border-radius: 999px; background: rgba(62, 39, 35, .15); overflow: hidden; }
 .fq-row__bar i { display: block; height: 100%; border-radius: inherit; background: #3e2723; }
 .fq-row__go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-[data-theme='dark'] .fq-row__go { background: #4a302a; color: #ffedac; border-color: rgba(255, 237, 172, .45); }
+[data-theme='dark'] .fq-row__go { background: #3e2723; color: #ffedac; border-color: #ffedac; }
 [data-theme='dark'] .fq-row__bar { background: rgba(255, 237, 172, .2); }
 [data-theme='dark'] .fq-row__bar i { background: #ffedac; }
 [data-theme='dark'] .fq-row__go:focus-visible { outline-color: #ffedac; }

@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react';
 import { PILL_TABS_MAX } from './pillTabs.js';
 import { useSlidingInk } from '../../eco/ecoMotion.js';
 import './ay-primitives.css';
+import { haptic } from '../../../utils/haptics.js';
 
 
 /**
@@ -24,9 +25,10 @@ export default function PillTabs({ tabs = [], active, onChange, label, labelId, 
   const hasInk = ink.opacity === 1;
   if (import.meta.env?.DEV && tabs.length > PILL_TABS_MAX) console.warn(`PillTabs: ${tabs.length} tabs; the brief allows ${PILL_TABS_MAX}.`);
   const choose = useCallback((id, focus = false) => {
+    if (id !== active) haptic('selection');
     onChange?.(id);
     if (focus) window.requestAnimationFrame(() => listRef.current?.querySelector(`[data-tab="${id}"]`)?.focus());
-  }, [onChange]);
+  }, [onChange, active]);
   const onKeyDown = (e) => {
     const i = list.findIndex((t) => t.id === active);
     let next = -1;

@@ -170,7 +170,7 @@
   --s-bg: #c9dceb; --s-fg: #3e2723; --s-muted: rgba(62, 39, 35, .8); --s-line: #3e2723; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-track: rgba(62, 39, 35, .18);
 }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-persona {
-  --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: rgba(255, 237, 172, .82); --s-line: #ffedac; --s-panel: #4a312c; --s-btn: #ffedac; --s-on-btn: #3e2723; --s-track: rgba(255, 237, 172, .22);
+  --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: rgba(255, 237, 172, .82); --s-line: #ffedac; --s-panel: #3e2723; --s-btn: #ffedac; --s-on-btn: #3e2723; --s-track: rgba(255, 237, 172, .22);
 }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card { position: relative; isolation: isolate; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card > :not(.ay-wr-wall) { position: relative; z-index: 1; }
@@ -317,7 +317,7 @@ html body .ay-wr .ay-wr-nums dd { margin: 0; font: 600 16px/1.35 var(--ay-font-u
 }
 /* The end is espresso so the pink summary card pops (Wrapped ends on its share card). */
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-finish.is-finish {
-  --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: #ffedac; --s-line: #ffedac; --s-panel: #4a312c;
+  --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: #ffedac; --s-line: #ffedac; --s-panel: #3e2723;
   --s-track: rgba(255, 237, 172, .22); --s-btn: #ffedac; --s-on-btn: #3e2723; --s-pink: #f7badd;
 }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-wr-card__list p { margin: 0 0 6px; font: 600 13px/1.2 var(--s-ui); color: #3e2723; }

@@ -15,7 +15,7 @@
   padding: 14px 14px 16px !important; border: 2px solid var(--pc-ink) !important; border-radius: 16px!important; background: var(--pc-bg) !important; color: var(--pc-ink);
   box-shadow: var(--pc-shadow) !important; overflow: visible !important; transition: transform .16s var(--ease-out, ease-out), box-shadow .16s var(--ease-out, ease-out);
 }
-:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card { --pc-ink: #ffedac; --pc-bg: #4a312c; --pc-soft: rgba(255, 237, 172, .78); --pc-shadow: none; }
+:is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container):is([data-theme='brand-dark'], [data-theme='dark']) .ay-product-card { --pc-ink: #ffedac; --pc-bg: #3e2723; --pc-soft: rgba(255, 237, 172, .78); --pc-shadow: none; }
 @media (hover: hover) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:hover) { transform: translate(-2px, -2px); box-shadow: none !important; } }
 :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card:has(.ay-product-card__link:active) { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--pc-ink) !important; }
 @media (prefers-reduced-motion: reduce) { :is(#pc-w, .app-container):is(#pc-w, .app-container):is(#pc-w, .app-container) .ay-product-card { transition: none; transform: none !important; } }

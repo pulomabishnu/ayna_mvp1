@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { haptic } from '../../utils/haptics.js';
 import './play-tour.css';
 
 /**
@@ -131,6 +132,9 @@ export default function PlayTour({ onClose, onStartQuiz = null, theme = 'light' 
   }, [onClose]);
   const step = STEPS[i];
   const did = [picked.length > 0, matchOpen, goalDone, logged, Boolean(asked)][i];
+  // Each "aha" in the practice round gets one success tap (Apple HIG: success = a task completed).
+  const wasDid = useRef(false);
+  useEffect(() => { if (did && !wasDid.current) haptic('success'); wasDid.current = did; }, [did, i]);
   const last = i === STEPS.length - 1;
   const finish = () => { onClose?.(); if (onStartQuiz) onStartQuiz(); };
 

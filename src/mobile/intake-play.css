@@ -544,21 +544,21 @@
 /* Dark mode quiz: a steady black canvas with alternating ayna-color choices.
    Light mode keeps the coloured scenes with white answer bubbles. */
 .ayna-mobile[data-theme='dark'] .ayna-play-intake {
-  --ip-bg: #2e1c18;
+  --ip-bg: #3e2723;
   --legacy-ink: #fff;
   --ay-ink-soft: rgba(255, 237, 172, .76);
   --ay-ink-faint: rgba(255, 237, 172, .24);
-  --ay-paper: #4a302a;
+  --ay-paper: #3e2723;
   --ay-cream: #111115;
   --ay-shadow: none;
   --ay-shadow-lg: none;
-  background: #2e1c18;
+  background: #3e2723;
   color: #ffedac;
 }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #2e1c18; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake:is(.ip-tone--peri, .ip-tone--butter, .ip-tone--pink, .ip-tone--mint, .ip-tone--calm) { --ip-bg: #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-art { opacity: .16 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(button, input, textarea):focus-visible { outline-color: #ffedac; }
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next { background: #fff; color: #2e1c18 !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next { background: #fff; color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next:disabled { background: transparent; color: var(--ay-ink-soft) !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-next i svg { stroke: #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-label { color: #ffedac; }
@@ -575,7 +575,7 @@
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button:nth-child(4n) { background: var(--ay-butter) !important; color: #3e2723 !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-chip, .ip-card, .ip-price-col, .ip-podium-row, .ip-tab)[aria-pressed='true'],
 .ayna-mobile[data-theme='dark'] .ayna-play-intake :is(.ip-sticker, .ip-row, .ip-card, .ip-tab)[aria-checked='true'],
-.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { box-shadow: 0 0 0 2px #2e1c18, 0 0 0 4px #fff !important; }
+.ayna-mobile[data-theme='dark'] .ayna-play-intake .ayna-count-choices button[aria-pressed='true'] { box-shadow: 0 0 0 2px #3e2723, 0 0 0 4px #fff !important; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row .ip-radio { border-color: #3e2723; background: #fff; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-row[aria-checked='true'] .ip-radio { box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 12px #3e2723; }
 .ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-sticker-icon { color: #3e2723; border-color: #3e2723; }
@@ -621,7 +621,7 @@
 
 /* Cyber treatment for the dark-mode quiz; choices keep their alternating colors. */
 .ayna-mobile[data-theme='dark'] .ayna-play-intake {
-  background-color: #2e1c18 !important;
+  background-color: #3e2723 !important;
   background-image:
     linear-gradient(rgba(247, 186, 221, .05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(247, 186, 221, .05) 1px, transparent 1px),
@@ -689,7 +689,7 @@
 .ayna-play-intake .ip-zip-err { --zip-err: #b4402a; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 17px/1.3 var(--ay-font-ui); color: var(--zip-err) !important; text-align: center; }
 .ayna-play-intake .ip-zip-err::before { content: '!'; display: grid; place-items: center; width: 20px; height: 20px; flex: none; border-radius: 50%; background: var(--zip-err); color: #ffffff; font: 500 13px/1 var(--ay-font-ui); }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-zip-err { --zip-err: #ff9b85; }
-.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-zip-err::before { color: #4a302a; }
+.ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-play-intake .ip-zip-err::before { color: #3e2723; }
 
 /* Required minimum -> checkpoint -> optional refinements */
 .ip-tag-optional { display: inline-flex; align-items: center; margin: 0 auto 10px 8px; padding: 5px 10px; border: 1.5px dashed var(--legacy-ink); border-radius: 99px; font: 500 13px/1 var(--ay-font-ui); color: var(--legacy-ink); }

@@ -705,7 +705,7 @@
     linear-gradient(90deg, rgba(247, 186, 221, .045) 1px, transparent 1px),
     radial-gradient(circle at 85% 4%, rgba(247, 186, 221, .14), transparent 32%),
     radial-gradient(circle at 8% 58%, rgba(247, 186, 221, .07), transparent 38%);
-  background-color: #2e1c18 !important;
+  background-color: #3e2723 !important;
   background-image: var(--ay-cyber-grid) !important;
   background-size: 28px 28px, 28px 28px, auto, auto !important;
 }
@@ -715,7 +715,7 @@
   .ayna-fresh-profile-hub, .ayna-fresh-product-detail, .ayna-fresh-article,
   .am-screen
 ) {
-  background-color: #2e1c18 !important;
+  background-color: #3e2723 !important;
   background-image: var(--ay-cyber-grid) !important;
   background-size: 28px 28px, 28px 28px, auto, auto !important;
 }
@@ -767,12 +767,12 @@
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-active:not(.is-center) {
   background: var(--legacy-butter) !important;
-  color: #2e1c18 !important;
+  color: #3e2723 !important;
   box-shadow: 0 0 16px rgba(255, 237, 172, .34) !important;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav .ay-nav-center {
   border-color: var(--legacy-butter) !important;
-  color: #2e1c18 !important;
+  color: #3e2723 !important;
   box-shadow: 0 0 18px rgba(255, 237, 172, .42) !important;
 }
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ayna-bottom-nav button.is-center.is-active .ay-nav-center {
@@ -790,7 +790,7 @@
 
 /* Library continues the same dark-mode grid and luminous edges. */
 .ayna-mobile.ayna-mobile[data-theme='dark'] .ay-lib {
-  background-color: #2e1c18 !important;
+  background-color: #3e2723 !important;
   background-image: var(--ay-cyber-grid) !important;
   background-size: 28px 28px, 28px 28px, auto, auto !important;
 }

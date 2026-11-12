@@ -29,10 +29,10 @@
   --ds-ink: #ffedac;
   --ds-on: #3e2723;
   --ds-page: #3e2723;
-  --ds-group: #4a312c;
+  --ds-group: #3e2723;
   --ds-line: #ffedac;
 }
-.ayna-mobile[data-theme='dark'] { --ds-page: #2e1c18; }
+.ayna-mobile[data-theme='dark'] { --ds-page: #3e2723; }
 @media (max-width: 699px) { .app-container { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; } }
 .ayna-mobile { --ds-shadow: 3px 3px 0 var(--ds-line); --ds-r: 16px; }
 

@@ -5,6 +5,7 @@ import './metric-sheet.css';
 import './month-sheet.css';
 import { LOG_SAVED_EVENT, readLog, saveLogEntry } from '../../health/dailyLog.js';
 import { announceLogChange } from '../../health/todayHelp.js';
+import { haptic } from '../../utils/haptics.js';
 
 /**
  * "Your month" (founder: a cute calendar, "only if it looks good and doesn't
@@ -81,6 +82,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const saveField = (id, v) => {
     if (!canLogPicked) return;
     saveLogEntry(picked, { [id]: v });
+    haptic(v == null ? 'light' : 'selection');
     announceLogChange(picked);
     const next = readLog();
     setOwnLog(next);

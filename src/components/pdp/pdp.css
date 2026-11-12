@@ -137,7 +137,7 @@
   --v-ui: 'Figtree', system-ui, sans-serif; --v-display: 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif;
 }
 :is([data-theme='brand-dark'], [data-theme='dark']) :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet), :is([data-theme='brand-dark'], [data-theme='dark']) #ay-tabs#ay-tabs#ay-tabs { --legacy-ink: #ffedac; --ay-ink-muted: rgba(255, 237, 172, .8); --legacy-surface: rgba(255, 237, 172, .08); --ay-rule: 1px solid rgba(255, 237, 172, .2); --legacy-outline: 1.5px solid #ffedac;
-  --v-ink: #ffedac; --v-mute: rgba(255, 237, 172, .8); --v-bg: #3e2723; --v-tint: #4a312c; --v-line: rgba(255, 237, 172, .22); --v-hard: #ffedac;
+  --v-ink: #ffedac; --v-mute: rgba(255, 237, 172, .8); --v-bg: #3e2723; --v-tint: #3e2723; --v-line: rgba(255, 237, 172, .22); --v-hard: #ffedac;
 }
 
 /* ---------- shared bits ---------- */
@@ -967,7 +967,7 @@ html body .app-container .ayq-badges.is-web { margin-top: 14px; }
 /* ---------- App: tinted stage, overlapping sheet, dark pill bar ---------- */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero { position: relative; margin: 0; padding: 60px var(--d-gutter, 20px) 48px; background: #ffedac; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero.tone-pink { background: #f7badd; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .ay-pdp .ayq-apphero { background: #4a312c; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme='dark'] .ay-pdp .ayq-apphero { background: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stage { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-pdp .ayq-apphero__stage:not(:has(.ayq-badges)) { grid-template-columns: minmax(0, 1fr); padding: 0 24px; }
 /* The photo stays small enough that price, why, evidence and Buy fit on the first screen (master prompt 112). */

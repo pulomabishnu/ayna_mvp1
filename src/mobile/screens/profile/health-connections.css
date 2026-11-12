@@ -177,7 +177,7 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 }
 [data-theme='dark'] .ay-hc-web, .app-container[data-theme='brand-dark'] .ay-hc-web {
   --legacy-ink: #ffedac; --ay-ink-soft: rgba(255, 237, 172, .78); --ay-ink-faint: rgba(255, 237, 172, .2);
-  --ay-paper: #3e2723; --ay-cream: #2e1c18; --ay-line: rgba(255, 237, 172, .2); --ay-alert: #f7badd;
+  --ay-paper: #3e2723; --ay-cream: #3e2723; --ay-line: rgba(255, 237, 172, .2); --ay-alert: #f7badd;
 }
 .ay-hc-web-head { display: grid; justify-items: start; gap: 4px; margin: 0 0 18px; }
 /* Search on the website: the app's rules live under .ayna-mobile, so the

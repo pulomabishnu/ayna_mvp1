@@ -1320,7 +1320,7 @@ const THEME_SWATCHES = [
 
 function ThemeSwatch({ mode, selected, onClick }) {
   // Device: half butter, half espresso.
-  const bg = mode === 'light' ? '#FFEDAC' : mode === 'dark' ? '#2E1C18' : 'linear-gradient(135deg, #FFEDAC 0 50%, #2E1C18 50% 100%)';
+  const bg = mode === 'light' ? '#FFEDAC' : mode === 'dark' ? '#3e2723' : 'linear-gradient(135deg, #FFEDAC 0 50%, #3e2723 50% 100%)';
   const barColor = mode === 'dark' ? 'rgba(255,249,242,.35)' : 'rgba(41,37,36,.25)';
   return (
     <button type="button" aria-label={mode === 'dark' ? 'Dark theme' : mode === 'light' ? 'Light theme' : 'Match my device'} aria-pressed={selected} onClick={onClick} style={{ border: 0, padding: 0, background: 'transparent', color: 'var(--ayna-text)', cursor: 'pointer', textAlign: 'center' }}>

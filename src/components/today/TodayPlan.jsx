@@ -4,6 +4,7 @@ import { todayHelp, TODAY_HELP, productsForTopic, announceLogChange } from '../.
 import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, topicFor } from '../../health/myGoals.js';
 import { saveLogEntry, readLog } from '../../health/dailyLog.js';
 import ProductTileImage from '../ProductTileImage.jsx';
+import { haptic } from '../../utils/haptics.js';
 import './today-plan.css';
 
 /**
@@ -113,6 +114,7 @@ export default function TodayPlan({
   const saveGoal = (g) => {
     const before = new Set(goals.map((x) => x.id));
     const next = addGoal(g);
+    haptic('success');
     setGoals(next);
     // A preset (or her words naming one) also tells the matcher, quietly, so her picks follow it.
     const preset = GOAL_PRESETS.find((x) => x.topic === (g.topic === undefined ? topicFor(g.text) : g.topic));
@@ -131,7 +133,7 @@ export default function TodayPlan({
   const [open, setOpen] = useState(null);
   const [added, setAdded] = useState([]);
   const inRoutine = (id) => myProductIds.includes(id) || added.includes(id);
-  const addToRoutine = onAddToRoutine ? (p) => { onAddToRoutine(p); setAdded((x) => [...x, p.id]); } : null;
+  const addToRoutine = onAddToRoutine ? (p) => { haptic('success'); onAddToRoutine(p); setAdded((x) => [...x, p.id]); } : null;
   const help = todayHelp(entry, { pregnant, postCycle });
   const logged = ['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy'].some((f) => entry?.[f] != null);
 
@@ -241,7 +243,7 @@ export default function TodayPlan({
                   <b>{g.text}</b>
                   <small>{w.count}/{w.of}</small>
                 </button>
-                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => setGoals(toggleDone(g.id, today))}>
+                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => { haptic(w.doneToday ? 'light' : 'success'); setGoals(toggleDone(g.id, today)); }}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
                 </button>
               </li>
@@ -328,7 +330,7 @@ export default function TodayPlan({
               <div className="ay-tp-goallist__row">
                 <svg className="ay-tp-ring is-big" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
                 <div><b>{g.text}</b><span>{w.count} of {w.of} days this week</span></div>
-                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => setGoals(toggleDone(g.id, today))}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
+                <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => { haptic(w.doneToday ? 'light' : 'success'); setGoals(toggleDone(g.id, today)); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
               </div>
               {help && <p className="ay-tp-goallist__tip">{help.tips[0]}</p>}
               {prods.length > 0 && <p className="ay-tp-goallist__sub">Products for this goal</p>}

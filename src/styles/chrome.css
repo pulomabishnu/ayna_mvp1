@@ -260,7 +260,7 @@ html body .app-container .ed .ed-h2 em { background: none !important; font-style
 /* ================= Close-out pass (Oct 21, RECHECK.md) ================= */
 
 /* R1: theme-v3 still forces espresso text on the old pink callout in dark mode.
-   The callout is a Group now (#4a312c in dark), so its text follows the theme. */
+   The callout is a Group now (#3e2723 in dark), so its text follows the theme. */
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout,
 html body .app-container.app-container.app-container.app-container.app-container.app-container.app-container[data-theme='brand-dark'] .ed .ay-chd .callout * { color: var(--ed-text, #ffedac) !important; }
 

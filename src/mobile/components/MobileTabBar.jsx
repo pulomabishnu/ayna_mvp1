@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { APP_TABS, TabIcon } from '../../components/nav/tabs.jsx';
 import '../../styles/home-tab.css';
+import { haptic } from '../../utils/haptics.js';
 
 // The app's tabs, the same five as the website (founder, Nov 10):
 // Shop · Library · Home · Community · Profile. Ask ayna, the cart and the updates bell are in the header.
@@ -42,7 +43,7 @@ export default function MobileTabBar({ active, onExplore, onHome, onAsk, onCommu
     };
   }, [active]);
   return <nav ref={navRef} className={`ayna-bottom-nav is-${tabs.length}-tabs`} aria-label="Main navigation">
-    {tabs.map(([key, label, center, icon]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${center ? ' is-center' : ''}`} onClick={actions[key]} aria-current={active === key ? 'page' : undefined} data-tab-target={key}>
+    {tabs.map(([key, label, center, icon]) => <button type="button" key={key} className={`${active === key ? 'is-active' : ''}${center ? ' is-center' : ''}`} onClick={(e) => { if (active !== key) haptic('selection'); actions[key]?.(e); }} aria-current={active === key ? 'page' : undefined} data-tab-target={key}>
       {center ? <span className="ay-nav-center" aria-hidden="true"><TabIcon kind={icon} on={active === key} /></span> : <TabIcon kind={icon} on={active === key} />}
       <span>{label}</span>
     </button>)}

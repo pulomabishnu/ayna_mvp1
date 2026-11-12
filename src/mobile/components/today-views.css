@@ -52,4 +52,4 @@
 
 /* The toggle stays in reach while its content scrolls (review #15). */
 .ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile) .ay-homescreen .ay-tv > .ayk-tabs { position: relative; top: auto; z-index: 20; background-color: #ffedac !important; box-shadow: 0 0 0 8px var(--r-canvas, #ffedac); }
-.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-tv > .ayk-tabs { background-color: #45302b !important; box-shadow: 0 0 0 8px var(--r-canvas, #2e1c18); }
+.ayna-mobile:is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile):is(#tv-a, .ayna-mobile)[data-theme='dark'] .ay-homescreen .ay-tv > .ayk-tabs { background-color: #45302b !important; box-shadow: 0 0 0 8px var(--r-canvas, #3e2723); }
