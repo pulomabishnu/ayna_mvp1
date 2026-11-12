@@ -429,7 +429,7 @@ export default function EcosystemScreen({
     {(view === 'mine' || !hasAnything) && <>
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">
       <button type="button" aria-pressed={activeChip === 'all'} onClick={() => setChip('all')}>All</button>
-      {chipSections.map((sct) => <button key={sct.key} type="button" aria-pressed={activeChip === sct.key} onClick={() => setChip(activeChip === sct.key ? 'all' : sct.key)}><i style={{ background: toneFor(sct) }} aria-hidden="true" />{shortNeedLabel(sct.label)}<small>{sct.products.length || sct.picks?.length || 0}</small></button>)}
+      {chipSections.map((sct) => <button key={sct.key} type="button" aria-pressed={activeChip === sct.key} onClick={() => setChip(activeChip === sct.key ? 'all' : sct.key)}><i style={{ background: toneFor(sct) }} aria-hidden="true" />{shortNeedLabel(sct.label)}{sct.products.length > 0 && <small>{sct.products.length}</small>}</button>)}
     </div>}
     {q && <p className="eco-app-found" role="status">{anyMatch ? `${matchCount} in your ecosystem` : 'Nothing in your ecosystem matches.'}{' '}<button type="button" onClick={() => onBrowse?.(query.trim())}>Search the Shop for “{query.trim()}”</button></p>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
