@@ -245,6 +245,11 @@ export function onboardingProgress(step, part, list = []) {
   // "Step 2 of 5"). The total can grow when an answer adds a follow-up.
   const core = (list || []).filter((s) => s.id !== 'ready');
   const at = core.findIndex((s) => s.id === step.id);
+  // Audit (Nov 12): the label said "Step 3 of 4", then "Step 4 of 6" once her needs added
+  // follow-ups. A total that grows reads as a broken promise (NN/g, progress indicators), so the
+  // total only shows once "What do you want help with?" is answered and the count can't change.
+  const settled = core.findIndex((s) => s.id === 'support');
+  if (at >= 0 && settled >= 0 && at <= settled) return { label: `Step ${at + 1}`, now: at + 1, total: core.length };
   if (at >= 0) return { label: `Step ${at + 1} of ${core.length}`, now: at + 1, total: core.length };
   const now = Math.max(1, CORE_SCREENS.indexOf(step.screen) + 1);
   return { label: `Step ${now} of ${CORE_SCREENS.length}`, now, total: CORE_SCREENS.length };

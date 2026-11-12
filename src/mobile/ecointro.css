@@ -40,13 +40,13 @@
 .ay-intro-part { width: 27%; }
 .ay-intro-part.is-goals { top: 15%; }
 .ay-intro-part.is-health { left: 83%; top: 77%; }
-.ay-intro-part.is-preferences { left: 17%; top: 77%; font-size: calc(11.5px * var(--ayna-text-scale, 1)); font-weight: 500; }
+.ay-intro-part.is-preferences { left: 17%; top: 77%; font-size: calc(13px * var(--ayna-text-scale, 1)); font-weight: 500; }
 .ay-intro-map { padding: 32px 0 32px; }
 @media (max-height: 720px) {
   .ay-intro-map { padding: 16px 0 24px; gap: 12px; }
   .ay-intro-diagram { width: 236px; }
   .ay-intro-part { width: 30%; font-size: calc(13px * var(--ayna-text-scale, 1)); font-weight: 500; }
-  .ay-intro-part.is-preferences { font-size: calc(11.5px * var(--ayna-text-scale, 1)); font-weight: 500; }
+  .ay-intro-part.is-preferences { font-size: calc(13px * var(--ayna-text-scale, 1)); font-weight: 500; }
   .ay-intro-note { min-height: 0; font-size: 15px; line-height: 1.45; font-weight: 400; }
   .ayna-mobile.ayna-mobile .ay-intro-head p { margin-top: 4px; }
 }

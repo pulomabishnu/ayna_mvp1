@@ -29,7 +29,7 @@
     border: 0; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit;
     box-shadow: none; border-radius: 14px; min-height: 0;
   }
-  .ay-pc-main:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+  .ay-pc-main:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
   .ay-pc-photo {
     position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden;
     border-radius: 14px; background: #ffffff;

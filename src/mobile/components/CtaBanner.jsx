@@ -88,7 +88,7 @@ function StickyPill({ onClick }) {
     >
       <div>
         <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))' }}>Build your ecosystem</div>
-        <div style={{ fontWeight: 500, fontSize: 'calc(11.5px * var(--ayna-text-scale, 1))', opacity: 0.62, marginTop: 1 }}>6 steps · 90 seconds</div>
+        <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', opacity: 0.62, marginTop: 1 }}>6 steps · 90 seconds</div>
       </div>
       <div
         style={{

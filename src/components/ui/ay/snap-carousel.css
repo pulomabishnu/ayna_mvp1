@@ -7,7 +7,7 @@
 .ayk-snap.is-card .ayk-snap__item { width: calc(100% - 44px); max-width: 420px; }
 .ayk-snap.is-plate .ayk-snap__item { width: 136px; }
 .ayk-snap__dots { display: flex; justify-content: center; flex-wrap: wrap; }
-.ayk-snap__dot { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 28px; height: 44px; }
+.ayk-snap__dot { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; margin: 0 -8px; }
 .ayk-snap__dot i { display: block; width: 8px; height: 8px; border-radius: 999px; background: var(--ay-fg, #3e2723); opacity: .3; transition: width 160ms ease, opacity 160ms ease; }
 .ayk-snap__dot.is-on i { width: 20px; opacity: 1; }
 .ayk-snap__dot:focus-visible { outline: 2px solid var(--ay-fg, #3e2723); outline-offset: -6px; border-radius: 999px; }

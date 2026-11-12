@@ -6,7 +6,7 @@
 .ay-msheet-layer.is-web .ay-msheet { border-radius: 20px; }
 @keyframes ay-msheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .ay-msheet { animation: none; } }
-.ay-msheet__grab { justify-self: center; width: 40px; height: 4px; border-radius: 999px; background: rgba(62, 39, 35, .3); }
+.ay-msheet__grab { justify-self: center; width: 40px; height: 4px; border-radius: 999px; background: #3e2723; }
 .ay-msheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ay-msheet__head h2 { margin: 0; font: 800 28px/1.1 var(--ay-font-display, var(--ay-app-heading, inherit)); letter-spacing: -.02em; color: inherit; }
 .ay-msheet__close { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; }
@@ -24,7 +24,7 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet { background: #3e2723; color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__line, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dd { color: #ffedac !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet .ay-msheet__big small, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__facts dt { color: rgba(255, 237, 172, .8) !important; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__grab { background: rgba(255, 237, 172, .3); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__grab { background: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-msheet__more { background: #ffedac; color: #3e2723; }
 
 /* Founder 22:45: the chart in the sheet looked broken. Calm it down:

@@ -86,7 +86,7 @@
 /* Auth sheet: sign in only; new people go build their Ecosystem first */
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new { display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px 0; border: 0; background: none; color: var(--legacy-ink, #3e2723); font: 400 15px/1.45 var(--ay-font-ui, 'Figtree'), sans-serif; text-align: center; cursor: pointer; }
 .ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new b { font-weight: 600; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new:focus-visible { outline: 3px solid var(--ay-peri, #769ebe); outline-offset: 2px; border-radius: 8px; }
+.ayna-mobile .ayna-profile-auth-sheet .ayna-profile-auth-new:focus-visible { outline: 3px solid var(--ay-peri, #3e2723); outline-offset: 2px; border-radius: 8px; }
 
 /* "Where did you hear about us?" (sign up only, optional) */
 .ay-auth-heard { display: grid; gap: 8px; margin-top: 8px; }

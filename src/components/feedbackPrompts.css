@@ -71,7 +71,7 @@
 .v6-survey-card .ay-btn { padding: 10px 18px; border: 1.5px solid var(--ay-outline-color, #3e2723); border-radius: 999px; background: var(--ay-group, #ffedac); color: var(--ay-text, #3e2723); font: 600 15px/1.2 var(--ay-sans-stack, system-ui, sans-serif); cursor: pointer; }
 .v6-survey-card .ay-btn--primary { background: var(--ay-alert-bg, #f7badd); }
 .v6-survey-card .ay-btn:disabled { opacity: .5; cursor: not-allowed; }
-.v6-survey-card :focus-visible { outline: 3px solid var(--ay-focus, #769ebe); outline-offset: 2px; }
+.v6-survey-card :focus-visible { outline: 3px solid var(--ay-focus, #3e2723); outline-offset: 2px; }
 
 @media (max-width: 420px) {
   .v6-survey-card { padding-inline: 20px; }

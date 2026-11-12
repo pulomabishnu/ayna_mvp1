@@ -24,10 +24,10 @@
 .ay-hh-bubble:focus-visible, .ay-hh-streak:focus-visible { outline: 2px solid #f7badd; outline-offset: 3px; }
 
 /* The logging streak: one compact tappable row. */
-.ay-hh-streak { all: unset; box-sizing: border-box; cursor: pointer; flex: 1 1 auto; min-width: 0; display: grid; align-content: center; gap: 8px; min-height: 44px; padding: 12px 14px; border-radius: 16px; background: rgba(255, 237, 172, .1); color: #ffedac; }
+.ay-hh-streak { all: unset; box-sizing: border-box; cursor: pointer; flex: 1 1 auto; min-width: 0; display: grid; align-content: center; gap: 8px; min-height: 44px; padding: 12px 14px; border-radius: 16px; background: #3e2723; box-shadow: inset 0 0 0 1.5px #ffedac; color: #ffedac; }
 .ay-hh-streak__top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .ay-hh-streak__top b { font: 800 17px/1.2 var(--ay-font-display, inherit); letter-spacing: -.01em; white-space: nowrap; }
-.ay-hh-streak__top small { font: 500 13px/1.2 var(--ay-font-ui, inherit); color: rgba(255, 237, 172, .82); text-align: right; }
+.ay-hh-streak__top small { font: 500 13px/1.2 var(--ay-font-ui, inherit); color: #ffedac; text-align: right; }
 .ay-hh-streak__top small { margin-left: auto; }
 .ay-hh-streak__cal { flex: none; align-self: center; width: 20px; height: 20px; fill: none; stroke: #ffedac; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .ay-hh-streak__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }

@@ -28,7 +28,8 @@ html body .ay-psetup .ay-psetup__go {
   width: 100%; min-height: 50px; border-radius: 999px !important; border: 2px solid var(--ay-espresso, #3e2723) !important;
   background: var(--ay-espresso, #3e2723) !important; color: var(--ay-butter, #ffedac) !important; font: 700 16px/1 var(--ay-sans-stack, system-ui) !important; cursor: pointer;
 }
-html body .ay-psetup .ay-psetup__go:disabled { opacity: .45; cursor: not-allowed; }
+html body .ay-psetup .ay-psetup__go:disabled { opacity: 1; background: transparent; color: #3e2723; border: 1.5px dashed #3e2723; box-shadow: none; cursor: not-allowed; }
+[data-theme*="dark"] .ay-psetup .ay-psetup__go:disabled, html body [data-theme*="dark"] .ay-psetup .ay-psetup__go:disabled { color: #ffedac; border-color: #ffedac; }
 .ay-psetup__later { justify-self: center; margin-top: 12px; }
 /* In the app's dark sign-in screen: a butter card. */
 .ay-psetup-card { margin: auto 0; padding: 24px 20px; border-radius: 24px; background: var(--ay-butter, #ffedac); color: var(--ay-espresso, #3e2723); }

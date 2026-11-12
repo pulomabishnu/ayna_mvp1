@@ -383,7 +383,7 @@
 .ayna-match-section .ayna-match-reasons { list-style:none; padding:0; }
 .ayna-match-reasons li { padding:16px 0; border-bottom:1px solid var(--ayna-border); }
 .ayna-match-reasons li+li { margin-top:0; }
-.ayna-match-reasons span { color:var(--ayna-text-muted); font-size:calc(11.5px * var(--ayna-text-scale,1)); font-weight: 500; }
+.ayna-match-reasons span { color:var(--ayna-text-muted); font-size:calc(13px * var(--ayna-text-scale,1)); font-weight: 500; }
 .ayna-match-reasons p { margin:5px 0 0; }
 .ayna-match-cautions { border-left:3px solid var(--ayna-accent-dark); padding-left:16px; }
 .ayna-match-cautions button { min-height:44px; padding:8px 0; border:0; background:transparent; color:var(--ayna-accent-dark); font-size:13px; font-weight: 500; text-decoration:underline; cursor:pointer; }

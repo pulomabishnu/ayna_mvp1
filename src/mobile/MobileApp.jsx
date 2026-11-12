@@ -154,6 +154,7 @@ import '../styles/ds.css';
 import './ds-app.css';
 import '../styles/focus-group-oct26.css';
 import './app-flat-nov9.css';
+import './brand-audit-nov12.css';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import TutorialLayer from './tutorial/TutorialLayer.jsx';
 import { growTransition } from '../utils/viewTransition.js';

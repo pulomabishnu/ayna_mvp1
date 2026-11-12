@@ -144,5 +144,5 @@
 .wyou-switch[aria-checked='true'] { background: #f7badd; }
 .wyou-switch[aria-checked='true'] span { transform: translateX(20px); }
 .wyou-switch:disabled, .wyou-email__freq button:disabled { opacity: .45; cursor: default; }
-.wyou-switch:focus-visible, .wyou-email__freq button:focus-visible { outline: 3px solid #769ebe; outline-offset: 2px; }
+.wyou-switch:focus-visible, .wyou-email__freq button:focus-visible { outline: 3px solid #3e2723; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .wyou-switch span { transition: none; } }

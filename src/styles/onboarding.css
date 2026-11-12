@@ -19,7 +19,7 @@
 }
 :is(.ayna-mobile, .app-container) .ay-ob-primary { border: 0 !important; background: var(--o-ink, #3e2723) !important; color: var(--o-page, #ffedac) !important; }
 :is(.ayna-mobile, .app-container) .ay-ob-quiet { border: 1.5px solid var(--o-hair, rgba(62, 39, 35, .16)) !important; background: transparent !important; color: var(--o-ink, #3e2723) !important; }
-:is(.ayna-mobile, .app-container) :is(.ay-ob-primary, .ay-ob-quiet):focus-visible { outline: 3px solid var(--o-sky, #769ebe) !important; outline-offset: 3px; }
+:is(.ayna-mobile, .app-container) :is(.ay-ob-primary, .ay-ob-quiet):focus-visible { outline: 3px solid var(--o-sky, #3e2723) !important; outline-offset: 3px; }
 
 /* ── Reveal: "Your ayna is ready." ─────────────────────────────────────── */
 :is(.ayna-mobile, .app-container) .ay-ob-ready {

@@ -38,6 +38,9 @@ describe('first-run setup (seven screens)', () => {
     expect(more.map((s) => s.id)).toEqual(['conditions', 'allergies', 'medications', 'goals', 'products', 'avoidRepeat', 'formats', 'priceRange', 'brandOpenness', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'zip', 'trust', 'recommendationCount', 'anythingElse', 'periodFlow', 'name']);
     // Given the list she sees, every screen counts (critique, Oct 27).
     expect(onboardingProgress(core[3], 'core', core).label).toBe(`Step 4 of ${core.length}`);
+    // Before her needs are in, the total can still grow, so no total is shown (audit, Nov 12).
+    expect(onboardingProgress(core[0], 'core', core).label).toBe('Step 1');
+    expect(onboardingProgress(core[2], 'core', core).label).toBe('Step 3');
     expect(more.find((s) => s.id === 'priceRange').title).toBe('What would you usually spend on one product?');
     expect(more.find((s) => s.id === 'avoidIngredients').title).toBe('Anything you want your products to avoid?');
     expect(more.find((s) => s.id === 'preferIngredients').title).toBe('Anything you prefer your products to have or be?');

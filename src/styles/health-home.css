@@ -26,7 +26,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
   --db-deep: rgba(255, 237, 172, .16); --db-rule: rgba(255, 237, 172, .2); --db-on-ink: #3e2723;
   /* older (pre-token) rules inside the dashboard read --legacy-*; the --ay-* tokens switch on their own */
   --legacy-ink: #ffedac; --legacy-surface: rgba(255, 237, 172, .08); --legacy-outline: 1.5px solid #ffedac;
-  --db-ink: #ffedac; --db-muted: rgba(255, 237, 172, .8); --db-surface: rgba(255, 237, 172, .08);
+  --db-ink: #ffedac; --db-muted: rgba(255, 237, 172, .8); --db-surface: #3e2723;
 }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db * { box-sizing: border-box; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db :is(h1, h2, h3, h4, p, ul, ol, dl, dd, figure) { margin: 0 !important; }
@@ -337,3 +337,15 @@ html body :is(.ayna-mobile, .app-container, .ay-msheet) :is(i, span, div).ay-db-
 html body :is(.ayna-mobile, .app-container, .ay-msheet) .ay-db-rangebar-track { background: #f7badd !important; }
 html body :is(.ayna-mobile, .app-container, .ay-msheet) .ay-db-range { background: transparent !important; box-shadow: inset 0 0 0 1.5px currentColor !important; }
 html body :is(.ayna-mobile, .app-container) .wb-spark .ay-db-band { fill: #f7badd !important; opacity: 1 !important; }
+/* Audit (Nov 12): brand colours only in the cycle line, no blue and no see-through fills.
+   Period = pink, follicular = butter with an espresso outline, ovulation = solid espresso,
+   luteal = espresso stripes on butter, so the four phases still read apart. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-track i { background: #ffedac !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-track i.is-period { background: #f7badd !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-track i.is-ovulation { background: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-track i.is-luteal { background: repeating-linear-gradient(135deg, #3e2723 0 2px, #ffedac 2px 5px) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small::before { background: #ffedac !important; box-shadow: inset 0 0 0 1.5px #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small.is-period::before { background: #f7badd !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small.is-ovulation::before { background: #3e2723 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small.is-luteal::before { background: repeating-linear-gradient(135deg, #3e2723 0 2px, #ffedac 2px 4px) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2):not([data-theme*='dark']) .ay-db-date { background: #f7badd !important; color: #3e2723 !important; }

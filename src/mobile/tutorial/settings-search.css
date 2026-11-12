@@ -55,7 +55,7 @@
   background: transparent;
   color: var(--ayna-accent-dark);
   font: inherit;
-  font-size: calc(12px * var(--ayna-text-scale, 1));
+  font-size: calc(13px * var(--ayna-text-scale, 1));
   font-weight: 600;
   cursor: pointer;
 }
@@ -103,7 +103,7 @@
 
 .ayna-mobile .ay-settings-search__results small {
   color: var(--ayna-text-muted);
-  font-size: calc(12px * var(--ayna-text-scale, 1));
+  font-size: calc(13px * var(--ayna-text-scale, 1));
   font-weight: 500;
   line-height: 1.35;
 }

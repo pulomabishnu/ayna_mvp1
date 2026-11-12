@@ -88,7 +88,7 @@
 
 /* finger + press ring */
 .qi-finger { position: absolute; width: 48px; height: 48px; margin: -24px 0 0 -24px; display: grid; place-items: center; pointer-events: none; }
-.qi-finger i { width: 22px; height: 22px; border: 2px solid var(--qi-dark); border-radius: 50%; background: rgba(255, 237, 172, .7); box-shadow: 0 0 0 4px rgba(62, 39, 35, .14); }
+.qi-finger i { width: 22px; height: 22px; border: 2px solid var(--qi-dark); border-radius: 50%; background: #f7badd; box-shadow: 0 0 0 4px #ffedac; }
 .qi-finger--tap { top: 36px; right: 4px; animation: qi-tap var(--qi-dur) linear both; }
 .qi-finger--hold { top: 36px; left: 72px; animation: qi-hold var(--qi-dur) linear both; }
 .qi-finger svg { position: absolute; inset: 0; width: 48px; height: 48px; rotate: -90deg; fill: none; stroke-width: 3; }

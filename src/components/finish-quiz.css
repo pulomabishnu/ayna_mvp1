@@ -51,7 +51,7 @@
   font: 600 calc(var(--ay-fs-secondary) * var(--ayna-text-scale, 1))/1.2 var(--ay-sans) !important;
   text-decoration: underline !important; text-underline-offset: 4px; cursor: pointer;
 }
-.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq :is(.fq__go, .fq__quiet):focus-visible { outline: 3px solid #769ebe !important; outline-offset: 2px !important; }
+.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq :is(.fq__go, .fq__quiet):focus-visible { outline: 3px solid #3e2723 !important; outline-offset: 2px !important; }
 
 /* Website: a wider card, button and link side by side. */
 .fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq.fq--web { margin: 0 0 32px !important; padding: 24px !important; }
