@@ -969,7 +969,7 @@ export default function MobileApp() {
   useEffect(() => {
     const n = health.connected.length;
     const prev = suggestRef.current.connected;
-    if (health.status !== 'ready') return;
+    if (health.status !== 'ready') { if (health.status === 'idle') suggestRef.current.connected = null; return; }
     suggestRef.current.connected = n;
     if (prev == null || n <= prev) return;
     const name = health.connected[n - 1]?.name || health.connected[n - 1]?.label || 'Your app';
