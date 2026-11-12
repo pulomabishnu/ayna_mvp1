@@ -308,3 +308,67 @@
 .ay-tp-goals__head span { display: block; margin-top: 2px; }
 .ay-tp-goals__head svg { width: 18px; height: 18px; }
 .ay-tp.is-open .ay-tp-feel__q { margin: 0 0 14px !important; }
+
+/* ---- Nov 12 polish ("make it really good") ----
+   Brand rules: espresso, pink, butter only; no opacity tints; 1.5px lines; one card. */
+/* Week rail: no boxes. Letter and date in a column; today is the one filled pill; a pink dot
+   under each day she logged. Future days are the same ink, just no dot. */
+.ay-tp.is-open .ay-tp-week__rail { gap: 2px; }
+.ay-tp.is-open .ay-tp-week__rail :is(button, span) { min-height: 62px; padding: 8px 0 6px; border: 0 !important; border-radius: 999px; background: transparent; }
+.ay-tp.is-open .ay-tp-week__rail .is-future :is(button, span) { border: 0 !important; }
+.ay-tp.is-open .ay-tp-week__rail small { font-size: 12px; font-weight: 600; }
+.ay-tp.is-open .ay-tp-week__rail b { font-size: 18px; }
+.ay-tp.is-open .ay-tp-week__rail i { width: 6px; height: 6px; }
+.ay-tp.is-open .ay-tp-week__rail i.is-on { background: #f7badd; box-shadow: 0 0 0 1.5px #3e2723; }
+.ay-tp.is-open .ay-tp-week__rail .is-today :is(button, span) { background: #3e2723; color: #ffedac; transform: none; box-shadow: none; }
+.ay-tp.is-open .ay-tp-week__rail .is-today i.is-on { box-shadow: none; }
+.ay-tp.is-open .ay-tp-week__head { margin-bottom: 6px; }
+.ay-tp.is-open .ay-tp-week__head b { font-size: 30px; }
+
+/* Feeling: outlined, never tinted; picked = pink. */
+.ay-tp.is-open .ay-tp-feel__row { gap: 10px; }
+.ay-tp.is-open .ay-tp-feel__row button { min-height: 72px; gap: 6px; border: 1.5px solid #3e2723 !important; background: transparent !important; font-size: 15px; }
+.ay-tp.is-open .ay-tp-feel__row button.is-on { background: #f7badd !important; }
+.ay-tp.is-open .ay-tp-feel__row svg { width: 32px; height: 32px; }
+
+/* Section label over the rows, same voice as the goals card. */
+.ay-tp-label { margin: 0 0 4px !important; font: 700 18px/1.2 'ayna Display', 'Figtree', sans-serif !important; letter-spacing: -0.01em; color: #3e2723 !important; }
+.ay-tp.is-open .ay-tp-grid { margin-top: 0 !important; border-top: 1.5px solid #3e2723; }
+.ay-tp.is-open .ay-tp-tile > button { min-height: 72px; padding: 14px 0; column-gap: 14px; }
+.ay-tp.is-open .ay-tp-tile__ic { width: 40px; height: 40px; }
+.ay-tp.is-open .ay-tp-tile b { font-size: 17px; }
+.ay-tp.is-open .ay-tp-tile:is(.is-pink, .is-butter, .is-wash) > button * { color: inherit !important; }
+.ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic, .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic * { color: #ffedac !important; }
+.ay-tp.is-open .ay-tp-tile > button:active { transform: none; background: #f7badd; }
+
+/* Goals card ring track: a solid line in the card's own palette, not a see-through one. */
+.ay-tp-goals.is-compact .ay-tp-ring .is-bg { stroke: #ffedac; stroke-width: 1.5; }
+.ay-tp-goals.is-compact .ay-tp-ring .is-fg { stroke: #f7badd; stroke-width: 4.5; }
+.ay-tp-goals.is-compact :is(.ay-tp-goals__list, .ay-tp-goals__list li + li) { border-color: #ffedac !important; border-top-width: 1px; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick svg { opacity: 1; stroke-width: 2.2; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick:not(.is-on) { color: #ffedac; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick:not(.is-on) svg { stroke: transparent; }
+.ay-tp-goals.is-compact .ay-tp-goals__tick:not(.is-on):hover svg { stroke: currentColor; }
+
+/* Feedback: a quiet text link, not another box. */
+.ay-fb-pill { border: 0; padding: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+
+/* Dark mode for all of the above. */
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-week__rail i.is-on { box-shadow: none; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-week__rail .is-today :is(button, span) { background: #ffedac; color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-week__head :is(b, span) { color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-feel__row button { border-color: #ffedac !important; color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-feel__row button.is-on { color: #3e2723; border-color: #f7badd !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-label { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-grid { border-top-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile > button,
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile > button * { color: #ffedac !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic,
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic * { color: #3e2723 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile > button:active { background: transparent; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact .ay-tp-ring .is-bg { stroke: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact .ay-tp-ring .is-fg { stroke: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact :is(.ay-tp-goals__list, .ay-tp-goals__list li + li) { border-color: #3e2723 !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-goals.is-compact .ay-tp-goals__tick:not(.is-on) { color: #3e2723; border-color: #3e2723; }
+.ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic svg { stroke: #ffedac !important; fill: none !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp.is-open .ay-tp-tile .ay-tp-tile__ic svg { stroke: #3e2723 !important; }

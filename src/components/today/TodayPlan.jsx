@@ -137,7 +137,7 @@ export default function TodayPlan({
   const fits = (h) => picks.filter((p) => FITS[h.id]?.test(textOf(p))).slice(0, 3);
 
   const tiles = [];
-  if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: 'Log today', line: 'Mood, pain, energy, period', go: onOpenLog });
+  if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: layout === 'bento' ? 'Log today' : 'Log symptoms', line: layout === 'bento' ? 'Mood, pain, energy, period' : 'Pain, period, energy, sleep', go: onOpenLog });
   topics.slice(0, 3).forEach((h) => tiles.push({ key: h.id, icon: ICONS[h.id] || ICONS.steady, title: SHORT[h.id] || h.title, line: h.fromData || h.tips[0], go: () => setOpen(h.id) }));
   if (insight && !insight.topic && onOpenInsight) tiles.push({ key: 'data', icon: ICONS.data, title: insight.label, line: insight.line, go: onOpenInsight });
   // Founder, Nov 11: "one can be a suggestion, adding one thing to your routine, based off the data".
@@ -231,7 +231,7 @@ export default function TodayPlan({
         );
       })()}
 
-      {when('For you today')}
+      {layout === 'open' ? <p className="ay-tp-label">For you today</p> : when('For you today')}
       <ul className={`ay-tp-grid is-${tiles.length}`}>
         {tiles.map((t, k) => (
           <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`} style={{ '--k': k }}>
