@@ -116,7 +116,9 @@ export function sizedShopImage(src) {
 
 function proxyExternalImage(src) {
   if (!/^https?:\/\//i.test(src)) return src;
-  src = sizedShopImage(src);
+  // The image proxy only fetches https: four catalog photos saved as http:// never loaded
+  // (Bonafide Thermella and Ristela, Micro Ingredients inositol, Womaness Melt; Nov 12).
+  src = sizedShopImage(src.replace(/^http:\/\//i, 'https://'));
   // apiUrl: inside the iOS/Android app a bare /api path points at the phone
   // (capacitor://localhost), so 35 product photos never loaded there (Nov 2).
   return apiUrl(`/api/image-proxy?url=${encodeURIComponent(src)}`);
