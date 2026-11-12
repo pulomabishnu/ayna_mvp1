@@ -62,13 +62,14 @@ const ADVISORS = [
  * Jemila Medley: "Jemila Medley, MS, OTR/L, CES ... Pelvic Floor Occupational
  *   Therapist & Owner" on mommasinmotion.com/about-us; photo from her own
  *   headshot set (jemilamedley.teachable.com).
- * Kristen Damery: "PT", as Puloma asked (2026-11-12).
+ * Kristen Damery: "PT, Pelvic Floor Therapist", per Puloma (2026-11-12);
+ *   photo from bossmom.com, link given by Puloma.
  * Shruti Gajjar, Geena Yousry: MS1 credit as on their ayna articles. No public
  *   photo found, so they show initials until the team adds photos. */
 const MEDICAL_REVIEW_TEAM = [
   { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
   { name: 'Jemila Medley, MS, OTR/L, CES', title: 'Pelvic Floor Occupational Therapist; Owner, Mommas in Motion', photo: '/advisors/jemila-medley.jpg', linkedin: 'https://mommasinmotion.com/about-us', linkLabel: 'Profile' },
-  { name: 'Kristen Damery', title: 'PT' },
+  { name: 'Kristen Damery', title: 'PT, Pelvic Floor Therapist', photo: '/advisors/kristen-damery.jpg' },
   { name: 'Shruti Gajjar', title: 'MS1, Medical Student' },
   { name: 'Geena Yousry', title: 'MS1, Medical Student' },
 ];
@@ -202,23 +203,6 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </ul>
       </EdBlock>
 
-      <EdBlock title="ayna’s medical content review team">
-        <ul className="ed-advisors" id="medical-review-team">
-          {MEDICAL_REVIEW_TEAM.map((m) => (
-            <li key={m.name} className="ed-advisor">
-              <AdvisorPhoto advisor={m} />
-              <span className="ed-rowtitle">{m.name}</span>
-              <span className="ed-meta">{m.title}</span>
-              {m.linkedin && (
-                <a href={m.linkedin} target="_blank" rel="noopener noreferrer">
-                  {m.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </EdBlock>
-
       <EdBlock title="Advised by physicians and health-industry operators.">
         <ul className="ed-advisors" id="advisors">
           {ADVISORS.map((advisor) => (
@@ -242,11 +226,28 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </div>}
       </EdBlock>
 
+      <EdBlock title="ayna’s medical content team">
+        <ul className="ed-advisors" id="medical-review-team">
+          {MEDICAL_REVIEW_TEAM.map((m) => (
+            <li key={m.name} className="ed-advisor">
+              <AdvisorPhoto advisor={m} />
+              <span className="ed-rowtitle">{m.name}</span>
+              <span className="ed-meta">{m.title}</span>
+              {m.linkedin && (
+                <a href={m.linkedin} target="_blank" rel="noopener noreferrer">
+                  {m.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </EdBlock>
+
       {/* Invest moved here from the consumer home page (critique, Oct 27). Same words, the full notice with it. */}
       <EdBlock title="Invest in ayna">
         <div className="ip-invest" id="invest">
           <p className="ed-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
-          <p><a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('about')}>Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></p>
+          <p><a className="ay-btn ay-btn--secondary ip-invest__btn" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('about')}>Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></p>
           <p className="ip-invest__legal">{TESTING_WATERS_NOTICE}</p>
         </div>
       </EdBlock>
