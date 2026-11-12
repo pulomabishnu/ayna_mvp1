@@ -39,7 +39,6 @@ export default function UpdatePop({ update, onClose, onOpenProduct, onRemove, on
         {update.sub && <p className="ay-upop__sub">{update.sub}</p>}
         {update.tips?.length > 0 && <ul className="ay-upop__tips">{update.tips.map((t) => <li key={t}>{t}</li>)}</ul>}
         {update.source && <p className="ay-upop__src">From <a href={update.source.url} target="_blank" rel="noopener noreferrer">{update.source.label}</a></p>}
-        {update.goal && onGoal && <button type="button" className="ay-upop__goal" onClick={() => onGoal(update.goal)}>{`Make ${update.goalLabel || 'this'} a goal`}</button>}
         <ul className="ay-upop__list">
           {products.map((p, i) => {
             const kept = inEcosystem(p.id);
@@ -56,6 +55,8 @@ export default function UpdatePop({ update, onClose, onOpenProduct, onRemove, on
             );
           })}
         </ul>
+        {/* Founder, Nov 11: the goal button sits with the main button, same width, right above it. */}
+        {update.goal && onGoal && <button type="button" className="ay-upop__goal" onClick={() => onGoal(update.goal)}>{`Make ${update.goalLabel || 'this'} a goal`}</button>}
         {suggest && update.shop && onShop
           ? <button type="button" className="ay-upop__primary" onClick={() => onShop(update.shop)}>See products for this</button>
           : <button type="button" className="ay-upop__primary" onClick={suggest ? onClose : (onSeeAll || onClose)}>{suggest ? 'Done' : onSeeAll ? 'See my products' : 'Done'}</button>}

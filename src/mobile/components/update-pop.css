@@ -36,3 +36,4 @@
 .ay-upop__src { margin: 0 0 12px; font: 500 12px/1.4 'Figtree', sans-serif; color: #ffedac; }
 .ay-upop__src a { color: inherit; }
 .ay-upop__goal { display: inline-flex; align-items: center; min-height: 44px; margin: 0 0 8px; padding: 0 18px; border: 1.5px solid #ffedac; border-radius: 999px; background: transparent; color: #ffedac; font: 700 14px/1 'Figtree', sans-serif; cursor: pointer; }
+.ay-upop .ay-upop__goal { display: flex; justify-content: center; width: 100%; min-height: 52px; margin: 8px 0 10px; font-size: 16px; }
