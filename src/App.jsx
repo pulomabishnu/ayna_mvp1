@@ -1896,6 +1896,11 @@ function App() {
 
   // Nav targets are real links (cmd/middle-click open a tab); a plain click
   // stays in the app (audit G02).
+  // Top-bar buttons on the landing page each count as their own anonymous step
+  // (journeyStep.js, e.g. cta_signup_topbar). Elsewhere on the site they aren't counted.
+  const onLandingView = ['welcome', 'hero'].includes(currentView);
+  const landingTopbar = (step) => { if (onLandingView && step) countJourneyStep(step); };
+  const TOPBAR_TAB_STEPS = { explore: 'cta_shop_topbar', library: 'cta_library_topbar', community: 'cta_community_topbar' };
   const linkProps = (go) => ({
     onClick: (e) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -2652,13 +2657,13 @@ function App() {
           {/* Home leads the desktop navigation; mobile keeps the familiar centre Home tab. */}
           <div className="ay-nav__links">
             {WEB_TOP_TABS.map((t) => (
-              <a key={t.key} href={t.key === 'today' ? (user ? '/home' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(mainTabGo[t.key])}>
+              <a key={t.key} href={t.key === 'today' ? (user ? '/home' : '/') : t.href} className={`ay-nav__link${t.key === 'today' ? ' is-home' : ''}`} aria-current={webTabOn(t.key) ? 'page' : undefined} {...linkProps(() => { landingTopbar(TOPBAR_TAB_STEPS[t.key]); mainTabGo[t.key](); })}>
                 {t.key === 'today' && <span className="ay-nav__home-mark" aria-hidden="true"><TabIcon kind="home" /></span>}
                 <span>{t.label}</span>
               </a>
             ))}
             {/* Founder, Nov 3: a Pricing link in the menu. /pro is the Free vs Pro page. */}
-            <a href="/pro" className="ay-nav__link ay-nav__pricing-link"><span>Pricing</span></a>
+            <a href="/pro" className="ay-nav__link ay-nav__pricing-link" onClick={() => landingTopbar('cta_pricing_topbar')}><span>Pricing</span></a>
           </div>
 
           {currentView === 'quiz' && (
@@ -2670,13 +2675,13 @@ function App() {
           <div className="ay-nav__actions">
             {/* Phone: Ask ayna sits in the header, as in the app (one tab set, P1-7). */}
             {!FOCUSED_FLOW_VIEWS.includes(currentView) && currentView !== 'campus-resources' && currentView !== 'ask' && (
-              <button type="button" className="ay-nav__ask" onClick={() => openAsk('')}>
+              <button type="button" className="ay-nav__ask" onClick={() => { landingTopbar('cta_ask_topbar'); openAsk(''); }}>
                 <span className="ay-nav__ask-orb" aria-hidden="true"><AskMark /></span>Ask ayna
               </button>
             )}
             {/* The cart (founder, Nov 10: "ask ayna, cart and a bell"): what she saved, with the count. Opens You > Saved. */}
             {!FOCUSED_FLOW_VIEWS.includes(currentView) && (
-              <a href="/you/saved" className={`ay-nav__heart is-cart${savedCount ? ' has-saved' : ''}`} aria-label={savedCount ? `Cart, ${savedCount} saved ${savedCount === 1 ? 'product' : 'products'}` : 'Cart, your saved products'} aria-current={currentView === 'you' && youSection === 'saved' ? 'page' : undefined} {...linkProps(() => { setShowAccountMenu(false); handleViewWishlist(); })}>
+              <a href="/you/saved" className={`ay-nav__heart is-cart${savedCount ? ' has-saved' : ''}`} aria-label={savedCount ? `Cart, ${savedCount} saved ${savedCount === 1 ? 'product' : 'products'}` : 'Cart, your saved products'} aria-current={currentView === 'you' && youSection === 'saved' ? 'page' : undefined} {...linkProps(() => { landingTopbar('cta_cart_topbar'); setShowAccountMenu(false); handleViewWishlist(); })}>
                 <CartMark />
                 {savedCount > 0 && <span className="ay-heart-count" aria-hidden="true">{savedCount > 99 ? '99+' : savedCount}</span>}
               </a>
@@ -2698,7 +2703,7 @@ function App() {
               />
             )}
             {/* Phones hide the menu links, so signed-out visitors on the landing get Pricing here. */}
-            {!user && ['welcome', 'hero'].includes(currentView) && <a href="/pro" className="ay-nav__pricing">Pricing</a>}
+            {!user && ['welcome', 'hero'].includes(currentView) && <a href="/pro" className="ay-nav__pricing" onClick={() => landingTopbar('cta_pricing_topbar')}>Pricing</a>}
             {/* Signed out on the landing: Log in stays in the header on phones too (QA, Oct 25). */}
             <div ref={accountMenuRef} className={`ay-nav__account${!user && ['welcome', 'hero'].includes(currentView) ? ' is-landing-guest' : ''}`}>
               {user ? (
@@ -2729,7 +2734,7 @@ function App() {
                 <button
                   type="button"
                   className="ay-nav__login"
-                  onClick={() => { setShowAccountMenu(false); const next = ['welcome', 'hero'].includes(currentView) ? 'login' : 'stay'; setPendingAction(next); pendingActionRef.current = next; setShowAuthModal(true); }}
+                  onClick={() => { landingTopbar('cta_login_topbar'); setShowAccountMenu(false); const next = ['welcome', 'hero'].includes(currentView) ? 'login' : 'stay'; setPendingAction(next); pendingActionRef.current = next; setShowAuthModal(true); }}
                   aria-label="Log in"
                 >
                   Log in
@@ -2737,7 +2742,7 @@ function App() {
                 {/* Nov 3 (CTA research): on the desktop landing, the main button is also in the menu bar,
                     so it's there whenever the bar comes back on scroll up. Phones keep Log in only. */}
                 {['welcome', 'hero'].includes(currentView) && (
-                  <button type="button" className="ay-nav__start" onClick={() => { const c = landingCtaCopy(); trackLandingCta('start_quiz_nav', 'web', c); handleStartQuiz(); }}>{CTA_COPY[landingCtaCopy()]}</button>
+                  <button type="button" className="ay-nav__start" onClick={() => { landingTopbar('cta_signup_topbar'); const c = landingCtaCopy(); trackLandingCta('start_quiz_nav', 'web', c); handleStartQuiz(); }}>{CTA_COPY[landingCtaCopy()]}</button>
                 )}
                 </>
               )}

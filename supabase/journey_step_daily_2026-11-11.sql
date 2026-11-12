@@ -1,3 +1,4 @@
+-- SUPERSEDED: run supabase/journey_step_daily_ctas_2026-11-11.sql instead (same table, adds the landing buttons).
 -- Anonymous journey step counter: how many times each step of the site or
 -- app was reached per day, per platform. Written for api/step.js.
 -- Same design as the Buy counter (supabase/buy_click_daily_2026-11-10.sql).

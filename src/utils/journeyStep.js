@@ -16,7 +16,22 @@ import { analyticsPlatform } from './analyticsPlatform.js';
  * (buyCountingRefused), nor from founder browsers and test phones.
  * Fire-and-forget: never blocks or breaks the page.
  */
-export const JOURNEY_STEPS = new Set(['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created']);
+/**
+ * Landing page buttons and links (2026-11-11), one step each. Counted on a
+ * normal click only; the same skip rules as every other step. The main
+ * "Sign up free" button still also counts as sign_up_free_clicked.
+ */
+export const LANDING_CTA_STEPS = [
+  // Top bar, while the landing page is open.
+  'cta_signup_topbar', 'cta_login_topbar', 'cta_pricing_topbar', 'cta_shop_topbar', 'cta_library_topbar', 'cta_community_topbar', 'cta_ask_topbar', 'cta_cart_topbar',
+  // The main "Sign up free" button, by where on the page it was pressed.
+  'cta_signup_hero', 'cta_signup_problem', 'cta_signup_demo', 'cta_signup_testimonials', 'cta_signup_end',
+  // The main button when it says something else, and "Start over" under it.
+  'cta_finish_quiz', 'cta_start_over', 'cta_go_home',
+  // Everything else on the page.
+  'cta_search', 'cta_brands', 'cta_how_we_match', 'cta_see_all_products', 'cta_product_card', 'cta_sources', 'cta_library', 'cta_read_article', 'cta_community', 'cta_meet_us', 'cta_get_pro', 'cta_pro_yearly', 'cta_pro_monthly', 'cta_see_pro', 'cta_faq_ask_us',
+];
+export const JOURNEY_STEPS = new Set(['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created', ...LANDING_CTA_STEPS]);
 
 function currentPlatform() {
   try {
