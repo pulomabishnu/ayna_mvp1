@@ -27,3 +27,13 @@ describe('what may help today (founder, Nov 11)', () => {
     }
   });
 });
+
+describe('productsForTopic (pop-up after a log)', async () => {
+  const { productsForTopic } = await import('./todayHelp.js');
+  it('picks her matches that fit the topic only', () => {
+    const list = [{ id: 'a', name: 'Iron bisglycinate' }, { id: 'b', name: 'Heating pad', category: 'cramp relief' }];
+    expect(productsForTopic('energy', list).map((p) => p.id)).toEqual(['a']);
+    expect(productsForTopic('pain', list).map((p) => p.id)).toEqual(['b']);
+    expect(productsForTopic('nope', list)).toEqual([]);
+  });
+});

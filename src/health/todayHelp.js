@@ -124,3 +124,23 @@ export function todayHelp(entry, { pregnant = false, postCycle = false } = {}) {
   if (!out.length && logged) out.push(TODAY_HELP.steady);
   return out.slice(0, 2);
 }
+
+/** Her matched products that fit a topic (name, category and needs text). Used by For today and the pop-up. */
+export const TOPIC_FITS = {
+  pain: /cramp|heat|warm|tens|period pain|menstrual pain/i,
+  sleep: /sleep|melatonin|magnesium|night/i,
+  energy: /iron|energy|fatigue|b12|ferr/i,
+  mood: /stress|mood|calm|anxiety|ashwagandha/i,
+  pms: /pms|bloat|premenstrual|cycle support/i,
+};
+const topicText = (p) => `${p?.name || ''} ${p?.category || ''} ${p?.subcategory || ''} ${Array.isArray(p?.needs) ? p.needs.join(' ') : ''} ${Array.isArray(p?.concerns) ? p.concerns.join(' ') : ''} ${p?.description || ''}`;
+export function productsForTopic(topicId, products = [], max = 3) {
+  const re = TOPIC_FITS[topicId];
+  return re ? products.filter((p) => p?.id && re.test(topicText(p))).slice(0, max) : [];
+}
+
+/** Fired whenever she saves something in her log (the pop-up listens). */
+export const LOG_CHANGED_EVENT = 'ayna:log-changed';
+export function announceLogChange(day) {
+  try { globalThis.dispatchEvent?.(new CustomEvent(LOG_CHANGED_EVENT, { detail: { day } })); } catch { /* old browser */ }
+}

@@ -1,4 +1,6 @@
 import { takeHealthReturn } from '../health/healthReturn.js';
+import { todayHelp, productsForTopic, LOG_CHANGED_EVENT } from '../health/todayHelp.js';
+import { readLog } from '../health/dailyLog.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { readPendingVerification } from '../utils/pendingVerification.js';
 import { claimQuizRetake } from '../utils/proApi.js';
@@ -963,6 +965,17 @@ export default function MobileApp() {
     try { return effectiveQuizAnswers ? getSelectedNeeds(effectiveQuizAnswers).map((n) => n.id) : []; } catch { return []; }
   }, [effectiveQuizAnswers]);
   const health = useHealthData(authUser?.id || null, selectedNeedIds);
+  // b) A new app connected (Oura, WHOOP, Apple Health...): say so, with picks that fit her.
+  useEffect(() => {
+    const n = health.connected.length;
+    const prev = suggestRef.current.connected;
+    if (health.status !== 'ready') return;
+    suggestRef.current.connected = n;
+    if (prev == null || n <= prev) return;
+    const name = health.connected[n - 1]?.name || health.connected[n - 1]?.label || 'Your app';
+    const picks = suggestedEcosystemProductsRef.current.slice(0, 3);
+    popSuggest({ kicker: 'Connected', title: `${name} is connected`, sub: 'ayna now uses it for your charts, your Daily Rundown and your matches. Picks that fit you:', products: picks });
+  }, [health.connected.length, health.status]); // eslint-disable-line react-hooks/exhaustive-deps
   const guideRecap = useMemo(() => {
     if (!authUser?.id || !personalizeWithData) return '';
     const sections = health.insights?.sections || [];
@@ -1003,6 +1016,41 @@ export default function MobileApp() {
     // Only what she added herself is left out (utils/forYouPicks.js).
     return forYouPicks(seedEcosystemFromAnswers(effectiveQuizAnswers, matchOpts), myProducts, 6);
   }, [effectiveQuizAnswers, myProducts, matchOpts]);
+
+  // Founder, Nov 11: "when you update your quiz, connect your Oura or log something, it pops up with
+  // product suggestions and other suggestions, not just do nothing". One pop-up (UpdatePop, 'suggest'
+  // mode): her matched products she doesn't have yet, with Add to routine; never more than once per
+  // event, never during onboarding or while another sheet is open.
+  const suggestRef = useRef({ quiz: null, connected: null });
+  const popSuggest = (update) => { if (!update?.products?.length && !update?.tips?.length) return; setUpdatePop({ mode: 'suggest', ...update }); };
+  // a) Quiz answers changed: the new matches she doesn't have yet.
+  useEffect(() => {
+    const before = suggestRef.current.quiz;
+    if (!before) return;
+    suggestRef.current.quiz = null;
+    const fresh = suggestedEcosystemProducts.filter((p) => !before.includes(p.id));
+    const list = (fresh.length ? fresh : suggestedEcosystemProducts).slice(0, 3);
+    popSuggest({ kicker: 'Your answers are updated', title: fresh.length ? `${fresh.length} new ${fresh.length === 1 ? 'match' : 'matches'} for you` : 'Your top matches now', sub: 'From what you just told ayna. Tap one to see why it fits, or add it to your routine.', products: list });
+  }, [suggestedEcosystemProducts]); // eslint-disable-line react-hooks/exhaustive-deps
+  // c) She logged something that brings a topic (low energy, pain...): what may help, and products for it.
+  useEffect(() => {
+    const onChange = (e) => {
+      const day = e?.detail?.day;
+      if (!day || day !== localToday()) return;
+      let entry = null;
+      try { entry = readLog()[day] || null; } catch { return; }
+      const help = todayHelp(entry, {});
+      const h = help.find((x) => x.id !== 'steady');
+      if (!h) return;
+      const key = `ayna_pop_topic_${day}_${h.id}`;
+      try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); } catch { /* blocked */ }
+      setTimeout(() => popSuggest({ kicker: 'From what you logged', title: h.title, sub: h.tips[0], tips: h.tips.slice(1, 3), source: h.sources?.[0] || null, goal: h.goal || null, goalLabel: h.goalLabel || '', shop: h.shop || null, products: productsForTopic(h.id, suggestedEcosystemProductsRef.current) }), 450);
+    };
+    window.addEventListener(LOG_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(LOG_CHANGED_EVENT, onChange);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const suggestedEcosystemProductsRef = useRef([]);
+  suggestedEcosystemProductsRef.current = suggestedEcosystemProducts;
 
   // End of the quiz (connect -> plan -> matches): her new answers wait in
   // session.pendingQuiz until she taps "See my matches". Health data is read
@@ -1170,6 +1218,7 @@ export default function MobileApp() {
     const previous = lastQuizAnswers;
     // Only the answers she changed get a new time (src/matching/factFreshness.js).
     const nextIntake = stampFactUpdates(rawIntake, previous?.fullHealthIntake || previous || null);
+    suggestRef.current.quiz = suggestedEcosystemProducts.map((p) => p.id);
     updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
     try {
       const r = await saveHealthIntakeForCurrentUser(nextIntake);
@@ -1822,6 +1871,8 @@ export default function MobileApp() {
         onRemove={(p) => handleAddToEcosystem(p)}
         inEcosystem={(id) => myProducts.some((p) => p.id === id)}
         onSeeAll={() => { setUpdatePop(null); setOverlay(null); setScreen('ayna'); setHomeView('products'); }}
+        onGoal={(g) => { setUpdatePop(null); handleAddGoal?.(g); }}
+        onShop={(q) => { setUpdatePop(null); setOverlay(null); nav.onBrowse?.(q); }}
       />
       {saveNudge && !authUser && (
         <div className="ay-save-nudge" role="status">

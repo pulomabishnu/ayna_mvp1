@@ -5,6 +5,7 @@
  * computer) | 'saving' | 'saved' (on her account) | 'pending' (kept here,
  * uploads when back online or once syncing is switched on).
  */
+import { announceLogChange } from './todayHelp.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LOG_SAVED_EVENT, readLog, saveLogEntry, setLogOwner } from './dailyLog.js';
 import { setTriesOwner } from './outcomes.js';
@@ -65,6 +66,7 @@ export function useDailyLog(userId = null) {
     saveLogEntry(day, patch);
     setLog(readLog());
     touched.current = true;
+    announceLogChange(day);
     if (!userId) { setSaveState('saved_device'); return; }
     setSaveState('saving');
     clearTimeout(timer.current);

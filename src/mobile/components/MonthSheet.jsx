@@ -4,6 +4,7 @@ import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthC
 import './metric-sheet.css';
 import './month-sheet.css';
 import { LOG_SAVED_EVENT, readLog, saveLogEntry } from '../../health/dailyLog.js';
+import { announceLogChange } from '../../health/todayHelp.js';
 
 /**
  * "Your month" (founder: a cute calendar, "only if it looks good and doesn't
@@ -80,6 +81,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const saveField = (id, v) => {
     if (!canLogPicked) return;
     saveLogEntry(picked, { [id]: v });
+    announceLogChange(picked);
     const next = readLog();
     setOwnLog(next);
     onSaved?.(next);
