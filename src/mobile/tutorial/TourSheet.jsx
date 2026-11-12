@@ -8,7 +8,14 @@ import { createPortal } from 'react-dom';
  * later unless she turns page tips on in Settings.
  */
 export const TOUR_SECTIONS = [
+  // Founder, Nov 12: the tour opens when the app is first opened, so it starts with the quiz.
+  { title: 'Start with the quiz', items: [
+    'About 3 minutes: your life stage, what you want help with and anything to avoid.',
+    'ayna matches products to your answers and shows why each one fits you.',
+    'Make a free account to save your matches. Change your answers anytime.',
+  ] },
   { title: 'Home', items: [
+    'For today: your goals, picks for your goals and a couple of tips for the day.',
     'Your cycle, sleep and activity sit at the top. Tap a ring for more.',
     'Rundown plays your 60-second Daily Rundown.',
     'Your data and Your products each open in one tap.',

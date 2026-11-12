@@ -50,7 +50,7 @@ export const SCREENS = [
     landing: true,
     waitMs: 900,
     tips: [
-      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Tap a word under What these mean to see what it means.' },
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
     ],
   },
   {
@@ -273,7 +273,7 @@ export const WEB_SCREENS = [
     landing: true,
     waitMs: 900,
     tips: [
-      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Tap a word under What these mean to see what it means.' },
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
     ],
   },
   {

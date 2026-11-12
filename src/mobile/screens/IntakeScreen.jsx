@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { defineOption, findTerm } from '../data/glossary.js';
+import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, SearchField, AgeDial, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
 import { QuizFrame, QuizBlock, Chips, Rows, SubQuestion, GlossaryCard } from '../../components/quiz/QuizKit.jsx';
@@ -631,27 +631,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const visibleSteps = onboarding ? onboardingSteps : phase === 'optional' ? optionalSteps : requiredSteps;
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
-  // Focus group, Nov 11: nobody found press-and-hold. The options on this step that have a plain
-  // meaning are also listed under the answers with a visible info icon; a tap shows the meaning.
-  const [stepTerms, setStepTerms] = useState([]);
-  useEffect(() => {
-    const t = setTimeout(() => {
-      const els = [...document.querySelectorAll('.aq-answer button, .aq-answer label, .aq-answer [role="radio"]')];
-      const seen = new Set();
-      const out = [];
-      for (const el of els) {
-        const raw = el.textContent.replace(/\s+/g, ' ').trim();
-        const value = LIFE_STAGE_VALUE_BY_LABEL[raw] || raw;
-        const hit = defineOption(value, step?.type) || (step?.type === 'price' && defineOption(value, 'largePurchase'));
-        if (!hit || seen.has(hit.definition)) continue;
-        seen.add(hit.definition);
-        out.push({ ...hit, term: hit.term === value ? raw : hit.term, hard: Boolean(findTerm(value)) });
-      }
-      // The words people actually look up first (Perimenopause, PMDD), at most four.
-      setStepTerms([...out.filter((t) => t.hard), ...out.filter((t) => !t.hard)].slice(0, 4));
-    }, 60);
-    return () => clearTimeout(t);
-  }, [step?.id, step?.type]);
   const isLast = currentIndex === visibleSteps.length - 1;
   // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
   useEffect(() => {
@@ -1067,16 +1046,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     >
       {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}
       {renderBody()}
-      {stepTerms.length > 0 && (
-        <div className="aq-terms" aria-label="What these mean">
-          <p className="aq-terms__h">What these mean</p>
-          <div className="aq-terms__row">{stepTerms.map((t) => (
-            <button key={t.term} type="button" className="aq-terms__chip" onClick={() => { setGlossary(t); haptic('selection'); }}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.5v.5" /></svg>{t.term}
-            </button>
-          ))}</div>
-        </div>
-      )}
     </QuizFrame>
   );
 }

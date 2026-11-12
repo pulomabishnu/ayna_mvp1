@@ -116,10 +116,17 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('signed out on the app landing: no tip (the button says Take your quiz)', () => {
+  it('first open, signed out on the landing: the tour sheet, starting with the quiz (founder, Nov 12); once only', () => {
+    localStorage.removeItem('ayna_tour_sheet_once_nov11');
     mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
-    wait(4000);
-    expect(dialog()).toBeNull();
+    wait(2000);
+    const sheet = document.querySelector('.ay-tour__all');
+    expect(sheet?.textContent).toContain('Start with the quiz');
+    act(() => document.querySelector('.ay-tour__go').click());
+    act(() => root.unmount()); root = null; app.remove();
+    mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
+    wait(3000);
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
   });
 
   it('closing the tour with the X turns tips off and nothing shows again', () => {

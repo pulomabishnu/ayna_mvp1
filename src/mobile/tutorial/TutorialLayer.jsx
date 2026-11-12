@@ -165,6 +165,20 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       // Founder, Nov 11 ("the one-time tutorial is still not there"): accounts older than 3 days had
       // tips switched off, so people who already had the app never saw the new tour. It opens once on
       // Home for everyone after this update (per device), then only from Settings.
+      // Founder, Nov 12: the tour opens the first time the app is opened, signed out, on the landing,
+      // and starts with the quiz. Once per device; Settings has it again.
+      if (surface === 'app' && host?.dataset?.screen === 'landing' && !base.foreignDialog && !document.querySelector('.aq, .ay-auth')) {
+        let shownL = true;
+        try { shownL = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
+        if (!shownL) {
+          pendingRef.current = pendingRef.current.key === 'landing-once' ? { key: 'landing-once', count: pendingRef.current.count + 1 } : { key: 'landing-once', count: 1 };
+          if (pendingRef.current.count < STABLE_POLLS) return;
+          try { localStorage.setItem(TOUR_ONCE_KEY, '1'); } catch { /* blocked */ }
+          openerRef.current = document.activeElement;
+          setSheet(true);
+          return;
+        }
+      }
       if (surface === 'app' && screen?.welcome && !base.onboarding && !base.rundownOpen && !base.foreignDialog && !document.querySelector('.ay-today__notify, .ay-upop')) {
         let shown = true;
         try { shown = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
