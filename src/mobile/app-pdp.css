@@ -10,7 +10,7 @@
 
 /* Title */
 .ay-pdp-title { padding: 20px var(--ay-gutter) 0; }
-.ay-pdp-eyebrow { font-size: 13px; font-weight: 500; color: var(--legacy-ink); opacity: .62; }
+.ay-pdp-eyebrow { font-size: 13px; font-weight: 500; color: var(--legacy-ink); opacity: 1; }
 .ay-pdp-title h1 { margin: 6px 0 0; font-family: var(--ayna-font-ui); font-weight: 600; font-size: calc(30px * var(--ayna-text-scale, 1)); line-height: 1.15; letter-spacing: -0.01em; color: var(--legacy-ink); text-wrap: balance; }
 
 /* At a glance */
@@ -316,7 +316,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button + button { border-top: 1px solid var(--d-hair, rgba(62, 39, 35, .15)); border-radius: 0; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-more__menu > button:focus-visible { outline: 2px solid var(--d-ink, #3e2723); outline-offset: -2px; }
 /* The photo: full width, square, on the light photo panel the cards use; dots under it when there are several. */
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero { margin: 0; padding: 0; background: #f6f5f2; border-bottom: 1.5px solid var(--d-ink, #3e2723); }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero { margin: 0; padding: 0; background: #fff; border-bottom: 1.5px solid var(--d-ink, #3e2723); }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ayq-apphero__tile { position: relative; aspect-ratio: auto !important; width: 100%; max-width: 520px; margin: 0 auto; border: 0 !important; border-radius: 0 !important; background: transparent !important; overflow: visible !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero .ay-gal { gap: 0; padding-bottom: 0; --gal-ink: #3e2723; --gal-soft: rgba(62, 39, 35, .28); }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-hero :is(.ay-gal__track, .ay-gal__open) { background: transparent !important; }
@@ -367,7 +367,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { flex: 1; min-width: 0; padding: 0; margin: 0; background: none; border: 0; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id h1 { margin: 2px 0 0; font-size: calc(22px * var(--ayna-text-scale, 1)); line-height: 1.15; overflow-wrap: anywhere; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-metaline { margin: 4px 0 0; font-size: 13px; }
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ay-pdp-eyebrow { font-size: 12px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ay-pdp-eyebrow { font-size: 13px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id .ayv-pricerow { margin: 8px 0 0 !important; padding: 0 !important; min-height: 0 !important; }
 /* Below the stack: the summary's detail rows, then Ask and Buy. */
 #ay-pdp .ayv--stack .ayv-stack-rest { margin-top: 12px; }

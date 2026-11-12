@@ -123,7 +123,7 @@ html body .app-container:is([data-theme='brand-dark'], [data-theme='dark']) .ay-
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-table :is(th, td) { padding: 6px 0 !important; border-bottom: 1px solid var(--db-rule); text-align: left; font-size: 14px !important; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-table td { text-align: right; font-variant-numeric: tabular-nums; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-range { display: inline-flex; gap: 0; padding: 4px !important; border-radius: 999px; background: var(--db-deep); }
-:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-range button { min-height: 36px; padding: 0 14px !important; border: 0 !important; border-radius: 999px !important; background: none !important; box-shadow: none !important; color: var(--db-ink) !important; cursor: pointer; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-range button { min-height: 44px; padding: 0 14px !important; border: 0 !important; border-radius: 999px !important; background: none !important; box-shadow: none !important; color: var(--db-ink) !important; cursor: pointer; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-range button[aria-pressed='true'] { background: var(--db-ink) !important; color: var(--db-on-ink) !important; }
 
 /* ---------- phase line, range bar ---------- */

@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 export const TOUR_SECTIONS = [
   // Founder, Nov 12: the tour opens when the app is first opened, so it starts with the quiz.
   { title: 'Start with the quiz', items: [
-    'About 3 minutes: your life stage, what you want help with and anything to avoid.',
+    'About a minute: your life stage, what you want help with and anything urgent. More questions are optional.',
     'ayna matches products to your answers and shows why each one fits you.',
     'Make a free account to save your matches. Change your answers anytime.',
   ] },

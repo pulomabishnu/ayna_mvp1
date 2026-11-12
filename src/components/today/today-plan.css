@@ -405,3 +405,7 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-daily__card { color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-daily__img { border-color: #ffedac; }
 .ay-tp-goallist__sub { margin: 12px 0 0 60px; font: 700 14px/1.2 'Figtree', sans-serif; }
+/* Audit (Nov 12): 44px touch targets and 13px minimum text. */
+.ay-tp-goals.is-empty.is-compact .ay-tp-goals__presets button { min-height: 44px; }
+.ay-tp-daily__img i { font-size: 13px; }
+.ay-tp-daily__card small { font-size: 13px; }

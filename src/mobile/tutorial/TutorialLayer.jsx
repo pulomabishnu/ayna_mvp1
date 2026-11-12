@@ -168,7 +168,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       // Home for everyone after this update (per device), then only from Settings.
       // Founder, Nov 12: the tour opens the first time the app is opened, signed out, on the landing,
       // and starts with the quiz. Once per device; Settings has it again.
-      if (surface === 'app' && host?.dataset?.screen === 'landing' && !base.foreignDialog && !document.querySelector('.aq, .ay-auth')) {
+      if (surface === 'app' && !userId && host?.dataset?.screen === 'landing' && !base.foreignDialog && !document.querySelector('.aq, .ay-auth')) {
         let shownL = true;
         try { shownL = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
         if (!shownL) {
@@ -229,7 +229,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
     };
     const id = window.setInterval(tick, POLL_MS);
     return () => window.clearInterval(id);
-  }, [cfg, screens, avoid, surface]);
+  }, [cfg, screens, avoid, surface, userId]);
 
   // Follow the anchor while a tip is open (scroll, resize, layout changes).
   const tip = run?.kind === 'tips' ? run.tips[run.index] : null;

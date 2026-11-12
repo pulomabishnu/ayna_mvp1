@@ -20,8 +20,8 @@
 .ay-stack__body { padding: 0 8px 8px; }
 .ay-stack__panel { border-radius: 16px; background: #ffedac; color: #3e2723; padding: 14px; animation: ay-stack-in .35s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes ay-stack-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink { background: #4a302a; border-color: rgba(255, 237, 172, .45); }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink .ay-stack__ic svg { stroke: #4a302a; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink { background: #3e2723; border-color: rgba(255, 237, 172, .45); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__card.is-ink .ay-stack__ic svg { stroke: #3e2723; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack__panel { background: #3e2723; color: #ffedac; }
 @media (prefers-reduced-motion: reduce) { .ay-stack__card, .ay-stack__chev { transition: none; } .ay-stack__panel { animation: none; } .ay-stack__card.is-open { transform: none; } }
 /* Inside the stack the tab panel classes keep the content's styles, but the card owns the box. */
@@ -49,11 +49,11 @@
 .ay-stack.is-index .ay-stack__head b { font: 700 15px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; }
 .ay-stack.is-index .ay-stack__tag { font: 600 13px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .92; }
 .ay-stack.is-index .ay-stack__ic { width: 30px; height: 30px; }
-.ay-stack.is-index .ay-stack__card.is-open { box-shadow: 0 0 0 3px #fff8dc, 0 0 0 5.5px #3e2723 !important; }
+.ay-stack.is-index .ay-stack__card.is-open { box-shadow: 0 0 0 3px #ffedac, 0 0 0 5.5px #3e2723 !important; }
 .ay-stack.is-index .ay-stack__body { padding: 8px 0 0; }
 .ay-stack.is-index .ay-stack__panel { border: 1.5px solid #3e2723; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) { background: #4a302a; color: #ffedac; border-color: #ffedac; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) .ay-stack__ic svg { stroke: #4a302a; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) { background: #3e2723; color: #ffedac; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__grid.is-4 .ay-stack__card:nth-child(4) .ay-stack__ic svg { stroke: #3e2723; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__card.is-open { box-shadow: 0 0 0 3px #3e2723, 0 0 0 5.5px #ffedac !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-stack.is-index .ay-stack__panel { border-color: rgba(255, 237, 172, .5); }
 
@@ -152,7 +152,7 @@ html body :is(#pdp-v4, #ay-pdp, #ay-psheet):is(#pdp-v4, #ay-pdp, #ay-psheet):is(
 :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card :is(b, .ay-stack__tag, .ay-stack__chev) { color: inherit !important; }
 :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack .ay-stack__panel.ay-stack__panel { background: transparent !important; padding: 14px 4px !important; color: inherit; }
 @media (prefers-reduced-motion: reduce) { :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card { transition: none !important; } }
-:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card:not(.is-open) { background: #4a302a !important; }
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card:not(.is-open) { background: #3e2723 !important; }
 /* Founder, Nov 11: no white on these, and the next thing sat too close under the grid. */
 :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid { margin-bottom: 20px !important; }
 :is(#ay-pdp, #pdp-v4, #ay-psheet, #ay-tabs, body) .ay-stack.is-index .ay-stack__grid .ay-stack__card.ay-stack__card .ay-stack__tag { opacity: 1 !important; font-weight: 600 !important; font-size: 13px !important; }

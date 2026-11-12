@@ -11,7 +11,7 @@
   --pc-bg: #ffedac;
   --pc-line: #3e2723;
   --pc-shadow: #3e2723;
-  --pc-photo: #f6f5f2;
+  --pc-photo: #fff; /* product photos sit on white (brand rule: white only behind photos) */
   --pc-photo-rule: rgba(62, 39, 35, .14);
   --pc-dot: #f7badd;
   position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 0;

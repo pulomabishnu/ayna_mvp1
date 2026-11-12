@@ -101,3 +101,6 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 /* Nov 10 audit: the setup card is brown in dark mode, so its "0% complete" line is butter there. */
 html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-hsetup .ay-you2-setup-sub,
 html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-hsetup .ay-you2-setup-sub b { color: #ffedac !important; }
+/* Audit (Nov 12): 13px minimum text on Profile. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-you2-stats span,
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-you2 small { font-size: 13px !important; }

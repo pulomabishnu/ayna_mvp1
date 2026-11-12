@@ -62,7 +62,7 @@
 .ay-mcal .ay-mcal__flowh { margin: 0; font: 700 15px/1.2 var(--ay-font-ui, inherit) !important; color: inherit !important; }
 .ay-mcal__chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .ay-mcal__chip { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid currentColor; font: 600 15px/1 var(--ay-font-ui, inherit); }
-.ay-mcal .ay-mcal__chip[aria-pressed='true'] { background: #3e2723; color: #fff8dc; border-color: #3e2723; }
+.ay-mcal .ay-mcal__chip[aria-pressed='true'] { background: #3e2723; color: #ffedac; border-color: #3e2723; }
 .ay-mcal__chip:focus-visible { outline: 3px solid #f7badd; outline-offset: 2px; }
 /* Nov 11: mood, energy, pain and sleep for the picked day, as segmented rows (filled track). */
 .ay-mcal__seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #f7badd; }

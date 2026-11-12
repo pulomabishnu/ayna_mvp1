@@ -90,7 +90,7 @@ html body :is(#rtl1, .app-container, .ayna-mobile):is(#rtl2, .app-container, .ay
 .ay-rt2__txt small { font: 700 11px/1.2 var(--ay-font-ui, Figtree, sans-serif); letter-spacing: .05em; text-transform: uppercase; opacity: .65; }
 .ay-rt2__txt b { font: 700 15px/1.25 var(--ay-font-ui, Figtree, sans-serif); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ay-rt2__txt span { font: 500 13px/1.3 var(--ay-font-ui, Figtree, sans-serif); opacity: .8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ay-rt2__how { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; min-height: 36px; padding: 0 4px; font: 700 13px/1 var(--ay-font-ui, Figtree, sans-serif); color: inherit; opacity: .85; }
+.ay-rt2__how { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; min-height: 44px; min-width: 44px; padding: 0 4px; font: 700 13px/1 var(--ay-font-ui, Figtree, sans-serif); color: inherit; opacity: 1; }
 .ay-rt2__how svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; transition: transform .2s; }
 .ay-rt2__row.is-open .ay-rt2__how svg { transform: rotate(180deg); }
 .ay-rt2__detail { grid-column: 1 / -1; margin: 0 0 8px 52px; display: grid; gap: 6px; font: 500 14px/1.45 var(--ay-font-ui, Figtree, sans-serif); }

@@ -10,7 +10,7 @@
 .app-container .ll-feature:focus-visible { outline: 3px solid #3e2723; outline-offset: 3px; }
 .app-container .ll-feature__text { display: grid; gap: 6px; min-width: 0; }
 .app-container .ll-feature__title { font: 700 20px/1.2 var(--ay-font-display, 'Bricolage Grotesque', sans-serif); letter-spacing: -.01em; color: #3e2723; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.app-container .ll-feature__line { font: 500 15px/1.4 var(--ay-sans-stack, 'Figtree', sans-serif); color: #5d4037; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-container .ll-feature__line { font: 500 15px/1.4 var(--ay-sans-stack, 'Figtree', sans-serif); color: #3e2723; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .app-container .ll-feature__credit { font: 500 13px/1.3 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
 
 /* Covers: one modest size each. */
@@ -26,7 +26,7 @@
 .app-container .ll-shelves.is-one { grid-template-columns: minmax(0, 1fr); }
 .app-container .ll-shelf { min-width: 0; }
 .app-container .ll-shelf__head > :is(button, a):last-child:not(.ll-shelf__n) { align-self: flex-end; margin: 0 0 6px auto; min-height: 36px; padding: 0 2px; border: 0; background: none; color: #3e2723; font: 600 15px/1 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; cursor: pointer; }
-.app-container .ll-shelf__note { margin: 10px 0 0; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: #5d4037; }
+.app-container .ll-shelf__note { margin: 10px 0 0; font: 500 14px/1.4 var(--ay-sans-stack, sans-serif); color: #3e2723; }
 .app-container .ll-rows { margin: 0; padding: 0; list-style: none; }
 .app-container .ll-row { border-bottom: 1px solid rgba(62, 39, 35, .16); }
 .app-container .ll-row__link { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 56px; padding: 10px 0; color: #3e2723 !important; text-decoration: none !important; }

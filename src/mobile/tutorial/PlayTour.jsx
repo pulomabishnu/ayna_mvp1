@@ -17,7 +17,7 @@ import './play-tour.css';
 const STEPS = [
   {
     id: 'quiz', kicker: 'Step 1 · The quiz', title: 'Tell ayna what you want help with',
-    hint: 'Tap one or two.', done: 'That is the quiz. About 3 minutes, and every answer shapes your matches.',
+    hint: 'Tap one or two.', done: 'That is the quiz. About a minute, and every answer shapes your matches.',
   },
   {
     id: 'match', kicker: 'Step 2 · Your matches', title: 'Every match says why it fits',
