@@ -71,3 +71,12 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-askquick__row button { background: transparent !important; text-decoration: underline; text-underline-offset: 3px; padding: 0 6px !important; }
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body #ay-pdp .ay-pdp-morelist { display: grid; gap: 12px; }
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-reads .ay-group > li { border: 0 !important; border-bottom: 1px solid #3e2723 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+/* The safety line sits right under "When to get help now" as one Safety block (run-through: "keep one"). */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-safetyafter { margin: 0 !important; padding: 0 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ayv-safeline { margin: 4px 0 0 !important; padding: 8px var(--d-gutter, 20px) 0 !important; border: 0 !important; border-left: 0 !important; box-shadow: none !important; background: transparent !important; width: auto !important; max-width: 100% !important; transform: none !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ayv-safeline::before { content: none !important; display: none !important; }
+/* No awkward gaps (founder, Nov 11): the Safety block and Compare sit at normal spacing. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp details.ay-urgent { margin-bottom: 0 !important; padding-bottom: 4px !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-passport > * + * { margin-top: 0 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-more { margin-top: 16px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-related { margin-top: 24px !important; }
