@@ -5505,5 +5505,80 @@ export const NOV_2026_PRODUCTS = [
       "sourceUrl": "https://www.accessdata.fda.gov/cdrh_docs/pdf23/K230926.pdf",
       "sourceLabel": "FDA 510(k) K230926"
     }
+  },
+  {
+    "id": "p-flamingo-calming-magnesium-body-lotion",
+    "name": "Calming Magnesium Body Lotion",
+    "brand": "Flamingo",
+    "category": "sleep",
+    "type": "physical",
+    "internal": false,
+    "healthFunctions": [
+      "sleep",
+      "stress-relief"
+    ],
+    "tags": [
+      "magnesium",
+      "topical",
+      "sleep",
+      "stress",
+      "body-aches",
+      "breast-tenderness"
+    ],
+    "price": "See the brand for current price",
+    "whereToBuy": [
+      "Flamingo"
+    ],
+    "url": "https://www.shopflamingo.com/products/calming-magnesium-collection",
+    "whereToBuyLinks": {
+      "Flamingo": "https://www.shopflamingo.com/products/calming-magnesium-collection"
+    },
+    "summary": "A magnesium body lotion from Flamingo. On safety hold: not shown on ayna until we have read Flamingo's product page.",
+    "safety": {
+      "fdaStatus": "No FDA device listing found in openFDA (searched Nov 11 2026).",
+      "sideEffects": "Not yet read from the label."
+    },
+    "clinicianOpinionSource": "brand",
+    "clinicianAttribution": "Requested by Puloma (Nov 11 2026). Flamingo's page could not be read yet (the site refused automated requests), so no label facts are recorded.",
+    "warnings": [],
+    "verificationLinks": {
+      "doctor": {
+        "links": []
+      },
+      "scientific": {
+        "links": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/28788060/",
+            "label": "Gröber 2017 (Nutrients), review: transdermal magnesium is scientifically unsupported"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/28403154/",
+            "label": "Kass 2017 (PLoS One), pilot, n=25, 2 weeks: magnesium cream did not significantly raise blood magnesium overall"
+          }
+        ]
+      },
+      "community": {
+        "links": []
+      }
+    },
+    "integrations": [],
+    "badges": [],
+    "addedFrom": "Puloma, Nov 11 2026",
+    "researchSources": [
+      {
+        "url": "https://pubmed.ncbi.nlm.nih.gov/28788060/",
+        "what": "abstract read via NCBI E-utilities: review concludes transdermal magnesium is scientifically unsupported"
+      },
+      {
+        "url": "https://pubmed.ncbi.nlm.nih.gov/28403154/",
+        "what": "abstract read via NCBI E-utilities: single-blind pilot, n=25, 56 mg/day cream for 2 weeks; serum rise not significant overall (p=0.29), significant only in a non-athlete subgroup; sleep, mood and pain not measured"
+      },
+      {
+        "url": "https://api.fda.gov/device/registrationlisting.json?search=proprietary_name:%22flamingo%22&limit=5",
+        "what": "openFDA device registrations named Flamingo: none from this brand"
+      }
+    ],
+    "hidden": true,
+    "hiddenReason": "Safety hold (Puloma, Nov 11 2026): not every fact is sourced yet. Flamingo's page (shopflamingo.com) refused automated requests (HTTP 429), so the exact product name, price, size, full ingredient list, magnesium amount, claims, directions, warnings and photo are unread, and the link is not yet confirmed to load. The page may sell a kit with ingestible strips; if so the strips are a supplement and need their own safety check. Puloma asked for: sleep (sleep.trouble), body aches (closest quiz answer: pain.joint), breast tenderness (its own answer, cycle.breast_tenderness) and anxiety (mood.general_anxiety). No study supports a magnesium lotion for any of these (see researchSources), so when it goes live, match it weakly and say these are Flamingo's claims; breast tenderness has no source at all."
   }
 ];
