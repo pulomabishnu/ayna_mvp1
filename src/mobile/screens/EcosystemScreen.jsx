@@ -27,7 +27,6 @@ import { lifeStageClash, STAGE_NOTE_CODE } from '../../components/eco/lifeStageF
 import { useDismissed, useRevealOnce } from '../../components/eco/ecoMotion.js';
 import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement.js';
 import '../eco-app-best.css';
-import HealthShapedNote from '../../components/health/HealthShapedNote.jsx';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
 import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
@@ -445,7 +444,7 @@ export default function EcosystemScreen({
         return <section key={section.key} id={`ayna-area-${section.key}`} className={`ay-shelf2 eco-app-shelf${empty ? ' is-empty-shelf' : ''}${grid ? ' is-grid' : ''}`} style={{ '--area-tone': tone, '--area-ink': tone === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
           <div className="ay-shelf2-head">
             <h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>
-            {section.products.length > 0 && <span className="ay-shelf2-count" aria-label={`${section.products.length} on this shelf`}>{section.products.length}</span>}
+            {/* Nov 11 (founder: "the numbers are off"): no count next to the shelf title; the rows show what's there. */}
             <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>Add</button>
           </div>
           {empty && <div className="ay-shelf2-empty">
@@ -480,9 +479,8 @@ export default function EcosystemScreen({
         // Nov 9 (founder: the care note read as part of the first shelf): it goes after the last shelf.
         all.length === 1 && careBanner ? <div key="care-note" className="ay-carenote-slot">{careBanner}</div> : null,
         // How her health data shaped the order (or the invite to connect): after the first shelf, so shelves lead.
-        seed ? <HealthShapedNote key="hsn" shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" /> : null,
+        // Nov 11 (founder: "do we need this?"): the health-data note lives in Your data, not between shelves.
       ].filter(Boolean) : [node]))}
-      {visibleSections.length === 0 && seed && <HealthShapedNote shaped={seed.healthShaped} userId={authUser?.id || null} onConnect={onConnectHealth || onOpenHealthData} className="ay-eco-hsn" />}
       {visibleSections.length === 0 && careBanner}
 
     </div>
