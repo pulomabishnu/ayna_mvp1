@@ -57,6 +57,22 @@ const ADVISORS = [
   { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
 ];
 
+/* Medical content review team (Puloma, 2026-11-12). Sources for each title:
+ * Dr. Vyas: as already published above and on her articles.
+ * Jemila Medley: "Jemila Medley, MS, OTR/L, CES ... Pelvic Floor Occupational
+ *   Therapist & Owner" on mommasinmotion.com/about-us; photo from her own
+ *   headshot set (jemilamedley.teachable.com).
+ * Kristen Damery: "PT", as Puloma asked (2026-11-12).
+ * Shruti Gajjar, Geena Yousry: MS1 credit as on their ayna articles. No public
+ *   photo found, so they show initials until the team adds photos. */
+const MEDICAL_REVIEW_TEAM = [
+  { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
+  { name: 'Jemila Medley, MS, OTR/L, CES', title: 'Pelvic Floor Occupational Therapist; Owner, Mommas in Motion', photo: '/advisors/jemila-medley.jpg', linkedin: 'https://mommasinmotion.com/about-us', linkLabel: 'Profile' },
+  { name: 'Kristen Damery', title: 'PT' },
+  { name: 'Shruti Gajjar', title: 'MS1, Medical Student' },
+  { name: 'Geena Yousry', title: 'MS1, Medical Student' },
+];
+
 /** Not yet a confirmed advisor. Kept separate from ADVISORS rather than
  * implying a relationship that isn't official yet. */
 const ADVISOR_IN_DISCUSSION = {
@@ -119,6 +135,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack} backLabel={backLabel}
       crumb="About"
+      className="ed-page--about"
     >
       <EdBlock title="We kept asking the same thing: why is this so hard to find?">
         <div className="ed-story">
@@ -178,6 +195,23 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
               {f.linkedin && (
                 <a href={f.linkedin} target="_blank" rel="noopener noreferrer">
                   LinkedIn <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </EdBlock>
+
+      <EdBlock title="ayna’s medical content review team">
+        <ul className="ed-advisors" id="medical-review-team">
+          {MEDICAL_REVIEW_TEAM.map((m) => (
+            <li key={m.name} className="ed-advisor">
+              <AdvisorPhoto advisor={m} />
+              <span className="ed-rowtitle">{m.name}</span>
+              <span className="ed-meta">{m.title}</span>
+              {m.linkedin && (
+                <a href={m.linkedin} target="_blank" rel="noopener noreferrer">
+                  {m.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
                 </a>
               )}
             </li>

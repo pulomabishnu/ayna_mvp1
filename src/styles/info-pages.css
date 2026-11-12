@@ -302,3 +302,7 @@ html body .app-container[data-theme='brand-dark'] .ip-fun__bar { color: #ffedac 
   html body .app-container .ip-fun__bar b { font-size: 40px !important; }
   html body .app-container .ip-fun__bar span { font-size: 13px; }
 }
+
+/* About only (Puloma, 2026-11-12): text and blocks use the full content width
+   instead of stopping at 68ch / 720px halfway across the page. */
+html body .app-container .ed.ed-page--about :is(.ed-body, .ed-head__sub, .ed-prose, .ip-invest, .ip-faq, .ip-mirror.ip-mirror--plain) { max-width: none; }
