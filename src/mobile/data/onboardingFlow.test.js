@@ -34,15 +34,16 @@ describe('first-run setup (seven screens)', () => {
     // Nov 3: four screens before her matches; name and the safety questions right after the reveal.
     // Nov 3 (later): 4 questions, all used by the matcher (the topic screen only filtered the next one).
     expect(core.map((s) => s.id)).toEqual(['age', 'lifeStage', 'support', 'periodPain', 'safety']);
-    expect(more.map((s) => s.id)).toEqual(['conditions', 'allergies', 'medications', 'goals', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow', 'name']);
+    // Nov 12 (founder): every full-quiz question is in onboarding's second part, ZIP code included.
+    expect(more.map((s) => s.id)).toEqual(['conditions', 'allergies', 'medications', 'goals', 'products', 'avoidRepeat', 'formats', 'priceRange', 'brandOpenness', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'zip', 'trust', 'recommendationCount', 'anythingElse', 'periodFlow', 'name']);
     // Given the list she sees, every screen counts (critique, Oct 27).
     expect(onboardingProgress(core[3], 'core', core).label).toBe(`Step 4 of ${core.length}`);
     expect(more.find((s) => s.id === 'priceRange').title).toBe('What would you usually spend on one product?');
     expect(more.find((s) => s.id === 'avoidIngredients').title).toBe('Anything you want your products to avoid?');
     expect(more.find((s) => s.id === 'preferIngredients').title).toBe('Anything you prefer your products to have or be?');
     expect(more.find((s) => s.id === 'fsaHsa').subtitle).toMatch(/before tax/);
-    expect(moreRemaining(i)).toBe(11); // name (optional) never counts as left to do
-    expect(moreRemaining({ ...i, goals: ['Improve sleep'], skippedSteps: ['conditions', 'allergies', 'medications', 'name', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow'] })).toBe(0);
+    expect(moreRemaining(i)).toBe(17); // name (optional) never counts as left to do
+    expect(moreRemaining({ ...i, goals: ['Improve sleep'], skippedSteps: ['conditions', 'allergies', 'medications', 'name', 'formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust', 'periodFlow', 'products', 'avoidRepeat', 'brandOpenness', 'zip', 'recommendationCount', 'anythingElse'] })).toBe(0);
   });
 
   it('screen 1 is a list of topics with Something else; screen 3 the spec goals', () => {

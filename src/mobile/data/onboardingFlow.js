@@ -158,18 +158,22 @@ const SCREEN_OF = {
   support: 3, periodFlow: 3, periodPain: 3, utiFrequency: 3, safety: 3,
   age: 2, lifeStage: 2, ttcDuration: 2, postpartumTiming: 2, pregnancyTrimester: 2,
   formats: 5, priceRange: 5, avoidIngredients: 5, preferIngredients: 5, fsaHsa: 5, trust: 5,
+  products: 5, avoidRepeat: 5, brandOpenness: 5, zip: 5, recommendationCount: 5, anythingElse: 5,
   conditions: 6, allergies: 6, medications: 6,
 };
 const SCREEN_ORDER = {
   2: ['age', 'lifeStage', 'ttcDuration', 'postpartumTiming', 'pregnancyTrimester'],
   3: ['support', 'periodFlow', 'periodPain', 'utiFrequency', 'safety'],
-  5: ['formats', 'priceRange', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'trust'],
+  // Founder, Nov 12 ("some quiz questions are missing from onboarding, like ZIP code"): every
+  // question in the full quiz is in "more", after her matches (the first part stays four questions).
+  5: ['products', 'avoidRepeat', 'formats', 'priceRange', 'brandOpenness', 'avoidIngredients', 'preferIngredients', 'fsaHsa', 'zip', 'trust', 'recommendationCount', 'anythingElse'],
   6: ['conditions', 'allergies', 'medications'],
 };
 // Optional detail she can add on screen 6 (cycle and pregnancy information).
 const DEEPER_OPTIONAL = ['periodFlow', 'ttcDuration', 'pregnancyTrimester'];
 /** Steps left for later, asked one at a time after the first run. */
-export const LATER_STEP_IDS = ['zip', 'products', 'avoidRepeat', 'recommendationCount', 'brandOpenness', 'trustedBrands', 'anythingElse'];
+// Nov 12: all but trustedBrands are now in "more" (founder: none missing from onboarding).
+export const LATER_STEP_IDS = ['trustedBrands'];
 
 /**
  * The first-run sequence: [{ ...intakeStep, screen, why, required }].
