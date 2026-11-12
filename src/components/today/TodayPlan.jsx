@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { todayHelp, TODAY_HELP } from '../../health/todayHelp.js';
+import { todayHelp, TODAY_HELP, productsForTopic } from '../../health/todayHelp.js';
+import { goalsProgress } from '../../health/goalProgress.js';
 import ProductTileImage from '../ProductTileImage.jsx';
 import './today-plan.css';
 
@@ -26,6 +27,7 @@ const ICONS = {
   log: 'M12 5v14M5 12h14',
   picks: 'M6 7h12l-1 13H7zM9 7a3 3 0 0 1 6 0',
   data: 'M4 19V9M10 19V5M16 19v-7M22 19H2',
+  goals: 'M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z',
 };
 const SHORT = { pain: 'Ease cramps', sleep: 'Sleep better', energy: 'More energy', mood: 'Lift your mood', pms: 'Ease PMS', steady: 'Keep it up' };
 // Which of her matched products fit each topic (name, category and needs text).
@@ -90,6 +92,7 @@ function ProductRows({ products, inRoutine, onOpenProduct, onAddToRoutine }) {
 export default function TodayPlan({
   entry = null, pregnant = false, postCycle = false, insight = null, picks = [], myProductIds = [],
   onOpenLog, onOpenRead, onExplore, onAddGoal, goalsAdded = [], onOpenProduct, onAddToRoutine, onOpenInsight,
+  goals = [], log = {}, today = null,
 }) {
   const [open, setOpen] = useState(null);
   const [added, setAdded] = useState([]);
@@ -104,6 +107,12 @@ export default function TodayPlan({
   const fits = (h) => picks.filter((p) => FITS[h.id]?.test(textOf(p))).slice(0, 3);
 
   const tiles = [];
+  // Your goals (founder + Puloma, Nov 11): this week's progress on each goal, from her own log.
+  const progress = today ? goalsProgress(goals, log, today) : [];
+  if (progress.length) {
+    const best = [...progress].sort((a, b) => b.good - a.good)[0];
+    tiles.push({ key: 'goals', icon: ICONS.goals, title: 'Your goals', line: best.logged ? `${best.label}: ${best.good} of 7 days` : `${progress.length} ${progress.length === 1 ? 'goal' : 'goals'}. Log today to see progress.`, rings: progress.slice(0, 3), go: () => setOpen('goals') });
+  }
   if (!logged) tiles.push({ key: 'log', icon: ICONS.log, title: 'Log today', line: 'Mood, pain, energy, period', go: onOpenLog });
   topics.slice(0, 3).forEach((h) => tiles.push({ key: h.id, icon: ICONS[h.id] || ICONS.steady, title: SHORT[h.id] || h.title, line: h.fromData || h.tips[0], go: () => setOpen(h.id) }));
   if (insight && !insight.topic && onOpenInsight) tiles.push({ key: 'data', icon: ICONS.data, title: insight.label, line: insight.line, go: onOpenInsight });
@@ -126,6 +135,7 @@ export default function TodayPlan({
               <span className="ay-tp-tile__ic"><Icon d={t.icon} /></span>
               <b>{t.title}</b>
               <span className="ay-tp-tile__line">{t.line}</span>
+              {t.rings && <span className="ay-tp-rings" aria-hidden="true">{t.rings.map((g) => <svg key={g.id} viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" className="ay-tp-ring__bg" /><circle cx="18" cy="18" r="15" className="ay-tp-ring__fg" style={{ strokeDasharray: `${(g.good / 7) * 94.25} 94.25` }} /></svg>)}</span>}
               {t.thumbs && <span className="ay-tp-tile__thumbs" aria-hidden="true">{t.thumbs.map((p) => <span key={p.id}><ProductTileImage product={p} alt="" letterNode={<span>{(p.brand || p.name || '?').slice(0, 1)}</span>} /></span>)}</span>}
             </button>
           </li>
@@ -151,6 +161,37 @@ export default function TodayPlan({
           {h.read && onOpenRead && <button type="button" className="ay-tp-link" onClick={() => { setOpen(null); onOpenRead(h.read); }}>Read more</button>}
           <p className="ay-tp-src">From {h.sources.map((s, j) => <span key={s.url}>{j ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>
         </>}
+      </Sheet>
+
+      <Sheet open={open === 'goals'} onClose={() => setOpen(null)} labelledBy="ay-tp-goals-h">
+        <p className="ay-tp-sheet__kicker">This week, from your log</p>
+        <h2 id="ay-tp-goals-h">Your goals</h2>
+        <ul className="ay-tp-goals">
+          {progress.map((g) => {
+            const help = g.topic ? TODAY_HELP[g.topic] : null;
+            const prods = g.topic ? productsForTopic(g.topic, picks, 2) : [];
+            return (
+              <li key={g.id}>
+                <div className="ay-tp-goal__row">
+                  <svg className="ay-tp-goal__ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="ay-tp-ring__bg" /><circle cx="18" cy="18" r="15" className="ay-tp-ring__fg" style={{ strokeDasharray: `${(g.good / 7) * 94.25} 94.25` }} /></svg>
+                  <div><b>{g.label}</b><span>{g.line}</span></div>
+                  <em aria-label={`${g.good} of 7 days`}>{g.good}<small>/7</small></em>
+                </div>
+                {help && <p className="ay-tp-goal__tip">{help.tips[0]}</p>}
+                {prods.length > 0 && <ProductRows products={prods} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />}
+              </li>
+            );
+          })}
+        </ul>
+        {onOpenLog && <button type="button" className="ay-tp-goal ay-tp-goal--wide" onClick={() => { setOpen(null); onOpenLog(); }}>Log today</button>}
+        {onAddGoal && (() => {
+          const have = new Set(goals.map((g) => g.id));
+          const more = ['sleep', 'energy', 'mood', 'pain', 'pms'].map((k) => TODAY_HELP[k]).filter((h) => h?.goal && !have.has(h.goal) && !goalsAdded.includes(h.goal));
+          return more.length > 0 && <>
+            <h3>Add a goal</h3>
+            <div className="ay-tp-addgoals">{more.map((h) => <button key={h.goal} type="button" onClick={() => onAddGoal(h.goal)}>{SHORT[h.id] || h.goalLabel}</button>)}</div>
+          </>;
+        })()}
       </Sheet>
 
       <Sheet open={open === 'picks'} onClose={() => setOpen(null)} labelledBy="ay-tp-picks-h">

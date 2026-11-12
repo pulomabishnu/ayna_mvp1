@@ -8,6 +8,7 @@
  * says when to see a clinician. Pure: same entry in, same list out.
  */
 import { SOURCES } from './interventions.js';
+import { diversifyByBrand } from '../matching/diversify.js';
 
 const NIMH_CARE = { label: 'NIMH: Caring for your mental health', url: 'https://www.nimh.nih.gov/health/topics/caring-for-your-mental-health' };
 const MEDLINE_FATIGUE = { label: 'MedlinePlus: Fatigue', url: 'https://medlineplus.gov/ency/article/003088.htm' };
@@ -136,7 +137,8 @@ export const TOPIC_FITS = {
 const topicText = (p) => `${p?.name || ''} ${p?.category || ''} ${p?.subcategory || ''} ${Array.isArray(p?.needs) ? p.needs.join(' ') : ''} ${Array.isArray(p?.concerns) ? p.concerns.join(' ') : ''} ${p?.description || ''}`;
 export function productsForTopic(topicId, products = [], max = 3) {
   const re = TOPIC_FITS[topicId];
-  return re ? products.filter((p) => p?.id && re.test(topicText(p))).slice(0, max) : [];
+  // One per brand first (matching/diversify.js, Ziegler et al. 2005).
+  return re ? diversifyByBrand(products.filter((p) => p?.id && re.test(topicText(p))), max).slice(0, max) : [];
 }
 
 /** Fired whenever she saves something in her log (the pop-up listens). */

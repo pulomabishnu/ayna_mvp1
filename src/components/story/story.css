@@ -138,3 +138,8 @@
   .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress .is-running i { animation: none; width: 100%; }
   .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-frame { transition: none; }
 }
+/* Pink surface (Nov 11): the rundown's opening and closing, like Wrapped's colour per card. */
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-pink:not([data-theme='dark']) {
+  --s-bg: #f7badd; --s-fg: #3e2723; --s-muted: #3e2723; --s-line: #3e2723;
+  --s-panel: #ffedac; --s-track: rgba(62, 39, 35, .2); --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
+}

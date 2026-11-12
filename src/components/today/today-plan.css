@@ -100,3 +100,28 @@
 .ay-tp .ay-tp-tile.is-plain { border: 1.5px solid #3e2723; }
 .ay-tp .ay-tp-tile.is-plain > button { padding-left: 16px; padding-right: 16px; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp .ay-tp-tile.is-plain { border-color: #ffedac; }
+
+/* Your goals (Nov 11): small progress rings like the inspo's activity rings; the sheet lists each goal
+   with its ring, "3/7", one tip and matched products. Brand colours only. */
+.ay-tp-rings { display: flex; gap: 6px; margin-top: 6px; }
+.ay-tp-rings svg, .ay-tp-goal__ring { width: 36px; height: 36px; transform: rotate(-90deg); }
+.ay-tp-ring__bg { fill: none; stroke: currentColor; stroke-width: 4; opacity: .2; }
+.ay-tp-ring__fg { fill: none; stroke: #3e2723; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray .6s cubic-bezier(.2, .8, .2, 1); }
+.ay-tp .ay-tp-tile.is-pink .ay-tp-ring__fg { stroke: #3e2723; }
+.ay-tp-goals { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 16px; }
+.ay-tp-goal__row { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.ay-tp-goal__row .ay-tp-goal__ring { width: 44px; height: 44px; }
+.ay-tp-sheet .ay-tp-goal__ring .ay-tp-ring__fg { stroke: #3e2723; }
+.ay-tp-goal__row b { display: block; font: 700 16px/1.25 'Figtree', sans-serif; }
+.ay-tp-goal__row span { display: block; font: 500 14px/1.35 'Figtree', sans-serif; }
+.ay-tp-goal__row em { font: 700 24px/1 'ayna Display', 'Figtree', sans-serif; font-style: normal; }
+.ay-tp-goal__row em small { font-size: 14px; }
+.ay-tp-goal__tip { margin: 8px 0 0 56px; font: 500 14px/1.45 'Figtree', sans-serif; }
+.ay-tp-goals .ay-tp-prods { margin-left: 56px; }
+.ay-tp-goal--wide { width: 100%; justify-content: center; margin-top: 20px; }
+.ay-tp-addgoals { display: flex; flex-wrap: wrap; gap: 8px; }
+.ay-tp-addgoals button { min-height: 40px; padding: 0 16px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 14px/1 'Figtree', sans-serif; cursor: pointer; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-sheet .ay-tp-goal__ring .ay-tp-ring__fg { stroke: #f7badd; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-addgoals button { border-color: #ffedac; color: #ffedac; }
+@media (prefers-reduced-motion: reduce) { .ay-tp-ring__fg { transition: none; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-tp-ring__fg { stroke: #f7badd; }

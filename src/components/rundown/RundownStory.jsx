@@ -355,7 +355,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const savable = card.kind === 'match' && !sheet ? card.match.product : null;
   // Two surfaces only (founder, Oct 27: calm, one theme): espresso for the frame,
   // data and safety cards (the Your data band), butter for the rest. Dark mode: both espresso.
-  const surface = isData || card.category === 'safety' || ['opening', 'closing', 'ask'].includes(card.kind) ? 'is-espresso' : 'is-butter';
+  // Nov 11 (founder: "better than Spotify Wrapped"): Wrapped's colour-per-card rhythm in our three
+  // colours. The opening and closing are pink, her data espresso, everything else butter.
+  const surface = ['opening', 'closing'].includes(card.kind) ? 'is-pink' : isData || card.category === 'safety' || card.kind === 'ask' ? 'is-espresso' : 'is-butter';
   const content = list.filter((c) => c.category !== 'frame').length;
   // One action on the glance: the card's own (Body), else Ask why / See data.
   const oneAction = isData && !card.check && !card.flowAsk

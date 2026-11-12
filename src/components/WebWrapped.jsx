@@ -5,6 +5,7 @@ import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, get
 import { whyLine } from '../utils/whyLine';
 import { formatPrice, shownPriceText } from '../utils/formatPrice.js';
 import { groupShelves } from '../matching/shelfGroups.js';
+import { diversifyByBrand } from '../matching/diversify.js';
 import { whyFitSummary } from './match/WhyFit.jsx';
 import { evidenceLevel } from './pdp/evidenceLevel.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
@@ -112,7 +113,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const [peek, setPeek] = useState(null);
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
-    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), 'finish']
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(picks.length >= 3 ? ['top5'] : []), ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -156,7 +157,13 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
     if (message) shareTimer.current = window.setTimeout(() => setShareState(''), 2400);
   };
 
-  const surface = ['intro', 'persona', 'finish'].includes(active) ? 'is-espresso' : 'is-butter';
+  // Nov 11 (founder: "better than Spotify Wrapped"): every slide is its own flat brand colour, like Wrapped's
+  // colour-per-card rhythm: espresso, butter, pink. Never a tint or a fourth colour.
+  const SURFACE = { intro: 'is-espresso', categories: 'is-butter', match: 'is-pink', top5: 'is-butter', why: 'is-pink', checked: 'is-pink', persona: 'is-espresso', finish: 'is-espresso', empty: 'is-butter' };
+  const surface = SURFACE[active] || 'is-butter';
+  // Top 5 and the summary card: one product per brand first (research: diversify.js). #1 stays #1.
+  const top = diversifyByBrand(picks, 5);
+  const pctOf = (p) => { if (!quizResults) return null; try { const r = percentFor ? percentFor(p) : getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts); return Number.isFinite(r) && r > 0 ? shownMatchPercent(Math.round(r)) : null; } catch { return null; } };
   const pct = firstMatch ? shownMatchPercent(firstMatch) : null;
   const plate = (p, cls = '') => <span className={`ays-plate ${cls}`.trim()}><span><Photo product={p} /></span></span>;
   // A tappable photo: opens the product pop-up (never advances the story).
@@ -215,6 +222,18 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               {(first.brand || firstWhy) && <p className="ays-body">{[first.brand, firstWhy].filter(Boolean).join(' · ')}</p>}
             </div>
           </>}
+          {active === 'top5' && <>
+            {/* Wrapped's "Top songs": her top five, numbered big, each with its photo; they land one by one. */}
+            <div className="ays-words"><p className="ays-kicker">Your top {Math.min(5, picks.length)}</p><Kinetic text="Your best matches" /></div>
+            <ol className="ay-wr-top">{top.slice(0, 5).map((p, i) => { const pc = pctOf(p); return (
+              <li key={p.id} style={{ '--d': `${i * 160}ms` }}>
+                <span className="ay-wr-top__n" aria-hidden="true">{i + 1}</span>
+                {tapPlate(p, 'ay-wr-top__plate')}
+                <span className="ay-wr-top__t"><b>{p.name}</b>{p.brand && <small>{p.brand}</small>}</span>
+                {pc != null && <span className="ay-wr-top__pct">{pc}%</span>}
+              </li>
+            ); })}</ol>
+          </>}
           {active === 'why' && firstWhyFit && <>
             <div className="ays-words"><p className="ays-kicker">Why it’s your #1</p><Kinetic text={firstWhyFit.forWhat ? `For ${firstWhyFit.forWhat.toLowerCase()}` : 'Made for what you told us'} /></div>
             <ul className="ay-wr-why">
@@ -242,13 +261,17 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           {active === 'finish' && <>
             {/* Founder, Nov 10: the end looked like a spreadsheet and repeated the shopping-style slide.
                 Now it is her picks themselves, big, like the #1 slide, with one line and one button. */}
-            <div className="ays-visual"><Burst className="is-corner" />
-              <div className={`ay-wr-collage is-n${Math.min(picks.length, 4)}`}>{picks.slice(0, 4).map((p) => <span key={p.id}>{tapPlate(p)}</span>)}</div>
-            </div>
-            <div className="ays-words">
-              <p className="ays-kicker">{persona?.title || 'Your ecosystem'}</p>
-              <Kinetic text={`${picks.length} ${picks.length === 1 ? 'pick' : 'picks'}, ready`} />
-              {first && <p className="ays-body">Your #1: {first.name}</p>}
+            {/* Wrapped's summary card: her photos, her top picks and her needs, one big number. */}
+            <h1 className="sr-only">Your ayna summary</h1>
+            <div className="ay-wr-card">
+              <div className={`ay-wr-card__photos is-n${Math.min(picks.length, 4)}`}>{top.slice(0, 4).map((p) => <span key={p.id}>{tapPlate(p)}</span>)}</div>
+              <div className="ay-wr-card__list"><p>Top picks</p><ol>{top.slice(0, 5).map((p, i) => <li key={p.id}><i>{i + 1}</i><span>{p.name}</span></li>)}</ol></div>
+              {byArea.length > 0 && <ul className="ay-wr-card__needs" aria-label={byNeed.length ? 'Picked for' : 'Areas'}>{byArea.slice(0, 4).map((a) => <li key={a.label}>{a.label}</li>)}</ul>}
+              <div className="ay-wr-card__stats">
+                <p><small>Products</small><b>{counts ? counts.products : picks.length}</b></p>
+                {pct != null ? <p><small>#1 match</small><b>{pct}%</b></p> : counts && counts.needs > 0 ? <p><small>Needs covered</small><b>{counts.needsCovered}/{counts.needs}</b></p> : null}
+              </div>
+              <p className="ay-wr-card__brand">ayna</p>
             </div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>

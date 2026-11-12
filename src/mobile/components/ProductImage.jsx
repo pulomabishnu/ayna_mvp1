@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { safeProductImageSrc, resolveProductImage } from '../../utils/resolveProductImage.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
+import { getProductById } from '../../data/catalog.js';
 
 // No photo yet: the same designed tile as the website (ProductTileImage.jsx):
 // the brand in the display face on a tint picked from its name, a hairline,
@@ -35,7 +36,10 @@ function PhotoPlaceholder({ style, product }) {
  */
 export default function ProductImage({ src, alt, allowBrandLogo = false, style, product, fallback = null }) {
   // Cleaned white-background studio photo (by catalog id) wins over `src`.
-  const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo);
+  // A saved snapshot can carry no image (or a stale one): fall back to the live catalog entry's photo
+  // by id, as the website's ProductTileImage does. Embr Wave 2 showed "Photo coming soon" (Nov 11).
+  const catalogSrc = product?.id ? (getProductById(product.id)?.image || '') : '';
+  const directSrc = productImageOverride(product) || safeProductImageSrc(src, allowBrandLogo) || safeProductImageSrc(catalogSrc, allowBrandLogo);
   // Same live photo lookup the website always used (/api/product-image via
   // resolveProductImage) when the catalog has no usable photo, so cards
   // stop showing the placeholder for products that do have a real image.

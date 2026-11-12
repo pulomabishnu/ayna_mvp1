@@ -23,6 +23,7 @@ import { flowRowsFromLog, readLog, sleepFromLog } from '../../health/dailyLog.js
 import '../../styles/week-explained.css';
 import TodayViews from '../components/TodayViews.jsx';
 import TodayPlan from '../../components/today/TodayPlan.jsx';
+import { getSelectedNeeds } from '../../data/products.js';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
 import '../ayna-home.css';
 import HealthRefreshPrompt from '../../components/health/HealthRefreshPrompt.jsx';
@@ -111,6 +112,8 @@ export default function AynaHomeScreen(props) {
     return (suggestedEcosystemProducts || []).filter((p) => p?.id && !mine.has(p.id) && !omittedProducts?.[p.id]).slice(0, 6);
   }, [suggestedEcosystemProducts, myProducts, omittedProducts]);
   const [goalsAdded, setGoalsAdded] = useState([]);
+  // Her goals: the needs she chose in the quiz or added with "Make it a goal".
+  const myGoals = useMemo(() => { try { const q = lastQuizAnswers || quizAnswers; return q ? getSelectedNeeds(q).map((n) => ({ id: n.id, label: n.label })) : []; } catch { return []; } }, [lastQuizAnswers, quizAnswers]);
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
   const [sheet, setSheet] = useState(null);
   const openMetric = (m) => { if (m === 'cycle' ? cycle : m && chartOf(m)) setSheet(m); else openDashboard(); };
@@ -143,7 +146,8 @@ export default function AynaHomeScreen(props) {
             onOpenLog={() => setMonthOpen(true)} onOpenRead={(id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }}
             onExplore={onBrowse ? (q) => onBrowse(q) : undefined} onOpenProduct={onOpenProduct} onAddToRoutine={props.onAddToEcosystem || null}
             onAddGoal={onAddGoal ? (g) => { onAddGoal(g); setGoalsAdded((x) => [...x, g]); } : null} goalsAdded={goalsAdded}
-            onOpenInsight={todayInsight?.metric ? () => openMetric(todayInsight.metric) : null} />
+            onOpenInsight={todayInsight?.metric ? () => openMetric(todayInsight.metric) : null}
+            goals={myGoals} log={dayLog} today={today} />
           {things}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
           <HomeWidgets
