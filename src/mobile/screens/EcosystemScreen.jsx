@@ -158,7 +158,10 @@ export default function EcosystemScreen({
       if (p) forcedShelf.set(p.id, sh.needId);
     });
   }
-  const currentProducts = forcedShelf.size ? [...shortlist, ...myProducts.filter((p) => forcedShelf.has(p.id))] : shortlist;
+  // Founder, Nov 11 ("it shows no products even though I have 5 and they're in my routine"): every
+  // product she has shows on a shelf. The shortlist leads; the rest go on the shelf of their best need
+  // or their area, never into a folded "Earlier picks" list she can't see.
+  const currentProducts = [...shortlist, ...myProducts.filter((p) => forcedShelf.has(p.id) && !shortIds.has(p.id)), ...myProducts.filter((p) => !shortIds.has(p.id) && !forcedShelf.has(p.id))];
   const currentIds = new Set(currentProducts.map((product) => product.id));
   const earlierProducts = myProducts.filter((product) => !currentIds.has(product.id));
   const careFlags = seed?.careFlags || null;
@@ -442,7 +445,7 @@ export default function EcosystemScreen({
         return <section key={section.key} id={`ayna-area-${section.key}`} className={`ay-shelf2 eco-app-shelf${empty ? ' is-empty-shelf' : ''}${grid ? ' is-grid' : ''}`} style={{ '--area-tone': tone, '--area-ink': tone === '#3E2723' ? '#FFEDAC' : '#3E2723' }} aria-labelledby={`ayna-area-title-${section.key}`}>
           <div className="ay-shelf2-head">
             <h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>
-            {shown.length > 0 && <span className="ay-shelf2-count" aria-label={`${shown.length} on this shelf`}>{shown.length}</span>}
+            {section.products.length > 0 && <span className="ay-shelf2-count" aria-label={`${section.products.length} on this shelf`}>{section.products.length}</span>}
             <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>Add</button>
           </div>
           {empty && <div className="ay-shelf2-empty">

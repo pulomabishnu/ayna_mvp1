@@ -296,7 +296,7 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
    real photo, 16px name, brand and price, her match, and a chevron; shelves are a plain heading,
    a count and Add. Soft fills, no outlines, no dashed boxes. */
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row { display: grid; gap: 0; border-radius: 20px; background: #f7badd; overflow: hidden; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row { display: grid; gap: 0; border-radius: 0; background: transparent; overflow: hidden; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__main { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 64px minmax(0, 1fr) 20px; align-items: center; gap: 14px; padding: 12px 14px; color: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__main:focus-visible { outline: 3px solid #3e2723; outline-offset: -3px; border-radius: 20px; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__img { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: #fff; overflow: hidden; font: 700 22px/1 'Figtree', sans-serif; color: #3e2723; }
@@ -313,9 +313,9 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-app-shelf .ay-shelf2-count { border: 0 !important; background: none !important; font: 600 15px/1 'Figtree', sans-serif !important; color: #3e2723 !important; width: auto !important; height: auto !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-app-shelf .ay-shelf2-add { margin-left: auto !important; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-app-shelf .ay-shelf2-empty { border: 0 !important; background: #f7badd !important; border-radius: 20px !important; }
-.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row { background: #f7badd; }
+.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row { background: transparent; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) :is(.ay-yp-row__main, .ay-yp-row__day, .eco-app-shelf .ay-shelf2-head h2) { color: #ffedac !important; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__txt small { color: #ffedac; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__txt em { background: #f7badd; color: #3e2723; }
-.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { border: 0 !important; background: #f7badd !important; box-shadow: none !important; }
-.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { background: #f7badd !important; }
+.ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { border: 1.5px solid #3e2723 !important; background: transparent !important; box-shadow: none !important; }
+.ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { background: transparent !important; border-color: #ffedac !important; }

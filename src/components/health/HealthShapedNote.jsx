@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import { useHealthData } from '../../mobile/hooks/useHealthData.js';
 import { useHealthMatchPref } from '../../health/matchPref.js';
+import { mergeLines } from './mergeLines.js';
 import { changeLine, changeSources, joinNames, sourceName, splitSources, PERIOD_TIMING_SOURCE } from './healthCopy.js';
 import { PulseIcon } from './HealthBackedBadge.jsx';
 import HealthMatchToggle from './HealthMatchToggle.jsx';
@@ -118,7 +119,8 @@ export default function HealthShapedNote({ shaped = null, userId = null, onConne
         {sources.length > 0 && <ul className="ay-hsn__srcs" aria-label="From">{sources.map((id) => <SourceChip key={id} id={id} />)}</ul>}
       </div>
       <ul className="ay-hsn__changes">
-        {shown.map((c) => { const l = changeLine(c); return <li key={c.needId}><b>{l.lead}</b> {l.effect}</li>; })}
+        {/* Nov 11: two goals backed by the same finding read as one line, not the same sentence twice. */}
+        {mergeLines(shown).map((l) => <li key={l.key}><b>{l.lead}</b> {l.effect}</li>)}
       </ul>
       <div className="ay-hsn__foot">
         {changes.length > shown.length && <span className="ay-hsn__more">{changes.length - shown.length} more</span>}
