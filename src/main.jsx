@@ -439,18 +439,33 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 // Anonymous journey step counter: one "landed" per visit (journeyStep.js).
 try { countLanded() } catch { /* never blocks the page */ }
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      {isMobilePreview ? (
-        <React.Suspense fallback={<div style={{ minHeight: '100vh', background: mobileLoadingBackground() }} />}>
-          <MobileApp />
-        </React.Suspense>
-      ) : <App />}
-    </ErrorBoundary>
-  </React.StrictMode>
-);
+function mountApp() {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        {isMobilePreview ? (
+          <React.Suspense fallback={<div style={{ minHeight: '100vh', background: mobileLoadingBackground() }} />}>
+            <MobileApp />
+          </React.Suspense>
+        ) : <App />}
+      </ErrorBoundary>
+    </React.StrictMode>
+  );
+  // "page opened → app shell visible": the double rAF fires after the first
+  // frame React painted, which is exactly when the shell is on screen.
+  requestAnimationFrame(() => requestAnimationFrame(() => markPerf('shell_visible')));
+}
 
-// "page opened → app shell visible": the double rAF fires after the first
-// frame React painted, which is exactly when the shell is on screen.
-requestAnimationFrame(() => requestAnimationFrame(() => markPerf('shell_visible')));
+// The home page's full stylesheet loads without blocking (scripts/prerender-home.mjs). A guest on /
+// already has the landing's CSS inline; anywhere else (other routes, the iOS app) waits for the full
+// stylesheet first so nothing renders unstyled. Never more than 4s: a failed stylesheet can't hold the app.
+const fullCss = typeof document !== 'undefined' ? document.querySelector('link[data-ay-css]') : null;
+if (fullCss && !fullCss.sheet && !document.documentElement.classList.contains('ay-pre')) {
+  let done = false;
+  const go = () => { if (!done) { done = true; mountApp(); } };
+  fullCss.addEventListener('load', go);
+  fullCss.addEventListener('error', go);
+  setTimeout(go, 4000);
+} else {
+  mountApp();
+}

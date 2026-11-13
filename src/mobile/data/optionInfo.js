@@ -145,7 +145,7 @@ export const OPTION_INFO = {
   'Drinks or teas': 'Ready-to-drink or steeped products.',
   'Creams, lotions, or gels': 'Applied to the skin.',
   'Patches': 'Stuck on the skin, like heat patches or hormone patches.',
-  'Suppositories': 'Small inserts placed in the vagina that melt, like boric acid.',
+  'Suppositories': 'Small inserts placed in the vagina that dissolve, like boric acid suppositories.',
   'Devices or wearables': 'Things like pelvic trainers, heat devices or tracking rings.',
   'Period-care products': 'Pads, tampons, cups, discs and period underwear.',
   'No preference': 'Any option works for you.',

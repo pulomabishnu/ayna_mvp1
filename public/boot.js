@@ -97,3 +97,27 @@ window.setTimeout(function ayBootSlow() {
   var link = slow && slow.querySelector('a');
   if (link) link.addEventListener('click', function (e) { e.preventDefault(); window.location.reload(); });
 }, 8000);
+
+// Website home for a guest: show the prerendered landing (scripts/prerender-home.mjs) at once.
+// Never in the iOS app, on other routes that share this file, or when a session is stored.
+(function () {
+  try {
+    if (!/^\/(home|today)?\/?$/.test(location.pathname) || window.Capacitor || !/^https?:$/.test(location.protocol)) return;
+    var stores = [window.localStorage, window.sessionStorage];
+    for (var s = 0; s < stores.length; s++) {
+      var st = stores[s]; if (!st) continue;
+      for (var i = 0; i < st.length; i++) { var k = st.key(i); if (k && /^sb-.+-auth-token/.test(k)) return; }
+    }
+    document.documentElement.className += ' ay-pre';
+  } catch (e) { /* storage blocked: the app paints as before */ }
+})();
+// The full stylesheet waits behind media="print" on the prerendered home page (prerender-home.mjs).
+// Guest on /: switch it on once it has arrived (the inline critical CSS covers the landing until then).
+// Anywhere else (other routes, the iOS app): switch it on now; main.jsx waits for it before rendering.
+(function () {
+  var l = document.querySelector('link[data-ay-css]');
+  if (!l) return;
+  var on = function () { l.media = 'all'; };
+  if (!/\bay-pre\b/.test(document.documentElement.className)) { on(); return; }
+  if (l.sheet) on(); else { l.addEventListener('load', on); l.addEventListener('error', on); }
+})();

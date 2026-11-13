@@ -45,3 +45,25 @@ export function wideRainCols(rand = Math.random, pool = RAIN_POOL_WIDE) {
     return c % 2 ? [{ k: w }, prod] : [prod, { k: w }];
   }));
 }
+
+/** Same numbers for the same seed (mulberry32). Lets the prerendered home page and the app's first
+ *  render show the same products in the rain, so nothing swaps when the page code starts. */
+export function seededRandom(seed) {
+  let a = (Number(seed) >>> 0) || 1;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** The seed the prerendered home page used, if its HTML is still on screen; otherwise a new one. */
+export function rainSeed() {
+  try {
+    const v = Number(document.querySelector('[data-ay-pre] .wl-hero[data-rain-seed]')?.getAttribute('data-rain-seed'));
+    if (Number.isFinite(v) && v > 0) return v;
+  } catch { /* no document */ }
+  return 1 + Math.floor(Math.random() * 2147483646);
+}

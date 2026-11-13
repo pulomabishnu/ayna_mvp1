@@ -220,6 +220,12 @@ export const PRODUCT_FORMATS = [
   'Pills or capsules', 'Gummies', 'Powders', 'Drinks or teas', 'Creams, lotions, or gels', 'Patches',
   'Suppositories', 'Devices or wearables', 'Period-care products', 'No preference',
 ];
+/** What the format chips say (founder, Nov 12: "Suppositories" and "Period-care products" read off).
+ *  The saved values stay the same, so earlier answers and the matcher's mapping keep working.
+ *  "Vaginal inserts" is the consumer word for suppositories like boric acid; the period option
+ *  names the products themselves. */
+export const PRODUCT_FORMAT_LABELS = { Suppositories: 'Vaginal inserts', 'Period-care products': 'Pads, tampons or cups' };
+
 
 export const PRICE_RANGES = ['Under $25', '$25–$75', '$75–$150', '$150+', 'Price is not a major factor for me'];
 

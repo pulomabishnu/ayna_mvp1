@@ -131,7 +131,7 @@ import { installScrollMemory, isRestoringScroll } from './utils/scrollMemory';
 import { avatarInitials } from './utils/avatarInitials';
 import AuthCallback from './components/AuthCallback';
 import './styles/editorial.css';
-import { getSupabaseClient } from './utils/supabaseClient';
+import { getSupabaseClient, hasStoredAuthSession } from './utils/supabaseClient';
 import { clearGeneratedPicksForUser, isGeneratedPick, loadEcosystemForUser, upsertProductState, upsertProductsBatch, removeGeneratedProductsFromEcosystem, clearEcosystemForUser } from './utils/ecosystemStore';
 import { loadSavedProducts, persistSavedProducts, clearSavedProducts, loadSavedForUser, setSavedForUser, savedListToPersist } from './utils/savedProductsStore';
 import { loadLearningMemoryForUser, saveLearningMemoryForUser } from './utils/learningMemoryStore';
@@ -466,7 +466,11 @@ function getInitialView() {
   // a genuinely unknown path, never '/'.
   // Tolerate a trailing slash (e.g. /campus-resources/ from a shared link).
   const trimmed = path.length > 1 ? path.replace(/\/+$/, '') : path;
-  return PATH_TO_VIEW[path] || PATH_TO_VIEW[trimmed] || 'not-found';
+  const view = PATH_TO_VIEW[path] || PATH_TO_VIEW[trimmed] || 'not-found';
+  // Home is private. A browser with no stored session starts on the landing, instead of drawing an
+  // empty Home and then swapping (the footer jumped up the page: layout shift 0.9, audit Nov 12).
+  if (view === 'home' && !hasStoredAuthSession()) return 'welcome';
+  return view;
 }
 
 function getInitialProductId() {
@@ -839,7 +843,9 @@ function App() {
   const myProductsRef = useRef({});
   const seedSavePromiseRef = useRef(Promise.resolve());
   useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
-  const [authLoading, setAuthLoading] = useState(true);
+  // A browser with no stored session is a guest: no skeleton while getSession() confirms it, so the
+  // landing (the page's largest paint) shows at once and matches the prerendered HTML (speed, Nov 12).
+  const [authLoading, setAuthLoading] = useState(() => (typeof window === 'undefined' ? true : hasStoredAuthSession()));
   useEffect(() => {
     if (authLoading || user || guestEcoRestoredRef.current) return;
     guestEcoRestoredRef.current = true;

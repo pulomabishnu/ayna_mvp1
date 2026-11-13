@@ -685,3 +685,8 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 /* Brand colours only (Nov 12): the two choices are outlined in butter, not a see-through wash. */
 html body :is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container) .ay-pz .ay-pz__list :is(li, li > button) { background: transparent !important; }
 html body :is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container):is(#ay, .ayna-mobile, .app-container) .ay-pz .ay-pz__list li { box-shadow: inset 0 0 0 1.5px currentColor !important; border-radius: 20px !important; padding: 0 14px !important; }
+/* No matches: one line per need she picked, saying why (Nov 12). */
+.ay-ob-ready__whynone { display: grid; gap: 12px; margin: 16px 0 0; padding: 0; list-style: none; }
+.ay-ob-ready__whynone li { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; box-shadow: inset 0 0 0 1.5px currentColor; }
+.ay-ob-ready__whynone b { font: 700 16px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-ob-ready__whynone span { font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }

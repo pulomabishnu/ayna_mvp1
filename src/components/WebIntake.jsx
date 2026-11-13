@@ -8,7 +8,7 @@ import {
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BREASTFEEDING_STATUS,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
-  PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS,
+  PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS, PRODUCT_FORMAT_LABELS,
   STOP_REASONS, SUPPORT_GROUPS, VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming,
   UTI_FREQUENCY, buildSnapshot, isMultiSelectStep,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
@@ -747,7 +747,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       case 'formats': {
         const custom = intake.preferredFormats.filter((f) => !PRODUCT_FORMATS.includes(f));
         return <>
-          <Tiles label={step.title} items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />
+          <Tiles label={step.title} items={PRODUCT_FORMATS} labels={PRODUCT_FORMAT_LABELS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} />
           <div className="qz-chips is-small qz-format-own">
             {custom.length > 0 && <Chips small items={custom} selected={custom} onToggle={(v) => toggleExclusive('preferredFormats', v)} />}
             <AddOwn placeholder="Add a format" onAdd={(v) => addCustom('preferredFormats', v, ['No preference'])} />

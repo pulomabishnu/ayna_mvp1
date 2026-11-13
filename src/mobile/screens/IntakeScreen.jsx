@@ -58,6 +58,7 @@ import {
   PREGNANCY_TRIMESTER,
   PRICE_RANGES,
   PRODUCT_FORMATS,
+  PRODUCT_FORMAT_LABELS,
   STOP_REASONS,
   SUPPORT_GROUPS,
   VASOMOTOR_TIMING_OPTIONS,
@@ -911,7 +912,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'formats') return (
       <>
-        <SearchableChoices items={PRODUCT_FORMATS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search formats" layout="grid" icons={FORMAT_ICONS} searchable={false} />
+        <SearchableChoices items={PRODUCT_FORMATS} labels={PRODUCT_FORMAT_LABELS} selected={intake.preferredFormats} onToggle={(v) => toggleExclusive('preferredFormats', v, ['No preference'])} search={search} onSearch={setSearch} onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} placeholder="Search formats" layout="grid" icons={FORMAT_ICONS} searchable={false} />
         <div className="ip-gap"><AddOwn placeholder="Add a format" onAdd={(value) => addCustomSelection('preferredFormats', value, ['No preference'])} /></div>
       </>
     );

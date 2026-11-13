@@ -13,7 +13,7 @@ import './web-landing.css';
 import HowItWorksDemo from './HowItWorksDemo.jsx';
 import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
 import './landing-story.css';
-import { wideRainCols } from './rainData.js';
+import { wideRainCols, seededRandom, rainSeed } from './rainData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
 import { countJourneyStep } from '../../utils/journeyStep.js';
 
@@ -43,9 +43,11 @@ const tap = (step, fn) => (typeof fn === 'function' ? (...a) => { countJourneySt
    tip's anchor). How we match is in the walkthrough below. The brown and pink bar runs under it. */
 function Hero({ cta, onSearch, banner = null, draftLine = null }) {
   // A different mix of products on every visit (founder, Nov 9: "why is it the same products").
-  const [rain] = useState(() => wideRainCols());
+  // Seeded, so the prerendered home page and this first render pick the same products (speed, Nov 12).
+  const [seed] = useState(rainSeed);
+  const [rain] = useState(() => wideRainCols(seededRandom(seed)));
   return (
-    <section className="wl-hero" aria-labelledby="hm-hero-title">
+    <section className="wl-hero" aria-labelledby="hm-hero-title" data-rain-seed={seed}>
       <div className="wl-hero__band">
         <Rain cols={4} layout={rain} onInk className="wl-rain" />
         <div className="wl-hero__in">

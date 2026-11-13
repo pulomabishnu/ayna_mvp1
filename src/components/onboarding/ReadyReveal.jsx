@@ -99,7 +99,9 @@ function perNeed(answers, matchOpts = undefined) {
     const careNoteFor = first?.code === 'pregnancy_constipation' ? 'digestive.constipation' : null;
     const grouped = groupRevealRows(rows);
     const total = new Set(grouped.flatMap((row) => [...row.products, ...row.services].map((p) => p.id))).size;
-    return { rows: grouped, total, careNote, careNoteFor, everydayBasics };
+    // Needs she picked that have nothing yet, with the reason (shown only when there are no matches).
+    const emptyNeeds = rows.filter((r) => !r.products.length && !r.services.length).map((r) => ({ id: r.id, label: r.label, why: r.why || r.heldWhy || '' }));
+    return { rows: grouped, total, careNote, careNoteFor, everydayBasics, emptyNeeds };
   } catch {
     return { rows: [], total: 0, careNote: '' };
   }
@@ -122,7 +124,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
   const matches = useMemo(() => (ready && liveReady ? firstMatches(answers, 5) : []), [answers, ready, liveReady]);
   // Her connected health data counts too (founder, Nov 9: results from the quiz AND wearables).
-  const { rows: needRows, total: needTotal, careNote, everydayBasics = false } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
+  const { rows: needRows, total: needTotal, careNote, everydayBasics = false, emptyNeeds = [] } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
   // Founder, Nov 10 ("this should never be a thing"): no screen that says there is nothing for her.
   // When no need produced a shelf, her top matches from the same engine show as "Picks for you".
   const basics = [];
@@ -279,6 +281,13 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         )}
         {/* Founder, Nov 10: never a dead end. Explore Shop and add what she uses or likes; ayna learns
             from her ecosystem and suggests similar products in the Daily Rundown. */}
+        {/* Nov 12 (team run-through, "what is this?"): with no matches, say why for each need she
+            picked, instead of a bare "Your profile is ready". */}
+        {emptyNeeds.length > 0 && (
+          <ul className="ay-ob-ready__whynone" aria-label="Why there are no matches yet">
+            {emptyNeeds.map((r) => <li key={r.id}><b>{r.label}</b><span>{r.why || r.heldWhy || 'Nothing meets ayna’s evidence and safety bar for this yet. We add products as they pass.'}</span></li>)}
+          </ul>
+        )}
         <p className="ay-ob-ready__lead">Explore Shop and add the products you use or like to your ecosystem. ayna learns from them and suggests similar ones in your Daily Rundown.</p>
 </>
       )}

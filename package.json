@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build && node scripts/prerender.mjs",
+    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build && node scripts/prerender.mjs && node scripts/prerender-home.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "catalog:export": "node scripts/export-catalog.mjs",
@@ -49,6 +49,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "beasties": "^0.5.5",
     "cross-env": "^7.0.3",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",

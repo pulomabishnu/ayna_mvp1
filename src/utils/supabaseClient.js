@@ -310,3 +310,24 @@ export async function getSupabaseUser() {
   if (error) return null;
   return data?.user || null;
 }
+
+/**
+ * True when this browser holds a main-account Supabase session (or a sign-in in progress).
+ * Synchronous, so the first render can tell a known guest from a maybe-signed-in visitor
+ * without waiting for getSession(): a guest gets the landing at once instead of a skeleton
+ * (website speed, Nov 12). When unsure (storage blocked), it says true so nothing flips.
+ */
+export function hasStoredAuthSession() {
+  try {
+    for (const store of [window.localStorage, window.sessionStorage]) {
+      if (!store) continue;
+      for (let i = 0; i < store.length; i += 1) {
+        const k = store.key(i);
+        if (k && AUTH_TOKEN_KEY_RE.test(k) && !/community/i.test(k)) return true;
+      }
+    }
+    return false;
+  } catch {
+    return true;
+  }
+}
