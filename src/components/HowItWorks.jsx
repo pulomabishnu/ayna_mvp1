@@ -178,7 +178,7 @@ export default function HowItWorks({ onBack, backLabel, onViewSources, onStart }
         </ReadMore>
         {/* One clear next step at the end (Oct 29 audit): get matched; the sources stay one tap away. */}
         <div className="ip-closer__cta" style={{ marginTop: 24 }}>
-          {onStart && <StickerButton onClick={() => onStart()}>Get my matches</StickerButton>}
+          {onStart && <StickerButton onClick={() => onStart()}>Take the 1-minute quiz</StickerButton>}
           {onStart ? <OutlineButton onClick={openSources}>Read our sources</OutlineButton> : <StickerButton onClick={openSources}>Read our sources</StickerButton>}
         </div>
       </EdBlock>

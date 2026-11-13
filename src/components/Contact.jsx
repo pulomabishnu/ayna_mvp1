@@ -139,7 +139,8 @@ export default function Contact({ onBack, backLabel, user = null }) {
         </div>
 
         {status === 'sent' && (
-          <div role="status" className="ed-notice ed-notice--ok">Thanks. Your message has been sent to the ayna team.</div>
+          // Audit (Nov 12): brought into view, so a sender on a phone sees it went through.
+          <div role="status" tabIndex={-1} ref={(el) => { if (el && !el.dataset.shown) { el.dataset.shown = '1'; el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.focus({ preventScroll: true }); } }} className="ed-notice ed-notice--ok">Thanks. Your message has been sent to the ayna team. We reply by email.</div>
         )}
         {error && (
           <div role="alert" className="ed-notice ed-notice--err">{error}</div>

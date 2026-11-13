@@ -16,13 +16,13 @@ const CTAS = new Set(['start_quiz', 'start_quiz_demo', 'start_quiz_end', 'start_
  * Default "Get my free matches". A PostHog multivariate flag `landing-cta-copy` can
  * switch a share of visitors to "Sign up free" to compare; `copy` is sent with each click.
  */
-export const CTA_COPY = { get_my_free_matches: 'Get my free matches', sign_up_free: 'Sign up free' };
+export const CTA_COPY = { get_my_free_matches: 'Get my free matches', sign_up_free: 'Take the quiz' };
 export function landingCtaCopy() {
   try {
     const v = client.getFeatureFlag?.('landing-cta-copy');
     if (typeof v === 'string' && CTA_COPY[v]) return v;
   } catch { /* flags not loaded */ }
-  return 'sign_up_free'; // founder, Nov 4: the main button says "Sign up free"
+  return 'sign_up_free'; // Nov 12: the header button says "Take the quiz" (the hero says "Take the 1-minute quiz"); same event key
 }
 const SURFACES = new Set(['web', 'app', 'mobile_web']);
 const SAFE_ID = /^[a-zA-Z][a-zA-Z0-9_]{0,40}$/;

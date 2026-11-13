@@ -589,7 +589,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         {!isSignup && !allowSignup && onStartEcosystem && (
           <div className="ay-auth-doors">
             <button type="button" className="ay-auth-doors__new" onClick={onStartEcosystem}>
-              <b>New here? Get my matches</b>
+              <b>New here? Take the 1-minute quiz</b>
               <span>A short quiz, then products matched to you</span>
             </button>
             <p className="ay-auth-doors__or">or sign in</p>

@@ -197,7 +197,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             <li style={{ '--i': 0 }}>
               <button type="button" onClick={safetyLeft > 0 ? (onSafety || onMorePersonal) : onMorePersonal}>
                 <span className="ay-pz__blob is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 9.5a4 4 0 1 1 5.5 3.7c-.9.4-1.5 1.2-1.5 2.2V16" /><circle cx="12" cy="19.5" r=".6" /></svg></span>
-                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : 'Answer a few more questions'}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · about {moreMin} min</small></span>
+                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : `Answer ${remaining} more ${remaining === 1 ? 'question' : 'questions'}`}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · about {moreMin} min</small></span>
                 <Arrow />
               </button>
             </li>
