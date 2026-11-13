@@ -302,3 +302,12 @@ html body .app-container[data-theme='brand-dark'] .ip-fun__bar { color: #ffedac 
   html body .app-container .ip-fun__bar b { font-size: 40px !important; }
   html body .app-container .ip-fun__bar span { font-size: 13px; }
 }
+
+/* About only (Puloma, 2026-11-12): text and blocks use the full content width
+   instead of stopping at 68ch / 720px halfway across the page. */
+html body .app-container .ed.ed-page--about :is(.ed-body, .ed-head__sub, .ed-prose, .ip-invest, .ip-faq, .ip-mirror.ip-mirror--plain) { max-width: none; }
+/* Invest on Wefunder: espresso button, butter text (Puloma, 2026-11-12). */
+html body .app-container.app-container .ed .ip-invest__btn { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; }
+html body .app-container.app-container .ed .ip-invest__btn:hover { background: #5a3a33 !important; color: #ffedac !important; }
+/* About: no hairline above each advisor / medical team member (Puloma, 2026-11-12). */
+html body .app-container .ed.ed-page--about .ed-advisor { border-top: 0 !important; }

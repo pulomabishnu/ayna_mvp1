@@ -57,6 +57,24 @@ const ADVISORS = [
   { name: 'Dr. Anuja Vyas', title: 'Board-Certified OB/GYN, Advisor', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
 ];
 
+/* Medical content review team (Puloma, 2026-11-12). Sources for each title:
+ * Anuja Vyas: "Anuja Vyas, MD, FACOG", board-certified OB/GYN (ABOG), Houston
+ *   Methodist Obstetrics and Gynecology Associates, per houstonmethodist.org/doctor/anuja-vyas.
+ * Jemila Medley: "Jemila Medley, MS, OTR/L, CES ... Pelvic Floor Occupational
+ *   Therapist & Owner" on mommasinmotion.com/about-us; photo from her own
+ *   headshot set (jemilamedley.teachable.com).
+ * Kristen Damery: PT, pelvic floor therapist, per Puloma (2026-11-12);
+ *   photo from bossmom.com, link given by Puloma.
+ * Shruti Gajjar, Geena Yousry: MS1 credit as on their ayna articles. No public
+ *   photo found, so they show initials until the team adds photos. */
+const MEDICAL_REVIEW_TEAM = [
+  { name: 'Anuja Vyas, MD, FACOG', title: 'Board-Certified OB/GYN, Houston Methodist', photo: '/advisors/anuja-vyas.jpg', linkedin: 'https://www.houstonmethodist.org/doctor/anuja-vyas/', linkLabel: 'Profile' },
+  { name: 'Jemila Medley, MS, OTR/L, CES', title: 'Pelvic Floor Occupational Therapist; Owner, Mommas in Motion', photo: '/advisors/jemila-medley.jpg', linkedin: 'https://mommasinmotion.com/about-us', linkLabel: 'Profile' },
+  { name: 'Kristen Damery, PT', title: 'Pelvic Floor Physical Therapist', photo: '/advisors/kristen-damery.jpg' },
+  { name: 'Shruti Gajjar, MS1', title: 'Medical Student' },
+  { name: 'Geena Yousry, MS1', title: 'Medical Student' },
+];
+
 /** Not yet a confirmed advisor. Kept separate from ADVISORS rather than
  * implying a relationship that isn't official yet. */
 const ADVISOR_IN_DISCUSSION = {
@@ -119,6 +137,7 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
       lede="Women’s wellness products matched to your needs, with the research and reviews beside them."
       onBack={onBack} backLabel={backLabel}
       crumb="About"
+      className="ed-page--about"
     >
       <EdBlock title="We kept asking the same thing: why is this so hard to find?">
         <div className="ed-story">
@@ -208,11 +227,28 @@ export default function About({ onBack, backLabel, onExplore, onStart }) {
         </div>}
       </EdBlock>
 
+      <EdBlock title="ayna’s medical content team">
+        <ul className="ed-advisors" id="medical-review-team">
+          {MEDICAL_REVIEW_TEAM.map((m) => (
+            <li key={m.name} className="ed-advisor">
+              <AdvisorPhoto advisor={m} />
+              <span className="ed-rowtitle">{m.name}</span>
+              <span className="ed-meta">{m.title}</span>
+              {m.linkedin && (
+                <a href={m.linkedin} target="_blank" rel="noopener noreferrer">
+                  {m.linkLabel || 'LinkedIn'} <span aria-hidden="true">↗</span><span className="ed-sr"> (opens in a new tab)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </EdBlock>
+
       {/* Invest moved here from the consumer home page (critique, Oct 27). Same words, the full notice with it. */}
       <EdBlock title="Invest in ayna">
         <div className="ip-invest" id="invest">
           <p className="ed-body">We&rsquo;re so excited to extend an opportunity for you to invest in ayna, whether you&rsquo;re one of our earliest ayna users or a part of the greater community passionate about ayna&rsquo;s work to expand the future of women&rsquo;s health. Join our community round and learn more on Wefunder.</p>
-          <p><a className="ay-btn ay-btn--secondary" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('about')}>Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></p>
+          <p><a className="ay-btn ay-btn--secondary ip-invest__btn" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('about')}>Invest on Wefunder<span className="ed-sr"> (opens in a new tab)</span> <span aria-hidden="true">↗</span></a></p>
           <p className="ip-invest__legal">{TESTING_WATERS_NOTICE}</p>
         </div>
       </EdBlock>
