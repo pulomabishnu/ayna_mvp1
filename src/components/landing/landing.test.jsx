@@ -41,7 +41,7 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
     expect(text(out)).toContain('Take the free 1-minute quiz');
-    expect(out).toContain('what fits your body'); // Nov 13: same promise as the website
+    expect(out).toContain('matched to you'); // Nov 4: same promise as the website
     // A quiz already started: the one button finishes it, with a small line (no second box).
     const draft = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 3, total: 7 }} onResumeQuiz={() => {}} onStartQuizOver={() => {}} />);
     expect(text(draft)).toContain('Finish your free quiz');
