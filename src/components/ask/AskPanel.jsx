@@ -225,6 +225,9 @@ export function AskStart({ name = '', intro = '', how = null, top = null, groups
       </div>
       {top}
       <AskPrompts groups={groups} onPick={onPick} />
+      {/* Focus group (Gwyn, Oct 26): an easy way to reach a real person. The app opens the website's
+          contact page in the browser; the website goes straight to it. */}
+      <p className="ay-askp-human">Rather talk to a person? <a href={typeof window !== 'undefined' && (window.Capacitor || /^\/mobile-preview/.test(window.location.pathname)) ? 'https://www.aynahealth.co/contact' : '/contact'} target="_blank" rel="noreferrer">Message the ayna team</a></p>
       {(recent.length > 0 || onContinue) && (
         <section className="ay-askp-group is-recent" aria-labelledby="ay-askp-g-recent">
           <div className="ay-askp-group__head">

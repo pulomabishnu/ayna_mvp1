@@ -38,9 +38,11 @@ describe('ontology covers every intake option', () => {
     INTAKE_LIFE_STAGES.forEach((s) => expect(LIFE_STAGE_ID_BY_OPTION[s]).toBeTruthy());
     PRODUCT_FORMATS.filter((f) => f !== 'No preference').forEach((f) => expect(FORMAT_ID_BY_OPTION[f]).toBeTruthy());
     ALLERGIES.forEach((a) => expect(ALLERGEN_BY_OPTION[a]).toBeTruthy());
-    AVOID_GROUPS.avoid.forEach((a) => expect(LEAVE_OUT_BY_OPTION[a]).toBeTruthy());
+    // "Internal products" is not an ingredient: it sets declinesInternal (userProfile.js), tested there.
+    const INTERNAL = 'Internal products (tampons, cups, discs)';
+    AVOID_GROUPS.avoid.filter((a) => a !== INTERNAL).forEach((a) => expect(LEAVE_OUT_BY_OPTION[a]).toBeTruthy());
     AVOID_GROUPS.want.forEach((w) => expect(VALUE_ID_BY_OPTION[w]).toBeTruthy());
-    AVOID_INGREDIENTS.filter((x) => x !== 'No preference').forEach((x) => expect(LEAVE_OUT_BY_OPTION[x] || VALUE_ID_BY_OPTION[x]).toBeTruthy());
+    AVOID_INGREDIENTS.filter((x) => x !== 'No preference' && x !== INTERNAL).forEach((x) => expect(LEAVE_OUT_BY_OPTION[x] || VALUE_ID_BY_OPTION[x]).toBeTruthy());
   });
 
   it('maps both spellings of animal-derived (fixes the PREFERENCE_MAP mismatch)', () => {

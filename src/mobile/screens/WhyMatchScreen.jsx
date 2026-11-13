@@ -21,7 +21,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
       </header>
       <div className="ayna-match-scroll ay-w2">
         <WhyFit product={product} quizResults={quizAnswers} matchOpts={matchOpts} onUpdateHealth={onUpdateHealth} onFixSafety={onFixSafety} />
-        <p className="ay-w2-fine">{WHY_FIT_FINE} <a href="/how-it-works">How we match</a></p>
+        <p className="ay-w2-fine">{WHY_FIT_FINE} <a href="https://www.aynahealth.co/how-it-works" target="_blank" rel="noreferrer">How we match ↗</a></p>
         <LegalFooter />
       </div>
     </main>

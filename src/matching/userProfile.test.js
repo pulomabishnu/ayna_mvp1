@@ -210,3 +210,15 @@ describe('intake spec answer states (2026-10)', () => {
     expect(buildUserProfile(snap).minimumComplete).toBe(true);
   });
 });
+
+// Focus group (Trevina, Oct 7): "Internal products" in Leave out means no tampons, cups or discs.
+import { describe as d2, it as i2, expect as e2 } from 'vitest';
+import { getEcosystemSeedFromQuiz as seed2, getProductById as byId2 } from '../data/products.js';
+d2('leaving out internal products', () => {
+  i2('period picks are pads and underwear only', () => {
+    const r = seed2({ personalizationCompleted: true, fullHealthIntake: { personalizationCompleted: true, age: '29', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Period product support', 'Heavy periods'], urgentConcern: 'No', avoidIngredients: ['Internal products (tampons, cups, discs)'] } });
+    const names = [...new Set((r.shelves || []).flatMap((s) => s.productIds || []))].map((id) => byId2(id)?.name || '');
+    e2(names.length).toBeGreaterThan(0);
+    e2(names.filter((n) => /tampon|cup|disc/i.test(n) && !/pad|underwear|liner/i.test(n))).toEqual([]);
+  });
+});

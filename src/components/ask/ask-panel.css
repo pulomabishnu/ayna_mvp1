@@ -308,3 +308,6 @@ html body .app-container.app-container .wx-askpage { padding-top: 32px; padding-
 /* Founder, Nov 11: the switch needs an outline so it reads as one control with two sides. */
 .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-filter { border: 1.5px solid #3e2723 !important; border-radius: 999px !important; padding: 3px !important; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-askp:is(#ay-askp, .ay-askp):is(#ay-askp, .ay-askp) .ay-askp-filter { border-color: #ffedac !important; }
+/* A way to reach a person (focus group, Oct 26). */
+.ay-askp .ay-askp-human { margin: 16px 0 0; font: 500 14px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--askp-ink, #3e2723); }
+.ay-askp .ay-askp-human a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }

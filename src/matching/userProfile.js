@@ -662,7 +662,7 @@ export function buildUserProfile(intakeInput, options = {}) {
   const shouldBe = [];
   const allergyAttrs = new Set(allergies.map((a) => a.attr).filter(Boolean));
   for (const raw of [...arr(intake.avoidIngredients), ...splitList(intake.avoidIngredientsOtherText)]) {
-    if (raw === 'No preference' || raw === 'Other') continue;
+    if (raw === 'No preference' || raw === 'Other' || raw === 'Internal products (tampons, cups, discs)') continue;
     const lo = LEAVE_OUT_BY_OPTION[raw];
     if (lo) {
       if (!leaveOut.some((x) => x.attr === lo.attr)) leaveOut.push({ attr: lo.attr, raw, strength: allergyAttrs.has(lo.attr) ? 'allergy_equivalent' : 'strong', source: 'selected' });
@@ -898,7 +898,8 @@ export function buildUserProfile(intakeInput, options = {}) {
       fsaHsa,
       picksPerNeed,
       // First quiz "comfortable with internal products?" = No: a stated hard preference.
-      declinesInternal: intake.internalComfort === 'No',
+      // or "Internal products" in Leave out (focus group, Oct 7).
+      declinesInternal: intake.internalComfort === 'No' || arr(intake.avoidIngredients).includes('Internal products (tampons, cups, discs)'),
     },
     trust: { ranking, weights: trustWeights, touched },
     access: { zip: zipMatch ? zipMatch[1] : null, fsaHsa },

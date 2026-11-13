@@ -13,8 +13,8 @@
 
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) {
   --s-bg: #ffedac; --s-fg: #3e2723; --s-muted: rgba(62, 39, 35, .78); --s-line: #3e2723;
-  --s-panel: #f7badd; --s-track: rgba(62, 39, 35, .16); --s-btn: #3e2723; --s-on-btn: #ffedac;
-  --s-pink: #f7badd; --s-blue: #769ebe;
+  --s-panel: #f7badd; --s-track: #f7badd; --s-btn: #3e2723; --s-on-btn: #ffedac;
+  --s-pink: #f7badd; --s-blue: var(--s-btn); /* was sky blue; brand colours only (audit, Nov 13) */
   --s-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', 'Figtree', sans-serif);
   --s-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
   position: fixed; inset: 0; z-index: 2147483000; display: block; margin: 0; padding: 0;
@@ -24,7 +24,7 @@
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-espresso,
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays)[data-theme='dark'] {
   --s-bg: #3e2723; --s-fg: #ffedac; --s-muted: rgba(255, 237, 172, .8); --s-line: #ffedac;
-  --s-panel: #3e2723; --s-track: rgba(255, 237, 172, .2); --s-btn: #ffedac; --s-on-btn: #3e2723;
+  --s-panel: #3e2723; --s-track: #f7badd; --s-btn: #ffedac; --s-on-btn: #3e2723;
 }
 
 /* the frame: the whole screen on a phone */
@@ -38,7 +38,7 @@
 /* progress: one segment per card */
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-top { display: grid; gap: 4px; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
-.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress li { flex: 1; height: 3px; margin: 0; padding: 0; border-radius: 999px; background: var(--s-track); overflow: hidden; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress li { flex: 1; height: 4px; margin: 0; padding: 0; border-radius: 999px; background: transparent; box-shadow: inset 0 0 0 1px var(--s-btn); /* outlined, not a see-through track */ overflow: hidden; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress li::before { content: none; }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--s-fg); }
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-progress .is-done i,
@@ -141,5 +141,5 @@
 /* Pink surface (Nov 11): the rundown's opening and closing, like Wrapped's colour per card. */
 .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-pink:not([data-theme='dark']) {
   --s-bg: #f7badd; --s-fg: #3e2723; --s-muted: #3e2723; --s-line: #3e2723;
-  --s-panel: #ffedac; --s-track: rgba(62, 39, 35, .2); --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
+  --s-panel: #ffedac; --s-track: #ffedac; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
 }

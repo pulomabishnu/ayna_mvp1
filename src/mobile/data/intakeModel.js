@@ -239,7 +239,7 @@ export const BRAND_OPENNESS = [
 ];
 export const AVOID_INGREDIENTS = [
   'Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials',
-  'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Pregnancy considerations',
+  'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Internal products (tampons, cups, discs)', 'Pregnancy considerations',
   'Fragrance-free', 'Dye-free', 'Paraben-free', 'Sulfate-free', 'Latex-free', 'Vegan', 'Cruelty-free',
   'Black-owned', 'Brown-owned', 'Eco-friendly', 'Reusable', 'Organic', 'Minimal ingredients',
   'Sensitive skin', 'Unscented', 'No preference',
@@ -250,7 +250,8 @@ export const FSA_HSA = ['FSA', 'HSA', 'Both', 'No', 'Not sure', 'I\'m not in the
 export const AVOID_PAIRS = { Fragrance: 'Fragrance-free', Dyes: 'Dye-free', Parabens: 'Paraben-free', Sulfates: 'Sulfate-free', Latex: 'Latex-free' };
 // Same values as AVOID_INGREDIENTS, grouped so "Fragrance" (leave out) and "Vegan" (should be) don't read as one list.
 export const AVOID_GROUPS = {
-  avoid: ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners'],
+  // Focus group (Trevina, Oct 7): she doesn't use internal products and still got a menstrual cup.
+  avoid: ['Fragrance', 'Dyes', 'Parabens', 'Sulfates', 'Phthalates', 'Latex', 'Synthetic materials', 'Animal-derived', 'Added sugar', 'Artificial sweeteners', 'Internal products (tampons, cups, discs)'],
   want: ['Unscented', 'Organic', 'Vegan', 'Cruelty-free', 'Minimal ingredients', 'Sensitive skin', 'Reusable', 'Eco-friendly', 'Pregnancy considerations', 'Black-owned', 'Brown-owned'],
 };
 // Display wording for a few stored values (the stored value is what the

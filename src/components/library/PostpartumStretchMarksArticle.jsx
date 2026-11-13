@@ -116,7 +116,7 @@ const SCOPED_CSS = `
 /* One column on phones: the contents list sits above the read instead of
    sticking over it. */
 @media (max-width: 760px) { .ay-geena aside { position: static !important; } }
-.ay-geena { --g-bg: #43292a; --g-fg: #ffedac; --g-fg-rgb: 255, 237, 172; --g-butter: #ffedac; --g-pink: #f7badd; --g-sky: #769ebe; }
+.ay-geena { --g-bg: #3e2723; --g-fg: #ffedac; --g-fg-rgb: 255, 237, 172; --g-butter: #ffedac; --g-pink: #f7badd; --g-sky: #f7badd; }
 /* Light mode: the site's yellow page with espresso type. Pink and sky stay as
    box colours; as text they turn espresso so they read on yellow. */
 .ay-geena.is-light { --g-bg: #ffedac; --g-fg: #3e2723; --g-fg-rgb: 62, 39, 35; --g-butter: #fff; --g-pink: #3e2723; --g-sky: #3e2723; }
@@ -183,7 +183,7 @@ export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, ne
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
           <BackLink label="Library" href="/explore/resources" onClick={onBack} />
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-            <span style={{ padding: "7px 12px", borderRadius: "99px", background: "#769ebe", color: "#2a1a19", font: "700 13px/1 'Figtree'" }}>Postpartum</span>
+            <span style={{ padding: "7px 12px", borderRadius: "99px", background: "#f7badd", color: "#3e2723", font: "700 13px/1 'Figtree'" }}>Postpartum</span>
             <span style={{ padding: "7px 12px", borderRadius: "99px", border: "1.5px solid var(--g-fg)", font: "600 13px/1 'Figtree'" }}>Skin</span>
             <span style={{ padding: "7px 12px", borderRadius: "99px", border: "1.5px solid var(--g-fg)", font: "600 13px/1 'Figtree'" }}>{readLabel}</span>
           </div>
@@ -259,7 +259,7 @@ export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, ne
                   <strong style={{ font: "400 24px/1.15 var(--ay-heading)" }}>Stretch marks</strong>
                   <span style={{ font: "400 16px/1.6 'Figtree'" }}>Medically known as striae distensae, develop when changes in the skin's collagen and elastic-fiber network occur during pregnancy. They often start out pink, red, or purple (striae rubrae) before gradually becoming lighter, silvery, and slightly sunken (striae albae).</span>
                 </div>
-                <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "#769ebe", color: "#2a1a19" }}>
+                <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "#f7badd", color: "#3e2723" }}>
                   <strong style={{ font: "400 24px/1.15 var(--ay-heading)" }}>C-section and perineal scars</strong>
                   <span style={{ font: "400 16px/1.6 'Figtree'" }}>Develop as the body repairs tissue following an incision or tear.</span>
                 </div>
@@ -328,8 +328,8 @@ export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, ne
                 </div>
                 <p style={{ margin: "0", font: "400 italic 15px/1.55 'Figtree'" }}>These are product examples, not independently tested rankings.</p>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#769ebe", color: "#2a1a19" }}>
-                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#2a1a19", color: "#769ebe", font: "400 22px/1 var(--ay-heading)" }}>✦</span>
+              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
+                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#3e2723", color: "#f7badd", font: "400 22px/1 var(--ay-heading)" }}>✦</span>
                 <div style={{ display: "grid", gap: "6px" }}><span style={{ font: "600 13px/1.4 'Figtree'" }}>From our clinical experts</span><p style={{ margin: "0", font: "500 17px/1.6 'Figtree'" }}>The combination of tissue massage along, above, and below the c-section scar with a good product - whether prescription or not - and regular application of silicone scar tape is the best defense against not only stretch marks but also painful or lumpy scars.</p></div>
               </div>
             </section>
@@ -381,8 +381,8 @@ export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, ne
               <p style={{ margin: "0" }}><strong>Can you do it at home?</strong></p>
               <p style={{ margin: "0" }}>At-home microneedling devices are available, and skincare routines sometimes pair them with products such as Medicube PDRN serum, Centella asiatica serum, and rich moisturizers.</p>
               <figure style={{ margin: "0" }}><div style={{ aspectRatio: "16/9", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "rgba(var(--g-fg-rgb), .08)" }}><img src={IMG.diy} alt="#DIY GIF" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
-              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#769ebe", color: "#2a1a19" }}>
-                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#2a1a19", color: "#769ebe", font: "700 22px/1 'Figtree'" }}>!</span>
+              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
+                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#3e2723", color: "#f7badd", font: "700 22px/1 'Figtree'" }}>!</span>
                 <div style={{ display: "grid", gap: "6px" }}><span style={{ font: "600 13px/1.4 'Figtree'" }}>But here's where I'd be careful</span><p style={{ margin: "0", font: "500 17px/1.6 'Figtree'" }}>Deeper at-home needling can cause infection, scarring, and pigmentation changes, particularly when equipment or technique is inappropriate.</p></div>
               </div>
               <div style={{ display: "grid", gap: "10px", padding: "24px 26px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
@@ -410,8 +410,8 @@ export default function PostpartumStretchMarksArticle({ minutes = 12, onBack, ne
               <p style={{ margin: "0" }}>Different lasers target different concerns. Vascular lasers may help reduce the redness of newer stretch marks, while fractional lasers stimulate skin remodeling and may improve the texture of older marks.</p>
               <p style={{ margin: "0" }}>Fractional CO₂ lasers have also been studied for surgical scars, including C-section scars.</p>
               <p style={{ margin: "0" }}>A 2026 systematic review identified fractional lasers among the more promising stretch-mark treatments, although the authors emphasized that study sizes and treatment protocols varied considerably.</p>
-              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#769ebe", color: "#2a1a19" }}>
-                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#2a1a19", color: "#769ebe", font: "700 22px/1 'Figtree'" }}>!</span>
+              <div style={{ display: "grid", gridTemplateColumns: "44px 1fr", gap: "16px", alignItems: "start", padding: "22px 24px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
+                <span style={{ display: "grid", placeItems: "center", width: "44px", height: "44px", borderRadius: "50%", background: "#3e2723", color: "#f7badd", font: "700 22px/1 'Figtree'" }}>!</span>
                 <div style={{ display: "grid", gap: "6px" }}><span style={{ font: "600 13px/1.4 'Figtree'" }}>One important consideration: skin tone</span><p style={{ margin: "0", font: "500 17px/1.6 'Figtree'" }}>Some laser treatments carry a risk of post-inflammatory hyperpigmentation, particularly in darker skin tones. That doesn't mean people with deeper skin tones can't benefit from laser treatments, but it does mean choosing an experienced clinician and an appropriate device is especially important.</p></div>
               </div>
               <div style={{ display: "grid", gap: "10px", padding: "24px 26px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>

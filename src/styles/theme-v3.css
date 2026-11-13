@@ -2361,10 +2361,10 @@ html body .app-container:not([data-theme='dark']) .eco3-extras .ay-saved, html b
 
 /* ---- No colour clashes: an accent never matches what it sits on ---- */
 /* tape is never butter (cards are butter) */
-.app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card:nth-child(3n) { --tape: rgba(247, 186, 221, .9); }
+.app-container:not([data-theme='dark']) .ayna-discover-card.ayna-browse-card:nth-child(3n) { --tape: #f7badd; }
 /* on pink pages tape is sky; on blue pages tape is rose */
 .app-container:not([data-theme='dark']):is([data-view='discovery'], [data-view='you'], [data-view='waitlist'], [data-view='doctor-prep'], [data-view='comparison'], [data-view='not-found']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: rgba(118, 158, 190, .85); }
-.app-container:not([data-theme='dark']):is([data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: rgba(247, 186, 221, .9); }
+.app-container:not([data-theme='dark']):is([data-view='ecosystem'], [data-view='contact'], [data-view='recommendations'], [data-view='recalls']) .ayna-discover-card.ayna-browse-card:nth-child(n) { --tape: #f7badd; }
 .app-container .eco3-flow { display: contents; }
 html body .app-container:not([data-theme='dark']) .eco3-stickybar .eco3-search input { border: 0 !important; background: transparent !important; box-shadow: none !important; height: 44px !important; }
 

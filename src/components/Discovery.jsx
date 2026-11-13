@@ -958,10 +958,13 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             if (!matchesLifeStage(item, lifeStageFilter)) return false;
             if (!matchesFormat(item, formatFilter)) return false;
             // Nov 9 (founder: "add the personalized button back, like only your personalized"): Personalized shows only her matches.
-            if ((onlyMine || (personalizationFilter && hasAnswers && personalizedSet.size > 0)) && !personalizedSet.has(item.id)) return false;
+            // Focus group (Linda, Oct 19): with Personalized on, a search for a product outside her matches
+            // found nothing, so it looked like ayna didn't have it. A search looks through everything;
+            // Personalized still applies when she is browsing.
+            if ((onlyMine || (!String(submittedQuery || '').trim() && personalizationFilter && hasAnswers && personalizedSet.size > 0)) && !personalizedSet.has(item.id)) return false;
             if (!passesAvoid(item, avoidAttrs)) return false;
             return true;
-    }, [avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, formatFilter, onlyMine, hasAnswers, matchOpts]);
+    }, [submittedQuery, avoidAttrs, omittedProducts, personalizationFilter, eligibilityFilter, personalizedSet, macroGroup, categoryFilter, typeFilter, padFlowFilter, padPreferenceFilter, padUseCaseFilter, symptomFilter, priceFilter, ratingFilter, aynaReviews, aynaFilter, quizResults, healthProfile, myProducts, preferenceFilter, sustainabilityFilter, lifeStageFilter, formatFilter, onlyMine, hasAnswers, matchOpts]);
 
     const filtered = useMemo(() => {
         const applyFilters = (items, skipCategory = false) => items.filter((item) => passesActiveFilters(item, skipCategory));

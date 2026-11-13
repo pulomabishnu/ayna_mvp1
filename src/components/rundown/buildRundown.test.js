@@ -123,7 +123,8 @@ describe('Daily Rundown', () => {
     // the daily fact and the check-in included, fits in the cap.
     expect(r.cards.length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards);
     const ci = r.cards.findIndex((c) => c.kind === 'checkin');
-    if (ci >= 0) expect(ci).toBe(r.cards.length - 2);
+    // Nov 11 follow-up: the check-in is the first page after the opening (after any safety card).
+    if (ci >= 0) expect(ci).toBe(1 + r.cards.filter((c) => c.category === 'safety').length);
   });
 
   it('sleep change uses only connected rows and needs a real drop', () => {

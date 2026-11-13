@@ -45,7 +45,7 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
           <a href="/explore/resources" onClick={onBack} style={{ display: "inline-flex", alignItems: "center", gap: "8px", font: "600 15px/1 'Figtree'", textDecoration: "none" }}><span style={{ display: "grid", placeItems: "center", width: "36px", height: "36px", borderRadius: "50%", border: "2px solid var(--g-fg)" }}>←</span>Back to Library</a>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-            <span style={{ padding: "7px 12px", borderRadius: "99px", background: "#769ebe", color: "#2a1a19", font: "700 13px/1 'Figtree'" }}>Menopause</span>
+            <span style={{ padding: "7px 12px", borderRadius: "99px", background: "#f7badd", color: "#3e2723", font: "700 13px/1 'Figtree'" }}>Menopause</span>
             <span style={{ padding: "7px 12px", borderRadius: "99px", border: "1.5px solid var(--g-fg)", font: "600 13px/1 'Figtree'" }}>Vaginal health</span>
             <span style={{ padding: "7px 12px", borderRadius: "99px", border: "1.5px solid var(--g-fg)", font: "600 13px/1 'Figtree'" }}>{readLabel}</span>
           </div>
@@ -57,7 +57,7 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
         </section>
 
         <figure style={{ margin: "0" }}>
-          <div style={{ aspectRatio: "3/2", maxHeight: "620px", borderRadius: "28px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#fdf3f2" }}>
+          <div style={{ aspectRatio: "3/2", maxHeight: "620px", borderRadius: "28px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac" }}>
             <img src={IMG.hero} alt="Illustration: estrogen levels falling across a woman's life, from young adult to older age" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
         </figure>
@@ -96,8 +96,8 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
             <section id="where" style={{ display: "grid", gap: "20px", scrollMarginTop: "24px" }}>
               <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'ayna Display',serif", color: "var(--g-pink)" }}>02</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'ayna Display',serif", textWrap: "balance" }}>Where it shows up</h2></div>
               <p style={{ margin: "0" }}>GSM affects tissues of the vulva (the outer genital area), the vagina, the urethra (the tube where urine passes through), and the bladder.</p>
-              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "3/2", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#fdf3f2" }}><img src={IMG.anatomy} alt="Diagram of the vulva, vagina, urethra and bladder" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
-              <div style={{ display: "grid", gap: "10px", padding: "24px 26px", borderRadius: "24px", background: "#769ebe", color: "#2a1a19" }}>
+              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "3/2", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac" }}><img src={IMG.anatomy} alt="Diagram of the vulva, vagina, urethra and bladder" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
+              <div style={{ display: "grid", gap: "10px", padding: "24px 26px", borderRadius: "24px", background: "#f7badd", color: "#3e2723" }}>
                 <span style={{ font: "700 12px/1 'Figtree'", letterSpacing: ".08em", textTransform: "uppercase" }}>Why the new name</span>
                 <p style={{ margin: "0", font: "400 18px/1.6 'Figtree'" }}>Because these estrogen-related changes involve both the genital and urinary systems, we now call it genitourinary syndrome of menopause. This term is more representative of the range of affected tissues and related symptoms.</p>
               </div>
@@ -125,12 +125,12 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
                   <strong style={{ font: "400 24px/1.15 'ayna Display',serif" }}>Vaginal moisturizers</strong>
                   <span style={{ font: "400 16px/1.6 'Figtree'" }}>Also treat vaginal dryness, but are generally inserted every 1–3 days as the formulas are longer-acting.</span>
                 </div>
-                <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "#769ebe", color: "#2a1a19" }}>
+                <div style={{ display: "grid", gap: "10px", alignContent: "start", padding: "22px", borderRadius: "22px", background: "#f7badd", color: "#3e2723" }}>
                   <strong style={{ font: "400 24px/1.15 'ayna Display',serif" }}>Vulvar skin protectants</strong>
                   <span style={{ font: "400 16px/1.6 'Figtree'" }}>Specially formulated for this area of the body to treat external dryness, and an important part of treating GSM.</span>
                 </div>
               </div>
-              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "784/502", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#fbeef0", transform: "rotate(-1deg)" }}><img src={IMG.lubes} alt="Illustration of a vaginal lubricant and moisturizer" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
+              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "784/502", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac", transform: "rotate(-1deg)" }}><img src={IMG.lubes} alt="Illustration of a vaginal lubricant and moisturizer" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
           
                 <div style={{ display: "grid", borderRadius: "24px", border: "2px solid var(--g-fg)", overflow: "hidden" }}>
                   <div style={{ display: "grid", gap: "8px", padding: "22px 24px 0" }}><h3 style={{ margin: "0", font: "400 26px/1.15 'ayna Display',serif" }}>Explore our recommendations</h3><p style={{ margin: "0", font: "400 17px/1.65 'Figtree'" }}>Vaginal lubricants and moisturizers, as well as vulvar skin protectants.</p></div>
@@ -148,11 +148,11 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
               <div style={{ display: "grid", gap: "10px" }}><span style={{ font: "400 64px/.9 'ayna Display',serif", color: "var(--g-pink)" }}>05</span><h2 style={{ margin: "0", font: "400 clamp(30px,3.2vw,40px)/1.1 'ayna Display',serif", textWrap: "balance" }}>When symptoms persist: topical estrogen</h2></div>
               <p style={{ margin: "0" }}>If symptoms continue to persist despite use of vaginal moisturizers and lubricants, your provider may recommend use of topical estrogen in the form of vaginal creams, tablets, or rings.</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "24px", alignItems: "center" }}>
-                <div style={{ aspectRatio: "832/562", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#e4e2f6", transform: "rotate(-2deg)" }}><img src={IMG.topical} alt="Illustration of vaginal estrogen as a cream, tablet or ring" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
+                <div style={{ aspectRatio: "832/562", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac", transform: "rotate(-2deg)" }}><img src={IMG.topical} alt="Illustration of vaginal estrogen as a cream, tablet or ring" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
                 <p style={{ margin: "0", font: "400 clamp(28px,3.2vw,38px)/1.15 'ayna Display',serif", color: "var(--g-pink)" }}>Creams, tablets, or rings, targeting the affected tissues directly.</p>
               </div>
               <p style={{ margin: "0" }}>These topical treatments alleviate the symptoms of GSM that are driven by estrogen decline by directly targeting the affected tissues with low dose estrogen. This is a more targeted approach than hormonal estrogen pills, systemic patches, or gels, although these can be especially useful treatments for women who have other menopausal symptoms.</p>
-              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "1630/464", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#fbf6e6" }}><img src={IMG.systemic} alt="Illustration of systemic estrogen reaching the whole body compared with local vaginal estrogen" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
+              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "1630/464", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac" }}><img src={IMG.systemic} alt="Illustration of systemic estrogen reaching the whole body compared with local vaginal estrogen" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
               <dl style={{ margin: "0", display: "grid", border: "2px solid var(--g-fg)", borderRadius: "20px", overflow: "hidden" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px" }}><dt style={{ font: "700 13px/1.6 'Figtree'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Systemic</dt><dd style={{ margin: "0", font: "400 16px/1.55 'Figtree'" }}>Pills, patches, or gels increase estrogen levels throughout the whole body.</dd></div>
                 <div style={{ display: "grid", gridTemplateColumns: "minmax(110px,150px) 1fr", gap: "14px", padding: "14px 20px", borderTop: "1.5px solid rgba(var(--g-fg-rgb), .3)" }}><dt style={{ font: "700 13px/1.6 'Figtree'", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--g-pink)" }}>Topical vaginal</dt><dd style={{ margin: "0", font: "400 16px/1.55 'Figtree'" }}>Low dose estrogen acting locally on the affected tissues, without raising levels body-wide.</dd></div>
@@ -168,7 +168,7 @@ export default function VaginalAtrophyGsmArticle({ minutes = 4, onBack, nextArti
               <p style={{ margin: "0" }}>GSM symptoms are not something that fade over time. In fact they usually worsen and require treatment for improvement.</p>
               <blockquote style={{ margin: "6px 0", padding: "0", font: "400 italic clamp(26px,2.8vw,32px)/1.25 'ayna Display',serif", color: "var(--g-pink)", textWrap: "balance" }}>GSM impacts roughly half or more of women after menopause.</blockquote>
               <p style={{ margin: "0" }}>Despite GSM being fairly common, stigma around it can cause many women to feel uncomfortable speaking with their providers about this highly treatable condition. If you are reading this article and feel that you may be experiencing symptoms of GSM, we encourage you to speak with your medical provider about it.</p>
-              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "3/2", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#fdf6ee" }}><img src={IMG.stigma} alt="Illustration of a woman moving from feeling isolated to talking with her clinician" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
+              <figure style={{ margin: "0" }}><div style={{ aspectRatio: "3/2", borderRadius: "24px", overflow: "hidden", border: "2px solid var(--g-fg)", background: "#ffedac" }}><img src={IMG.stigma} alt="Illustration of a woman moving from feeling isolated to talking with her clinician" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div></figure>
             </section>
 
             <section id="care" style={{ display: "grid", gap: "18px", padding: "30px", borderRadius: "28px", background: "var(--g-butter)", color: "#3e2723", scrollMarginTop: "24px" }}>
