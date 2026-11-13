@@ -923,7 +923,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       return (
         <>
           <Chips label={step.title} items={[...PRICE_RANGES.filter((opt) => opt !== notAFactor), notAFactor]} muted={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>
+          {/* Only asked when she picked $75 or more (audit, Nov 12: it showed under "Under $25" too). */}
+          {selectedPrices.some((v) => /\$75|\$150/.test(v)) && <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>}
         </>
       );
     }

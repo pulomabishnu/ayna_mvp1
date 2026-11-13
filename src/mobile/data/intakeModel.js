@@ -1021,7 +1021,7 @@ export function getIntakeSteps(intake) {
     ...(ttcOptional(intake) ? [opt(ttcStep)] : []),
     ...(trimesterOptional(intake) ? [opt(trimesterStep)] : []),
     opt({ id: 'products', section: 'history', title: 'What have you tried?', type: 'products', info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' }),
-    opt({ id: 'avoidRepeat', section: 'history', title: 'What should we avoid?', type: 'avoidRepeat', info: 'Anything you add here will never show up in your picks.' }),
+    opt({ id: 'avoidRepeat', section: 'history', title: 'Any products or brands to skip?', type: 'avoidRepeat', info: 'Anything you add here will never show up in your picks.' }),
     opt({ id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', info: 'The kinds of products you like using. We rank these formats higher in your picks. Skip it and every format counts the same.' }),
     opt({ id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked, 3 if you skip. We never lower the bar to fill a slot.', type: 'recommendationCount' }),
     opt({ id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Skip it and we assume nothing.', type: 'price' }),

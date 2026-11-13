@@ -198,7 +198,7 @@ export function getOnboardingSteps(intake, { part = 'all', surface = 'app' } = {
   for (const n of [2, 3, 4, 5, 6]) {
     if (n === 3) out.push(helpTopicsStep);
     if (n === 4) {
-      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What do you want ayna to help you do?', screen: 4, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
+      out.push({ id: 'goals', section: 'goals', type: 'goals', title: 'What would make ayna worth it for you?', screen: 4, why: WHY_FOR.goals, required: false, optional: true, phase: 'optional' });
       continue;
     }
     for (const id of SCREEN_ORDER[n]) {

@@ -760,7 +760,8 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
         const notAFactor = 'Price is not a major factor for me';
         return <>
           <Chips label={step.title} items={PRICE_RANGES} muted={[notAFactor]} selected={sel} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
-          <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>
+          {/* Only asked when she picked $75 or more (audit, Nov 12: it showed under "Under $25" too). */}
+          {sel.some((v) => /\$75|\$150/.test(v)) && <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>}
         </>;
       }
       case 'brand': return <Rows label={step.title} options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;

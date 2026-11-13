@@ -100,7 +100,7 @@ function perNeed(answers, matchOpts = undefined) {
     const grouped = groupRevealRows(rows);
     const total = new Set(grouped.flatMap((row) => [...row.products, ...row.services].map((p) => p.id))).size;
     // Needs she picked that have nothing yet, with the reason (shown only when there are no matches).
-    const emptyNeeds = rows.filter((r) => !r.products.length && !r.services.length).map((r) => ({ id: r.id, label: r.label, why: r.why || r.heldWhy || '' }));
+    const emptyNeeds = rows.filter((r) => !r.products.length && !r.services.length).map((r) => ({ id: r.id, label: r.label, why: r.why || r.heldWhy || '', needsAnswers: r.needsAnswers }));
     return { rows: grouped, total, careNote, careNoteFor, everydayBasics, emptyNeeds };
   } catch {
     return { rows: [], total: 0, careNote: '' };
@@ -292,7 +292,11 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
 </>
       )}
       <div className="ay-ob-ready__actions ay-ob-next">
-        {total === 0 && (rows.length === 0 || basics.length > 0) && onExplore && ready && liveReady
+        {total === 0 && emptyNeeds.some((n) => n.needsAnswers) && (onSafety || onMorePersonal) && ready && liveReady
+          // Audit (Nov 12): picks held only for missing safety answers had no way to answer them here.
+          ? <><button type="button" className="ay-ob-next__main" onClick={onSafety || onMorePersonal}>Answer the safety questions<Arrow /></button>
+            {onExplore && <button type="button" className="ay-ob-next__link" onClick={onExplore}>Or explore Shop</button>}</>
+          : total === 0 && (rows.length === 0 || basics.length > 0) && onExplore && ready && liveReady
           ? <><button type="button" className="ay-ob-next__main" onClick={onExplore}>Explore Shop<Arrow /></button>
             {onBack && <button type="button" className="ay-ob-next__link" onClick={onBack}>Or pick what you want help with</button>}</>
           : onWatchWrapped && total > 0
