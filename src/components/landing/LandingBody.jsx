@@ -371,7 +371,6 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
         <div className="lb-end wlx-end">
           <h2 className="lb-end__h">Find what fits <span>your body.</span></h2>
           <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
-          {!/Home/.test(cta.label) && <p className="ls-note is-light">Free. See your top matches before you sign up.</p>}
         </div>
       </div>
     </section>

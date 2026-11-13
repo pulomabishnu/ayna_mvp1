@@ -21,7 +21,7 @@ import { trackLandingCta } from '../../utils/funnelEvents.js';
  */
 export default function AppLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onSignIn, onBrowse, banner = null, quizDraft = null, onResumeQuiz = null, onStartQuizOver = null }) {
   const home = signedIn && hasProfile && onGoHome;
-  // Founder, Nov 9: same words as the website (Nov 12: "Take the 1-minute quiz" on both), no search bar, and a quiz
+  // Founder, Nov 9: same words as the website (Nov 12: "Take the free 1-minute quiz" on both), no search bar, and a quiz
   // already started is this one button ("Finish your free quiz"), never a second box.
   const draft = !home && quizDraft && onResumeQuiz && (quizDraft.requiredDone || (quizDraft.index || 1) > 1) ? quizDraft : null;
   const cta = home
@@ -30,7 +30,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
       ? { label: 'Finish your free quiz', slide: 'Finish your free quiz', go: onResumeQuiz }
       // Nov 12 (founder: "you decide, research it"): the button says what happens next (it starts the
       // quiz, it doesn't ask for an account), and the line under it removes the fear of a sign-up wall.
-      : { label: 'Take the 1-minute quiz', slide: 'Take the 1-minute quiz', go: () => { trackLandingCta('sign_up_free', 'app'); onStartQuiz?.(); } };
+      : { label: 'Take the free 1-minute quiz', slide: 'Take the free 1-minute quiz', go: () => { trackLandingCta('sign_up_free', 'app'); onStartQuiz?.(); } };
   return (
     <div id="ay-landing" className="alx">
       <section className="alx__band" aria-labelledby="alx-title">
@@ -41,7 +41,7 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
         <Rain cols={3} onInk className="alx__rain" />
         <div className="alx__head">
           <div className="alx__copy">
-            <h1 id="alx-title" className="alx__title">Women’s health products, <span>matched to you.</span></h1>
+            <h1 id="alx-title" className="alx__title">Shop <span>what fits your body.</span></h1>
             <p className="alx__one">Answer a few questions. See what fits your body, and why.</p>
           </div>
         </div>
@@ -50,7 +50,6 @@ export default function AppLanding({ signedIn = false, hasProfile = false, onSta
       <div className="alx__act">
         {banner && <div className="alx__banner">{banner}</div>}
         <SlideToStart className="alx__sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="ink" />
-        {!home && !draft && <p className="alx__free">Free. See your top matches before you sign up.</p>}
         {draft && <p className="alx__draft">{draft.requiredDone ? 'Your answers are saved.' : `Question ${draft.index} of ${draft.total}, saved.`}{onStartQuizOver && <> <button type="button" className="alx__draft-over" onClick={onStartQuizOver}>Start over</button></>}</p>}
         {!signedIn && onBrowse && <button type="button" className="alx__link" onClick={() => onBrowse()}>Explore first</button>}
       </div>

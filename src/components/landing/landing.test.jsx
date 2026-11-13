@@ -40,15 +40,15 @@ const text =(html) => html.replace(/<[^>]+>/g, ' ');
 describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
   it('signed out: the main action is Get my matches; signed in with a profile: Go to your Home', () => {
     const out = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} />);
-    expect(text(out)).toContain('Take the 1-minute quiz');
-    expect(out).toContain('matched to you'); // Nov 4: same promise as the website
+    expect(text(out)).toContain('Take the free 1-minute quiz');
+    expect(out).toContain('what fits your body'); // Nov 13: same promise as the website
     // A quiz already started: the one button finishes it, with a small line (no second box).
     const draft = renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 3, total: 7 }} onResumeQuiz={() => {}} onStartQuizOver={() => {}} />);
     expect(text(draft)).toContain('Finish your free quiz');
     expect(text(draft)).toContain('Question 3 of 7, saved.');
     expect(draft).not.toContain('Continue my quiz');
     // Still on question 1: nothing to finish, the normal button.
-    expect(text(renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 1, total: 7 }} onResumeQuiz={() => {}} />))).toContain('Take the 1-minute quiz');
+    expect(text(renderToStaticMarkup(<AppLanding onStartQuiz={() => {}} quizDraft={{ index: 1, total: 7 }} onResumeQuiz={() => {}} />))).toContain('Take the free 1-minute quiz');
     const home = renderToStaticMarkup(<AppLanding signedIn hasProfile onGoHome={() => {}} onStartQuiz={() => {}} />);
     expect(text(home)).toContain('Go to your Home');
   });
@@ -117,7 +117,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
 
   it('hero: a centred title, search, Slide to start (welcome tip anchor) and the rain beside it', () => {
     const html = renderToStaticMarkup(<WebLanding onStartQuiz={() => {}} onViewHowItWorks={() => {}} />);
-    expect(text(html)).toContain('Take the 1-minute quiz');
+    expect(text(html)).toContain('Take the free 1-minute quiz');
     expect(html).toContain('data-tour="landing-start"');
     expect(html).toContain('class="lsx-search wl-search"');
     expect(html).toMatch(/class="lk-rainbox lk-rainbox--ink wl-rain" aria-hidden="true"/);
@@ -167,7 +167,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(page.querySelector('.wl-turn')).toBeNull();
     // the last ask repeats Slide to start, without a second welcome-tip anchor, then the note ends the page
     const end = page.querySelector('.lb-close .wlx-end');
-    expect(end.querySelector('.ay-sts__track').textContent).toBe('Take the 1-minute quiz');
+    expect(end.querySelector('.ay-sts__track').textContent).toBe('Take the free 1-minute quiz');
     expect(page.querySelectorAll('[data-tour="landing-start"]').length).toBe(1);
     expect(page.querySelector('.lb-close').nextElementSibling).toBe(page.lastElementChild);
     // the founders photo stays
