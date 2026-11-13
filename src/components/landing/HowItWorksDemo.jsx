@@ -70,7 +70,7 @@ function Screen({ k }) {
   );
 }
 
-export default function HowItWorksDemo({ onStart, startLabel = 'Sign up free', onViewHowItWorks }) {
+export default function HowItWorksDemo({ onStart, startLabel = 'Take the 1-minute quiz', onViewHowItWorks }) {
   const ref = useRef(null);
   const [still] = useState(motionOff);
   const [scene, setScene] = useState(0);

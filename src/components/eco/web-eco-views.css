@@ -30,7 +30,7 @@ html body .app-container #ayeco .weco-row:hover { background: linear-gradient(90
 html body .app-container #ayeco .weco-row__main:focus-visible { outline: none; }
 html body .app-container #ayeco .weco-row:has(.weco-row__main:focus-visible) { outline: 3px solid #f7badd; outline-offset: 2px; border-radius: 8px; }
 html body .app-container.app-container #ayeco .weco-row__name { font: 600 16px/1.3 var(--ay-sans-stack, sans-serif) !important; color: #3e2723 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-html body .app-container.app-container #ayeco .weco-row__meta { font: 500 14px/1.3 var(--ay-sans-stack, sans-serif) !important; color: #6d4c41 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html body .app-container.app-container #ayeco .weco-row__meta { font: 500 14px/1.3 var(--ay-sans-stack, sans-serif) !important; color: #3e2723 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 html body .app-container #ayeco .weco-row__chev { width: 18px; height: 18px; fill: none; stroke: #3e2723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .6; }
 html body .app-container #ayeco .weco-row:hover .weco-row__chev { opacity: 1; }
 html body .app-container #ayeco .weco-row__pct { position: relative; z-index: 1; padding: 5px 9px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 12.5px/1 var(--ay-sans-stack, sans-serif); white-space: nowrap; }
@@ -62,7 +62,7 @@ html body .app-container #ayeco .weco-sr { position: absolute !important; width:
 /* Plain section headings (founder, Oct 28: no pink folder tabs anywhere). */
 html body .app-container #ayeco .weco-shelf__head { display: flex; align-items: baseline; gap: 10px; padding-bottom: 10px; border-bottom: 1.5px solid #3e2723; }
 html body .app-container.app-container #ayeco .weco-shelf__head h3 { margin: 0; font: 700 20px/1.2 var(--ay-heading, 'Bricolage Grotesque', sans-serif) !important; letter-spacing: -.01em; color: #3e2723 !important; }
-html body .app-container #ayeco .weco-shelf__n { font: 500 14px/1 var(--ay-sans-stack, sans-serif); color: #6d4c41; }
+html body .app-container #ayeco .weco-shelf__n { font: 500 14px/1 var(--ay-sans-stack, sans-serif); color: #3e2723; }
 html body .app-container #ayeco .weco-shelf__add { align-self: baseline; }
 
 /* View switcher as plain text links with an underline on the current one (founder: fewer pill switchers). */
@@ -70,7 +70,7 @@ html body .app-container #ayeco .weco-tabs { display: flex; gap: 28px; margin: 8
 html body .app-container #ayeco .weco-tabs button { min-height: 44px; padding: 0 0 2px; border-radius: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; background: none; font: 600 16px/1 var(--ay-sans-stack, sans-serif); gap: 6px; }
 html body .app-container #ayeco .weco-tabs button:hover:not(.is-on) { background: none; border-bottom-color: rgba(62, 39, 35, .3); }
 html body .app-container #ayeco .weco-tabs button.is-on { background: none; color: #3e2723; border-bottom-color: #3e2723; font-weight: 700; }
-html body .app-container #ayeco .weco-tabs small { min-width: 0; height: auto; padding: 0; background: none; color: #6d4c41; font: 500 14px/1 var(--ay-sans-stack, sans-serif); }
+html body .app-container #ayeco .weco-tabs small { min-width: 0; height: auto; padding: 0; background: none; color: #3e2723; font: 500 14px/1 var(--ay-sans-stack, sans-serif); }
 @media (max-width: 640px) { html body .app-container #ayeco .weco-tabs { gap: 20px; overflow-x: auto; } html body .app-container #ayeco .weco-tabs button { flex: none; padding: 0 0 2px; font-size: 15px; } }
 
 /* Dark (follows the device by default): text on the page turns butter. */

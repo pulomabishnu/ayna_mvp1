@@ -21,7 +21,7 @@ import { trackLandingCta } from '../../utils/funnelEvents.js';
  */
 export default function AppLanding({ signedIn = false, hasProfile = false, onStartQuiz, onGoHome, onSignIn, onBrowse, banner = null, quizDraft = null, onResumeQuiz = null, onStartQuizOver = null }) {
   const home = signedIn && hasProfile && onGoHome;
-  // Founder, Nov 9: same words as the website ("Sign up free"), no search bar, and a quiz
+  // Founder, Nov 9: same words as the website (Nov 12: "Take the 1-minute quiz" on both), no search bar, and a quiz
   // already started is this one button ("Finish your free quiz"), never a second box.
   const draft = !home && quizDraft && onResumeQuiz && (quizDraft.requiredDone || (quizDraft.index || 1) > 1) ? quizDraft : null;
   const cta = home

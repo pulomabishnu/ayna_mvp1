@@ -168,6 +168,1691 @@
       "source": "/today",
       "destination": "/home",
       "permanent": true
+    },
+    {
+      "source": "/product/d-apple-health",
+      "destination": "/product/apple-health-cycle-tracking",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-balance-menopause",
+      "destination": "/product/balance-menopause-and-perimenopause",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-betterhelp",
+      "destination": "/product/betterhelp",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-bloom",
+      "destination": "/product/bloom-cbt-therapy-and-self-care",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-calm",
+      "destination": "/product/calm",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-caria-caria-menopause-midlife",
+      "destination": "/product/caria-menopause-and-midlife",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-clue",
+      "destination": "/product/clue-period-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-connect-pelvic-floor-fitness",
+      "destination": "/product/connect-pelvic-floor-fitness",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-eight-sleep",
+      "destination": "/product/eight-sleep-pod-4",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-evernow",
+      "destination": "/product/evernow-menopause-care",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-function-health-function-health-membership",
+      "destination": "/product/function-health-membership",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-glow",
+      "destination": "/product/glow-period-and-ovulation-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-headspace",
+      "destination": "/product/headspace",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-health-her-health-her-app",
+      "destination": "/product/health-and-her-app",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-hers",
+      "destination": "/product/hers",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-initio",
+      "destination": "/product/inito-fertility-monitor",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-lively-lively-period-tracker-cycle",
+      "destination": "/product/lively-period-tracker-cycle",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-maven",
+      "destination": "/product/maven-clinic",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-menolog-listed-as-menelle-perimenopause-tracker",
+      "destination": "/product/menolog-listed-as-menelle-perimenopause-tracker-menelle",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-midi-health",
+      "destination": "/product/midi-health",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-natural-cycles",
+      "destination": "/product/natural-cycles",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-nurx-bc",
+      "destination": "/product/nurx",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-oura",
+      "destination": "/product/oura-ring-gen-3",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-ovia",
+      "destination": "/product/ovia-health",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-peanut",
+      "destination": "/product/peanut-find-friends-and-support",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-perry-perry-perimenopause-community",
+      "destination": "/product/perry-perimenopause-community",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-pomelo-care",
+      "destination": "/product/pomelo-care",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-ppd",
+      "destination": "/product/planned-parenthood-direct",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-soonr",
+      "destination": "/product/soonr-fertility-app-for-couples",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-stardust",
+      "destination": "/product/stardust-period-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-stella-stella-menopause-relief",
+      "destination": "/product/stella-menopause-relief",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-the-fertility-class",
+      "destination": "/product/the-fertility-class-exercise-method",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-tia",
+      "destination": "/product/tia",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-twentyeight-health-birth-control-emergency-contr",
+      "destination": "/product/twentyeight-health-birth-control-emergency-contraception-and-urgent-care",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-visana",
+      "destination": "/product/visana-health",
+      "permanent": true
+    },
+    {
+      "source": "/product/d-wisp-bc",
+      "destination": "/product/wisp",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-aisle-underwear",
+      "destination": "/product/aisle-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-calming-cream",
+      "destination": "/product/alubri-calming-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-intimate-serum",
+      "destination": "/product/alubri-intimate-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-moisture-renewal-kit",
+      "destination": "/product/alubri-moisture-renewal-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-rejuvenate-restore-kit",
+      "destination": "/product/alubri-rejuvenate-and-restore-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-vaginal-moisturizing-gel",
+      "destination": "/product/alubri-vaginal-moisturizing-gel",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-vaginal-wellness-kit",
+      "destination": "/product/alubri-vaginal-wellness-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-alubri-vulva-balm",
+      "destination": "/product/alubri-vulva-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-always-discreet-boutique-liners",
+      "destination": "/product/always-discreet-boutique-incontinence-panty-liners-for-women-bladder-leaks",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-always-infinity",
+      "destination": "/product/always-infinity-flexfoam",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-always-liners",
+      "destination": "/product/always-liners",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-arrae-mb-1",
+      "destination": "/product/arrae-mb-1-metabolism-support",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-azo-test",
+      "destination": "/product/azo-uti-test-strips",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-b-complex",
+      "destination": "/product/thorne-b-complex-12",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bambody-underwear",
+      "destination": "/product/bambody-absorbent-panties",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bedjet-3-climate-comfort-sleep-system",
+      "destination": "/product/bedjet-3-climate-comfort-sleep-system",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-belly-bandit",
+      "destination": "/product/belly-bandit-upsie-belly",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bigvita-scalp-serum-plus",
+      "destination": "/product/bigvita-scalp-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bodily-kit",
+      "destination": "/product/bodily-postpartum-recovery-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bodyform-pad",
+      "destination": "/product/bodyform-ultra-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bonafide-clairvee-vaginal-pre-probiotic",
+      "destination": "/product/bonafide-clairvee-vaginal-pre-probiotic",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bonafide-revaree",
+      "destination": "/product/bonafide-revaree",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bonafide-revaree-plus",
+      "destination": "/product/bonafide-revaree-plus",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bonafide-ristela",
+      "destination": "/product/bonafide-ristela",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-bonafide-thermella",
+      "destination": "/product/bonafide-thermella",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-boppy-pillow",
+      "destination": "/product/boppy-nursing-pillow",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-boric-acid",
+      "destination": "/product/the-honey-pot-boric-acid-suppositories",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-buni-bundle",
+      "destination": "/product/buni-bundle",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-buni-rejuvenate-vulva-balm",
+      "destination": "/product/buni-rejuvenate-vulva-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-buni-soothe-nipple-lip-balm",
+      "destination": "/product/buni-soothe-nipple-and-lip-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-buni-transform-scar-body-oil",
+      "destination": "/product/buni-transform-scar-body-treatment-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-carefree-liners",
+      "destination": "/product/carefree-acti-fresh-liners",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cbb-13-in-1-womens-gummies",
+      "destination": "/product/cbb-curvy-body-bears-cbb-women-s-13-in-1-supplement-gummies",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cbb-perfect-ph-probiotic-gummies",
+      "destination": "/product/cbb-curvy-body-bears-cbb-perfect-ph-probiotic-gummies",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cean-lymphatic-maternity-compression-romper",
+      "destination": "/product/cean-lymphatic-maternity-compression-romper",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-citracal-bone-health",
+      "destination": "/product/citracal-maximum-plus-calcium-citrate-d3-120-caplets",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cocoandeve-tripeptide-hair-density-serum",
+      "destination": "/product/coco-and-eve-tripeptide-hair-density-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cool-jams-women-s-nightcool-v-neck-nightshirt",
+      "destination": "/product/cool-jams-women-s-nightcool-v-neck-nightshirt",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cora-disc",
+      "destination": "/product/cora-reusable-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cora-organic-pads",
+      "destination": "/product/cora-organic-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cora-organic-tampons",
+      "destination": "/product/cora-organic-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-cranberry-supplement",
+      "destination": "/product/azo-cranberry-urinary-health",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-creatine-womens",
+      "destination": "/product/thorne-creatine",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-d-mannose-now",
+      "destination": "/product/now-foods-now-d-mannose",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-dame-arc",
+      "destination": "/product/dame-arc-g-spot-vibrator",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-dear-kate-underwear",
+      "destination": "/product/dear-kate-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-depend-silhouette-underwear",
+      "destination": "/product/depend-silhouette-incontinence-underwear-for-women-maximum-absorbency",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-differin-adapalene-gel",
+      "destination": "/product/differin-adapalene-gel-0-1-acne-treatment",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-diva-cup",
+      "destination": "/product/divacup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-easyhome-lh-strips-50",
+      "destination": "/product/easy-home-ovulation-test-strips-50-lh-tests",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-elitone",
+      "destination": "/product/elitone-stress-mixed-incontinence",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-elitone-urge",
+      "destination": "/product/elitone-urge-overactive-bladder",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-elvie-trainer",
+      "destination": "/product/elvie-pelvic-floor-trainer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-embr-labs-embr-wave-2",
+      "destination": "/product/embr-labs-embr-wave-2",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-estherformula-ceramide-strips",
+      "destination": "/product/esther-formula-esther-lyuh-ceramide-strips-hyaluronic-acid-and-ceramide",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-estroven-mood",
+      "destination": "/product/estroven-menopause-relief-mood-boost",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-evening-primrose",
+      "destination": "/product/now-foods-evening-primrose-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-femmycycle",
+      "destination": "/product/femmycycle-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-finch-self-care-pet",
+      "destination": "/product/finch-self-care-pet",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-fish-oil",
+      "destination": "/product/nordic-naturals-omega-woman",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-flex-cup",
+      "destination": "/product/flex-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-flex-disc",
+      "destination": "/product/flex-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-flo-gummies",
+      "destination": "/product/flo-pms-gummy-vitamins",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-frida-mom-kit",
+      "destination": "/product/frida-mom-postpartum-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-gennev-care",
+      "destination": "/product/gennev-menopause-care",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-gina-insertion-applicator-refills",
+      "destination": "/product/gina-insertion-applicator-refills",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-gina-starter-kit",
+      "destination": "/product/gina-the-starter-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-gina-vaginal-moisturizing-glides",
+      "destination": "/product/gina-vaginal-moisturizing-glides",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-good-clean-love",
+      "destination": "/product/good-clean-love-bio-match-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-good-kitty-uti-biome-shield",
+      "destination": "/product/good-kitty-co-good-kitty-uti-biome-shield",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-goodbug-good-down-there",
+      "destination": "/product/the-good-bug-good-down-there-vaginal-health-stick",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-goodbug-good-to-glow",
+      "destination": "/product/the-good-bug-good-to-glow-supergut-stick",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-goodbug-gut-balance",
+      "destination": "/product/the-good-bug-gut-balance-supergut-stick",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-goodcycle-dailybasis",
+      "destination": "/product/goodcycle-dailybasis-by-goodcycle",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-haakaa-pump",
+      "destination": "/product/haakaa-silicone-breast-pump",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hanes-period",
+      "destination": "/product/hanes-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-happyhead-hair-growth-supplements",
+      "destination": "/product/happy-head-hair-growth-supplements",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hatch-oil",
+      "destination": "/product/hatch-belly-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hello-disc",
+      "destination": "/product/hello-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-heraure-hermag-magnesium",
+      "destination": "/product/heraure-hermag-magnesium-20-in-1-complex",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hero-mighty-cleanser",
+      "destination": "/product/hero-cosmetics-mighty-cleanser-2-salicylic-acid-acne-face-wash",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hero-mighty-patch-original",
+      "destination": "/product/hero-cosmetics-mighty-patch-original-pimple-patch",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hero-pimple-correct",
+      "destination": "/product/hero-cosmetics-pimple-correct-acne-clearing-gel-pen",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-honeypot-pad",
+      "destination": "/product/the-honey-pot-herbal-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-honeypot-wash",
+      "destination": "/product/the-honey-pot-intimate-wash",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hoolest-verelief-prime",
+      "destination": "/product/hoolest-verelief-prime",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hormona-perimenopause-test-kit-app",
+      "destination": "/product/hormona-perimenopause-test-kit-app",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-hum-flatter-me",
+      "destination": "/product/hum-nutrition-flatter-me",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-infiniwell-ptd-dbm",
+      "destination": "/product/infiniwell-ptd-dbm-methyl-vanillate",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-inositol-wholesome",
+      "destination": "/product/wholesome-story-myo-and-d-chiro-inositol",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-intimate-rose",
+      "destination": "/product/intimate-rose-vaginal-dilators",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-intimina-kegel",
+      "destination": "/product/intimina-laselle-kegel-exercisers",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-intimina-lily",
+      "destination": "/product/intimina-lily-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-coldher",
+      "destination": "/product/joylux-coldhertm-cooling-bra-inserts",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-ilyeo-body",
+      "destination": "/product/joylux-ilyeotm-body",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-juicy-like-a-peach",
+      "destination": "/product/joylux-juicy-like-a-peach-vaginal-gel",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-lets-spin",
+      "destination": "/product/joylux-let-s-spin-intimacy-gel",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-reliefher",
+      "destination": "/product/joylux-reliefhertm-vaginal-hydration-melts",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-revitalizher",
+      "destination": "/product/joylux-revitalizhertm-hydrating-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-shebar",
+      "destination": "/product/joylux-shebar-intimate-cleansing-bar",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-vfit",
+      "destination": "/product/joylux-vfit-device",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-joylux-vfit-plus",
+      "destination": "/product/joylux-vfit-plus",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-airy-sun-stick-spf50",
+      "destination": "/product/kiero-airy-sun-stick-spf-50",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-balance-toner-pads",
+      "destination": "/product/kiero-balance-toner-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-comfort-cleansing-balm",
+      "destination": "/product/kiero-comfort-cleansing-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-essential-boost-serum",
+      "destination": "/product/kiero-essential-boost-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-moisturizing-barrier-cream",
+      "destination": "/product/kiero-moisturizing-barrier-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-prime-sun-gel-spf40",
+      "destination": "/product/kiero-prime-sun-gel-spf-40",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-pure-radiant-eye-cream",
+      "destination": "/product/kiero-pure-radiant-eye-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kiero-refining-enzyme-cleanser",
+      "destination": "/product/kiero-refining-enzyme-cleanser",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kindra-boric-acid-suppositories",
+      "destination": "/product/kindra-boric-acid-suppositories",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kindra-lotion",
+      "destination": "/product/kindra-daily-vaginal-lotion",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kindra-v-lube-silicone-lubricant",
+      "destination": "/product/kindra-v-lube-silicone-lubricant",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kindra-v-lube-water-based-lubricant",
+      "destination": "/product/kindra-v-lube-water-based-lubricant",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kindra-v-relief-serum",
+      "destination": "/product/kindra-v-relief-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-knix-underwear",
+      "destination": "/product/knix-leakproof-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-komuso-classic-shift-anxiety-breathing-necklace",
+      "destination": "/product/komuso-classic-shift-breathing-necklace",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kotex-security",
+      "destination": "/product/kotex-security-ultra-thin",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-kotex-tampon",
+      "destination": "/product/u-by-kotex-click-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-l-pad",
+      "destination": "/product/l-organic-cotton-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lansinoh-pads",
+      "destination": "/product/lansinoh-stay-dry-nursing-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lelo-sona",
+      "destination": "/product/lelo-sona-cruise",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lena-cup",
+      "destination": "/product/lena-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lilyeve-growturn-ampoule",
+      "destination": "/product/lilyeve-grow-turn-ampoule-hair-serum-with-brush",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lim-method-bundle",
+      "destination": "/product/lim-method-the-lim-bundle",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lim-method-kneeling-pad",
+      "destination": "/product/lim-method-kneeling-pad",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lim-method-shoe-covers",
+      "destination": "/product/lim-method-shoe-covers",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-livi-after-sex-absorption-device",
+      "destination": "/product/livi-after-sex-absorption-device",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lola-pad",
+      "destination": "/product/lola-organic-cotton-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lola-tampon",
+      "destination": "/product/lola-organic-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-love-wellness-bloat",
+      "destination": "/product/love-wellness-bye-bye-bloat",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-love-wellness-intimate-skin-support",
+      "destination": "/product/love-wellness-intimate-skin-support",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lumma-disc",
+      "destination": "/product/lumma-unique-menstrual-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-luna-wash",
+      "destination": "/product/luna-daily-intimate-feminine-wash",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lunette-cup",
+      "destination": "/product/lunette-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-magnesium-glycinate",
+      "destination": "/product/nature-made-magnesium-glycinate-200-mg-60-capsules",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-magnumsolace-nighttime-magnesium-cream",
+      "destination": "/product/magnum-solace-nighttime-magnesium-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-maude-vibe",
+      "destination": "/product/maude-vibe",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-metamucil-psyllium-orange",
+      "destination": "/product/metamucil-psyllium-fiber-powder-orange-with-sugar",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-micro-ingredients-myo-d-chiro-inositol-powder",
+      "destination": "/product/micro-ingredients-myo-and-d-chiro-inositol-powder",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-miralax-peg-3350",
+      "destination": "/product/miralax-osmotic-laxative-powder-unflavored",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-modibodi",
+      "destination": "/product/modibodi-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-bath-body-tonic",
+      "destination": "/product/momotaro-apotheca-nourishing-bath-and-body-tonic",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-body-oil",
+      "destination": "/product/momotaro-apotheca-organic-body-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-daily-probiotic",
+      "destination": "/product/momotaro-apotheca-daily-probiotic",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-hydrosol-toner",
+      "destination": "/product/momotaro-apotheca-organic-hydrosol-toner",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-salve",
+      "destination": "/product/momotaro-apotheca-soothe-and-restore-salve",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-urinary-tract-supplement",
+      "destination": "/product/momotaro-apotheca-urinary-tract-and-pelvic-health-super-supplement",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-momotaro-vaginal-suppository",
+      "destination": "/product/momotaro-apotheca-vaginal-suppository",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-monistat-3-combo",
+      "destination": "/product/monistat-3-dose-yeast-infection-treatment-prefilled-applicators-external-itch-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-mypelvicbra-classic",
+      "destination": "/product/my-pelvic-bra-classic-pelvic-bra",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-mypelvicbra-classic-plus",
+      "destination": "/product/my-pelvic-bra-classic-plus-pelvic-bra",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-mypelvicbra-sports",
+      "destination": "/product/my-pelvic-bra-sports-pelvic-bra",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-mypelvicbra-waistband-extenders",
+      "destination": "/product/my-pelvic-bra-pelvic-bra-waistband-extenders",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-mystery-vibe",
+      "destination": "/product/mysteryvibe-crescendo-2",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-najeau-follicle-drops",
+      "destination": "/product/najeau-follicle-drops-pre-shampoo-scalp-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-natracare-pad",
+      "destination": "/product/natracare-ultra-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-natracare-tampon",
+      "destination": "/product/natracare-regular-non-applicator-organic-cotton-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-nature-made-folic-acid-400",
+      "destination": "/product/nature-made-folic-acid-400-mcg-tablets",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-nature-made-iron-65mg",
+      "destination": "/product/nature-made-iron-65-mg-tablets",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-natures-bounty-d3-125mcg",
+      "destination": "/product/nature-s-bounty-vitamin-d3-5000-iu-softgels",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-naya-applicator-kit",
+      "destination": "/product/naya-applicator-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-naya-regular-tampons",
+      "destination": "/product/naya-regular-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-neycher-hydrobloom-gel",
+      "destination": "/product/neycher-hydrobloom-moisturizing-gel",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-neycher-odor-be-gone",
+      "destination": "/product/neycher-odor-be-gone",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-neycher-vaginal-moisturizer",
+      "destination": "/product/neycher-vaginal-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-nixit",
+      "destination": "/product/nixit-menstrual-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-o-positiv-uro-urinary-tract-health-capsules",
+      "destination": "/product/o-positiv-uro-urinary-tract-health-capsules",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-multipack-40",
+      "destination": "/product/o-b-original-tampons-multi-pack-40ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-multipack-80",
+      "destination": "/product/o-b-original-tampons-multi-pack-40ct-pack-of-2",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-regular-40",
+      "destination": "/product/o-b-original-tampons-regular-40ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-super-40",
+      "destination": "/product/o-b-original-tampons-super-40ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-super-plus-40",
+      "destination": "/product/o-b-original-tampons-super-plus-40ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-original-ultra-40",
+      "destination": "/product/o-b-original-tampons-ultra-40ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-procomfort-mini-16",
+      "destination": "/product/o-b-procomfort-mini-tampons-16ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-procomfort-mini-32",
+      "destination": "/product/o-b-procomfort-mini-tampons-32ct",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ob-tampon",
+      "destination": "/product/ob-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-boom",
+      "destination": "/product/oboo-boom-dual-end-wand",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-cool-spray",
+      "destination": "/product/oboo-cool-spray-for-hot-flashes",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-groove",
+      "destination": "/product/oboo-groove-dual-action-massager",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-loob-arousal",
+      "destination": "/product/oboo-loob-arousal-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-loob-daily",
+      "destination": "/product/oboo-loob-daily-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-mood-drops",
+      "destination": "/product/oboo-in-the-mood-drops",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-moon",
+      "destination": "/product/oboo-moon-anal-training-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-nook",
+      "destination": "/product/oboo-nook-clitoral-massager",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-oooh",
+      "destination": "/product/oboo-oooh-palm-massager",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-shoop",
+      "destination": "/product/oboo-shoop-gentle-dual-massager",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-smooch",
+      "destination": "/product/oboo-smooch-sonic-stimulator",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-smooth-arousal",
+      "destination": "/product/oboo-smooth-arousal-vulva-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-smooth-daily",
+      "destination": "/product/oboo-smooth-daily-vulva-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-woo",
+      "destination": "/product/oboo-woo-bullet",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-oboo-woosh-warming-wand",
+      "destination": "/product/oboo-woosh-warming-wand",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-organicup",
+      "destination": "/product/organicup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-organyc-pad",
+      "destination": "/product/organyc-100-cotton-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-organyc-tampon",
+      "destination": "/product/organyc-cotton-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-panoxyl-bpo-10-wash",
+      "destination": "/product/panoxyl-10-benzoyl-peroxide-acne-foaming-wash",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-pelvic-wand",
+      "destination": "/product/intimate-rose-pelvic-wand",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-conception-support-pack",
+      "destination": "/product/perelel-conception-support-pack",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-daily-iron-ease",
+      "destination": "/product/perelel-daily-iron-ease",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-fertility-support",
+      "destination": "/product/perelel-fertility-support",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-hormonal-balance-support",
+      "destination": "/product/perelel-hormonal-balance-support",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-mom-multi-support-pack",
+      "destination": "/product/perelel-mom-multi-support-pack",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-perimenopause-support-pack",
+      "destination": "/product/perelel-perimenopause-support-pack",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-perelel-prenatal-pack-1st-2nd-3rd-trimester",
+      "destination": "/product/perelel-prenatal-pack-1st-2nd-3rd-trimester",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-period-co-underwear",
+      "destination": "/product/the-bikini-period-in-organic-cotton-for-heavy-flows",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-period-nirvana-disc",
+      "destination": "/product/period-nirvana-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-phd-wash",
+      "destination": "/product/ph-d-feminine-health-boric-acid-wash",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-playtex-sport",
+      "destination": "/product/playtex-sport-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-poise-ultra-thin-moderate",
+      "destination": "/product/poise-incontinence-pads-for-women-moderate-absorbency",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-popmask-big-hug-self-heating-patches",
+      "destination": "/product/popmask-big-hug-self-heating-patches",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-portable-heating",
+      "destination": "/product/comfytemp-portable-heating-pad",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-probiotics-women",
+      "destination": "/product/garden-of-life-dr-formulated-probiotics-once-daily-women-s-shelf-stable-30-capsules",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proof-period",
+      "destination": "/product/proof-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proov-balance-bundle",
+      "destination": "/product/proov-balance-bundle",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proov-complete",
+      "destination": "/product/proov-complete-fertility-testing-system",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proov-empower",
+      "destination": "/product/proov-empower-hormone-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proov-his-hers",
+      "destination": "/product/proov-his-and-hers-fertility-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-proov-path-to-pregnancy",
+      "destination": "/product/proov-clinical-f-a-s-t-method-path-to-pregnancy",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-queen-of-the-thrones-ritual-starter-liver-castor",
+      "destination": "/product/queen-of-the-thrones-ritual-starter-liver-castor-oil-pack-kit",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rael-liners",
+      "destination": "/product/rael-regular-organic-cotton-cover-panty-liners-60-count",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rael-organic-pad",
+      "destination": "/product/rael-large-organic-cotton-cover-pads-with-wings",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rael-overnight",
+      "destination": "/product/rael-overnight-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rael-tampon",
+      "destination": "/product/rael-organic-cotton-tampon-variety-pack-32-count",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-refilled-cytokine-effector-plus",
+      "destination": "/product/refilled-hair-recovery-cytokine-effector-plus-spot-serum",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-remifemin",
+      "destination": "/product/remifemin-black-cohosh",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-resa-rhythm-bracelet",
+      "destination": "/product/resa-rhythm-bracelet",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rif-care-organic-cotton-and-hemp-fiber-leakproof",
+      "destination": "/product/rif-care-organic-cotton-and-hemp-fiber-leakproof-period-undies-no-pfa-added",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rif-care-organic-cotton-and-hemp-fiber-menstrual",
+      "destination": "/product/rif-care-organic-cotton-and-hemp-fiber-menstrual-pads-with-wings",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rif-care-organic-cotton-non-applicator-tampons",
+      "destination": "/product/rif-care-organic-cotton-non-applicator-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rituals-prenatal",
+      "destination": "/product/ritual-prenatal-vitamin",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ruby-cup",
+      "destination": "/product/ruby-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rubylove",
+      "destination": "/product/ruby-love-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-rugby-vitamin-b6-25",
+      "destination": "/product/rugby-vitamin-b6-25-mg-tablets",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-saalt-cup",
+      "destination": "/product/saalt-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-saalt-cup-steamer",
+      "destination": "/product/saalt-cup-steamer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-saalt-disc",
+      "destination": "/product/saalt-menstrual-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-seeking-health-dao-enzyme-formerly-histamine-dig",
+      "destination": "/product/seeking-health-dao-enzyme-formerly-histamine-digest-histamine-block",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-seventh-gen-pad",
+      "destination": "/product/seventh-generation-ultra-thin-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-seventh-gen-tampon",
+      "destination": "/product/seventh-generation-organic-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-silverette-cups",
+      "destination": "/product/silverette-nursing-cups",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-snoogle-pillow",
+      "destination": "/product/leachco-snoogle-maternity-pillow",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-softdisc",
+      "destination": "/product/softdisc-disposable",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-sootheher-elaris-pod",
+      "destination": "/product/sootheher-s-elaris-pod",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-sootheher-gel-pad-refills",
+      "destination": "/product/sootheher-gel-pad-refills",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-spearmint-pcos",
+      "destination": "/product/traditional-medicinals-organic-spearmint-tea",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-stayfree-ultra",
+      "destination": "/product/stayfree-ultra-thin",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-stripes-oh-my-glide-intimate-play-oil",
+      "destination": "/product/stripes-oh-my-glide-intimate-play-oil",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-stripes-vag-of-honor-vaginal-moisturizer",
+      "destination": "/product/stripes-vag-of-honor-vaginal-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-surearly-smart-ovulation-test",
+      "destination": "/product/surearly-smart-ovulation-test-reader-works-with-soonr",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-sweet-spot-wipes",
+      "destination": "/product/sweetspot-labs-wipes",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-sweetspot-buff-brighten",
+      "destination": "/product/sweetspot-labs-buff-and-brighten-aha-bha-body-exfoliating-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampax-pure",
+      "destination": "/product/tampax-pure-cotton",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampax-radiant",
+      "destination": "/product/tampax-radiant-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-menstrual-cup",
+      "destination": "/product/tampon-tribe-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-organic-pads",
+      "destination": "/product/tampon-tribe-organic-pads",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-organic-tampons",
+      "destination": "/product/tampon-tribe-organic-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-pads-bulk-buy",
+      "destination": "/product/tampon-tribe-organic-pads-bulk-buy-20",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-pantyliners-bulk-buy",
+      "destination": "/product/tampon-tribe-organic-pantyliners-bulk-buy-48",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-reusable-pads",
+      "destination": "/product/tampon-tribe-reusable-pads-organic-cotton-2-pack",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tampontribe-tampons-bulk-buy",
+      "destination": "/product/tampon-tribe-organic-tampons-bulk-buy",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-taro-clotrimazole-7",
+      "destination": "/product/taro-clotrimazole-1-7-day-vaginal-cream",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier",
+      "destination": "/product/happier-meditation",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tena-intimates-very-light-liner",
+      "destination": "/product/tena-intimates-very-light-liner-for-women",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tenscare-ova-plus-period-pain-relief",
+      "destination": "/product/tenscare-ova-period-pain-relief",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-thermacare",
+      "destination": "/product/thermacare-menstrual-pain-therapy-heatwraps-4-count",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-thinx",
+      "destination": "/product/thinx-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-thorne-5-mthf-1-mg",
+      "destination": "/product/thorne-5-mthf-1-mg",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-thorne-berberine",
+      "destination": "/product/thorne-berberine",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-tomboyx-period",
+      "destination": "/product/tomboyx-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-topicals-faded-brightening-clearing-serum-unscen",
+      "destination": "/product/topicals-faded-brightening-clearing-serum-unscented",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-u-kotex-pad",
+      "destination": "/product/u-by-kotex-clean-wear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-uberlube",
+      "destination": "/product/uberlube-luxury-lubricant",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ubiquinol-thorne",
+      "destination": "/product/thorne-ubiquinol-coq10",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-uqora-control",
+      "destination": "/product/uqora-control",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-v-wash",
+      "destination": "/product/v-wash-plus",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-veeda-pad",
+      "destination": "/product/veeda-natural-cotton-ultra-thin-pads-with-wings",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-vella-everslide-personal-lubricant",
+      "destination": "/product/vella-everslide-personal-lubricant",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-vella-meltwater-vaginal-emollient",
+      "destination": "/product/vella-meltwater-vaginal-emollient",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-viboos-heating-pad",
+      "destination": "/product/viboos-electric-heating-pad",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-vio2-mouth-tape",
+      "destination": "/product/vio2-partial-coverage-mouth-tape",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-visby-womens-sti-test",
+      "destination": "/product/visby-medical-visby-women-s-at-home-sti-test",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-vitex",
+      "destination": "/product/gaia-herbs-vitex-berry-chasteberry",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-viv-for-your-v-viv-bamboo-pads-liners",
+      "destination": "/product/viv-for-your-v-viv-bamboo-pads-and-liners",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-viv-for-your-v-viv-disc",
+      "destination": "/product/viv-for-your-v-viv-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-viv-for-your-v-viv-menstrual-cup",
+      "destination": "/product/viv-for-your-v-viv-menstrual-cup",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-viv-for-your-v-viv-organic-cotton-tampons",
+      "destination": "/product/viv-for-your-v-viv-organic-cotton-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-willow-pump",
+      "destination": "/product/willow-wearable-breast-pump",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-pregnancy-tests",
+      "destination": "/product/winx-health-early-pregnancy-tests",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-uti-daily-defense",
+      "destination": "/product/winx-health-urinary-daily-defense",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-uti-pain-relief",
+      "destination": "/product/winx-health-uti-fast-acting-pain-relief",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-uti-test-treat",
+      "destination": "/product/winx-health-uti-test-treat",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-vaginal-health-test-treat",
+      "destination": "/product/winx-health-vaginal-health-test-treat",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-winx-vaginal-probiotic",
+      "destination": "/product/winx-health-vaginal-health-probiotic",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-womaness-coco-bliss-external-vaginal-moisturizer",
+      "destination": "/product/womaness-coco-bliss-external-vaginal-moisturizer",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-womaness-daily-v-soothe",
+      "destination": "/product/womaness-daily-v-soothe",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-womaness-me",
+      "destination": "/product/womaness-me-no-pause-supplement",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-womaness-melt-for-you-vaginal-inserts",
+      "destination": "/product/womaness-melt-for-you-vaginal-inserts",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-womens-rogaine-foam",
+      "destination": "/product/rogaine-women-s-rogaine-5-minoxidil-foam",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-wuka-underwear",
+      "destination": "/product/wuka-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-ziggy-disc",
+      "destination": "/product/ziggy-cup-menstrual-disc",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-zinc",
+      "destination": "/product/garden-of-life-vitamin-code-raw-zinc-30-mg",
+      "permanent": true
     }
   ],
   "rewrites": [

@@ -9,7 +9,7 @@ import { SITE, SEO_PAGES, isNoindexPath } from '../src/utils/seoPages.js';
 import { LEGACY_REDIRECTS } from '../src/components/nav/mainTabs.js';
 
 const STATIC = ['/', ...Object.keys(SEO_PAGES)];
-const articlesSrc = fs.readFileSync(new URL('../src/components/Articles.jsx', import.meta.url), 'utf8');
+const articlesSrc = fs.readFileSync(new URL('../src/components/ArticlesCore.jsx', import.meta.url), 'utf8');
 const start = articlesSrc.indexOf('const ARTICLES = [');
 // Only the ARTICLES array itself (the section list after it also has ids, which are not reads).
 const end = start < 0 ? -1 : articlesSrc.indexOf('\n];', start);

@@ -24,7 +24,7 @@
 /* The phone. */
 .app-container .hd-stage { position: relative; display: grid; place-items: center; }
 .app-container .hd-phone { position: relative; width: min(300px, 78vw); aspect-ratio: 9 / 18.5; border-radius: 42px; background: #3e2723; padding: 12px; box-shadow: 10px 12px 0 #f7badd; }
-.app-container .hd-notch { position: absolute; top: 18px; left: 50%; width: 76px; height: 20px; margin-left: -38px; border-radius: 999px; background: #1f1311; z-index: 2; }
+.app-container .hd-notch { position: absolute; top: 18px; left: 50%; width: 76px; height: 20px; margin-left: -38px; border-radius: 999px; background: #3e2723; z-index: 2; }
 .app-container .hd-screen { position: relative; height: 100%; border-radius: 32px; background: #ffedac; overflow: hidden; animation: hd-in .5s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes hd-in { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
 .app-container .hd-pause { all: unset; box-sizing: border-box; cursor: pointer; position: absolute; right: max(0px, calc(50% - 190px)); bottom: -8px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: #ffedac; border: 2px solid #3e2723; }

@@ -101,6 +101,7 @@ const SharedAnswerPage = React.lazy(() => import('./components/SharedAnswerPage'
 // The catalog (products, research, matching) loads after first paint as its
 // own chunk; App re-renders when it lands (data/catalog.js, catalogReady below).
 import { ALL_PRODUCTS, CATEGORY_LABELS, getPersonalizedProductIds, getEcosystemSeedFromQuiz, getProductById, getProductMatchDetailsForProduct, getProfileMatchPercentForProduct, hasStatedLifeStage, matchEngine, getSelectedNeeds, useCatalogReady, isCatalogReady, loadCatalog } from './data/catalog.js';
+import { RELEASED_STARTUPS } from './data/startups.js';
 import { needAreaLabels } from './utils/needAreas.js';
 import { behaviorFrom } from './utils/matchDisplay';
 import { useHealthData } from './mobile/hooks/useHealthData.js';
@@ -171,6 +172,7 @@ import './styles/library-head.css';
 import './styles/no-vibe.css';
 import './styles/header-calm.css';
 import './styles/pdp-calm.css';
+import './styles/web-audit-nov12.css';
 import useMyAvatarUrl from './hooks/useMyAvatarUrl.js';
 import ProLock from './components/ProLock.jsx';
 import { proDoor, retakeDoor, proNow } from './pro/proDoor.js';
@@ -2402,6 +2404,14 @@ function App() {
       const loose = (x) => String(x || '').toLowerCase().replace(/-s-/g, '-').replace(/[^a-z0-9]/g, '');
       const want = loose(productRouteId);
       raw = want.length > 4 ? ALL_PRODUCTS.find((p) => loose(productRouteKey(p)) === want) || null : null;
+    }
+
+    // Services (startups) link to /product/<their name> from Explore > Services. A click opened
+    // them, but the same address opened in a new tab, shared or crawled said "Product not found"
+    // (website audit, Nov 12). Same shape Explore gives them.
+    if (!raw) {
+      const s = RELEASED_STARTUPS.find((x) => x.id === productRouteId || productRouteKey(x) === productRouteId);
+      if (s) raw = { ...s, type: 'digital', summary: s.description || s.tagline, price: s.stage || '' };
     }
 
     if (!raw) return null;

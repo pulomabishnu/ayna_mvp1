@@ -107,6 +107,6 @@ html.ay-motion .lsx-search__hint b { display: inline-block; animation: lk-hint 2
 .lk-spark { width: 72px; height: 32px; overflow: visible; }
 .lk-spark path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .lk-spark circle { fill: #f7badd; }
-.lk-fit { display: grid; gap: 5px; width: 92px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 237, 172, .14); }
+.lk-fit { display: grid; gap: 5px; width: 92px; padding: 10px 12px; border-radius: 14px; background: #3e2723; box-shadow: inset 0 0 0 1.5px #ffedac; }
 .lk-fit b { font: 800 11px/1 var(--ay-font-ui, 'Figtree', sans-serif); color: var(--lk-fg); }
 .lk-fit i { display: block; height: 6px; width: calc(var(--w) * 100%); border-radius: 99px; background: #f7badd; }

@@ -142,7 +142,7 @@ html body #ay-landing.wl .ls-pains { list-style: none; margin: 0; padding: 0; bo
 html body #ay-landing.wl .ls-pains > li { border-bottom: 1.5px solid rgba(62, 39, 35, .25); }
 html body #ay-landing.wl .ls-pains button { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 16px; padding: 20px 0; cursor: pointer; color: #3e2723; }
 html body #ay-landing.wl .ls-pains button:focus-visible { outline: 2px solid #3e2723; outline-offset: 4px; border-radius: 6px; }
-html body #ay-landing.wl .ls-pains .ls-ic { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: rgba(62, 39, 35, .08); transition: background .2s ease; }
+html body #ay-landing.wl .ls-pains .ls-ic { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: #f7badd; transition: background .2s ease; }
 html body #ay-landing.wl .ls-pains .ls-ic svg { width: 24px; height: 24px; fill: none; stroke: #3e2723; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 html body #ay-landing.wl .ls-pains li.is-on .ls-ic { background: #3e2723; }
 html body #ay-landing.wl .ls-pains li.is-on .ls-ic svg { stroke: #f7badd; }

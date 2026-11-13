@@ -190,7 +190,7 @@ const dupes = (m) => [...m.entries()].filter(([, ids]) => ids.length > 1);
 for (const [t, ids] of dupes(titles)) console.warn(`prerender: duplicate product title "${t}" (${ids.join(', ')})`);
 for (const [d, ids] of dupes(descriptions)) console.warn(`prerender: duplicate product description (${ids.join(', ')}): ${d.slice(0, 60)}`);
 
-const articlesSrc = fs.readFileSync(new URL('../src/components/Articles.jsx', import.meta.url), 'utf8');
+const articlesSrc = fs.readFileSync(new URL('../src/components/ArticlesCore.jsx', import.meta.url), 'utf8');
 const start = articlesSrc.indexOf('const ARTICLES = [');
 // One chunk per article, so a title is never paired with another article's teaser.
 const chunks = articlesSrc.slice(start).split(/\n {2}\{\s*\n\s*id: '/).slice(1);

@@ -20,7 +20,7 @@ const PAIN_ICONS = {
 
 /** One line under every main button: what it costs her (nothing) and how long it takes. */
 export function CtaNote({ className = '' }) {
-  return <p className={`ls-note ${className}`.trim()}>Free · about 1 minute · no card needed</p>;
+  return <p className={`ls-note ${className}`.trim()}>Free. See your top matches before you sign up.</p>;
 }
 
 /* ---------- the problem, from her side ----------
