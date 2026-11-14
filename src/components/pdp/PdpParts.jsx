@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { apiUrl } from '../../utils/apiUrl.js';
 import MatchPill from '../MatchPill.jsx';
 import SafetyHoldNote from '../match/SafetyHoldNote.jsx';
 import BleedingEvaluationNote from '../match/BleedingEvaluationNote.jsx';
@@ -313,7 +315,10 @@ export function MatchExplain({ breakdown = null, onFull = null, onAskWhy = null,
       <p className="ayv-lock__actions">
         {onAskWhy && <button type="button" className="ayv-obtn" onClick={() => onAskWhy(`Why is my match ${shown != null ? `${shown}%` : 'a partial fit'}?`)}><PdpIcon name="ask" size={16} />Ask ayna why</button>}
         {onFull && <button type="button" className="ayv-textbtn" onClick={onFull}>See the full breakdown</button>}
-        <a className="ayv-textbtn" href="/how-it-works">How we match</a>
+        {/* Nov 14 (focus group, Angelina): in the app "/how-it-works" loaded the app itself and landed on Home. */}
+        {Capacitor.isNativePlatform()
+          ? <a className="ayv-textbtn" href="https://www.aynahealth.co/how-it-works" target="_blank" rel="noopener noreferrer">How we match ↗</a>
+          : <a className="ayv-textbtn" href="/how-it-works">How we match</a>}
       </p>
     </div>
   );

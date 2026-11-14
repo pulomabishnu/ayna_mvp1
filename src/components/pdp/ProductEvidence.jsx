@@ -1,3 +1,4 @@
+import { apiUrl } from '../../utils/apiUrl.js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { useEdgeFade } from './useEdgeFade';
@@ -898,7 +899,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     // FDA status: the short value, the explanation behind "What this means".
     sf.fdaRaw && { label: m.isDigital ? 'Regulation' : 'FDA status', value: sf.fda?.label || sf.fdaRaw, node: sf.fda?.label ? <>{sf.fda.label}<details className="ayv-more2"><summary>What this means</summary><span>{sf.fda?.line && <>{sf.fda.line} </>}{sf.fdaRaw.trim().replace(/\.$/, '').toLowerCase() !== sf.fda.label.toLowerCase() && <>On file: <Tx>{fmtDate(sf.fdaRaw)}</Tx></>}</span></details></> : fdaValue },
     wear && { label: 'How long it lasts', value: cap(wear[0]), note: 'From the instructions' },
-    works.items.length > 0 && { label: 'Works with', value: works.items.join(', '), node: <>{works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href="/health-data">ayna</a> : t}</React.Fragment>)}</> },
+    works.items.length > 0 && { label: 'Works with', value: works.items.join(', '), node: <>{works.items.map((t, i) => <React.Fragment key={t}>{i > 0 && ', '}{t === 'ayna' && works.ayna ? <a href={apiUrl('/health-data')}>ayna</a> : t}</React.Fragment>)}</> },
     (glance?.who?.helps || []).length > 0 && { label: 'Helps with', value: dedupeList(glance.who.helps.join(', ')) },
     ...sf.labelRows.filter((r) => !SAFETY_ROWS.test(r.label)).map((r) => ({ label: r.label, value: r.value })),
     dt.badges.length > 0 && { label: 'Labels on file', value: dt.badges.join(', '), note: 'Claims and labels from the brand or listing. ayna hasn’t checked each one.' },

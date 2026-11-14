@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { apiUrl } from '../../utils/apiUrl.js';
 import { groupShelves } from '../../matching/shelfGroups.js';
 import { useCatalogReady } from '../../data/catalog.js';
 import { moreRemaining } from '../../mobile/data/onboardingFlow.js';
@@ -253,7 +254,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                     <span className="ay-ob-picks__text"><b>{p.name}</b><small>{[p.type === 'digital' ? 'Service' : null, p.brand, price].filter(Boolean).join(' · ')}</small></span>
                     {pct != null && <em className="ay-ob-picks__pct">{pct}%</em>}
                   </li>;
-                })}</ol> : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.held ? r.heldWhy : r.why || <>Nothing is backed well enough to recommend yet.{variant === 'web' && <> <a className="ay-deck__link" href={`/explore?q=${encodeURIComponent(String(r.label || '').toLowerCase())}`} target="_blank" rel="noopener noreferrer">Browse it in Shop</a> or <a className="ay-deck__link" href="/explore/services" target="_blank" rel="noopener noreferrer">see services</a>.</>}</>}</small>}
+                })}</ol> : <small className="ay-deck__empty">{r.careFirst && bleeding ? <>Bleeding after menopause should be checked promptly by an ob-gyn or your clinician. We don’t suggest products for it. {bleeding.source?.url && <a href={bleeding.source.url} target="_blank" rel="noopener noreferrer">{bleeding.source.label || 'Source'}</a>}</> : r.held ? r.heldWhy : r.why || <>Nothing is backed well enough to recommend yet.{variant === 'web' && <> <a className="ay-deck__link" href={`/explore?q=${encodeURIComponent(String(r.label || '').toLowerCase())}`} target="_blank" rel="noopener noreferrer">Browse it in Shop</a> or <a className="ay-deck__link" href={apiUrl('/explore/services')} target="_blank" rel="noopener noreferrer">see services</a>.</>}</>}</small>}
               </li>;
             })}
           </ul>
