@@ -12,7 +12,7 @@ const entries = Object.entries(OFFICIAL_IMAGE_OVERRIDES);
 const byId = new Map([...CATALOG_PRODUCTS, ...STARTUPS].map((p) => [p.id, p]));
 // Nov 9 photo pass: products that live only in the live catalog (/api/products, Supabase) and not in
 // the bundled files. Their override still applies by id wherever the product renders.
-const LIVE_ONLY = new Set(['p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule', 'p-intimina-lily-cup-compact', 'p-intimina-ziggy-cup-2', 'p-milli-vaginal-dilator', 'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684', 'p-thorne-magnesium-citramate', 'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum']);
+const LIVE_ONLY = new Set(['p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule', 'p-intimina-lily-cup-compact', 'p-intimina-ziggy-cup-2', 'p-milli-vaginal-dilator', 'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684', 'p-thorne-magnesium-citramate', 'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum', 'p-intimina-kegelsmart-2', 'p-hume-health-hume-band-2-0', 'p-nuropod-nuropod', 'p-slumber-cloud-ultracool-pillow']);
 
 describe('official image overrides', () => {
   it('only maps catalog ids, and never ones that already have a local packshot', () => {

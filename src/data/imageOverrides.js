@@ -175,6 +175,12 @@ export const OFFICIAL_IMAGE_OVERRIDES = Object.freeze({
   's-august': { src: 'https://www.itsaugust.co/cdn/shop/files/August_Collection_Full.jpg', alt: 'August organic tampons and pads', source: 'https://www.itsaugust.co', checkedOn: '2026-11-13' },
   's-needed': { src: 'https://thisisneeded.com/cdn/shop/files/PDP_Pro_Prenatal_Multi_Gallery_01.png', alt: 'Needed Prenatal Multivitamin Pro', source: 'https://thisisneeded.com', checkedOn: '2026-11-13' },
   's-oula': { src: 'https://wp-marketing-cdn.prod.oulahealth.com/wp-content/uploads/2024/10/14115515/home.jpg', alt: 'Oula OBGYN and midwife care', source: 'https://oulahealth.com', checkedOn: '2026-11-13' },
+  // Live catalog photo check (Nov 13: all 838 products loaded through /api/image-proxy and looked at). These showed
+  // a street photo (KegelSmart 2) or only a logo; each replacement is from the brand's own product page.
+  'p-intimina-kegelsmart-2': { src: 'https://assets.intimina.com/files/static/product-images/2023-05/KegelSmart2_%20eComm%2001%20Slider_600%20x%20600%20px.jpg', alt: 'INTIMINA KegelSmart 2', source: 'https://www.intimina.com/kegel-smart-2', checkedOn: '2026-11-13' },
+  'p-hume-health-hume-band-2-0': { src: 'https://humehealth.com/cdn/shop/files/HumeBand2.0.webp', alt: 'Hume Band 2.0 on a wrist', source: 'https://humehealth.com', checkedOn: '2026-11-13' },
+  'p-nuropod-nuropod': { src: 'https://nuropod.com/cdn/shop/files/nuropod-1.png', alt: 'Nuropod device in a hand', source: 'https://nuropod.com/products/nuropod', checkedOn: '2026-11-13' },
+  'p-slumber-cloud-ultracool-pillow': { src: 'https://slumbercloud.com/assets/holiday-pillow-gift-CK7UEGu_.jpg', alt: 'Slumber Cloud UltraCool Pillow', source: 'https://slumbercloud.com/products/ultracool-pillow-1', checkedOn: '2026-11-13' },
   's-birdandbe': { src: 'https://birdandbe.com/cdn/shop/files/All_Vitamins_2-Compressed.jpg', alt: 'Bird&Be vitamins', source: 'https://birdandbe.com', checkedOn: '2026-11-13' },
   'p-finch-self-care-pet': { src: appIcon('PurpleSource221/v4/bb/01/b0/bb01b099-57a3-4c89-2f9b-aa55548134e2/Placeholder.mill'), alt: 'Finch app icon', source: 'https://apps.apple.com/us/app/finch-self-care-pet/id1528595748', checkedOn: '2026-11-13' },
   'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier': { src: appIcon('PurpleSource211/v4/16/32/dd/1632dd07-ef68-df28-b0b4-a1c5925a4e49/Placeholder.mill'), alt: 'Happier Meditation app icon', source: 'https://apps.apple.com/us/app/id992210239', checkedOn: '2026-11-13' },
