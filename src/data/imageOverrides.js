@@ -178,6 +178,9 @@ export const OFFICIAL_IMAGE_OVERRIDES = Object.freeze({
   's-birdandbe': { src: 'https://birdandbe.com/cdn/shop/files/All_Vitamins_2-Compressed.jpg', alt: 'Bird&Be vitamins', source: 'https://birdandbe.com', checkedOn: '2026-11-13' },
   'p-finch-self-care-pet': { src: appIcon('PurpleSource221/v4/bb/01/b0/bb01b099-57a3-4c89-2f9b-aa55548134e2/Placeholder.mill'), alt: 'Finch app icon', source: 'https://apps.apple.com/us/app/finch-self-care-pet/id1528595748', checkedOn: '2026-11-13' },
   'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier': { src: appIcon('PurpleSource211/v4/16/32/dd/1632dd07-ef68-df28-b0b4-a1c5925a4e49/Placeholder.mill'), alt: 'Happier Meditation app icon', source: 'https://apps.apple.com/us/app/id992210239', checkedOn: '2026-11-13' },
+  's-qvin': { src: 'https://qvin.com/img/product/qpad-kit.webp', alt: 'Qvin Q-Pad kit', source: 'https://www.qvin.com', checkedOn: '2026-11-13' },
+  's-hertility': { src: 'https://hertilityhealth.com/_next/static/media/hormoneKit.feb4d1ef.webp', alt: 'Hertility hormone test kit', source: 'https://www.hertilityhealth.com', checkedOn: '2026-11-13' },
+  's-beafertility': { src: 'https://beafertility.com/cdn/shop/files/Group_1_62343285-15cc-4344-991f-4dc9890c1f52.png', alt: 'Béa Fertility kit', source: 'https://beafertility.com', checkedOn: '2026-11-13' },
   's-perelel': { src: 'https://perelelhealth.com/cdn/shop/files/Perelel_Boxes_Styled_088_1.jpg', alt: 'Perelel vitamin packs', source: 'https://perelelhealth.com', checkedOn: '2026-11-13' },
 });
 

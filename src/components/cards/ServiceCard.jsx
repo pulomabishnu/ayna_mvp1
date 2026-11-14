@@ -58,11 +58,11 @@ export default function ServiceCard({
   matchPercent = null, matchHold = false, matchLabel = '', onShowWhy = null, onSeeMatch = null,
   as = 'a', className = '',
 }) {
-  if (!service) return null;
-  const { format, cost, logo, covers } = serviceFacts(service);
   // Founder, Nov 13 ("we need pictures, every service"): with no logo file, the service's own photo or
   // app icon (the same image its page shows); the monogram only if that fails to load.
   const [picFailed, setPicFailed] = React.useState(false);
+  if (!service) return null;
+  const { format, cost, logo, covers } = serviceFacts(service);
   const photo = logo ? '' : (productImageOverride(service) || safeProductImageSrc(service.image || service.imageUrl || ''));
   const pic = logo || (!picFailed && photo) || '';
   const title = serviceTitle(service);

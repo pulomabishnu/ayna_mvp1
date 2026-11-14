@@ -42,6 +42,7 @@ import { SHOP_SEARCH_EXAMPLES } from './shop/searchExamples.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
+import ComingSoon from './comingSoon/ComingSoon.jsx';
 import { isServiceListing } from '../data/catalogCounts.js';
 import { getAynaRating, getAynaRatingCount } from '../data/aynaReviews';
 import { getPricePerUnitLabel } from '../utils/pricePerUnit';
@@ -2146,6 +2147,8 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                     );
                 })}
             </div>
+            {/* Founder, Nov 13: list waitlist services (real ones, each with its own site) after the services. */}
+            {servicesGrid && gridReady && !submittedQuery && <ComingSoon />}
             {gridReady && gridItems.length === 0 && !(searchSubmitted && aiLoading) && (
                 <div className="ayshop__empty">
                     <h2 className="ay-h2">{submittedQuery ? `Nothing for “${submittedQuery}”.` : 'Nothing here with these filters.'}</h2>

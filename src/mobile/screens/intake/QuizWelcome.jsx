@@ -13,9 +13,9 @@ import './quiz-welcome.css';
  *
  * Shown once per device (WELCOME_KEY). Nothing here is saved to her profile.
  */
-export const WELCOME_KEY = 'ayna_quiz_welcome_seen_v1';
+const WELCOME_KEY = 'ayna_quiz_welcome_seen_v1';
 
-export function quizWelcomeSeen() {
+function quizWelcomeSeen() {
   try { return localStorage.getItem(WELCOME_KEY) === '1'; } catch { return true; }
 }
 

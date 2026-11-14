@@ -1,3 +1,4 @@
+import ComingSoon from '../../components/comingSoon/ComingSoon.jsx';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import ShopGroups from '../../components/shop/ShopGroups.jsx';
 import { SHOP_GROUPS } from '../../data/catalogTaxonomy.js';
@@ -177,6 +178,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
           {visibleProducts.map((p, index) => <li key={p.id}><AppServiceCard service={p} index={index} onOpenProduct={onOpenProduct} quizAnswers={quizAnswers} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} /></li>)}
         </ul>
         {visibleCount < products.length && <div ref={sentinelRef} style={{ height: 1 }} />}
+        {visibleCount >= products.length && <div style={{ padding: '0 20px' }}><ComingSoon /></div>}
       </>
     );
   }
