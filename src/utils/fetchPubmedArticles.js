@@ -1,3 +1,4 @@
+import { apiUrl } from './apiUrl.js';
 // Fetches real PubMed articles for a product or ingredient
 const cache = new Map();
 
@@ -7,7 +8,7 @@ export async function fetchPubmedArticles(query, limit = 5) {
   if (cache.has(key)) return cache.get(key);
   try {
     const params = new URLSearchParams({ query: query.trim(), limit: String(limit) });
-    const res = await fetch(`/api/pubmed-search?${params}`);
+    const res = await fetch(apiUrl(`/api/pubmed-search?${params}`));
     if (!res.ok) { cache.set(key, []); return []; }
     const data = await res.json();
     const articles = Array.isArray(data?.articles) ? data.articles : [];

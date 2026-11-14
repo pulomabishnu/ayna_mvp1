@@ -110,6 +110,8 @@ async function checkLinks(urls) {
 export default async function handler(req, res) {
   // Public: approved research for one product page.
   if (req.method === 'GET' && req.query?.product) {
+    // Public, approved research for one product: the iPhone app reads it too (Nov 14).
+    res.setHeader('Access-Control-Allow-Origin', '*');
     const db = getServiceClient();
     if (!db) return res.status(200).json({ sections: {} });
     const id = clip(req.query.product, 120);

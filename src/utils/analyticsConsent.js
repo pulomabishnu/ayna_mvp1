@@ -1,3 +1,4 @@
+import { apiUrl } from './apiUrl.js';
 /**
  * analyticsConsent.js
  *
@@ -167,7 +168,7 @@ function checkMandatoryGpcRegion() {
     const controller = hasAbort ? new AbortController() : undefined;
     const timeoutId = hasAbort ? setTimeout(() => controller.abort(), 2500) : undefined;
     try {
-      const res = await fetch('/api/gpc-region', { signal: controller?.signal });
+      const res = await fetch(apiUrl('/api/gpc-region'), { signal: controller?.signal });
       if (!res.ok) return true;
       const data = await res.json();
       return data?.mandatory !== false; // fail closed unless explicitly told otherwise

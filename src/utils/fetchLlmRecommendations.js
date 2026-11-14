@@ -9,6 +9,7 @@ import {
 import { filterRecommendationsToCatalog } from './catalogIntegrity';
 import { loadCatalog } from '../data/catalog.js';
 import { getAppSessionId } from './conversationId';
+import { apiUrl } from './apiUrl.js';
 
 const API_PATH = '/api/llm-recommendations';
 const DEFAULT_FETCH_TIMEOUT_MS = 55_000;
@@ -244,7 +245,7 @@ export async function fetchLlmRecommendations(options = {}, fetchOpts = {}) {
 
   let res;
   try {
-    res = await fetch(API_PATH, {
+    res = await fetch(apiUrl(API_PATH), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,3 +1,4 @@
+import { apiUrl } from './apiUrl.js';
 // Checks OpenFDA for real recall data for a product.
 //
 // SAFETY: `status` must be propagated to the UI. A failed lookup is NOT the
@@ -41,7 +42,7 @@ export async function fetchFdaRecall(name, brand = '', category = '') {
 
   try {
     const params = new URLSearchParams({ name, brand: brand || '', category: category || '' });
-    const res = await fetch(`/api/fda-recall?${params}`, {
+    const res = await fetch(apiUrl(`/api/fda-recall?${params}`), {
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
     const data = await res.json().catch(() => null);

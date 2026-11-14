@@ -1,5 +1,6 @@
 import { applyCatalogCorrections } from '../data/catalogCorrections.js';
 import { isListedProduct } from '../data/hiddenProducts.js';
+import { apiUrl } from './apiUrl.js';
 /**
  * Catalog loader.
  *
@@ -82,7 +83,9 @@ export async function loadProductCatalog() {
 
   inFlight = (async () => {
     try {
-      const res = await fetch(API_PATH, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+      // Nov 14: through apiUrl() so the iPhone app (origin capacitor://localhost) reaches aynahealth.co.
+      // A bare '/api/products' failed there, and the app only ever had its ~300 bundled products.
+      const res = await fetch(apiUrl(API_PATH), { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       const products = Array.isArray(data?.products) ? data.products.filter(isListedProduct).map(applyCatalogCorrections) : [];

@@ -90,6 +90,8 @@ export function isPublishable(row) {
 
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
+  // Nov 14: the iPhone app (origin capacitor://localhost) reads the public catalog too, like /api/pro.
+  res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const client = getClient();

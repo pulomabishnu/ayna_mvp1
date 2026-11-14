@@ -2,6 +2,7 @@ import posthog from 'posthog-js';
 import { buildUserHealthContextString } from './userHealthContextForInsights';
 import { deriveBrandSearchContext } from './productBrandContext.js';
 import { getAppSessionId } from './conversationId';
+import { apiUrl } from './apiUrl.js';
 
 const API_PATH = '/api/product-insights';
 const CACHE_PREFIX = 'ayna_insights_v2_';
@@ -157,7 +158,7 @@ export async function fetchProductInsights(product, options = {}) {
 
   let res;
   try {
-    res = await fetch(API_PATH, {
+    res = await fetch(apiUrl(API_PATH), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

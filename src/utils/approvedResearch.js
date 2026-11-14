@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { apiUrl } from './apiUrl.js';
 
 /**
  * Research the team approved in /admin/research, shown on the product page.
@@ -31,7 +32,7 @@ export function useApprovedResearch(product) {
   useEffect(() => {
     if (!id || cache.has(id)) return undefined;
     let live = true;
-    fetch(`/api/research-product?product=${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(8000) })
+    fetch(apiUrl(`/api/research-product?product=${encodeURIComponent(id)}`), { signal: AbortSignal.timeout(8000) })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => { const v = j?.sections || {}; cache.set(id, v); if (live) setLoaded({ id, sections: v }); })
       .catch(() => {});

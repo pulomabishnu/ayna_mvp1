@@ -173,7 +173,7 @@ export async function resolveProductImage(name, brand, url, type) {
       const params = new URLSearchParams({ name, brand: brand || '' });
       if (url) params.set('url', url);
       if (type) params.set('type', type);
-      const res = await fetch(`/api/product-image?${params}`, {
+      const res = await fetch(apiUrl(`/api/product-image?${params}`), {
         signal: AbortSignal.timeout(10000),
       });
       if (!res.ok) {
