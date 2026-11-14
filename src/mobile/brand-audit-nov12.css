@@ -96,6 +96,8 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 /* About (dark): the scrapbook's butter and pink papers keep espresso words; the espresso tile keeps butter. */
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-scrapbook :is(.ayna-scrapbook__paper, .ayna-scrapbook__team-note) { color: #3e2723 !important; }
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-scrapbook :is(.ayna-scrapbook__paper, .ayna-scrapbook__team-note) :is(h1, h2, h3, p, span, strong, b, li, a, small, em) { color: #3e2723 !important; }
+/* Nov 14: the About page stays butter in dark mode, so its legal footer and closing line keep espresso words (they were butter on butter). */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-scrapbook :is(.ayna-scrapbook__footer, .ay-legal, .ay-legal :is(p, a, button, span)) { color: #3e2723 !important; }
 /* About: the espresso step tile ("04 Your shop") had espresso words in both themes. */
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4),
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4) :is(h1, h2, h3, p, strong, b, li, a, small, em) { color: #ffedac !important; }
@@ -131,3 +133,5 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 /* Saved: the grid was padded twice (18px + 20px), so cards sat 38px in and were narrower than on Shop. */
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-saved-content > .ayna-editorial-product-grid { padding-left: 0 !important; padding-right: 0 !important; }
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-saved-content { padding-left: var(--d-gutter, 20px) !important; padding-right: var(--d-gutter, 20px) !important; }
+/* Nov 14: Community "Create playlist" (and any other list-heading pill) was a see-through butter tint in dark mode; solid butter with espresso words. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-list-heading button { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
