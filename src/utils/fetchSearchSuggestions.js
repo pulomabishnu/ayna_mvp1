@@ -12,6 +12,29 @@ import { redactErrorMessage } from './errorAnalytics';
  */
 import { apiUrl } from './apiUrl.js';
 
+// One automatic retry when the AI provider fails, after a short pause.
+export const SEARCH_RETRIES = 1;
+export const SEARCH_RETRY_DELAY_MS = 1200;
+
+export function isRetryableSearchFailure(status, data) {
+  const code = data?.error;
+  return status === 502 || code === 'claude_failed' || code === 'invalid_model_json';
+}
+
+function waitUnlessAborted(ms, signal) {
+  return new Promise((resolve, reject) => {
+    const abortError = () => {
+      try { return new DOMException('Aborted', 'AbortError'); } catch {
+        const e = new Error('Aborted'); e.name = 'AbortError'; return e;
+      }
+    };
+    if (signal?.aborted) { reject(abortError()); return; }
+    const id = setTimeout(() => { signal?.removeEventListener?.('abort', onAbort); resolve(); }, ms);
+    function onAbort() { clearTimeout(id); reject(abortError()); }
+    signal?.addEventListener?.('abort', onAbort, { once: true });
+  });
+}
+
 function captureSearchAnalytics(event, properties) {
   try {
     posthog.capture(event, properties);
@@ -115,27 +138,38 @@ export async function fetchSearchSuggestions(opts) {
     }
   }
 
+  const requestBody = JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults, conversationId: getAppSessionId() });
   let res;
-  try {
-    res = await fetch(apiUrl('/api/search-suggestions'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, category, symptom, personalized, profileSummary, dislikedProducts, maxResults, conversationId: getAppSessionId() }),
-      signal: opts?.signal,
-    });
-  } catch (err) {
-    // Network failures (offline, DNS, CORS) never reached the server, so they
-    // were invisible before. A cancelled request is not a failure.
-    if (err?.name !== 'AbortError') {
-      captureSearchAnalytics('ai_search_failed', {
-        ...analyticsBase, component, code: 'network_error', status: 0,
-        errorMessage: redactErrorMessage(err?.message),
+  let data;
+  let retried = false;
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      res = await fetch(apiUrl('/api/search-suggestions'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody,
+        signal: opts?.signal,
       });
+    } catch (err) {
+      // Network failures (offline, DNS, CORS) never reached the server, so they
+      // were invisible before. A cancelled request is not a failure.
+      if (err?.name !== 'AbortError') {
+        captureSearchAnalytics('ai_search_failed', {
+          ...analyticsBase, component, code: 'network_error', status: 0, retried,
+          errorMessage: redactErrorMessage(err?.message),
+        });
+      }
+      throw err;
     }
-    throw err;
+    data = await res.json().catch(() => ({}));
+    // The AI provider failing once (502 claude_failed / invalid_model_json) is
+    // usually a blip: try once more before showing the "having trouble"
+    // message. 429s are not retried: they are a per-visitor cap, so a retry
+    // would hit the same limit.
+    if (attempt >= SEARCH_RETRIES || !isRetryableSearchFailure(res.status, data)) break;
+    retried = true;
+    await waitUnlessAborted(SEARCH_RETRY_DELAY_MS, opts?.signal);
   }
-
-  const data = await res.json().catch(() => ({}));
 
   if (res.status === 401) {
     // AI search is gated to signed-in users on this deployment. Not an error
@@ -182,6 +216,7 @@ export async function fetchSearchSuggestions(opts) {
       component,
       code: raw || 'request_failed',
       status: res.status,
+      retried,
       // What the server said, redacted (no query text). A 500 with no JSON
       // body is Vercel's own crash page, so say so.
       errorMessage: redactErrorMessage(data?.detail || data?.message || raw || (res.status >= 500 ? 'server error with no JSON body' : `HTTP ${res.status}`)),
@@ -203,6 +238,7 @@ export async function fetchSearchSuggestions(opts) {
     ...analyticsBase,
     resultCount: suggestions.length,
     fromCache: false,
+    retried,
     providerUsed: typeof data.providerUsed === 'string' ? data.providerUsed : 'server_fallback',
     healthRoutingMode: typeof data.healthRoutingMode === 'string' ? data.healthRoutingMode : undefined,
     externalSearchUsed: typeof data.externalSearchUsed === 'boolean' ? data.externalSearchUsed : undefined,

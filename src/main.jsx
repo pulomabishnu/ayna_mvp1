@@ -14,7 +14,7 @@ import './styles/delight.css'
 import { installDelight } from './utils/delightRuntime.js'
 import { installMotion } from './utils/motion.js'
 import { markPerf } from './utils/perfTimings.js'
-import { countLanded } from './utils/journeyStep.js'
+import { countJourneyStep, countLanded } from './utils/journeyStep.js'
 
 // The whole mobile app (src/mobile/**, ~1.6MB of source) was bundled into the
 // web entry chunk even though the web only ever shows it on /mobile-preview.
@@ -45,6 +45,7 @@ import { applyConsentTier } from './utils/essentialAnalytics'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
 import { nativePosthogTransportConfig } from './utils/nativePosthogTransport.js'
 import { trackAppOpened, eventSurface } from './utils/analyticsEvents.js'
+import { claimChunkReload, isChunkLoadError, scheduleChunkReloadReset } from './utils/chunkReload.js'
 
 // One origin only. Sign-in keeps its session (and the PKCE code verifier) per
 // origin, and Supabase sends every sign-in back to www.aynahealth.co. Someone who
@@ -165,6 +166,12 @@ function sanitizePosthogEvent(event) {
   // from this page. A pageview or click there would reveal that a specific
   // visitor looked for these resources.
   if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
+  // Anonymous daily search count (journeyStep.js): website Shop search and
+  // app Browse search both send search_performed, so count it here once.
+  // Only "a search happened" is sent, never what was searched. The counter
+  // itself skips Keep off, GPC and founder browsers. Runs before the consent
+  // tier below because a visitor who hasn't chosen yet is counted too.
+  if (event?.event === 'search_performed') countJourneyStep('search_submitted');
   // platform on every event, including the first pageview (which can be sent
   // before the `loaded` register below takes effect). Free text typed into
   // Shop/Community search (?q=) is stripped from every URL property.
@@ -292,12 +299,19 @@ function registerNativeAppAnalytics(ph) {
 // click through. The sessionStorage flag caps it at one silent retry per
 // session so a genuinely broken deploy still surfaces the real error instead
 // of reload-looping forever.
-const CHUNK_RELOAD_KEY = 'ayna_chunk_reload_attempted';
-function isChunkLoadError(error) {
-  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
-    String(error?.message || error || '')
-  );
-}
+// Helpers and the loop guard live in utils/chunkReload.js.
+//
+// Lazy imports outside React (the Capacitor plugins, the native link handler)
+// never reach the ErrorBoundary, and a failed CSS preload doesn't either. Vite
+// reports all of them as 'vite:preloadError', so reload once from here too.
+window.addEventListener('vite:preloadError', (event) => {
+  let canReload = false;
+  try { canReload = claimChunkReload(window.sessionStorage); } catch { /* storage unavailable */ }
+  if (!canReload) return; // already reloaded once: let the error surface
+  event.preventDefault();
+  window.__aynaReloadingForDeploy = true;
+  window.location.reload();
+});
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null, recovering: false };
@@ -307,14 +321,23 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidMount() {
-    // A clean mount means this reload (if any) actually fixed things, clear
-    // the one-shot flag so a LATER, unrelated chunk error in the same tab
-    // session (e.g. another deploy landing while it's still open) still gets
-    // its own automatic retry instead of going straight to the error screen.
-    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
+    // Once the page has stayed up for a while, the reload (if any) worked:
+    // clear the one-shot flag so a LATER deploy in the same tab gets its own
+    // automatic reload. Not cleared right away: mounting happens before a
+    // lazy chunk fails, so clearing here caused a reload loop.
+    try { this.reloadResetTimer = scheduleChunkReloadReset(window.sessionStorage); } catch { /* storage unavailable */ }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.reloadResetTimer);
   }
 
   componentDidCatch(error, info) {
+    // The vite:preloadError handler is already reloading for a new deploy.
+    if (window.__aynaReloadingForDeploy) {
+      this.setState({ recovering: true });
+      return;
+    }
     console.error('App error:', error);
     try {
       // What broke and where: redacted message, nearest component (or the
@@ -327,16 +350,13 @@ class ErrorBoundary extends React.Component {
 
     if (!isChunkLoadError(error)) return;
 
-    let alreadyTried = false;
-    try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch { /* storage unavailable */ }
-
-    if (!alreadyTried) {
-      try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch { /* storage unavailable */ }
+    let canReload = false;
+    try { canReload = claimChunkReload(window.sessionStorage); } catch { /* storage unavailable */ }
+    if (canReload) {
       this.setState({ recovering: true });
       window.location.reload();
-    } else {
-      try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* storage unavailable */ }
     }
+    // Otherwise it already reloaded once in this tab: show the error screen.
   }
 
   render() {

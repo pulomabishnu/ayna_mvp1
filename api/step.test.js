@@ -6,7 +6,7 @@ import { JOURNEY_STEPS as CLIENT_STEPS } from '../src/utils/journeyStep.js';
 import { mockReq, mockRes } from './_test-helpers.js';
 
 const fakeDb = (result = { error: null }) => ({ rpc: vi.fn(async () => result) });
-const sql = readFileSync(new URL('../supabase/journey_step_daily_ctas_2026-11-11.sql', import.meta.url), 'utf8');
+const sql = readFileSync(new URL('../supabase/journey_step_daily_search_2026-11-14.sql', import.meta.url), 'utf8');
 afterEach(() => setStepAdminForTests(null));
 
 describe('readStep', () => {
@@ -27,6 +27,10 @@ describe('readStep', () => {
     const list = JOURNEY_STEPS.map((s) => `'${s}'`).join(', ');
     expect(sql.split(list).length - 1).toBe(2); // table check + function guard
     expect(sql).toContain("('web', 'ios_app', 'android_app')");
+  });
+  it('accepts search_submitted', () => {
+    expect(readStep({ body: { s: 'search_submitted', pl: 'web' } })).toEqual({ step: 'search_submitted', platform: 'web' });
+    expect(readStep({ body: { s: 'search_submitted', pl: 'ios_app' } })).toEqual({ step: 'search_submitted', platform: 'ios_app' });
   });
   it('accepts every landing button step', () => {
     for (const s of ['cta_signup_topbar', 'cta_signup_hero', 'cta_signup_end', 'cta_faq_ask_us']) {

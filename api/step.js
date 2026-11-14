@@ -8,8 +8,8 @@
 // cookie, account or analytics id. The IP is used only in memory/Redis for
 // rate limiting and is never written to Supabase. Unknown steps or platforms
 // are ignored here and by the database function.
-// Table + function: supabase/journey_step_daily_ctas_2026-11-11.sql (a founder runs it;
-// it replaces journey_step_daily_2026-11-11.sql and adds the landing buttons).
+// Table + function: supabase/journey_step_daily_search_2026-11-14.sql (a founder runs it;
+// it replaces the earlier journey_step_daily_*.sql files and adds search_submitted).
 // Same design as the Buy counter (api/go.js).
 import { createClient } from '@supabase/supabase-js';
 import { getClientIp, rateLimit } from './_rateLimit.js';
@@ -25,7 +25,7 @@ export const LANDING_CTA_STEPS = [
   // Everything else on the page.
   'cta_search', 'cta_brands', 'cta_how_we_match', 'cta_see_all_products', 'cta_product_card', 'cta_sources', 'cta_library', 'cta_read_article', 'cta_community', 'cta_meet_us', 'cta_get_pro', 'cta_pro_yearly', 'cta_pro_monthly', 'cta_see_pro', 'cta_faq_ask_us',
 ];
-export const JOURNEY_STEPS = ['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created', ...LANDING_CTA_STEPS];
+export const JOURNEY_STEPS = ['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created', 'search_submitted', ...LANDING_CTA_STEPS];
 export const JOURNEY_PLATFORMS = ['web', 'ios_app', 'android_app'];
 
 /** { step, platform } from a fetch body or ?s=&pl=. Null if either is missing or unknown. Exported for tests. */

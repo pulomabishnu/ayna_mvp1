@@ -31,7 +31,7 @@ export const LANDING_CTA_STEPS = [
   // Everything else on the page.
   'cta_search', 'cta_brands', 'cta_how_we_match', 'cta_see_all_products', 'cta_product_card', 'cta_sources', 'cta_library', 'cta_read_article', 'cta_community', 'cta_meet_us', 'cta_get_pro', 'cta_pro_yearly', 'cta_pro_monthly', 'cta_see_pro', 'cta_faq_ask_us',
 ];
-export const JOURNEY_STEPS = new Set(['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created', ...LANDING_CTA_STEPS]);
+export const JOURNEY_STEPS = new Set(['landed', 'sign_up_free_clicked', 'quiz_started', 'quiz_completed', 'health_connected', 'account_created', 'search_submitted', ...LANDING_CTA_STEPS]);
 
 function currentPlatform() {
   try {
