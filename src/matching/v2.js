@@ -658,6 +658,13 @@ export function buildEcosystemV2(up, products, options = {}) {
   // No budget answer: nothing physical over the splurge ceiling (founder, Nov 4). Removed after the
   // partial-fit rule so a dropped splurge never lets a below-the-bar product in.
   if (priceRule) for (let i = candidates.length - 1; i >= 0; i -= 1) if (priceRule.overMax(candidates[i].pp)) candidates.splice(i, 1);
+  // Nov 14 (50-profile check: "Under $25" got an $89.99 heat pod as a cramp pick; only a skipped budget
+  // had a cap). A budget she chose: nothing physical over twice her top price, and one pick per shelf
+  // over her top price at most (below), the same shape as the skipped-budget rule.
+  const chosenBudget = up.shopping?.budget && !up.shopping.priceNotImportant && !(up.contradictions || []).some((c) => (c.affects || []).includes('price')) && Number.isFinite(up.shopping.budget.max) ? up.shopping.budget : null;
+  const isPhysical = (pp) => !(pp?.formats || []).includes('app_service');
+  const overChosen = (pp, k = 1) => chosenBudget && isPhysical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > chosenBudget.max * k;
+  if (chosenBudget) for (let i = candidates.length - 1; i >= 0; i -= 1) if (overChosen(candidates[i].pp, 2)) candidates.splice(i, 1);
 
   const cover = new Map(needs.map((n) => [n.id, 0]));
   const chosen = [];
@@ -698,6 +705,7 @@ export function buildEcosystemV2(up, products, options = {}) {
       if (homeCount >= needCap(home.needId)) continue;
       // No budget answer: one item over $25 per shelf, the rest $25 or less (founder, Nov 4).
       if (priceRule?.pricey(c.pp) && chosen.some((x) => x.home.needId === home.needId && priceRule.pricey(x.pp))) continue;
+      if (overChosen(c.pp) && chosen.some((x) => x.home.needId === home.needId && overChosen(x.pp))) continue;
       let gain = 0;
       for (const [needId, x] of c.results) {
         const before = cover.get(needId) || 0;

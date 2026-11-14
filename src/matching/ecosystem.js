@@ -208,6 +208,15 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
       if (physical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > DEFAULT_SPLURGE_MAX) pool.splice(i, 1);
     }
   }
+  // Nov 14 (50-profile check: "Under $25" got an $89.99 heat pod as her #2 cramp pick, because only
+  // the skipped-budget case had a cap). With a budget she chose: nothing over twice her top price while
+  // ever (a hard limit, like the skipped-budget one), and at most one pick over her top price per shelf.
+  const answered = up?.shopping?.budget && Number.isFinite(up.shopping.budget.max) ? up.shopping.budget : null;
+  const overMine = (pp) => answered && physical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > answered.max;
+  if (answered) {
+    const far = (c) => { const pp = profilesById.get(c.r.productId); return physical(pp) && Number.isFinite(pp?.price?.amount) && pp.price.amount > answered.max * 2; };
+    for (let i = pool.length - 1; i >= 0; i -= 1) if (far(pool[i])) pool.splice(i, 1);
+  }
   while (pool.length && out.length < limit) {
     let bestIdx = 0;
     let bestKey = -Infinity;
@@ -216,6 +225,7 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
     const allowed = (pp) => {
       if (pp?.brand?.key && brandsUsed.has(pp.brand.key)) return false;
       if (defaultBudget && physical(pp) && pricey(pp) && priceyUsed >= 1) return false;
+      if (answered && overMine(pp) && out.some((o) => overMine(profilesById.get(o.productId)))) return false;
       return true;
     };
     const anyAllowed = pool.some((c) => allowed(profilesById.get(c.r.productId)));

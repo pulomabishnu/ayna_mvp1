@@ -872,11 +872,17 @@ function formatsFor(f) {
   if (f.has('lozenge') || f.fmt(/lozenges?|hard drops|hard candy|nausea sweets/)) out.add('lozenge');
   if (((f.cat === 'supplement' || f.cat === 'medication') && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b/))
     // A swallowed pill sold in another category (e.g. calcium caplets under Menopause) is still a pill.
-    || f.n(/\b(caplets?|capsules?|tablets?|softgels?)\b/)) out.add('pill_capsule');
+    || f.n(/\b(caplets?|capsules?|tablets?|softgels?)\b/)
+    // Nov 14 (50-profile check: Thermella, a curcumin tablet, skipped the warfarin check): a supplement
+    // sold under Menopause, Pregnancy or Gut health is still swallowed. Tagged a supplement and sold as
+    // tablets/capsules/packs, or labelled with a Supplement Facts panel ("Amount per two tablets").
+    || ((f.has('supplement') || f.fn('supplement')) && f.fmt(/capsule|tablet|softgel|caplet|\bcaps\b|\bpills?\b|vitamin pack|daily pack|packets?\b/))
+    || f.fmt(/amount per (serving|\w+ (tablets?|capsules?|softgels?|caplets?))|supplement facts/)) out.add('pill_capsule');
   if (f.cat === 'supplement' && f.fmt(/powder/)) out.add('powder');
   // A tea you drink, not a serum or wash that lists green tea extract.
   if (f.n(/\btea\b/) || (f.cat === 'supplement' && f.t(/\btea\b/) && !f.t(/tea tree/))) out.add('drink_tea');
-  if (f.t(/suppositor/)) out.add('suppository');
+  // Nov 14: boric acid and DHEA "vaginal inserts" are suppositories too (interaction and pregnancy checks apply).
+  if (f.t(/suppositor/) || f.fmt(/suppositor|vaginal inserts?|\bovules?\b/)) out.add('suppository');
   if (f.t(/lotion|cream|\bgel\b|balm|moisturiz|lubricant|\blube\b|\boil\b|spray|wash|wipes|exfoliating pads|glides?\b/) && !f.t(/gel pad/) && !out.has('suppository')) out.add('topical');
   if (f.n(/heat wrap|patch/) || (f.cat === 'cramp-relief' && f.t(/adhesive/))) out.add('patch');
   if (['sex-tech', 'sleep', 'tracker', 'cramp-relief', 'pelvic-floor', 'incontinence'].includes(f.cat) && f.type !== 'digital'
@@ -1548,7 +1554,7 @@ export function buildProductProfile(product) {
   const f = facts(product);
   const formats = formatsFor(f);
   const isDigital = formats.includes('app_service') && !formats.some((x) => ['device', 'topical', 'pill_capsule', 'test_kit', 'period_care'].includes(x));
-  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || ['pill_capsule', 'gummy', 'powder', 'drink_tea', 'lozenge'].some((x) => formats.includes(x));
+  const ingested = f.cat === 'supplement' || f.cat === 'medication' || f.n(/laxative|miralax|psyllium/) || (f.n(/\bsupplement\b/) && !f.n(/serum|cream|lotion|balm|gel\b|oil\b|wash|spray/)) || ['pill_capsule', 'gummy', 'powder', 'drink_tea', 'lozenge'].some((x) => formats.includes(x));
   const sText = safetyText(product);
   const ctx = { isDigital, ingested, text: sText };
 
