@@ -395,8 +395,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
             {art && <div className="ays-visual">{art}</div>}
             <div className="ays-words">
-              {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. */}
-              {card.kicker && card.category !== 'frame' && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
+              {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. The daily fact keeps
+                  its "Daily ayna fact" label (focus group, Nov 11: it read like a fact about her). */}
+              {card.kicker && (card.category !== 'frame' || String(card.key || '').startsWith('fact:')) && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
               <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
               {card.because && <p className="ay-rd-because">{card.because}</p>}
               {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}
