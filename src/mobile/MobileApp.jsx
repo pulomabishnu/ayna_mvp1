@@ -2093,8 +2093,9 @@ export default function MobileApp() {
         asTab={screen === 'ayna' && homeView === 'chat' && !askAynaOpen}
         // Home: the chat full screen with Back to Home; chat-first variant: the switch on top.
         renderHomeTop={chatFirst && screen === 'ayna' && !askAynaOpen ? (leading) => <HomeSwitch view={homeView} onChange={(v) => { setAskAynaOpen(false); setHomeView(v); }} leading={leading} /> : null}
-        // Ask ayna is a root tab now, so no Back button; Today is one tap away in the tab bar.
-        onBackHome={null}
+        // Opened from Home's Ask ayna button the chat fills the screen with a Back to Home (TestFlight,
+        // Nov 12: no visible way out of the chat). The chat-first Home keeps its switch instead.
+        onBackHome={!chatFirst && screen === 'ayna' && homeView === 'chat' && !askAynaOpen ? () => setHomeView(homeRoot) : null}
         starters={askStarters}
         onStarter={(st) => nav.onAskAyna(st)}
         draft={askDraft}

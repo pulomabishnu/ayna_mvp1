@@ -135,3 +135,8 @@ html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-co
 }
 html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container):is(#cmf4, .app-container):is(#cmf5, .app-container) .cm-main > .ay-postcard { box-shadow: none !important; border: 1px solid rgba(62, 39, 35, .22) !important; border-radius: 20px !important; }
 html body :is(#cmf1, .app-container):is(#cmf2, .app-container):is(#cmf3, .app-container) .cm-main > .cm-pinned-ann { max-width: 760px; }
+/* Dark Community: the product in a post and the topic chip were see-through butter tints (12%); brand colours
+   only: the product box is outlined in butter, the topic is a pink chip with espresso text (as in light). */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html):is(#pc7, html) body :is(.ayna-mobile[data-theme='dark'], .app-container[data-theme*='dark']) .ay-postcard.ay-postcard :is(.ay-pcard, .ay-product-card).is-row,
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html):is(#pc7, html) body .ayna-mobile[data-theme='dark'] .am-mention-wrap .ay-pcard.is-row { background: #3e2723 !important; border: 1.5px solid #ffedac !important; color: #ffedac !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html):is(#pc7, html) body :is(.ayna-mobile[data-theme='dark'], .app-container[data-theme*='dark']) .ay-postcard.ay-postcard .ay-postcard__topic { background: #f7badd !important; border-color: #f7badd !important; color: #3e2723 !important; }

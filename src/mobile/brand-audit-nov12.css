@@ -100,3 +100,30 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4),
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4) :is(h1, h2, h3, p, strong, b, li, a, small, em) { color: #ffedac !important; }
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4) span { color: #f7badd !important; }
+
+/* Ask about a product (PDP AskPanel, sheet) in the app, TestFlight Nov 12 ("Chat UI is cut off at the top,
+   hard to access close button"). One full-height sheet: no half height that jumped to full when the box took
+   focus; the title and close sit below the status bar; the brand page colour, not white (white is for
+   product photos only), so dark mode reads too. */
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet .ayv-ask2__box,
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet.is-compare .ayv-ask2__box {
+  top: 0 !important; height: auto !important; border-top: 0 !important; border-radius: 0 !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) var(--d-gutter, 20px) calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+  background: var(--d-page, #ffedac) !important; color: var(--d-ink, #3e2723) !important;
+  overscroll-behavior: contain;
+}
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet .ayv-ask2__grab { display: none !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet .ayv-ask2__box > .ayv-ask2__grab + .ayv-ask2__head { margin-top: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet :is(.ayv-ask2__title, .ayv-ask2__close, .ayv-ask2__sub) { color: var(--d-ink, #3e2723) !important; }
+.ayna-mobile:is(#ay, .ayna-mobile) .ayv-ask2.is-sheet .ayv-ask2__head { position: sticky; top: calc(env(safe-area-inset-top, 0px) * -1 - 12px); z-index: 1; margin: 0 calc(-1 * var(--d-gutter, 20px)) !important; padding: 0 var(--d-gutter, 20px) 12px; background: var(--d-page, #ffedac); border-bottom: 1px solid var(--d-hair, rgba(62, 39, 35, .2)); }
+
+/* Ask ayna: the home-indicator space was added twice (the drawer and the composer), leaving a blank band
+   under the box; above the tab bar it needs none at all. */
+html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer .ayna-ask-drawer-content { padding-bottom: 0 !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-ask-drawer.is-tab:not(.is-full) .ay-askp:is(#ay-askp, .ay-askp) .ay-askp-composer { padding-bottom: 12px !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back { display: inline-flex !important; flex-direction: row !important; align-items: center !important; gap: 2px !important; width: auto !important; min-width: 44px; min-height: 44px; padding: 0 8px 0 0 !important; margin: 0 !important; border: 0 !important; background: none !important; color: var(--d-ink, #3e2723) !important; font: 600 16px/1 var(--f-ui, 'Figtree'), sans-serif !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Community: "See your match" under a product in a post touched the product box's bottom edge and sat
+   off-centre (116px in), so it read as cut in half. It sits 8px under the box, lined up with the post. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ayna-mobile .am-mention-wrap > .am-seematch { justify-self: start !important; margin: 8px 0 0 !important; }

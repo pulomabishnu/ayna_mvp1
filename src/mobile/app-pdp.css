@@ -479,7 +479,9 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts__help { margin-left: 8px !important; font-size: 14px !important; white-space: nowrap; }
 [data-theme*='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts dt { color: #ffedac; }
 [data-theme*='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts dd { color: #ffedac; }
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy { margin-top: 28px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy { margin-top: 4px !important; }
+/* Nov 14 ("awkward white space" on product pages): the Buy button sat 68px under the price. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-buy .ayv-buy { margin-top: 0 !important; }
 /* Save / Add / Post: round filled icon buttons with a small label under, like the inspo's icon circles. */
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills { display: flex !important; justify-content: flex-start !important; gap: 28px !important; margin: 20px 0 0 !important; padding: 0 4px !important; flex-wrap: nowrap !important; overflow: visible !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button { display: grid !important; justify-items: center !important; gap: 6px !important; min-width: 56px !important; min-height: 0 !important; height: auto !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; color: #3e2723 !important; font: 500 13px/1.2 var(--f-ui, 'Figtree'), sans-serif !important; }

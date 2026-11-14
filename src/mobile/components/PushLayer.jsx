@@ -8,7 +8,10 @@ import { useRef } from 'react';
 // position and search are kept.
 const EDGE = 28;
 
-export default function PushLayer({ zIndex = 40, onBack, children, className = '' }) {
+// 65: above the sticky header on Home, Profile and My ecosystem (z 60). At 40 that header drew
+// over a product page opened from those screens, covering its Back and the Ask sheet's close
+// button (TestFlight feedback, Nov 12: "Chat UI is cut off at the top, hard to access close button").
+export default function PushLayer({ zIndex = 65,onBack, children, className = '' }) {
   const ref = useRef(null);
   const drag = useRef(null);
 

@@ -440,7 +440,7 @@ export default function AskAynaModal({
   </>) : (
     <AskHeader
       start={homeMode && onBackHome
-        ? <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Today</button>
+        ? <button type="button" className="ay-chat-top__back" onClick={onBackHome}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Home</button>
         : backBtn}
       end={<>
         {onClose && <button type="button" className="ay-ask-done" onClick={onClose}>Done</button>}
