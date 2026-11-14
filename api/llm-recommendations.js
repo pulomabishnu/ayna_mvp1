@@ -929,6 +929,10 @@ async function handleRequest(req, res) {
           // within this budget while reducing truncation risk.
           maxTokens: 8000,
           timeoutMs: 28_000,
+          // Nov 14 (Vercel logs): Gemini timed out at 28s, then the Anthropic fallback was cut off by the
+          // function budget ("anthropic failed: aborted"), so the whole concern failed. Gemini now gives
+          // up after one 15s try (no retries on its 503s), which leaves the fallback time to answer.
+          gemini: { timeoutMs: 15_000, maxAttempts: 1 },
           signal: deadline,
           trace: {
             name: 'llm-recommendations',
