@@ -360,11 +360,16 @@ export const callOpenAI = withPrismTrace('openai', callOpenAIUntraced,
 export const callGemini = withPrismTrace('gemini', callGeminiUntraced,
   () => geminiCredentials()?.model || 'gemini');
 
+/** Gemini stays off unless a founder turns it back on here (Nov 14). */
+export const GEMINI_ENABLED = false;
+
 export function providerConfigured(name) {
   const n = name === 'claude' ? 'anthropic' : name;
   if (n === 'anthropic') return !!process.env.ANTHROPIC_API_KEY;
   if (n === 'openai') return !!process.env.OPENAI_API_KEY;
-  if (n === 'gemini') return !!geminiCredentials();
+  // Nov 14 (Ameera: "remove gemini"): Gemini is off everywhere. Its free tier failed with quota
+  // errors and slow timeouts that starved the fallback. The call code stays for a later switch-on.
+  if (n === 'gemini') return GEMINI_ENABLED && !!geminiCredentials();
   return false;
 }
 
@@ -373,7 +378,7 @@ export function parseProviderOrder(envName, fallback) {
     .split(',')
     .map((s) => s.trim().toLowerCase())
     .map((s) => (s === 'claude' ? 'anthropic' : s))
-    .filter((s) => s === 'anthropic' || s === 'openai' || s === 'gemini')
+    .filter((s) => s === 'anthropic' || s === 'openai' || (GEMINI_ENABLED && s === 'gemini'))
     .filter((s, i, arr) => arr.indexOf(s) === i);
 }
 

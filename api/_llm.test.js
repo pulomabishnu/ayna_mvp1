@@ -252,15 +252,14 @@ describe('Gemini', () => {
     await expect(callGemini({ prompt: 'hi' })).rejects.toMatchObject({ provider: 'gemini', retryable: false });
   });
 
-  it('participates in provider fallback', async () => {
+  it('is switched off (Nov 14): never tried in provider fallback, even with a key', async () => {
     process.env.GEMINI_API_KEY = 'test-gemini';
     delete process.env.ANTHROPIC_API_KEY;
     delete process.env.OPENAI_API_KEY;
     globalThis.fetch = vi.fn().mockResolvedValue(geminiOk('gemini answered'));
 
-    const out = await runWithTimers(callWithFallback(['anthropic', 'openai', 'gemini'], { prompt: 'hi' }));
-    expect(out.provider).toBe('gemini');
-    expect(out.text).toBe('gemini answered');
+    await expect(runWithTimers(callWithFallback(['anthropic', 'openai', 'gemini'], { prompt: 'hi' }))).rejects.toBeTruthy();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 });
 
@@ -273,9 +272,9 @@ describe('parseProviderOrder', () => {
     process.env.T = 'mistral,openai';
     expect(parseProviderOrder('T', '')).toEqual(['openai']);
   });
-  it('keeps gemini in the order', () => {
+  it('drops gemini from the order (switched off Nov 14)', () => {
     process.env.T = 'gemini,openai';
-    expect(parseProviderOrder('T', '')).toEqual(['gemini', 'openai']);
+    expect(parseProviderOrder('T', '')).toEqual(['openai']);
   });
   it('falls back when the env var is unset', () => {
     delete process.env.T;
