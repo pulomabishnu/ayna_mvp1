@@ -55,3 +55,5 @@
 @media (max-width: 720px) { :is(#sh1, html):is(#sh2, html):is(#sh3, html):is(#sh4, html):is(#sh5, html):is(#sh6, html) body .app-container .ayshop .ayshop__grid.is-services { grid-template-columns: minmax(0, 1fr); gap: 14px; } }
 /* One match: no peek of a next card, so it lines up with the full-width list below (Nov 2). */
 .ay-svc-rail:has(> li:only-child) { grid-auto-columns: 100%; padding-right: 0; }
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__logo.is-photo { background: #fff; } /* white only behind a product photo */
+:is(#sv1, html):is(#sv2, html) body .ay-svc.ay-svc .ay-svc__logo.is-photo img { width: 100%; height: 100%; object-fit: cover; }

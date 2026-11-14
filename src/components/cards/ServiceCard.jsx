@@ -5,6 +5,8 @@ import { serviceFacts } from '../../data/startups.js';
 import { productHref, isPlainLeftClick } from '../../utils/productRoute';
 import { saveFeedback } from '../../utils/feedback.js';
 import { SafetyTag } from './CardBits.jsx';
+import { productImageOverride } from '../../data/productImageOverrides.js';
+import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import './service-card.css';
 
 // Whole card opens the service (same as ProductCard): a click that isn't on its own control
@@ -58,6 +60,11 @@ export default function ServiceCard({
 }) {
   if (!service) return null;
   const { format, cost, logo, covers } = serviceFacts(service);
+  // Founder, Nov 13 ("we need pictures, every service"): with no logo file, the service's own photo or
+  // app icon (the same image its page shows); the monogram only if that fails to load.
+  const [picFailed, setPicFailed] = React.useState(false);
+  const photo = logo ? '' : (productImageOverride(service) || safeProductImageSrc(service.image || service.imageUrl || ''));
+  const pic = logo || (!picFailed && photo) || '';
   const title = serviceTitle(service);
   const line = oneLine(covers);
   const hasMatch = Number.isFinite(matchPercent) && matchPercent > 0;
@@ -69,8 +76,8 @@ export default function ServiceCard({
   const Link = as;
   return (
     <article onClick={openFromCard} data-pid={service.id} data-pname={service.name || undefined} data-pbrand={service.brand || undefined} data-tour="service-card" className={`ay-svc${isSaved ? ' is-saved' : ''}${onToggleSaved ? ' has-heart' : ''} ${className}`.trim()}>
-      <div className={`ay-svc__logo${logo ? '' : isAppService(service, format) ? ' is-mono-app' : ' is-mono-other'}`}>
-        {logo ? <img src={logo} alt={`${title} logo`} loading="lazy" decoding="async" /> : <span className="ay-svc__mono" aria-hidden="true">{monogram(service.brand || title)}</span>}
+      <div className={`ay-svc__logo${logo ? '' : pic ? ' is-photo' : isAppService(service, format) ? ' is-mono-app' : ' is-mono-other'}`}>
+        {pic ? <img src={pic} alt={logo ? `${title} logo` : ''} loading="lazy" decoding="async" onError={() => setPicFailed(true)} /> : <span className="ay-svc__mono" aria-hidden="true">{monogram(service.brand || title)}</span>}
       </div>
       <div className="ay-svc__body">
         <h3 className="ay-svc__name">

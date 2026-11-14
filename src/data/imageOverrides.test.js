@@ -1,13 +1,15 @@
 import { sizedShopImage } from '../utils/resolveProductImage.js';
 import { describe, it, expect } from 'vitest';
 import { CATALOG_PRODUCTS } from './products.js';
+import { STARTUPS } from './startups.js';
 import { OFFICIAL_IMAGE_OVERRIDES, officialImageFor } from './imageOverrides.js';
 import { PRODUCT_IMAGE_OVERRIDES, productImageOverride, productGallery, withImageOverride } from './productImageOverrides.js';
 import { galleryImages } from '../components/pdp/commerce.js';
 import { isPlaceholderProductImage } from '../utils/resolveProductImage.js';
 
 const entries = Object.entries(OFFICIAL_IMAGE_OVERRIDES);
-const byId = new Map(CATALOG_PRODUCTS.map((p) => [p.id, p]));
+// Services (startups) get official images too (Nov 13: every service needs a picture).
+const byId = new Map([...CATALOG_PRODUCTS, ...STARTUPS].map((p) => [p.id, p]));
 // Nov 9 photo pass: products that live only in the live catalog (/api/products, Supabase) and not in
 // the bundled files. Their override still applies by id wherever the product renders.
 const LIVE_ONLY = new Set(['p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule', 'p-intimina-lily-cup-compact', 'p-intimina-ziggy-cup-2', 'p-milli-vaginal-dilator', 'p-thorne-hormone-advantage-formerly-dim-advantage-sku-sp684', 'p-thorne-magnesium-citramate', 'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum']);

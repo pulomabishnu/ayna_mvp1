@@ -169,6 +169,16 @@ export const OFFICIAL_IMAGE_OVERRIDES = Object.freeze({
   // Its image was O Positiv's site-wide share picture (the URO packs), the same as another product (focus group, Nov 9).
   'p-o-positiv-meno-heart-health-and-blood-pressure-support-capsule': { src: 'https://cdn.shopify.com/s/files/1/0588/9340/2261/files/pdp-image1-ezgif.com-png-to-webp-converter.webp?v=1764801824', alt: 'O Positiv MENO Heart + Blood Pressure Support Capsules jar', source: 'https://opositiv.com/products/meno-heart-health-blood-pressure-support-capsules', checkedOn: '2026-11-09' },
   'p-trinny-london-naked-ambition-azelaic-acid-exosomes-vitamin-c-serum': { src: 'https://trinnylondon.com/cdn/shop/files/naked-ambition-serum-skincare-01.png', alt: 'Trinny London Naked Ambition serum', source: 'https://trinnylondon.com/us/products/naked-ambition', checkedOn: '2026-11-09' },
+  // Nov 13 (founder: "every single service and product has a pic"): these services showed an unrelated
+  // stock photo (a salad, a plant, a food spread, someone else's bottle) or a dead link. Each replacement
+  // was taken from the brand's own site in a browser and looked at.
+  's-august': { src: 'https://www.itsaugust.co/cdn/shop/files/August_Collection_Full.jpg', alt: 'August organic tampons and pads', source: 'https://www.itsaugust.co', checkedOn: '2026-11-13' },
+  's-needed': { src: 'https://thisisneeded.com/cdn/shop/files/PDP_Pro_Prenatal_Multi_Gallery_01.png', alt: 'Needed Prenatal Multivitamin Pro', source: 'https://thisisneeded.com', checkedOn: '2026-11-13' },
+  's-oula': { src: 'https://wp-marketing-cdn.prod.oulahealth.com/wp-content/uploads/2024/10/14115515/home.jpg', alt: 'Oula OBGYN and midwife care', source: 'https://oulahealth.com', checkedOn: '2026-11-13' },
+  's-birdandbe': { src: 'https://birdandbe.com/cdn/shop/files/All_Vitamins_2-Compressed.jpg', alt: 'Bird&Be vitamins', source: 'https://birdandbe.com', checkedOn: '2026-11-13' },
+  'p-finch-self-care-pet': { src: appIcon('PurpleSource221/v4/bb/01/b0/bb01b099-57a3-4c89-2f9b-aa55548134e2/Placeholder.mill'), alt: 'Finch app icon', source: 'https://apps.apple.com/us/app/finch-self-care-pet/id1528595748', checkedOn: '2026-11-13' },
+  'p-ten-percent-happier-happier-meditation-formerly-ten-percent-happier': { src: appIcon('PurpleSource211/v4/16/32/dd/1632dd07-ef68-df28-b0b4-a1c5925a4e49/Placeholder.mill'), alt: 'Happier Meditation app icon', source: 'https://apps.apple.com/us/app/id992210239', checkedOn: '2026-11-13' },
+  's-perelel': { src: 'https://perelelhealth.com/cdn/shop/files/Perelel_Boxes_Styled_088_1.jpg', alt: 'Perelel vitamin packs', source: 'https://perelelhealth.com', checkedOn: '2026-11-13' },
 });
 
 /** The official image entry for a product (or id), or null. */
