@@ -3074,3 +3074,5 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 }
 :is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__box > .ayv-ask2__grab + .ayv-ask2__head { margin-top: -8px; }
 :is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__close { min-width: 44px; min-height: 44px; border: 1.5px solid currentColor; border-radius: 50%; }
+/* How the summary is made (Nov 13). */
+.ayq .ayq-howmade { margin: 16px 0 0; font: 500 13px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
+import { monthTopSymptom, takeawayLine } from '../../health/monthTakeaway.js';
 import { LOG_SAVED_EVENT, flowRowsFromLog, readLog } from '../../health/dailyLog.js';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { AskContext } from '../askContext.js';
@@ -102,8 +103,18 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
       </div>
     );
   }
+  // Focus group (Zoleka, Nov 11; UCLA, Oct 1): one main takeaway at the top of Your data, from her own log.
+  let top = null;
+  if (dataView) { try { top = monthTopSymptom(readLog(), today); } catch { top = null; } }
   return (
     <div className="ay-hd">
+      {top && (
+        <section className="ay-hd-takeaway" aria-label="This month's takeaway">
+          <p className="ay-hd-takeaway__k">This month</p>
+          <p className="ay-hd-takeaway__t">{takeawayLine(top)}</p>
+          {openAsk && <button type="button" className="ay-hd-takeaway__ask" onClick={() => openAsk({ question: `What could help with ${top.noun}?` })}>Ask what could help<span aria-hidden="true"> ›</span></button>}
+        </section>
+      )}
       <HealthHome
         title={dataView ? 'Your data' : 'Your health'}
         titleLevel={dataView ? 1 : 2}

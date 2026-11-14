@@ -1,0 +1,54 @@
+/* The quiz's first page (QuizWelcome.jsx). Brand colours only: butter page, espresso ink, pink accent.
+   Entrances 200ms, staggered; the demo loops slowly; reduced motion shows the finished state. */
+.qw {
+  --qw-ink: #3e2723; --qw-page: #ffedac; --qw-pink: #f7badd;
+  position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; box-sizing: border-box;
+  padding: max(16px, env(safe-area-inset-top)) 24px max(16px, env(safe-area-inset-bottom));
+  background: var(--qw-page); color: var(--qw-ink); font-family: var(--ay-font-ui, 'Figtree', system-ui, sans-serif);
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.ayna-mobile[data-theme*='dark'] .qw { --qw-ink: #ffedac; --qw-page: #3e2723; }
+.qw-top { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.qw-kicker { font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); }
+.qw .qw-skip { min-width: 44px; min-height: 44px; margin-right: -8px; padding: 0 8px; border: 0; background: transparent; color: inherit; font: 600 15px/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.qw-body { flex: 1; display: grid; align-content: center; gap: 24px; padding: 8px 0 16px; }
+.qw-title { margin: 0; font: 800 34px/1.05 var(--ay-font-display, 'ayna Display', 'Figtree', sans-serif); letter-spacing: -.03em; }
+.qw-steps { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.qw-steps li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: center; font: 500 16px/1.4 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); animation: qw-in .2s ease-out both; animation-delay: calc(var(--i) * 90ms + 120ms); }
+.qw-steps b { font-weight: 700; }
+.qw-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--qw-pink); color: #3e2723; }
+.qw-ic svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Demo: an answer chip on pink, a finger holds it (the ring fills), the definition appears. 4s loop. */
+.qw-demo { position: relative; display: grid; justify-items: start; gap: 10px; padding: 18px; border-radius: 20px; background: var(--qw-pink); color: #3e2723; animation: qw-in .2s ease-out .4s both; }
+.qw-chip { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 56px 0 16px; border: 1.5px solid #3e2723; border-radius: 999px; background: #ffedac; font: 600 15px/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); animation: qw-chip 4s linear infinite; }
+.qw-finger { position: absolute; right: 6px; top: 50%; width: 44px; height: 44px; margin-top: -22px; display: grid; place-items: center; animation: qw-finger 4s linear infinite; }
+.qw-finger i { width: 20px; height: 20px; border: 2px solid #3e2723; border-radius: 50%; background: #f7badd; }
+.qw-finger svg { position: absolute; inset: 0; rotate: -90deg; fill: none; stroke: #3e2723; stroke-width: 3; stroke-linecap: round; }
+.qw-ring { stroke-dasharray: 120; stroke-dashoffset: 120; animation: qw-ring 4s linear infinite; }
+.qw-def { max-width: 280px; padding: 8px 12px; border: 1.5px solid #3e2723; border-radius: 12px; background: #ffedac; font: 500 14px/1.35 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); animation: qw-def 4s linear infinite; transform-origin: 24px 0; }
+
+.qw-foot { display: grid; gap: 10px; justify-items: center; animation: qw-in .2s ease-out .5s both; }
+.qw .qw-go { width: 100%; max-width: 420px; min-height: 56px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--qw-ink); color: var(--qw-page); font: 700 17px/1 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); cursor: pointer; }
+.qw .qw-go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.qw .qw-go:active { transform: scale(.98); }
+.qw .qw-go:focus-visible, .qw .qw-skip:focus-visible { outline: 3px solid var(--qw-ink); outline-offset: 3px; }
+.qw-note { margin: 0; font: 500 13px/1.3 var(--ay-font-ui, 'Figtree', system-ui, sans-serif); text-align: center; white-space: nowrap; } /* one line (founder, Nov 13) */
+
+@keyframes qw-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes qw-finger { 0%, 8% { opacity: 0; transform: translate(10px, 12px); } 15% { opacity: 1; transform: none; } 20%, 50% { transform: scale(.86); } 55% { transform: none; } 70% { opacity: 1; } 78%, 100% { opacity: 0; } }
+@keyframes qw-ring { 0%, 20% { stroke-dashoffset: 120; } 50%, 70% { stroke-dashoffset: 0; opacity: 1; } 78%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes qw-chip { 0%, 20% { transform: none; } 22%, 50% { transform: scale(.97); } 54%, 100% { transform: none; } }
+@keyframes qw-def { 0%, 50% { opacity: 0; transform: translateY(-4px) scale(.9); } 56% { opacity: 1; transform: scale(1.03); } 60%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .qw *, .qw { animation: none !important; }
+  .qw-finger { display: none; }
+  .qw-def { opacity: 1; }
+}
+@media (max-height: 700px) {
+  .qw-body { gap: 16px; }
+  .qw-title { font-size: 28px; }
+  .qw-steps { gap: 12px; }
+  .qw-steps li { font-size: 15px; }
+}

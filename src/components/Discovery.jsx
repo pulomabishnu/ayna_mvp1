@@ -1243,8 +1243,15 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
             }));
             scored.sort((a, b) => (b.score - a.score) || (a.idx - b.idx));
             const ranked = scored.map((x) => x.item);
-            // Catalog first; live results go in their own labelled group after it (A02).
-            return [...ranked.filter((p) => !p.llmGenerated), ...ranked.filter((p) => p.llmGenerated)];
+            // Focus group (Vivian, Oct 1): search results grouped by product type, the type with the best
+            // match first, best match first inside each type. Live results stay in their own group after.
+            const local = ranked.filter((p) => !p.llmGenerated);
+            const typeOf = (p) => p.type === 'digital' ? 'Apps & services' : (CATEGORY_LABELS[p.category] || p.category || 'Other');
+            const order = [];
+            const byType = new Map();
+            for (const p of local) { const t = typeOf(p); if (!byType.has(t)) { byType.set(t, []); order.push(t); } byType.get(t).push(p); }
+            const grouped = order.length > 1 && local.length >= 4 ? order.flatMap((t) => byType.get(t)) : local;
+            return [...grouped, ...ranked.filter((p) => p.llmGenerated)];
         }
         return [...out.filter((p) => !p.llmGenerated), ...out.filter((p) => p.llmGenerated)];
     }, [filtered, enrichedAiSuggestions, enrichedBrowseAiSuggestions, qTrimForAi, passesActiveFilters]);
@@ -1259,6 +1266,19 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
         return () => window.clearTimeout(t);
     }, [catalogShown, ready]);
     const firstWebIndex = useMemo(() => gridItems.findIndex((p) => p.llmGenerated), [gridItems]);
+    // Where each product type starts in grouped search results (index -> "Pads · 4").
+    const typeStarts = useMemo(() => {
+        const m = new Map();
+        if (!qTrimForAi) return m;
+        const local = gridItems.filter((p) => !p.llmGenerated);
+        const typeOf = (p) => p.type === 'digital' ? 'Apps & services' : (CATEGORY_LABELS[p.category] || p.category || 'Other');
+        const counts = new Map();
+        for (const p of local) counts.set(typeOf(p), (counts.get(typeOf(p)) || 0) + 1);
+        if (counts.size < 2 || local.length < 4) return m;
+        let prev = null;
+        local.forEach((p, i) => { const t = typeOf(p); if (t !== prev) { m.set(i, `${t} · ${counts.get(t)}`); prev = t; } });
+        return m;
+    }, [gridItems, qTrimForAi]);
 
     useEffect(() => {
         // Only resolve images for what's actually rendered (visibleCount),
@@ -2053,6 +2073,11 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
                         {idx === 8 && !inExplore && !submittedQuery && activeFilterCount === 0 && (
                             <div className="ayshop__ribbon">
                                 <Ribbon items={FAMILIAR_PHRASES} label="Searches people make" onPick={(q) => { setSearchQuery(q); runSearch(q); window.scrollTo({ top: 0, behavior: 'smooth' }); }} tab={<span className="ay-ribbon__tab is-label">Does this sound familiar?</span>} className="ay-ribbon--pink" />
+                            </div>
+                        )}
+                        {typeStarts.has(idx) && (
+                            <div className="ayshop__divider ayshop__typehead" role="heading" aria-level={3}>
+                                <strong>{typeStarts.get(idx)}</strong>
                             </div>
                         )}
                         {idx === firstWebIndex && (

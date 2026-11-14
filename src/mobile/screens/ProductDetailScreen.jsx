@@ -8,6 +8,7 @@ import { matchPercentFor } from '../utils/matchScore.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 import { renderMarkdownLite } from '../../utils/renderMarkdownLite.jsx';
 import WhyMatchScreen from './WhyMatchScreen.jsx';
+import ProductHabits from '../habits/ProductHabits.jsx';
 import { isBleedingEvaluation } from '../../utils/matchDisplay.js';
 import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
@@ -478,6 +479,8 @@ export default function ProductDetailScreen({
 
           <div className="ay-pdp3-id ay-pdp-title">
             {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
+            {/* Focus group (UCLA, Oct 1): the match, big and above the title, as "87% match". */}
+            {matchState?.kind === 'pct' && Number.isFinite(matchState.percent) && <p className="ay-pdp-pct">{matchState.percent}% match</p>}
             <h1>{shownName}</h1>
             {metaLine && <p className="ayv-metaline">{metaLine}</p>}
             <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />
@@ -528,6 +531,15 @@ export default function ProductDetailScreen({
           <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
           {/* Founder, Nov 11: no "Before you spend $X" box on the product page. */}
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}
+          {/* Focus group (Vivian, Oct 1): when one didn't work, what to try next. Same need, best match first. */}
+          {isOmitted && related.more.length > 0 && (
+            <div className="ay-trynext" role="note">
+              <p className="ay-trynext__h">Try one of these instead</p>
+              <ul>{related.more.slice(0, 3).map((p) => <li key={p.id}><button type="button" onClick={() => onOpenProduct?.(p)}><span>{p.name}</span>{Number.isFinite(p._match) && <small>{p._match}% match</small>}<span aria-hidden="true">›</span></button></li>)}</ul>
+            </div>
+          )}
+          {/* Focus group (Vivian, Oct 1; Ashlie, Oct 16): when she started it, and a daily reminder for supplements. */}
+          {(ecosystemProducts || []).some((p) => p?.id === product.id) && <ProductHabits key={product.id} product={product} ingested={/supplement|vitamin|gumm|capsule|tablet|softgel|tea\b|powder/i.test([product.category, product.subcategory, product.name].filter(Boolean).join(' '))} />}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
           {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLockup state={matchState} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}
         </div>

@@ -11,6 +11,7 @@ import '../intake-play.css';
 import '../../styles/onboarding.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
 import QuizIntro from './intake/QuizIntro.jsx';
+import QuizWelcome from './intake/QuizWelcome.jsx';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../../utils/search/index.js';
 import {
@@ -1043,6 +1044,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
       overlay={<>
         <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
+        {/* First quiz on this device: one page on how the quiz works, press-and-hold included (Nov 13). */}
+        {introEnabled && onboarding && currentIndex === 0 && <QuizWelcome />}
         {glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
       </>}
     >

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { isPartnerBrandItem } from '../../utils/partnerBrands.js';
 import { useEdgeFade } from './useEdgeFade';
 import PLAIN from '../../data/matching/plainRationales.js';
 import { needPhrase } from '../../matching/ontology';
@@ -1188,7 +1189,7 @@ export default function ProductEvidence({ product: baseProduct, glance = null, a
     const revTag = bigRating ? `${bigRating.value} of 5${bigRating.count ? ` from ${Number(bigRating.count).toLocaleString('en-US')}` : ''}` : '';
     const cards = [
       // Everything about the product lives in the summary card (founder, Nov 10: no second list under the cards).
-      { id: 'summary', title: TAB_LABELS.summary, peek: 'Fit, use and safety', body: <div className="ayq-sum ayv-read">{summaryLead}{xrowsEl}</div> },
+      { id: 'summary', title: TAB_LABELS.summary, peek: 'Fit, use and safety', body: <div className="ayq-sum ayv-read">{summaryLead}{xrowsEl}{/* Focus group (Vivian, Oct 1): how is this written? Founder, Nov 13: drafted by AI; partner brands are reviewed by the team. */}<p className="ayq-howmade ayv-fine">{isPartnerBrandItem(product) ? 'Drafted by AI from the sources on this page, then reviewed by the ayna team.' : 'Drafted by AI from the sources on this page.'}</p></div> },
       // No empty cards (founder, Nov 10: don't point at what we don't have): Clinical shows when a clinician has written.
       ...(expertBody ? [{ id: 'clinical', title: TAB_LABELS.clinical, peek: 'From a clinician', body: clinicalBody }] : []),
       { id: 'literature', title: TAB_LABELS.literature, peek: evTotal > 0 ? plural(evTotal, 'source') : 'What studies show', body: literatureBody },

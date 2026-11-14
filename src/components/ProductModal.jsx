@@ -814,6 +814,8 @@ export default function ProductModal({
               {/* Identity (brand, name, meta, rating) in one block: from 1024 to 1279px it sits beside a compact plate. */}
               <div className="ayv-ident">
                 {(brand || product.brand) && <p className="ayv-brand">{brand || product.brand}</p>}
+                {/* Focus group (UCLA, Oct 1): the match, big and above the title, as "87% match". */}
+                {matchState?.kind === 'pct' && Number.isFinite(matchState.percent) && <p className="ay-pdp-pct">{matchState.percent}% match</p>}
                 <h1 className="ay-h1 ayp-buy__name pdp-head__name">{displayName}</h1>
                 {metaLine && <p className="ayv-metaline">{metaLine}</p>}
                 {aynaRating != null && ratingCount > 0 && (
@@ -848,7 +850,14 @@ export default function ProductModal({
                   onRoutine={onAddToEcosystem && user ? () => onAddToEcosystem(product) : null}
                   routineWords={['Routine', 'In my routine']}
                   onAsk={onAskAyna ? () => setAskOpen(true) : null}
-                  notForMe={onOmit && user ? <p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p> : null}
+                  notForMe={onOmit && user ? <><p className="ayv-acts__more"><button type="button" className="ayv-textbtn" onClick={() => onOmit(product)}>{isOmitted ? 'Undo “Not for me”' : 'Not for me'}</button></p>
+                    {/* Focus group (Vivian, Oct 1): when one didn't work, what to try next. Same need, best match first. */}
+                    {isOmitted && suggestions.more.length > 0 && (
+                      <div className="ay-trynext" role="note">
+                        <p className="ay-trynext__h">Try one of these instead</p>
+                        <ul>{suggestions.more.slice(0, 3).map((p) => <li key={p.id}><button type="button" onClick={() => onOpenProduct?.(p)}><span>{p.name}</span>{Number.isFinite(p._match) && <small>{p._match}% match</small>}<span aria-hidden="true">›</span></button></li>)}</ul>
+                      </div>
+                    )}</> : null}
                 />
                 {/* Founder, Nov 11: "you can't see the Ask ayna buttons right away": three quick questions here. */}
                 {onAskAyna && <AskQuick name={displayName} hasProfile={Boolean(quizResults)} onAsk={onAskAyna} />}

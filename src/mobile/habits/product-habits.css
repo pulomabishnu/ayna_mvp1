@@ -1,0 +1,16 @@
+/* "Using since" + daily reminder on the app product page. Brand colours, 44px controls. */
+.ay-habit { display: grid; margin: 12px 0 0; padding: 4px 16px; border-radius: 16px; box-shadow: inset 0 0 0 1.5px currentColor; }
+.ay-habit__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
+.ay-habit__row + .ay-habit__row { border-top: 1px solid currentColor; }
+.ay-habit__lbl { font: 600 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-habit__btn { min-height: 44px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; color: inherit; font: 600 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); cursor: pointer; }
+.ay-habit__date { position: relative; display: inline-flex; align-items: center; min-height: 44px; font: 500 15px/1 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ay-habit__date input { position: absolute; inset: 0; opacity: 0; width: 100%; cursor: pointer; }
+.ay-habit__ctl { display: inline-flex; align-items: center; gap: 10px; }
+.ay-habit__ctl select { min-height: 44px; padding: 0 10px; border: 1.5px solid currentColor; border-radius: 12px; background: transparent; color: inherit; font: 500 14px/1 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-habit__sw { position: relative; width: 52px; height: 32px; padding: 0; border: 1.5px solid currentColor; border-radius: 999px; background: transparent; cursor: pointer; }
+.ay-habit__sw i { position: absolute; top: 3px; left: 3px; width: 23px; height: 23px; border-radius: 50%; background: currentColor; transition: transform .18s ease; }
+.ay-habit__sw.is-on { background: #f7badd; }
+.ay-habit__sw.is-on i { transform: translateX(20px); background: #3e2723; }
+.ay-habit__note { margin: 0 0 10px; font: 500 13px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+@media (prefers-reduced-motion: reduce) { .ay-habit__sw i { transition: none; } }

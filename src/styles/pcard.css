@@ -177,3 +177,14 @@
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext > svg { margin-top: 4px; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__evtext > span:not(.sr-only) { white-space: normal; overflow: visible; }
 :is(#pc1, html):is(#pc2, html):is(#pc3, html) body .ay-pcard.ay-pcard .ay-pcard__sizes { flex: 1 1 100%; flex-direction: row; flex-wrap: wrap; }
+/* "Try one of these instead" after Not for me (focus group, Oct 1). Brand colours, 44px rows. */
+.ay-trynext { margin: 12px 0 0; padding: 14px 16px; border-radius: 16px; background: #f7badd; color: #3e2723; }
+.ay-trynext .ay-trynext__h { margin: 0 0 6px; font: 700 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-trynext ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.ay-trynext li + li { border-top: 1px solid #3e2723; }
+.ay-trynext button { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; cursor: pointer; font: 500 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-trynext button > span:first-child { flex: 1; min-width: 0; }
+.ay-trynext small { flex: none; padding: 2px 8px; border-radius: 999px; background: #ffedac; font: 600 13px/1.4 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ay-trynext button:focus-visible { outline: 2px solid #3e2723; outline-offset: 2px; border-radius: 8px; }
+/* Big match above the product title (focus group, Oct 1). Pink pill, espresso text. */
+.ay-pdp-pct { display: inline-flex; align-items: center; width: fit-content; min-height: 32px; margin: 0 0 8px; padding: 4px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; font: 800 20px/1 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }

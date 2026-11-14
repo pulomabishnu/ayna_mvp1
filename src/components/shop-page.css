@@ -129,3 +129,6 @@ html body .app-container.app-container.app-container[data-theme='brand-dark'] .a
   html body .app-container.app-container.app-container.app-container .ayshop__toolbar :is(.ayshop__filters, .ayshop__sort, .ayshop__matches:not(.is-phone)) { display: none !important; }
   html body .app-container.app-container.app-container.app-container .ayshop__toolbar .ay-cmpt { min-height: 44px; }
 }
+/* Search results grouped by type (focus group, Oct 1): a heading row across the grid, app and web. */
+.ayshop__typehead { grid-column: 1 / -1; display: flex; align-items: center; min-height: 44px; margin: 8px 0 0; padding-top: 8px; border-top: 1.5px solid currentColor; font: 700 17px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
+.ayshop__typehead strong { font: inherit; }
