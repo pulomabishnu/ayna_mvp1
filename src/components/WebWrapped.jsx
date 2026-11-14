@@ -10,6 +10,7 @@ import { whyFitSummary } from './match/WhyFit.jsx';
 import { evidenceLevel } from './pdp/evidenceLevel.js';
 import { ECOSYSTEM_AREAS, resolveEcosystemProductArea } from './EcosystemBubbles';
 import ProductTileImage, { ProductImageFallback } from './ProductTileImage';
+import { haptic } from '../utils/haptics.js';
 import { buildPersona } from '../mobile/utils/shopperProfile.js';
 import { shareAynaLink } from '../mobile/utils/shareLink.js';
 import { StoryTop } from './story/StoryShell.jsx';
@@ -29,21 +30,38 @@ function Photo({ product }) {
 }
 
 // Counts up from 0 when the slide opens (respects reduced motion).
-function useCountUp(target, on, reduced) {
+function useCountUp(target, on, reduced, buzz = false) {
   // Starts at the real number (so it is right without animation, and for
   // screen readers), then counts up from 0 before the first paint.
+  // Founder, Nov 13 ("buzz while the circle fills"): with `buzz`, a light tick per number, in step with
+  // the ring (1s), and one success tap when it lands. Haptics only run in the app (utils/haptics).
   const [n, setN] = useState(target);
   useLayoutEffect(() => {
     if (!on || reduced) { setN(target); return undefined; }
     setN(0);
-    let raf; const t0 = performance.now();
-    const step = (t) => { const k = Math.min(1, (t - t0) / 700); setN(Math.round(target * (1 - (1 - k) ** 3))); if (k < 1) raf = requestAnimationFrame(step); };
+    let raf; let last = 0; let lastTick = 0; const t0 = performance.now(); const dur = buzz ? 1000 : 700;
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur); const v = Math.round(target * (1 - (1 - k) ** 3));
+      setN(v);
+      if (buzz && v !== last && v < target && t - lastTick > 55) { haptic('selection'); lastTick = t; }
+      last = v;
+      if (k < 1) raf = requestAnimationFrame(step); else if (buzz) haptic('success');
+    };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [target, on, reduced]);
+  }, [target, on, reduced, buzz]);
   return n;
 }
-function CountUp({ value, on, reduced }) { return <>{useCountUp(value, on, reduced)}</>; }
+// Taps timed to what lands on a slide (bars, cards). One schedule per slide; cleared when it changes.
+function useBeats(beats, key, reduced) {
+  useEffect(() => {
+    if (reduced || !beats?.length) return undefined;
+    const ids = beats.map(([ms, kind]) => window.setTimeout(() => haptic(kind), ms));
+    return () => ids.forEach((id) => window.clearTimeout(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, reduced]);
+}
+function CountUp({ value, on, reduced, buzz = false }) { return <>{useCountUp(value, on, reduced, buzz)}</>; }
 
 // The inspo's pink starburst: eight thin points, slowly turning.
 function Burst({ className = '' }) {
@@ -167,6 +185,16 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const top = diversifyByBrand(picks, 5);
   const pctOf = (p) => { if (!quizResults) return null; try { const r = percentFor ? percentFor(p) : getProfileMatchPercentForProduct(p, quizResults, healthProfile, matchOpts); return Number.isFinite(r) && r > 0 ? shownMatchPercent(Math.round(r)) : null; } catch { return null; } };
   const pct = firstMatch ? shownMatchPercent(firstMatch) : null;
+  // What lands on each slide, and when (ms after it opens), matched to the CSS timings.
+  const BEATS = {
+    categories: byArea.slice(0, 4).map((_, i) => [i * 120 + 250, 'light']),
+    match: [[350, 'medium']],
+    top5: top.slice(0, 5).map((_, i) => [i * 140 + 450, i === 0 ? 'medium' : 'light']),
+    why: [[300, 'light']],
+    persona: [[200, 'light'], [550, 'medium']],
+    finish: [[350, 'success']],
+  };
+  useBeats(BEATS[active], `${index}:${active}`, reduced);
   const plate = (p, cls = '') => <span className={`ays-plate ${cls}`.trim()}><span><Photo product={p} /></span></span>;
   // A tappable photo: opens the product pop-up (never advances the story).
   const tapPlate = (p, cls = '') => <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
@@ -190,8 +218,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <TypeWall value={counts ? counts.products : picks.length} />
             <div className="ays-visual"><Burst className="is-corner" />{counts
               // App: the same numbers, in the same words, as her Ecosystem hero (utils/ecosystemCounts).
-              ? <Ring share={counts.needs > 0 ? counts.needsCovered / counts.needs : 1}><b><CountUp value={counts.products} on={active === 'intro'} reduced={reduced} /></b><small>{counts.products === 1 ? 'product' : 'products'}</small></Ring>
-              : <Ring share={Math.min(1, byArea.length / Math.max(1, goals || byArea.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
+              ? <Ring share={counts.needs > 0 ? counts.needsCovered / counts.needs : 1}><b><CountUp value={counts.products} on={active === 'intro'} reduced={reduced} buzz /></b><small>{counts.products === 1 ? 'product' : 'products'}</small></Ring>
+              : <Ring share={Math.min(1, byArea.length / Math.max(1, goals || byArea.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} buzz /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
             <div className="ays-words">
               <p className="ays-kicker">Your ecosystem is ready</p>
               <Kinetic text="Your ayna, wrapped" outlineLast />
@@ -231,10 +259,11 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             {/* Wrapped's "Top songs": her top five, numbered big, each with its photo; they land one by one. */}
             <div className="ays-words"><p className="ays-kicker">Your top {Math.min(5, picks.length)}</p><Kinetic text="Your best matches" /></div>
             <ol className="ay-wr-bars5">{top.slice(0, 5).map((p, i) => { const pc = pctOf(p); return (
-              // Nov 13 (founder's Wrapped inspo, "top genres"): each pick a bar from the edge, longer for a higher match.
-              <li key={p.id} style={{ '--d': `${i * 140}ms`, '--len': `${58 - i * 8}%` }}>
-                <span className="ay-wr-bars5__bar" aria-hidden="true">{tapPlate(p, 'ay-wr-bars5__plate')}</span>
-                <span className="ay-wr-bars5__t"><i>No {i + 1}</i><b>{p.name}</b>{(p.brand || pc != null) && <small>{[p.brand, pc != null ? `${pc}% match` : ''].filter(Boolean).join(' · ')}</small>}</span>
+              // Nov 13 (founder): each pick is a brown or pink bar from the edge with its words inside,
+              // and its photo just outside the end. Bars get a little shorter down the list.
+              <li key={p.id} style={{ '--d': `${i * 140}ms`, '--k': 1 - i * 0.06 }}>
+                <span className="ay-wr-bars5__bar"><i>No {i + 1}</i><b>{p.name}</b>{pc != null && <small>{pc}% match</small>}</span>
+                {tapPlate(p, 'ay-wr-bars5__plate')}
               </li>
             ); })}</ol>
           </>}
