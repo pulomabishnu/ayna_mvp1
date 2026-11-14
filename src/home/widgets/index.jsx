@@ -11,7 +11,8 @@ import MiniChart from './MiniChart.jsx';
 import { REGISTRY, SUMMARY_TOPICS } from './registry.js';
 
 // Colour-block tiles, one fill per category (inspo 455687ac, Intelly stat tiles).
-const TONE = { charts: 'sky', summaries: 'butter', health: 'pink', routine: 'butter', shopping: 'sky', community: 'pink', ayna: 'espresso' };
+// Brand colours only (Nov 14: no sky blue). Charts sit on butter, never pink.
+const TONE = { charts: 'butter', summaries: 'butter', health: 'pink', routine: 'butter', shopping: 'espresso', community: 'pink', ayna: 'espresso' };
 import {
   customSummary, cycleSection, cycleTimeline, daysUntil, fmtDay, healthChart, heartChart, logSeries, logStreak, loggedToday,
   metricText, sinceYesterday, snippet, weekVsWeek,

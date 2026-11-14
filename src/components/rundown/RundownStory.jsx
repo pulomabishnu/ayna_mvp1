@@ -64,6 +64,8 @@ function CardArt({ card, count }) {
       </figure>
     ) : null;
   }
+  // Nov 14: the closing "Ask ayna about today" card had half a screen of empty espresso above it.
+  if (card.kind === 'ask') return <div className="ay-rd-art is-ask" aria-hidden="true"><span className="ay-rd-askorb"><svg viewBox="0 0 24 24"><path d="M12 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7z" /></svg></span></div>;
   if (card.kind === 'read' && READ_PHOTOS[card.readId]) return <div className="ay-rd-art is-photo" aria-hidden="true"><img src={READ_PHOTOS[card.readId]} alt="" /></div>;
   if (card.kind === 'stat') {
     const s = statNumber(card);
@@ -368,11 +370,15 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   // colours. The opening and closing are pink, her data espresso, everything else butter.
   const surface = ['opening', 'closing'].includes(card.kind) ? 'is-pink' : isData || card.category === 'safety' || card.kind === 'ask' ? 'is-espresso' : 'is-butter';
 
+  const askWhyPill = !isData && onAsk && card.ask && !card.check && !card.flowAsk && ['change', 'pattern', 'data'].includes(card.category);
   // One action on the glance: the card's own (Body), else Ask why / See data.
   const oneAction = isData && !card.check && !card.flowAsk
     ? (dataAsk ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button>
       : card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button> : null)
-    : !isData && card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button> : null;
+    : !isData && card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button>
+      // Nov 14: a pattern from her data ("Putting it together") gets the same "Ask why" pill as the
+      // data cards before it, not a small link at the bottom (the cards looked inconsistent).
+      : askWhyPill ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(card.ask)}>Ask why</button> : null;
   const art = isData ? <DataViz card={card} /> : <CardArt card={card} count={content} />;
   const safety = card.category === 'safety' || card.kind === 'care';
 
@@ -403,11 +409,11 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
               <Body card={card} h={h} done={done[card.key]} />
               {oneAction && <span className="ay-rd-actions">{oneAction}</span>}
               {!safety && <More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} />}
-              {!isData && !['opening', 'closing', 'ask'].includes(card.kind) && ((savable && onSave) || (onAsk && card.ask) || (!card.protected && onNotUseful)) && (
+              {!isData && !['opening', 'closing', 'ask'].includes(card.kind) && ((savable && onSave) || (onAsk && card.ask && !askWhyPill) || (!card.protected && onNotUseful)) && (
                 <div className="ay-rd-foot">
                   {savable && onSave && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
                   {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
-                  {onAsk && card.ask && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
+                  {onAsk && card.ask && !askWhyPill && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
                   {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
                   {!card.protected && onNotUseful && (
                     <ItemMenu label="More for this card" className="ay-rd-menu">

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { checkImageFile } from '../../utils/community/imageUpload.js';
 import { coverInk } from './playlistCoverImage.js';
 
-const COLORS = ['#3e2723', '#F7BADD', '#FFEDAC', '#769EBE'];
-const COLOR_NAMES = { '#3e2723': 'espresso', '#F7BADD': 'pink', '#FFEDAC': 'butter', '#769EBE': 'sky blue' };
+// Brand colours only (Nov 14: sky blue removed).
+const COLORS = ['#3e2723', '#F7BADD', '#FFEDAC'];
+const COLOR_NAMES = { '#3e2723': 'espresso', '#F7BADD': 'pink', '#FFEDAC': 'butter' };
 const EXAMPLES = ['Period care picks', 'My everyday routine', 'Worth sharing'];
 
 export default function PlaylistCoverPicker({ title, mode, onMode, color, onColor, text, onText, photo, onPhoto, existingCoverUrl }) {

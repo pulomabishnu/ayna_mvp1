@@ -5,6 +5,7 @@ import { playlistDoor } from '../../pro/proDoor.js';
 // with the website); they stay hidden until their migration runs. See
 // docs/community-user-topics.md.
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { apiUrl } from '../../utils/apiUrl';
 import EmptyState from '../components/EmptyState.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
@@ -57,6 +58,17 @@ import { useUserTopics } from '../../components/community/topics/useUserTopics.j
 import '../../components/community/topics/user-topics.css';
 import { openProPaywall, proLimitFeature } from '../../pro/paywall.js';
 import FriendRecs from '../../components/community/FriendRecs.jsx';
+
+/**
+ * Every Community sheet renders at the app root (Nov 14, TestFlight): inside the tab it could sit under the
+ * bottom tab bar, which covered the end of New post ("Community rules" under the Home button).
+ */
+function SheetLayer({ children, ...props }) {
+  const node = <div className="am-sheet-backdrop" {...props}>{children}</div>;
+  const host = typeof document !== 'undefined' ? document.querySelector('.ayna-mobile') : null;
+  return host ? createPortal(node, host) : node;
+}
+
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 // Five feeds in the pill bar (never scrolls on phones); Announcements opens from the pinned card and the Topics sheet.
@@ -123,7 +135,7 @@ function ProductMention({ productId, productsById, quizAnswers, matchOpts, onOpe
   return <div className="am-mention-wrap">{card}<button type="button" className="am-seematch" onClick={onSeeMatch} aria-label={`See your match for ${product.name}`}>See your match</button></div>;
 }
 
-const THUMB_TONES = ['#769ebe', '#F7BADD', '#769ebe', '#ffedac'];
+const THUMB_TONES = ['#F7BADD', '#ffedac']; // brand colours only (Nov 14: no blue)
 // Row thumbnail: the uploaded cover, else up to four product photos on white,
 // else a branded pastel tile with the title's first letter.
 function PlaylistThumb({ playlist, productsById }) {
@@ -185,7 +197,7 @@ function TopicSheet({ followed, onToggle, onClose, onSuggest, scope = null, onSc
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); opener?.focus?.(); };
   }, [onClose]);
-  return <div className="am-sheet-backdrop" {...backdropTap(onClose)}>
+  return <SheetLayer {...backdropTap(onClose)}>
     <div ref={sheetRef} className="am-sheet am-topic-sheet" role="dialog" aria-modal="true" aria-labelledby="am-topic-sheet-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head am-topic-sheet-head"><h2 id="am-topic-sheet-title">Your topics</h2><button ref={doneRef} type="button" onClick={onClose}>Done</button></div>
       {onScope && <div className="am-topic-scope" role="group" aria-label="Show posts from">
@@ -201,7 +213,7 @@ function TopicSheet({ followed, onToggle, onClose, onSuggest, scope = null, onSc
       <div className="am-topic-suggest"><span>Missing a topic?</span><button type="button" onClick={onSuggest}>Suggest a topic</button></div>
       {(onMembers || onAnnouncements || onProfile) && <div className="am-topic-links">{onProfile && <button type="button" onClick={onProfile}>Your community profile</button>}{onMembers && <button type="button" onClick={onMembers}>Topics by members</button>}{onAnnouncements && <button type="button" onClick={onAnnouncements}>Announcements from ayna</button>}</div>}
     </div>
-  </div>;
+  </SheetLayer>;
 }
 
 // "Suggest a topic": goes to the team through the same anonymous path as
@@ -228,7 +240,7 @@ function SuggestTopicSheet({ onClose, onSent, onShowRules }) {
     try { await sendTopicSuggestion({ name: name.trim(), why: why.trim() }); onSent(); }
     catch (e) { setProblem(e.message); } finally { setSending(false); }
   };
-  return <div className="am-sheet-backdrop" {...backdropTap(onClose)}><div className="am-sheet am-compose-sheet am-suggest-sheet" role="dialog" aria-modal="true" aria-labelledby="am-suggest-title" onClick={(e) => e.stopPropagation()}>
+  return <SheetLayer {...backdropTap(onClose)}><div className="am-sheet am-compose-sheet am-suggest-sheet" role="dialog" aria-modal="true" aria-labelledby="am-suggest-title" onClick={(e) => e.stopPropagation()}>
     <div className="am-sheet-head"><h2 id="am-suggest-title">Suggest a topic</h2><button type="button" aria-label="Close" onClick={onClose}>×</button></div>
     <p className="am-detail-copy">Tell us which topic you want in Community. The team reads every one.</p>
     <label className="am-field-label" htmlFor="am-suggest-name">Topic name</label>
@@ -238,7 +250,7 @@ function SuggestTopicSheet({ onClose, onSent, onShowRules }) {
     <CharRing length={why.length} max={500} className="ay-ring am-ring" />
     {problem && <p className="am-error" role="alert">{problem}</p>}
     <button type="button" className="am-primary" disabled={sending || name.trim().length < 2 || breaksCommunityRules(name, why)} onClick={send}>{sending ? 'Sending…' : 'Send suggestion'}</button>
-  </div></div>;
+  </div></SheetLayer>;
 }
 
 const PENDING_INVITE_KEY = 'ayna_pending_playlist_invite';
@@ -1182,15 +1194,15 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         </>}
       </>}
     </div>
-    {editingPlaylist && <div className="am-sheet-backdrop" {...backdropTap(() => setEditingPlaylist(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit playlist" onClick={(e) => e.stopPropagation()}>
+    {editingPlaylist && <SheetLayer {...backdropTap(() => setEditingPlaylist(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit playlist" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Edit playlist</h2><button type="button" aria-label="Close" onClick={() => setEditingPlaylist(false)}>×</button></div>
       <label className="am-field-label" htmlFor="am-edit-playlist-title">Playlist name</label><RuleField as="input" id="am-edit-playlist-title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onShowRules={openRules} />
       <label className="am-field-label" htmlFor="am-edit-playlist-description">Description</label><RuleField id="am-edit-playlist-description" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} placeholder="What is this collection for?" onShowRules={openRules} />
       <PlaylistAudiencePicker id="am-edit-playlist-visibility" value={editVisibility} onChange={setEditVisibility} />
       <PlaylistCoverPicker title={editTitle} mode={editCoverMode} onMode={setEditCoverMode} color={editCoverColor} onColor={setEditCoverColor} text={editCoverText} onText={setEditCoverText} photo={editCoverPhoto} onPhoto={setEditCoverPhoto} existingCoverUrl={publicMediaUrl(details?.cover_url)} />
       <button type="button" className="am-primary" disabled={busy || !editTitle.trim() || breaksCommunityRules(editTitle, editDescription)} onClick={savePlaylist}>{busy ? 'Saving…' : 'Save changes'}</button>
-    </div></div>}
-    {editingProfile && <div className="am-sheet-backdrop" {...backdropTap(() => setEditingProfile(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit community profile" onClick={(e) => e.stopPropagation()}>
+    </div></SheetLayer>}
+    {editingProfile && <SheetLayer {...backdropTap(() => setEditingProfile(false))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Edit community profile" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>Edit profile</h2><button type="button" aria-label="Close" onClick={() => setEditingProfile(false)}>×</button></div>
       <p className="am-detail-copy">This is your public Community profile. Your health answers stay private.</p>
       <label className="am-field-label" htmlFor="am-profile-display-name">Display name</label>
@@ -1204,9 +1216,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <small className="am-profile-help">{editProfileBio.length}/160</small>
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary" disabled={busy || !editProfileName.trim() || !editProfileHandle.trim() || breaksCommunityRules(editProfileName, editProfileBio)} onClick={saveProfileEdit}>{busy ? 'Saving…' : 'Save profile'}</button>
-    </div></div>}
-    {deletePlaylistTarget && <div className="am-sheet-backdrop" {...backdropTap(() => setDeletePlaylistTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></div>}
-    {likersPost && <div className="am-sheet-backdrop" {...backdropTap(() => setLikersPost(null))}><div className="am-sheet am-likers-sheet" role="dialog" aria-modal="true" aria-labelledby="am-likers-title" onClick={(e) => e.stopPropagation()}>
+    </div></SheetLayer>}
+    {deletePlaylistTarget && <SheetLayer {...backdropTap(() => setDeletePlaylistTarget(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Delete playlist" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Delete playlist?</h2><button type="button" aria-label="Close" onClick={() => setDeletePlaylistTarget(null)}>×</button></div><p className="am-detail-copy">This removes the playlist and its product list. This cannot be undone.</p><button type="button" className="am-primary" disabled={busy} onClick={confirmDeletePlaylist}>{busy ? 'Deleting…' : 'Delete playlist'}</button><button type="button" className="am-secondary" onClick={() => setDeletePlaylistTarget(null)}>Cancel</button></div></SheetLayer>}
+    {likersPost && <SheetLayer {...backdropTap(() => setLikersPost(null))}><div className="am-sheet am-likers-sheet" role="dialog" aria-modal="true" aria-labelledby="am-likers-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2 id="am-likers-title">Found this helpful</h2><button type="button" aria-label="Close" onClick={() => setLikersPost(null)}>×</button></div>
       <LikersList supabase={supabase} post={likersPost} user={authUser} friendships={friendships} refreshKey={refresh} variant="app"
         onRequireAuth={(f) => { setLikersPost(null); requireAccount(f); }}
@@ -1214,20 +1226,20 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
         onAddFriend={async (l) => { try { await community.sendFriendRequest(supabase, authUser.id, l.userId); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }}
         onAcceptFriend={async (l) => { const fs = community.friendshipState(friendships, authUser.id, l.userId); if (!fs.row) return; try { await community.acceptFriendRequest(supabase, fs.row.id); setRefresh((v) => v + 1); } catch (e) { notifyError(e); throw e; } }} />
       <p className="ay-likers-note">Who viewed a post is never shown.</p>
-    </div></div>}
+    </div></SheetLayer>}
     {topicSheetOpen && <TopicSheet followed={followedTopics} onToggle={toggleTopic} onClose={closeTopicSheet} onSuggest={openSuggestTopic}
       scope={topicsTab ? topicScope : null} onScope={topicsTab ? (k) => { setTopicScope(k); setTopicSheetOpen(false); } : null}
       onMembers={userTopics.available ? () => { setTopicSheetOpen(false); openTopics(); } : null}
       onAnnouncements={() => { setTopicSheetOpen(false); setTab('announcements'); }}
       onProfile={authUser ? () => { setTopicSheetOpen(false); if (profile) openProfile(profile.username); else setNotice('Create your community profile below.'); } : null} />}
-    {typeSheet && <div className="am-sheet-backdrop" {...backdropTap(() => setTypeSheet(false))}><div className="am-sheet am-types-sheet" role="dialog" aria-modal="true" aria-labelledby="am-types-title" onClick={(e) => e.stopPropagation()}>
+    {typeSheet && <SheetLayer {...backdropTap(() => setTypeSheet(false))}><div className="am-sheet am-types-sheet" role="dialog" aria-modal="true" aria-labelledby="am-types-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2 id="am-types-title">Share with the community</h2><button type="button" aria-label="Close" onClick={() => setTypeSheet(false)}>×</button></div>
       <ul className="am-types">{POST_TYPES.map(([k, l, hint]) => <li key={k}><button type="button" className="am-type" onClick={() => { setTypeSheet(false); openCompose(k); }}><span className="am-type-icon"><TypeIcon kind={k} size={20} /></span><span><strong>{l}</strong><small>{hint}</small></span></button></li>)}</ul>
       <p className="am-field-label">Or start with</p>
       <div className="am-starters">{PROMPTS.filter((pr) => pr.starter).map((pr) => <button type="button" key={pr.key} onClick={() => { setTypeSheet(false); openCompose(pr.kind, pr); }}>{pr.title}</button>)}</div>
-    </div></div>}
+    </div></SheetLayer>}
     {suggestOpen && <SuggestTopicSheet onClose={() => setSuggestOpen(false)} onShowRules={openRules} onSent={() => { setSuggestOpen(false); setNotice('Thanks. The team reads every suggestion.'); }} />}
-    {collabSheetOpen && details && page?.type === 'playlist' && <div className="am-sheet-backdrop" {...backdropTap(() => setCollabSheetOpen(false))}><div className="am-sheet am-compose-sheet am-collab-sheet" role="dialog" aria-modal="true" aria-labelledby="am-collab-title" onClick={(e) => e.stopPropagation()}>
+    {collabSheetOpen && details && page?.type === 'playlist' && <SheetLayer {...backdropTap(() => setCollabSheetOpen(false))}><div className="am-sheet am-compose-sheet am-collab-sheet" role="dialog" aria-modal="true" aria-labelledby="am-collab-title" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2 id="am-collab-title">Collaborators</h2><button type="button" aria-label="Close" onClick={() => setCollabSheetOpen(false)}>×</button></div>
       <p className="am-detail-copy">Collaborators can add and remove products. Only you can change the name, cover and who can see it.</p>
       {collab.rows.length > 0 && <div className="am-collab-list">{collab.rows.map((r) => { const p = profileById.get(r.user_id); return <div className="am-friend-row" key={r.user_id}><span className="am-friend-open"><CommunityAvatar name={p?.display_name || 'Member'} path={p?.avatar_url} /><span><strong>{p?.display_name || 'Community member'}</strong>{p?.username && <small>@{p.username}</small>}</span></span><button type="button" className="am-secondary" disabled={busy} onClick={() => removeCollaborator(r.user_id)}>Remove</button></div>; })}</div>}
@@ -1238,8 +1250,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {inviteLink && <input className="am-invite-link" readOnly value={inviteLink} aria-label="Invite link" onFocus={(e) => e.target.select()} />}
       <button type="button" className="am-primary" disabled={busy} onClick={shareInviteLink}>{inviteLink ? 'Share the link again' : 'Share invite link'}</button>
       {error && <p className="am-error" role="alert">{error}</p>}
-    </div></div>}
-    {editPost && <div className="am-sheet-backdrop" {...backdropTap(() => setEditPost(null))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
+    </div></SheetLayer>}
+    {editPost && <SheetLayer {...backdropTap(() => setEditPost(null))}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label={editPost.kind === 'review' ? 'Edit review' : 'Edit post'} onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><h2>{editPost.kind === 'review' ? 'Edit review' : 'Edit post'}</h2><button type="button" aria-label="Close" onClick={() => setEditPost(null)}>×</button></div>
       {editPost.kind === 'review' && <div className="am-rating"><span id="am-edit-rating-label">Your rating</span><RatingPicker value={editRating} onChange={setEditRating} label="Your rating" /></div>}
       <label className="am-field-label" htmlFor="am-edit-text">{editPost.kind === 'review' ? 'Your experience' : 'Your post'}</label>
@@ -1247,9 +1259,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <CharRing length={editBody.length} max={POST_MAX} className="ay-ring am-ring" />
       {error && <p className="am-error" role="alert">{error}</p>}
       <button type="button" className="am-primary am-submit" disabled={busy || !editBody.trim() || breaksCommunityRules(editBody) || (editPost.kind === 'review' && !normalizeRating(editRating))} onClick={saveEdit}>{busy ? 'Saving…' : 'Save changes'}</button>
-    </div></div>}
-    {reportPost && <div className="am-sheet-backdrop" {...backdropTap(() => setReportPost(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Report post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Report post</h2><button type="button" onClick={() => setReportPost(null)}>×</button></div><p className="am-detail-copy">Tell us what needs review.</p><select value={reportReason} onChange={(e) => setReportReason(e.target.value)}><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="am-primary" disabled={busy} onClick={submitReport}>Send report</button></div></div>}
-    {compose && <div className="am-sheet-backdrop" {...backdropTap(requestCloseCompose)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
+    </div></SheetLayer>}
+    {reportPost && <SheetLayer {...backdropTap(() => setReportPost(null))}><div className="am-sheet" role="dialog" aria-modal="true" aria-label="Report post" onClick={(e) => e.stopPropagation()}><div className="am-sheet-head"><h2>Report post</h2><button type="button" onClick={() => setReportPost(null)}>×</button></div><p className="am-detail-copy">Tell us what needs review.</p><select value={reportReason} onChange={(e) => setReportReason(e.target.value)}><option value="misinformation">Health misinformation</option><option value="harassment">Harassment</option><option value="spam">Spam</option><option value="other">Something else</option></select><button type="button" className="am-primary" disabled={busy} onClick={submitReport}>Send report</button></div></SheetLayer>}
+    {compose && <SheetLayer {...backdropTap(requestCloseCompose)}><div className="am-sheet am-compose-sheet" role="dialog" aria-modal="true" aria-label="Create in Community" onClick={(e) => e.stopPropagation()}>
       <div className="am-sheet-head"><div><h2>{({ post: 'New post', question: 'Ask a question', review: 'Write a review', playlist: 'Create a playlist', recommend: 'Recommend a product' })[compose]}</h2></div><button type="button" aria-label="Close" onClick={requestCloseCompose}>×</button></div>
       <div className="am-type-row" aria-label="What would you like to share?">{[['post','Post'],['question','Question'],['review','Review'],['playlist','Playlist'],['recommend','Recommend']].map(([kind,label]) => <button type="button" key={kind} className={compose === kind ? 'is-active' : ''} aria-pressed={compose === kind} onClick={() => { if (!authUser && ['review','playlist','recommend'].includes(kind)) { requireAccount(kind === 'review' ? 'reviews' : kind === 'playlist' ? 'playlists' : 'friend recommendations'); return; } setCompose(kind); setError(''); }}>{label}</button>)}</div>
       {compose === 'playlist' ? <><label className="am-field-label" htmlFor="am-playlist-name">Playlist name</label><RuleField as="input" id="am-playlist-name" data-autofocus value={playlistTitle} onChange={(e) => setPlaylistTitle(e.target.value)} placeholder="e.g. My everyday essentials" onShowRules={openRules} /><PlaylistAudiencePicker id="am-new-playlist-visibility" value={playlistVisibility} onChange={setPlaylistVisibility} /><PlaylistCoverPicker title={playlistTitle} mode={coverMode} onMode={setCoverMode} color={coverColor} onColor={setCoverColor} text={coverText} onText={setCoverText} photo={coverPhoto} onPhoto={setCoverPhoto} /></> : <><label className="am-field-label" htmlFor="am-post-text">{compose === 'question' ? 'Your question' : compose === 'review' ? 'Your experience' : compose === 'recommend' ? 'A note to your friends' : 'Your post'}</label><RuleField id="am-post-text" data-autofocus={compose !== 'review' || undefined} value={body} maxLength={POST_MAX} onChange={(e) => setBody(e.target.value)} onShowRules={openRules} placeholder={compose === 'question' ? 'What would you like to ask? Add #topics if helpful.' : compose === 'review' ? 'How was it for you?' : compose === 'recommend' ? 'Add a note (optional)' : 'What’s on your mind? Add #topics if helpful.'} /><CharRing length={body.length} max={POST_MAX} className="ay-ring am-ring" />{hashtagSuggestions.length > 0 && <div className="am-hashtags" aria-label="Suggested hashtags">{hashtagSuggestions.map((tag) => <button type="button" key={tag.key} onClick={() => setBody((text) => text.replace(/#(?:[A-Za-z][\w-]*)?$/, `${tag.tag} `))}>{tag.tag}</button>)}</div>}</>}
@@ -1267,7 +1279,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       <p id="am-discard-copy">What you wrote will be deleted.</p>
       <button type="button" className="am-primary" onClick={() => setConfirmDiscard(false)}>Keep editing</button>
       <button type="button" className="am-secondary" onClick={discardCompose}>Discard</button>
-    </div></div>}</div>}
+    </div></div>}</SheetLayer>}
     {startTopic && <TopicEditor variant="app" supabase={supabase} user={authUser} onShowRules={openRules} onClose={() => setStartTopic(false)}
       onSaved={(t) => { setStartTopic(false); userTopics.reload(); setNotice(t?.status === 'pending' ? 'Topic started. It shows in Community once the ayna team has checked it.' : 'Topic started.'); if (t?.id) openTopic(t); }} />}
     {showRules && <div className="am-sheet-backdrop am-rules-backdrop" {...backdropTap(() => setShowRules(false))}><div className="am-sheet am-rules-sheet" role="dialog" aria-modal="true" aria-label="Community rules" onClick={(e) => e.stopPropagation()}>

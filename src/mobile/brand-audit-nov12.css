@@ -135,3 +135,14 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-saved-content { padding-left: var(--d-gutter, 20px) !important; padding-right: var(--d-gutter, 20px) !important; }
 /* Nov 14: Community "Create playlist" (and any other list-heading pill) was a see-through butter tint in dark mode; solid butter with espresso words. */
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-list-heading button { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* Nov 14 (TestFlight, New post sheet): 13px minimum, 44px taps, and a solid "Choose photos" in dark mode. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-photo-input > span { font-size: 13px !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-photo-input .am-photo-cta { min-height: 44px !important; display: inline-flex !important; align-items: center !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-type-row button { min-height: 44px !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-type-row { padding-right: 20px; scroll-padding-right: 20px; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-photo-input .am-photo-cta { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* Nov 14 (Create a playlist): 13px text, 44px example chips, and a visible cover in dark mode. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile :is(.am-cover-hint, .am-cover-preview small, .am-cover-examples button) { font-size: 13px !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-cover-examples button { min-height: 44px !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-cover-preview { border: 1.5px solid #ffedac !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-cover-mode button.is-active { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }

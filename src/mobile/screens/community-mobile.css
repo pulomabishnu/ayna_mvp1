@@ -53,7 +53,7 @@
 .am-profile-setup>button { min-height:44px; }
 .am-profile-setup p { margin: 0; color: var(--ayna-text-muted); font-size: 13px; font-weight: 500; }
 .am-profile-setup button { border: 0; background: var(--ayna-cta-bg); color: var(--ayna-cta-text); border-radius: 99px; padding: 10px; }
-.am-sheet-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(20,20,30,.42); display: flex; align-items: flex-end; }
+.am-sheet-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(62,39,35,.45); /* espresso scrim, not blue-black (Nov 14) */ display: flex; align-items: flex-end; }
 .am-sheet { box-sizing: border-box; width: 100%; max-height: 86vh; overflow-y: auto; display: grid; gap: 15px; background: var(--ayna-bg); border-radius: 22px 22px 0 0; padding: 20px 20px max(24px, env(safe-area-inset-bottom)); }
 .am-sheet-head { display: flex; align-items: center; justify-content: space-between; }
 .am-sheet-head h2 { margin: 0; font: 400 22px/1.15 var(--ayna-font-display); }

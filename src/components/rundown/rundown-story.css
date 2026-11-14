@@ -92,7 +92,7 @@
 /* steps */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axis { font-size: 13px; font-weight: 600; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-axis.is-today { font-weight: 800; fill: var(--s-fg); }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar { fill: var(--s-fg); opacity: .9; transform-box: fill-box; transform-origin: 50% 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar { fill: var(--s-fg); opacity: 1; /* solid brand butter; .9 read as a muted khaki (Nov 14) */ transform-box: fill-box; transform-origin: 50% 100%; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-bar.is-today { fill: var(--s-pink); opacity: 1; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-miss { fill: none; stroke: var(--s-muted); stroke-width: 1.5; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-usual { stroke: var(--s-blue); stroke-width: 2; stroke-dasharray: 6 5; }
@@ -185,3 +185,11 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-recap li::before { content: none; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-recap button { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 6px 12px; border: 1.5px solid var(--s-line); border-radius: 16px; background: transparent; color: var(--s-fg); text-align: left; font: 600 14px/1.3 var(--s-ui); cursor: pointer; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-recap i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--s-fg); color: var(--s-bg); font: 700 14px/1 var(--s-ui); font-style: normal; }
+
+/* Nov 14: the "Ask ayna about today" card gets the Ask ayna orb (pink, espresso spark) instead of empty space. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-art.is-ask { width: 100%; display: grid; justify-items: start; padding: 10px 0; box-sizing: border-box; overflow: visible; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-askorb { display: grid; place-items: center; width: clamp(120px, 38vw, 160px); aspect-ratio: 1; border-radius: 50%; background: #f7badd; transform-origin: left center; animation: ay-rd-orb 2.4s ease-in-out infinite; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rd-askorb svg { width: 46%; height: 46%; fill: #3e2723; }
+@keyframes ay-rd-orb { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.ay-rd.is-still .ay-rd-askorb { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .ay-rd .ay-rd-askorb { animation: none !important; } }
