@@ -1,5 +1,6 @@
 import PrivacyPreferencesLink from '../../components/PrivacyPreferencesLink.jsx';
 import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
+import { openFeedback } from './FeedbackSheet.jsx';
 
 // Same absolute URLs already used by the Legal screen in ProfileFlow.jsx
 // (PRIVACY_POLICY_URL/TERMS_URL) and by desktop's SiteFooter, kept here
@@ -44,7 +45,7 @@ export default function LegalFooter({ variant = 'default', strip = false }) {
       style={{
         fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))',
         lineHeight: 2,
-        color: light ? 'rgba(255,249,242,.62)' : 'var(--ayna-text-faint)',
+        color: light ? '#ffedac' : 'var(--ayna-text-faint)',
         textAlign: 'center',
         padding: '22px 24px max(22px, env(safe-area-inset-bottom))',
       }}
@@ -53,6 +54,8 @@ export default function LegalFooter({ variant = 'default', strip = false }) {
       {/* QA (Oct 27): the links sit in their own wrapping row, each a full 44px
           target. Inline, their padded hit areas overlapped across wrapped lines. */}
       <p className="ay-legal__links">
+        {/* Focus group (Zoleka, Nov 11): beta feedback reachable from every page, not only Home and Profile. */}
+        <button type="button" className="ay-legal__feedback" onClick={() => openFeedback()} style={{ ...LINK_STYLE, background: 'none', border: 0, padding: 0, font: 'inherit', fontWeight: 700, cursor: 'pointer' }}>Send app feedback</button>
         <a href={PRIVACY_POLICY_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Privacy policy</a>
         <a href={CONSUMER_HEALTH_DATA_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Consumer health data notice</a>
         <a href={TERMS_URL} target="_blank" rel="noreferrer" style={LINK_STYLE}>Terms of use</a>

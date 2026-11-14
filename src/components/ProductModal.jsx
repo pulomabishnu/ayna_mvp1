@@ -657,7 +657,7 @@ export default function ProductModal({
   const purchaseNotes = buyUrl && !isPrelaunch ? (
     <>
       {/* Founder, Nov 10: one disclosure line, nothing else crowding Buy (same as the app). */}
-      <p className="ayp-buy__fine ayv-fine ayv-disclose"><span>ayna may earn a commission.</span></p>
+      <p className="ayp-buy__fine ayv-fine ayv-disclose"><span>You pay and ship on the seller’s site; ayna never sees your card. ayna may earn a commission.</span></p>
     </>
   ) : null;
 
