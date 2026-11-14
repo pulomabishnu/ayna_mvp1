@@ -63,14 +63,16 @@ function Ring({ share = 1, children }) {
 // bold flat colour with big type on it (Spotify's "type as form"), the title
 // words land one at a time, and her number repeats as a pattern behind it.
 // Categories are all the same size and colour, in the order of her picks, never ranked.
-function Kinetic({ text, className = 'ays-title' }) {
+function Kinetic({ text, className = 'ays-title', outlineLast = false }) {
   const words = String(text || '').split(/\s+/).filter(Boolean);
-  return <h1 className={`${className} ay-wr-kin`} aria-label={text}>{words.map((w, i) => <span key={`${w}${i}`} aria-hidden="true" style={{ '--w': i }}>{w}</span>)}</h1>;
+  return <h1 className={`${className} ay-wr-kin`} aria-label={text}>{words.map((w, i) => <span key={`${w}${i}`} aria-hidden="true" className={outlineLast && i === words.length - 1 ? 'is-outline' : undefined} style={{ '--w': i }}>{w}</span>)}</h1>;
 }
 function TypeWall({ value }) {
   if (value == null || value === '') return null;
   return <div className="ay-wr-wall" aria-hidden="true">{Array.from({ length: 4 }, (_, r) => <span key={r} style={{ '--r': r }}>{Array.from({ length: 6 }, () => value).join(' ')}</span>)}</div>;
 }
+
+const PERSONA_LINE = { 'The Researcher': 'You follow the evidence. Studies first, then the shelf.', 'The Listener': 'You trust real experiences from women like you.', 'The Curator': 'You go with expert picks and brands you trust.', 'The Explorer': 'You love finding a new brand before everyone else.' };
 
 export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null }) {
   const picks = products.filter(Boolean);
@@ -113,7 +115,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const [peek, setPeek] = useState(null);
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
-    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(picks.length >= 3 ? ['top5'] : []), ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), 'finish']
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(picks.length >= 3 ? ['top5'] : []), ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -192,9 +194,12 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               : <Ring share={Math.min(1, byArea.length / Math.max(1, goals || byArea.length))}><b><CountUp value={picks.length} on={active === 'intro'} reduced={reduced} /></b><small>{picks.length === 1 ? 'match' : 'matches'}</small></Ring>}</div>
             <div className="ays-words">
               <p className="ays-kicker">Your ecosystem is ready</p>
-              <Kinetic text="Your ayna, wrapped" />
-              {counts && counts.needs > 0 ? <p className="ay-wr-stat"><strong>{counts.needsCovered} of {counts.needs}</strong><span>{counts.needs === 1 ? 'need' : 'needs'} covered</span></p>
-              : <p className="ay-wr-stat"><strong>{byArea.length}</strong><span>{groupWord}</span></p>}
+              <Kinetic text="Your ayna, wrapped" outlineLast />
+              {/* Nov 13 (founder's Wrapped inspo: "Streams · Fans · Hours"): her numbers in one row. */}
+              <dl className="ay-wr-statrow">
+                {counts && counts.needs > 0 ? <div><dt>Needs covered</dt><dd>{counts.needsCovered} of {counts.needs}</dd></div> : <div><dt>{groupWord === 'need' || groupWord === 'needs' ? 'Needs' : 'Areas'}</dt><dd>{byArea.length}</dd></div>}
+                {pct != null && <div><dt>#1 match</dt><dd>{pct}%</dd></div>}
+              </dl>
             </div>
           </>}
           {active === 'categories' && <>
@@ -225,12 +230,11 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
           {active === 'top5' && <>
             {/* Wrapped's "Top songs": her top five, numbered big, each with its photo; they land one by one. */}
             <div className="ays-words"><p className="ays-kicker">Your top {Math.min(5, picks.length)}</p><Kinetic text="Your best matches" /></div>
-            <ol className="ay-wr-top">{top.slice(0, 5).map((p, i) => { const pc = pctOf(p); return (
-              <li key={p.id} style={{ '--d': `${i * 160}ms` }}>
-                <span className="ay-wr-top__n" aria-hidden="true">{i + 1}</span>
-                {tapPlate(p, 'ay-wr-top__plate')}
-                <span className="ay-wr-top__t"><b>{p.name}</b>{p.brand && <small>{p.brand}</small>}</span>
-                {pc != null && <span className="ay-wr-top__pct">{pc}%</span>}
+            <ol className="ay-wr-bars5">{top.slice(0, 5).map((p, i) => { const pc = pctOf(p); return (
+              // Nov 13 (founder's Wrapped inspo, "top genres"): each pick a bar from the edge, longer for a higher match.
+              <li key={p.id} style={{ '--d': `${i * 140}ms`, '--len': `${58 - i * 8}%` }}>
+                <span className="ay-wr-bars5__bar" aria-hidden="true">{tapPlate(p, 'ay-wr-bars5__plate')}</span>
+                <span className="ay-wr-bars5__t"><i>No {i + 1}</i><b>{p.name}</b>{(p.brand || pc != null) && <small>{[p.brand, pc != null ? `${pc}% match` : ''].filter(Boolean).join(' · ')}</small>}</span>
               </li>
             ); })}</ol>
           </>}
@@ -255,15 +259,25 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             <p className="ays-body">Brands can’t pay for a better match. Every % comes from your answers and the research.</p>
           </>}
           {active === 'persona' && persona && <>
-            <div className="ays-words"><p className="ays-kicker">Your shopping style</p><Kinetic text={persona.title} /></div>
-            <dl className="ay-wr-facts">{persona.facts.map(([l, v]) => <div key={l}><dt>{l}</dt><dd>{v}</dd></div>)}</dl>
+            {/* Nov 13 (founder's Wrapped inspo, "Listening Personality"): her shopping style as a card on a stack.
+                From her own answers (what she trusts, brands, format); never guessed. */}
+            <p className="ay-wr-ptitle">Your shopping style</p>
+            <div className="ay-wr-pcard">
+              <span className="ay-wr-pcard__back is-a" aria-hidden="true" /><span className="ay-wr-pcard__back is-b" aria-hidden="true" />
+              <div className="ay-wr-pcard__front">
+                <Burst className="ay-wr-pcard__burst" />
+                <Kinetic text={persona.title} />
+                <p className="ay-wr-pcard__line">{PERSONA_LINE[persona.title] || 'You shop your own way.'}</p>
+                <ul className="ay-wr-pcard__facts">{persona.facts.map(([l, v]) => <li key={l}><small>{l}</small><b>{v}</b></li>)}</ul>
+              </div>
+            </div>
           </>}
           {active === 'finish' && <>
             {/* Founder, Nov 10: the end looked like a spreadsheet and repeated the shopping-style slide.
                 Now it is her picks themselves, big, like the #1 slide, with one line and one button. */}
             {/* Wrapped's summary card: her photos, her top picks and her needs, one big number. */}
             <h1 className="sr-only">Your ayna summary</h1>
-            <div className="ay-wr-card">
+            <div className="ay-wr-stack"><span className="ay-wr-pcard__back is-a" aria-hidden="true" /><span className="ay-wr-pcard__back is-b" aria-hidden="true" /><div className="ay-wr-card">
               <div className={`ay-wr-card__photos is-n${Math.min(picks.length, 4)}`}>{top.slice(0, 4).map((p) => <span key={p.id}>{tapPlate(p)}</span>)}</div>
               <div className="ay-wr-card__list"><p>Top picks</p><ol>{top.slice(0, 5).map((p, i) => <li key={p.id}><i>{i + 1}</i><span>{p.name}</span></li>)}</ol></div>
               {byArea.length > 0 && <ul className="ay-wr-card__needs" aria-label={byNeed.length ? 'Picked for' : 'Areas'}>{byArea.slice(0, 4).map((a) => <li key={a.label}>{a.label}</li>)}</ul>}
@@ -272,7 +286,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
                 {pct != null ? <p><small>#1 match</small><b>{pct}%</b></p> : counts && counts.needs > 0 ? <p><small>Needs covered</small><b>{counts.needsCovered}/{counts.needs}</b></p> : null}
               </div>
               <p className="ay-wr-card__brand">ayna</p>
-            </div>
+            </div></div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
               {onPersonalize && moreQuestions > 0 && <button type="button" className="ays-link ay-wr-better" onClick={onPersonalize}>Make my matches better · {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>}

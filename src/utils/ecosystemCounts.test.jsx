@@ -37,7 +37,7 @@ describe('ecosystem counts', () => {
     expect(hero).toContain(`<b>${c.needsCovered} of ${c.needs}</b> needs covered`);
     expect(hero).not.toContain('needs have picks');
     expect(wrapped).toContain(`<b>${c.products}</b><small>products</small>`);
-    expect(wrapped).toContain(`<strong>${c.needsCovered} of ${c.needs}</strong><span>needs covered</span>`);
+    expect(wrapped).toContain(`<dt>Needs covered</dt><dd>${c.needsCovered} of ${c.needs}</dd>`); // Nov 13: in the stats row
   });
 
   it('a need the hero calls covered never shows an empty shelf', () => {
