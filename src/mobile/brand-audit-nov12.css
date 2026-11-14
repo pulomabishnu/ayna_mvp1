@@ -146,3 +146,5 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-cover-examples button { min-height: 44px !important; }
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-cover-preview { border: 1.5px solid #ffedac !important; }
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-cover-mode button.is-active { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
+/* Nov 14: the quiz's "More below" pill is a 44px tap. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .aq-more { min-height: 44px !important; }

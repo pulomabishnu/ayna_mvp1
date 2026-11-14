@@ -1045,7 +1045,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       overlay={<>
         <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
         {/* First quiz on this device: one page on how the quiz works, press-and-hold included (Nov 13). */}
-        {introEnabled && onboarding && currentIndex === 0 && <QuizWelcome />}
+        {/* Nov 14: the quiz intro belongs to the first quiz only, not to "Answer the safety questions" after it. */}
+        {introEnabled && onboarding && obPart === 'core' && currentIndex === 0 && <QuizWelcome />}
         {glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
       </>}
     >
