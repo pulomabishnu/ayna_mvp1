@@ -413,14 +413,18 @@ export function ActionsRow({ saved = false, onSave = null, inRoutine = false, on
 export function AskPanel({ open, onClose, title, starters = [], onAsk, variant = 'panel', children = null, className = '', sub = 'Uses your profile. Not medical advice.' }) {
   const ref = React.useRef(null);
   const [text, setText] = useState('');
+  // Focus moves only when it opens or closes: onClose is a new function on each parent render, and
+  // re-running this on every render pulled focus (and the iPhone keyboard) out of the box mid-typing.
+  const closeRef = React.useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     if (!open) return undefined;
     const prev = typeof document !== 'undefined' ? document.activeElement : null;
     window.requestAnimationFrame(() => ref.current?.querySelector('button, input')?.focus());
-    const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); onClose?.(); } };
+    const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); closeRef.current?.(); } };
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); try { prev?.focus?.({ preventScroll: true }); } catch { /* gone */ } };
-  }, [open, onClose]);
+  }, [open]);
   if (!open) return null;
   const send = (q) => { const t = String(q || '').trim(); if (t) { onAsk?.(t); setText(''); } };
   return (

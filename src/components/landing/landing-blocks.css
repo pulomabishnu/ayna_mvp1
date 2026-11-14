@@ -252,3 +252,8 @@ html body .app-container #ay-landing button.lb-price:focus-visible { outline: 3p
   html body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
 }
 html.ay-motion-paused body .app-container #ay-landing :is(.lb-tile__a:hover .lb-ic, button.lb-price:hover, .lb-pill.is-butter:hover) { transform: none; }
+/* "Add ayna as a preferred source on Google" (Notion AYNA-340), under the closing slider on the espresso band. */
+html body .app-container #ay-landing .lb-end__gsrc { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 1.5px solid #ffedac; border-radius: 999px; color: #ffedac; font: 600 15px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; text-decoration: none; }
+html body .app-container #ay-landing .lb-end__gsrc svg { width: 18px; height: 18px; fill: #f7badd; }
+html body .app-container #ay-landing .lb-end__gsrc:hover { background: #ffedac; color: #3e2723; }
+html body .app-container #ay-landing .lb-end__gsrc:focus-visible { outline: 2px solid #f7badd; outline-offset: 3px; }

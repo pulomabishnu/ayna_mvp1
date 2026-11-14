@@ -39,6 +39,8 @@ export const STARTUPS = [
     },
     {
         id: 's-daye',
+        // Hidden Nov 14 2026 (Notion AYNA-341, no CBD while Stripe restricts it): listed as CBD-infused tampons.
+        hidden: true,
         name: 'Daye',
         communityReview: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."',
         verificationLinks: { doctor: { links: [] }, scientific: { links: [] }, community: { links: [{ url: 'https://www.trustpilot.com/review/yourdaye.com', text: 'Trustpilot: Daye', summary: 'Trustpilot rates Daye 4.3/5 from 700 reviews (83% 5-star, 7% 1-star). Reviewers praise innovative at-home testing and eco-friendly products. Common complaints: slow customer-service replies and delivery issues. One reviewer: "The microbiome screen test is a game changer. No second guessing or self medicating before knowing what is really going on."' }] } },

@@ -213,6 +213,7 @@ import { markReturnToFreeProduct, takeReturnToFreeProduct } from './utils/freePr
 import { trackQuizStarted, trackFirstMatchShown, eventSurface } from './utils/analyticsEvents.js';
 import { countJourneyStep } from './utils/journeyStep.js';
 import { stampFactUpdates } from './matching/factFreshness.js';
+import { addNeedToAnswers } from './matching/addNeed.js';
 
 /** Which views light up each main tab (MAIN_TABS keys), in the top nav and the phone tab bar. */
 // Today · Shop · Services · Community · Library (founder, Oct 26). Shop keeps the 'explore' key.
@@ -2033,6 +2034,16 @@ function App() {
     return false;
   };
 
+  // "Add trouble sleeping to your answers" in Why this fits (Notion, Nov 13): added to her answers in
+  // place, saved like any answer change, and every match re-ranks. Signed out it stays on this device.
+  const handleAddNeed = async (needId) => {
+    if (!quizResults) return false;
+    const next = addNeedToAnswers(quizResults, needId);
+    if (next === quizResults) return true;
+    if (!user) { setQuizResults(next); return true; }
+    return handleUpdateIntake(next.fullHealthIntake || next);
+  };
+
   const handleHealthProfileEditorSave = async (updatedResults) => {
     if (!updatedResults) {
       setCurrentView('ecosystem');
@@ -3490,6 +3501,7 @@ function App() {
             // product's own defaults instead of carrying the previous
             // product's state over.
             <ProductModal
+              onAddNeed={handleAddNeed}
               onStartQuiz={() => { setQuizResume(false); setQuizRun((n) => n + 1); setCurrentView('quiz'); }}
               onFixSafety={(step) => { setEditAtStep(step || ''); setCurrentView(quizResults ? 'profile-edit' : 'quiz'); }}
               key={displayedProduct.id}

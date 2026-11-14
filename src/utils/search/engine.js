@@ -26,6 +26,10 @@ import {
 } from '../../data/searchSynonyms.js';
 
 const FILLER = new Set(QUERY_FILLER);
+// The kind of thing she typed, usually the last word: "sleep masks" is a mask, "magnesium lotion" a lotion
+// (Notion AYNA-256, Nov 2026: "sleep masks" showed teas and sunrise alarms between the masks).
+const HEAD_NOUNS = new Set(['mask', 'pillow', 'pillowcase', 'lotion', 'cream', 'oil', 'tea', 'gel', 'serum', 'pad', 'tampon', 'cup', 'disc', 'underwear', 'patch', 'spray', 'wash', 'wipe', 'balm', 'gummy', 'gummie', 'vitamin', 'tracker', 'ring', 'band', 'belt', 'sock', 'bra', 'pump', 'vibrator', 'lube', 'lubricant', 'test', 'kit', 'strip', 'massager', 'roller', 'glass', 'hat', 'blanket', 'sheet', 'machine', 'bottle', 'shampoo', 'conditioner', 'deodorant', 'sunscreen', 'moisturizer', 'cleanser', 'powder', 'capsule', 'tablet', 'drink', 'bar', 'bath', 'soak', 'salt', 'candle', 'diffuser', 'fan', 'light', 'lamp', 'wand', 'dilator', 'trainer', 'liner', 'brief', 'legging', 'pajama', 'robe', 'slipper', 'shoe', 'insole', 'brace', 'wrap', 'heating', 'tens', 'app']);
+const singular = (w) => w.replace(/ies$/, 'y').replace(/(ss|sh|ch|x)es$/, '$1').replace(/([^s])s$/, '$1');
 
 /** Weights: how strongly a vocabulary word is preferred as a correction target. */
 export const WEIGHT = { CURATED: 5, ONTOLOGY: 4, BRAND: 4, IDENTITY: 3, ARTICLE: 2, KNOWN_BRAND: 2, COMMON: 1 };
@@ -501,6 +505,26 @@ export function createSearchEngine(config = {}) {
     if (s > 0 && a.searchText) {
       const nameText = normalizeText(`${item.name || ''} ${item.brand || ''}`);
       for (const w of a.searchText.split(' ')) if (w.length > 2 && hasPhrase(nameText, w)) s += 1.5;
+    }
+    // What she named comes first: the whole phrase in the product's name ("sleep mask", also "eyemask"),
+    // and a product that is not that kind of thing at all drops below the ones that are.
+    if (s > 0 && a.searchText) {
+      const qw = a.searchText.split(' ').filter(Boolean).map(singular);
+      const brandWords = new Set(normalizeText(item.brand || '').split(' ').filter(Boolean));
+      const nameW = normalizeText(item.name || '').split(' ').filter((w) => w && !brandWords.has(w)).map(singular);
+      if (qw.length >= 2) {
+        const nameJoined = ` ${nameW.join(' ')} `;
+        if (nameJoined.includes(` ${qw.join(' ')} `) || nameW.join('').includes(qw.join(''))) s += 8;
+      }
+      const head = qw[qw.length - 1];
+      if (HEAD_NOUNS.has(head)) {
+        const kindW = [...nameW, ...normalizeText(`${(item.tags || []).join(' ')} ${item.subcategory || ''}`).split(' ').filter(Boolean).map(singular)];
+        const isKind = kindW.some((w) => w === head || (w.length > head.length + 2 && w.endsWith(head)));
+        s = isKind ? s + 3 : s * 0.35;
+        // The right kind of thing for the wrong job ("sleep masks" and a clay face mask): below the rest.
+        const mods = qw.slice(0, -1).filter((w) => w.length > 2);
+        if (isKind && mods.length && !mods.some((w) => wordHits(w, e.hay) || wordHits(w, normalizeText(item.category || '')))) s *= 0.4;
+      }
     }
     if (a.filters.fragranceFree && s > 0 && profileOf(item, e)?.safety?.fragrance === 'no') s += 1;
     if (!s && !a.searchText && !a.needs.length && !a.categories.length && a.hasFilters) s = 1;

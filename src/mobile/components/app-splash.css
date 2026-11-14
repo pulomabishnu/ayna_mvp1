@@ -1,0 +1,15 @@
+/* App opening (AppSplash.jsx). Butter page, espresso letters, pink shadow: the app icon, coming alive. */
+.ay-splash { position: fixed; inset: 0; z-index: 2147483600; display: grid; place-items: center; background: #ffedac; transition: opacity .3s ease-out; }
+.ay-splash.is-leaving { opacity: 0; pointer-events: none; }
+.ay-splash__mark { display: flex; align-items: baseline; font-family: var(--f-logo, var(--ayna-font-display, 'Figtree')), system-ui, sans-serif; font-weight: 800; font-size: 104px; line-height: 1; letter-spacing: -0.04em; color: #3e2723; animation: ay-splash-slide .4s .55s ease-out both; }
+.ay-splash__a { position: relative; display: inline-block; }
+.ay-splash__ink { position: relative; display: inline-block; animation: ay-splash-pop .45s cubic-bezier(.2, .9, .3, 1.25) both; }
+.ay-splash__shadow { position: absolute; left: 0; top: 0; color: #f7badd; transform: translate(.07em, .07em); animation: ay-splash-shadow .45s .3s ease-out both; }
+.ay-splash__rest { display: inline-block; clip-path: inset(0 100% 0 0); animation: ay-splash-write .4s .55s ease-out forwards; }
+@keyframes ay-splash-pop { from { transform: scale(.92); } 55% { transform: scale(1.08); } to { transform: none; } }
+@keyframes ay-splash-shadow { from { transform: translate(0, 0); opacity: 0; } to { transform: translate(.07em, .07em); opacity: 1; } }
+@keyframes ay-splash-slide { from { transform: translateX(var(--shift, 0px)); } to { transform: none; } }
+@keyframes ay-splash-write { to { clip-path: inset(0 0 0 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .ay-splash__mark, .ay-splash__ink, .ay-splash__shadow, .ay-splash__rest { animation: none; clip-path: none; }
+}

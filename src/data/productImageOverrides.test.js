@@ -16,6 +16,8 @@ const PACKSHOT_PENDING = new Set([
   'p-tampontribe-pantyliners-bulk-buy',
   'p-tampontribe-teen-pads',
   'p-resa-rhythm-bracelet',
+  // Nov 14 additions (verifiedNov14Products.js): brand/retailer photos until packshots are shot.
+  'p-ostrichpillow-eye-mask', 'p-voltaren-arthritis-pain-gel',
   'p-goodcycle-dailybasis', // GoodCycle (2026-10-27): brand photos from takegoodcycle.com, no studio packshot yet
   // Livi (Nov 4, Eliz's photo): brand photo until a packshot is shot.
   'p-livi-after-sex-absorption-device',

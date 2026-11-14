@@ -1,7 +1,7 @@
 import { takeHealthReturn } from '../health/healthReturn.js';
 import { todayHelp, productsForTopic, LOG_CHANGED_EVENT } from '../health/todayHelp.js';
 import { readLog } from '../health/dailyLog.js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { readPendingVerification } from '../utils/pendingVerification.js';
 import { claimQuizRetake } from '../utils/proApi.js';
 import { fingerprintIntake, buildIdFromFingerprint } from '../utils/fetchLlmRecommendations.js';
@@ -142,6 +142,7 @@ import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
 import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
+import AppSplash, { shouldShowSplash } from './components/AppSplash.jsx';
 import { shouldAskHeardAbout } from '../utils/signupConsent.js';
 import { toast } from '../utils/toast.js';
 // Motion moments (sheets, push, tab fade) and app-wide press states; last so it wins.
@@ -346,6 +347,9 @@ export default function MobileApp() {
   // saved here, she lands on the ayna chat, never back on the first-run welcome.
   // Dashboard-first Home by default; ?home=chat (or the dev flag) shows the chat-first one.
   const [homeVariant] = useState(() => readHomeVariant());
+  // The opening moment on the iPhone app (components/AppSplash.jsx), once per cold start.
+  const [splash, setSplash] = useState(() => shouldShowSplash());
+  const endSplash = useCallback(() => setSplash(false), []);
   const chatFirst = homeVariant === 'chat';
   const [initialRoute] = useState(() => initialAppRoute({
     variant: homeVariant,
@@ -1945,6 +1949,7 @@ export default function MobileApp() {
       {overlay?.type === 'product' && (
         <PushLayer key={`p-${overlay.item?.id}`} onBack={() => setOverlay(null)}>
           <ProductDetailScreen
+            onAddNeed={(needId) => handleAddGoal(needId, { quiet: true })}
             product={overlay.item}
             onBack={() => setOverlay(null)}
             isSaved={isSaved(overlay.item?.id)}
@@ -2029,6 +2034,7 @@ export default function MobileApp() {
             matchOpts={matchOpts}
             onBack={() => setOverlay(null)}
             onUpdateHealth={() => { setOverlay(null); setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); }}
+            onAddNeed={(needId) => handleAddGoal(needId, { quiet: true })}
             onFixSafety={(step) => { setOverlay(null); nav.onEditIntakeStep(step); }}
             onViewDetails={() => setOverlay({ type: 'product', item: overlay.item })}
           />
@@ -2147,6 +2153,7 @@ export default function MobileApp() {
           // "Read more": the full product page fills the sheet; Back returns to the sheet.
           renderFull={(item, back) => (
             <ProductDetailScreen
+              onAddNeed={(needId) => handleAddGoal(needId, { quiet: true })}
               product={item}
               onBack={back}
               isSaved={isSaved(item.id)}
@@ -2171,6 +2178,7 @@ export default function MobileApp() {
       </ProductSheetContext.Provider>
       {/* Same 14-day feedback survey as the website, only on resting screens. */}
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
+      {splash && <AppSplash onDone={endSplash} />}
       <OfflineBanner rootRef={rootRef} />
       <GlobalToast variant="app" />
       {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}

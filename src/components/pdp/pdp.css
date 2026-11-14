@@ -3076,3 +3076,10 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 :is(#ayc, .ayv-ask2):is(#ayc2, .ayv-ask2) .ayv-ask2__close { min-width: 44px; min-height: 44px; border: 1.5px solid currentColor; border-radius: 50%; }
 /* How the summary is made (Nov 13). */
 .ayq .ayq-howmade { margin: 16px 0 0; font: 500 13px/1.45 var(--ay-font-ui, 'Figtree', sans-serif); }
+
+/* Photo count ("1/2") on the website's product photo (Notion AYNA-89, "white image under product image"):
+   a white pill whose text turned butter in dark mode, so it showed as an empty white box on the photo's
+   corner; 12px. One espresso pill with butter text in both themes, 13px. */
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count,
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count * { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; font-size: 13px !important; }
+#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count * { background: transparent !important; }

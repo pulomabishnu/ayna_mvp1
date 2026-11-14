@@ -60,3 +60,22 @@ export function appErrorProperties(error, info, { isChunkLoadError = false, view
   if (Number.isFinite(Number(error?.status))) props.status = Number(error.status);
   return props;
 }
+
+
+/**
+ * The same error for PostHog's Error tracking (an $exception event), built only from the redacted
+ * fields above: type, redacted message, where. No stack, no user text. Notion AYNA-339.
+ */
+export function exceptionProperties({ errorName = 'Error', errorMessage = '', component = '', view = '', handled = false } = {}) {
+  const type = String(errorName || 'Error').slice(0, 64);
+  const value = String(errorMessage || '').slice(0, 160);
+  return {
+    $exception_list: [{ type, value, mechanism: { handled: Boolean(handled), synthetic: false } }],
+    $exception_level: 'error',
+    $exception_fingerprint: `${type}:${value.replace(/\d+/g, 'n').slice(0, 80)}:${String(component || view || '').slice(0, 40)}`,
+    errorName: type,
+    errorMessage: value,
+    component: String(component || '').slice(0, 64),
+    view: String(view || '').slice(0, 64),
+  };
+}

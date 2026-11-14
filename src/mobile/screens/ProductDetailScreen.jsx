@@ -14,6 +14,7 @@ import { whyLine } from '../../utils/whyLine.js';
 import ProductEvidence from '../../components/pdp/ProductEvidence.jsx';
 import AskQuick from '../../components/pdp/AskQuick.jsx';
 import { SafetyLine, MatchLockup, PriceRow, AskPanel } from '../../components/pdp/PdpParts.jsx';
+import ProductVideos from '../../components/pdp/ProductVideos.jsx';
 import { costPerUse, highlightsFor, metaLineFor, matchBreakdownFor, retailerOf } from '../../components/pdp/decision.js';
 import { trackPdpRetailerClicked, eventSurface } from '../../utils/analyticsEvents.js';
 import { haptic } from '../../utils/haptics.js';
@@ -218,6 +219,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
 }
 
 export default function ProductDetailScreen({
+  onAddNeed = null,
   product: catalogProduct,
   onBack,
   isSaved = false,
@@ -325,6 +327,7 @@ export default function ProductDetailScreen({
         matchOpts={matchOpts}
         onBack={() => setShowWhyMatch(false)}
         onUpdateHealth={onStartQuiz}
+        onAddNeed={onAddNeed}
         onViewDetails={() => setShowWhyMatch(false)}
       />
     );
@@ -528,6 +531,7 @@ export default function ProductDetailScreen({
           </div>
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {/* Founder, Nov 11: Ask ayna right here, three quick questions. */}
+          <ProductVideos product={product} />
           <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
           {/* Founder, Nov 11: no "Before you spend $X" box on the product page. */}
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}

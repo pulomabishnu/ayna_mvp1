@@ -1,3 +1,4 @@
+import { analyticsPlatform } from './analyticsPlatform.js';
 import posthog from 'posthog-js';
 import { filterProductListToCatalog } from './catalogIntegrity';
 import { loadCatalog } from '../data/catalog.js';
@@ -12,9 +13,15 @@ import { redactErrorMessage } from './errorAnalytics';
  */
 import { apiUrl } from './apiUrl.js';
 
+// Notion AYNA-345: every search event says which app it came from, even if the super property
+// (src/main.jsx) were ever missing on a native build.
+const searchPlatform = () => {
+  try { return analyticsPlatform(Boolean(window.Capacitor?.isNativePlatform?.()), window.Capacitor?.getPlatform?.()); } catch { return 'web'; }
+};
+
 function captureSearchAnalytics(event, properties) {
   try {
-    posthog.capture(event, properties);
+    posthog.capture(event, { platform: searchPlatform(), ...properties });
   } catch {
     // Analytics must never break search.
   }

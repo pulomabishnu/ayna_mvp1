@@ -55,6 +55,8 @@ import './pdp/pdp-nov6.css';
 import './pdp/pdp-web-compact.css';
 import { fetchWithTimeout } from '../utils/network.js';
 import { SaveFollowUpInline } from './save/SaveFollowUp.jsx';
+import StickyProductBar from './pdp/StickyProductBar.jsx';
+import ProductVideos from './pdp/ProductVideos.jsx';
 import { ASK_SIGN_IN, ASK_MONTHLY_LIMIT, ASK_BURST_LIMIT, askLimitCode } from '../pro/askLimitCopy.js';
 
 
@@ -325,6 +327,8 @@ async function copyText(text) {
 
 export default function ProductModal({
   product: catalogProduct,
+  // Adds a need she tapped in "Why this fits" to her answers in place (App.handleAddNeed).
+  onAddNeed = null,
   // After Save: "Remind me later · Compare" (src/components/save).
   onCompare = null,
   onOmit,
@@ -541,7 +545,7 @@ export default function ProductModal({
   ] : []);
 
   // The first time she sees "Add to my routine", one line says what it means.
-  // Watched by the sticky Buy bar on phones.
+  // Watched by the product bar that stays in view (StickyProductBar).
   const actionsRef = useRef(null);
 
   if (!product) return null;
@@ -788,7 +792,7 @@ export default function ProductModal({
     <div className="ayp" id="pdp-v4" data-tour="pdp">
       <div className="ay-container ayp__page">
 
-        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} />}
+        {showWhy && <WhyMatchPanel product={product} quizResults={quizResults} healthProfile={healthProfile} matchOpts={matchOpts} onClose={() => setShowWhy(false)} onUpdateHealth={() => { window.location.href = '/quiz'; }} onAddNeed={onAddNeed} />}
 
         {/* Uniqueness pass (Oct 26): the hero is a full-width pink band (AirPods colour-blocked apps, Glossier
             PDP): the product big on its white plate, the decision block on a butter panel beside it (under it on
@@ -875,11 +879,13 @@ export default function ProductModal({
           {/* Tabs: ayna summary (open), Clinical opinion, Scientific literature, Reviews (PDP audit, Oct 25). */}
           <div className="ayv-dk__tabs ayp-tabsarea pdp-head__info">
             <ProductEvidence layout="stack" loading={!researchLoaded} product={product} safetyLead={topWarning} glance={glance} aynaData={aynaData} aynaRating={aynaRating} ratingCount={ratingCount} rateControls={rateControls} onOpenReview={onOpenReview} onWriteReview={onCommunityAction ? () => onCommunityAction('review') : null} fit={fitData} extraRows={unlinkedStores.length ? [{ label: 'Also sold at', value: unlinkedStores.join(', ') }] : []} askSlot={onAskAyna ? <ProductAsk productName={displayName} onAsk={onAskAyna} hasProfile={Boolean(quizResults)} /> : null} endCta={buyUrl && !isPrelaunch ? buyButton('ayv-sticker is-compact') : null} />
+            <ProductVideos product={product} />
             {/* Founder, Nov 11: safety right under the four sections. */}
             <div className="ay-pdp-safetyafter">{warningLine}</div>
           </div>
         </div>
 
+        <StickyProductBar watchRef={actionsRef} image={shownImages[Math.min(photo, Math.max(shownImages.length - 1, 0))] || ''} name={displayName} price={priceView.known && !priceView.isPlaceholder ? priceView.main : ''} buy={buyUrl && !isPrelaunch ? buyButton('ayv-sticker is-compact') : null} />
         {onAskAyna && <AskPanel open={askOpen} onClose={() => setAskOpen(false)} title={`Ask about ${displayName}`} starters={askStarters} onAsk={(q) => { setAskOpen(false); onAskAyna(`About ${displayName}: ${q}`); }} />}
 
         {/* Compare, then Ask or share side by side on desktop. */}

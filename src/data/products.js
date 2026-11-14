@@ -1,4 +1,4 @@
-import { TEMPORARILY_HIDDEN_IDS, DUPLICATE_OF, isRxOnlyProduct, isListedProduct } from './hiddenProducts.js';
+import { TEMPORARILY_HIDDEN_IDS, DUPLICATE_OF, isRxOnlyProduct, isListedProduct, isCbdProduct } from './hiddenProducts.js';
 import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
 import { NEEDS as ONTOLOGY_NEEDS } from '../matching/ontology.js';
 const NEEDS_BY_ID = Object.fromEntries(ONTOLOGY_NEEDS.map((n) => [n.id, n]));
@@ -13,6 +13,7 @@ import { PRODUCT_RESEARCH_CORE } from './productResearchCore.js';
 import { NOV_2026_PRODUCTS } from './productsNov2026.js';
 import { VERIFIED_COMFORT_PRODUCTS } from './verifiedComfortProducts.js';
 import { VERIFIED_WELLBEING_PRODUCTS } from './verifiedWellbeingProducts.js';
+import { VERIFIED_NOV14_PRODUCTS } from './verifiedNov14Products.js';
 import { EXTENDED_PHYSICAL, EXTENDED_DIGITAL } from './productsExtended.js';
 import { EXTENDED_PHYSICAL_2, EXTENDED_DIGITAL_2 } from './productsExtended2.js';
 import { FILLER_PHYSICAL, FILLER_DIGITAL } from './categoryFillers.js';
@@ -909,6 +910,7 @@ export const CATALOG_PRODUCTS = [
     ...NOV_2026_PRODUCTS,
     ...VERIFIED_COMFORT_PRODUCTS,
     ...VERIFIED_WELLBEING_PRODUCTS,
+    ...VERIFIED_NOV14_PRODUCTS,
 ]
     .map(withCatalogEvidence)
     // The research fields matching, search and filters read (safety rules included) ship
@@ -917,7 +919,7 @@ export const CATALOG_PRODUCTS = [
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id])
     .map(withImageOverride);
 
-const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden);
+const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden && !isCbdProduct(p));
 export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
 
 /** The public live catalog is the same universe used by Shop and the API. */

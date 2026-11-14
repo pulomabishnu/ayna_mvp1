@@ -127,3 +127,7 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 /* Community: "See your match" under a product in a post touched the product box's bottom edge and sat
    off-centre (116px in), so it read as cut in half. It sits 8px under the box, lined up with the post. */
 :is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html):is(#pc5, html):is(#pc6, html) body .ayna-mobile .am-mention-wrap > .am-seematch { justify-self: start !important; margin: 8px 0 0 !important; }
+
+/* Saved: the grid was padded twice (18px + 20px), so cards sat 38px in and were narrower than on Shop. */
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-saved-content > .ayna-editorial-product-grid { padding-left: 0 !important; padding-right: 0 !important; }
+.ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ayna-saved-content { padding-left: var(--d-gutter, 20px) !important; padding-right: var(--d-gutter, 20px) !important; }

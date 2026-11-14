@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MatchFeedback from '../today/MatchFeedback.jsx';
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { needBreakdown, tierWord, exclusionLines, whyMatch, isBleedingEvaluation } from '../../utils/matchDisplay.js';
@@ -9,7 +10,7 @@ import { matchBreakdownFor } from '../pdp/decision.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { openProPaywall } from '../../pro/paywall.js';
 import { ALL_PRODUCTS } from '../../data/catalog.js';
-import { parsePrice } from '../../matching/productProfile.js';
+import { parsePrice, buildProductProfile } from '../../matching/productProfile.js';
 import '../../styles/match-ui.css';
 
 // "See why" side panel (Nov 5, founder: "just put 69% match, see why … bullet
@@ -49,10 +50,23 @@ const checkWord = (c) => CHECK_WORDS[c.code] || (String(c.code).startsWith('alle
 /* Where its price sits among the same kind of product on ayna (Nov 6, founder: "make it more
    informative"). Only one-time USD prices, only with 5+ others to compare, never invented. */
 const oneTime = (p) => { const x = parsePrice(p?.price); return x.currency === 'USD' && !x.recurring && x.amount > 0 ? x.amount : null; };
-function priceSpot(product) {
+// Its main form, most specific first: a sleep tea is also tagged 'device' by its aisle, but it is a tea.
+const FORM_ORDER = ['drink_tea', 'pill_capsule', 'gummy', 'powder', 'lozenge', 'suppository', 'patch', 'topical', 'test_kit', 'period_care', 'apparel_support', 'device', 'app_service'];
+const formCache = new WeakMap();
+function formOf(p) {
+  if (!p || typeof p !== 'object') return '';
+  if (!formCache.has(p)) { let f = []; try { f = buildProductProfile(p)?.formats || []; } catch { f = []; } formCache.set(p, FORM_ORDER.find((x) => f.includes(x)) || ''); }
+  return formCache.get(p);
+}
+export function priceSpot(product) {
   const mine = oneTime(product);
   if (mine == null || !product?.category) return null;
-  const peers = ALL_PRODUCTS.filter((p) => p.category === product.category && p.type === product.type).map(oneTime).filter((n) => n != null);
+  // Same kind of thing, not just the same aisle (Notion, Nov 13: a $11 sleep tea's slider ran to a $6,936.75
+  // smart bed). Peers share its main form (tea, capsule, device, topical…); with no form, its subcategory.
+  const form = formOf(product);
+  const sameKind = (p) => (form ? formOf(p) === form : Boolean(product.subcategory) && p.subcategory === product.subcategory);
+  const peers = ALL_PRODUCTS.filter((p) => p !== product && p.id !== product.id && p.category === product.category && p.type === product.type && sameKind(p)).map(oneTime).filter((n) => n != null);
+  peers.push(mine);
   if (peers.length < 6) return null;
   const lo = Math.min(...peers); const hi = Math.max(...peers);
   if (hi <= lo) return null;
@@ -70,7 +84,8 @@ function Bars({ level, of = 3 }) {
   return <span className="ay-w2-bars" aria-hidden="true">{Array.from({ length: of }, (_, i) => <i key={i} className={i < level ? 'is-on' : ''} />)}</span>;
 }
 
-export default function WhyFit({ product, quizResults, healthProfile = null, matchOpts, onUpdateHealth, onFixSafety = null }) {
+export default function WhyFit({ product, quizResults, healthProfile = null, matchOpts, onUpdateHealth, onFixSafety = null, onAddNeed = null }) {
+  const [added, setAdded] = useState(false);
   const details = getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts);
   const pro = usePro();
   const { percent, eligible, matchStatus, tier } = details;
@@ -115,7 +130,9 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
       {reasons.length > 0 && <section>
         <h3>Why</h3>
         <ul className="ay-w2-list is-why">{reasons.map((r) => <li key={r} data-ic={/rate it/.test(r) ? 'star' : /life stage/i.test(r) ? 'stage' : 'fit'}>{r}</li>)}</ul>
-        {browse && onUpdateHealth && <button type="button" className="ay-w2-link" onClick={onUpdateHealth}>Add {bf.phrase || 'this'} to your answers</button>}
+        {/* Notion (Nov 13): "Add trouble sleeping to your answers" added it right here instead of sending her
+            back through the quiz; the match updates in place. Without a way to save, the quiz as before. */}
+        {added ? <p className="ay-w2-done" role="status">Added to your answers. Your match updated.</p> : browse && (onAddNeed || onUpdateHealth) && (<button type="button" className="ay-w2-link" onClick={async () => { if (onAddNeed && bf.needId) { const ok = await onAddNeed(bf.needId); if (ok !== false) { setAdded(true); return; } } onUpdateHealth?.(); }}>Add {bf.phrase || 'this'} to your answers</button>)}
       </section>}
 
       {rows.length > 1 && <section>

@@ -1,3 +1,4 @@
+import StarterRoutine from '../today/StarterRoutine.jsx';
 import React, { useState } from 'react';
 import RoutineTimeline from '../routine/RoutineTimeline.jsx';
 import { WEB_ECO_VIEWS } from './webEcoModel.js';
@@ -121,9 +122,10 @@ export function WebEcoSaved({ saved = [], pctFor, onOpenProduct, onAdd, isOwned 
   );
 }
 
-export function WebEcoRoutine({ source, onOpenProduct, onCheckIn, children }) {
+export function WebEcoRoutine({ source, onOpenProduct, onCheckIn, onAddToRoutine = null, children }) {
   return (
     <div className="weco-routine">
+      <StarterRoutine quizAnswers={source?.quizAnswers} myProductIds={(Array.isArray(source?.products) ? source.products : Object.values(source?.products || {})).map((p) => p?.id)} onAddToRoutine={onAddToRoutine} onOpenProduct={onOpenProduct} />
       <div className="weco-routine__day"><RoutineTimeline compact {...source} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={onCheckIn} /></div>
       {children && <details className="weco-fold"><summary>Full routines and other options</summary>{children}</details>}
     </div>

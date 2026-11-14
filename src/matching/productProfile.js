@@ -235,6 +235,10 @@ const NOV5_MAP = {
   'p-p-volve-signature-bundle': { 'fitness.strength': SECONDARY },
   'p-stakt-the-stakt-mat': { 'fitness.strength': ADJACENT },
   'p-omron-pocket-pain-pro-tens-unit': { 'pain.joint': SECONDARY },
+  // Drug Facts: "for the treatment of arthritis pain" in hand, wrist, elbow, foot, ankle and knee (Nov 14).
+  'p-voltaren-arthritis-pain-gel': { 'pain.joint': DIRECT },
+  // A blackout mask: darkness for sleep; it does not treat insomnia.
+  'p-ostrichpillow-eye-mask': { 'sleep.trouble': SECONDARY },
   'p-compex-edge-3-0-muscle-stimulator-with-tens-kit': { 'pain.joint': ADJACENT, 'fitness.strength': WEAK },
   'p-mama-strut-postpartum-support-brace': { 'postpartum.recovery': STRONG, 'pain.postpartum': SECONDARY },
   'p-medline-compressed-foam-ring-cushion': { 'postpartum.recovery': ADJACENT, 'pain.postpartum': ADJACENT },

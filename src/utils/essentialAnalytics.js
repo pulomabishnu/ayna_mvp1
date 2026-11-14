@@ -23,7 +23,11 @@
  * 45-105 to 1-10. That looked exactly like the site going down.
  */
 
-export const ESSENTIAL_EVENTS = new Set(['$pageview', '$pageleave', 'app_error', 'signed_up']);
+// Notion AYNA-339 (Nov 13, "PostHog not recording errors or crash reports for the app"): errors outside
+// React (app_error_uncaught) were dropped here for everyone who hadn't opted in, which is nearly every
+// app user, and nothing fed PostHog's Error tracking. Both now count, with only redacted fields.
+export const ESSENTIAL_EVENTS = new Set(['$pageview', '$pageleave', 'app_error', 'app_error_uncaught', '$exception', 'signed_up']);
+const ERROR_EVENTS = new Set(['app_error', 'app_error_uncaught', '$exception']);
 
 // PostHog's cookieless placeholder id. Every anonymous event carries this,
 // never an account's analytics id: if the visitor is signed in (identify ran)
@@ -58,7 +62,7 @@ const KEEP = new Set([
   '$referring_domain', '$is_identified', '$process_person_profile', 'utm_source', 'utm_medium',
 ]);
 // app_error's own coarse fields (built by appErrorProperties, message redacted).
-const KEEP_FOR_ERRORS = new Set(['errorName', 'errorMessage', 'component', 'view', 'isChunkLoadError']);
+const KEEP_FOR_ERRORS = new Set(['errorName', 'errorMessage', 'component', 'view', 'isChunkLoadError', 'kind', 'source', 'line', '$exception_list', '$exception_level', '$exception_fingerprint']);
 // signed_up keeps only how the account was made (email / google / apple / phone).
 const KEEP_FOR_SIGNUP = new Set(['method']);
 
@@ -97,7 +101,7 @@ export function essentialProperties(event) {
   const props = event?.properties || {};
   const out = {};
   for (const [key, value] of Object.entries(props)) {
-    if (KEEP.has(key) || (event.event === 'app_error' && KEEP_FOR_ERRORS.has(key)) || (event.event === 'signed_up' && KEEP_FOR_SIGNUP.has(key))) out[key] = value;
+    if (KEEP.has(key) || (ERROR_EVENTS.has(event.event) && KEEP_FOR_ERRORS.has(key)) || (event.event === 'signed_up' && KEEP_FOR_SIGNUP.has(key))) out[key] = value;
   }
   if ('$current_url' in props) out.$current_url = sectionUrl(props.$current_url);
   if ('$pathname' in props) out.$pathname = sectionPath(props.$pathname);

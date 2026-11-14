@@ -28,6 +28,7 @@
 import NEED_MAP_RESEARCH from '../data/matching/needMap.research.js';
 const RESEARCH_GRADES = new Map(NEED_MAP_RESEARCH.map((r) => [`${r.product}|${r.need}`, r]));
 import { buildProductProfile } from './productProfile.js';
+import { isPainkiller } from './eligibility.js';
 import { careFirstForNeed } from './carePriority.js';
 import { scoreProductForNeed, evaluateSafety, evidenceChannels, TIERS, REQUIRED_FIELD_TEXT, PRODUCT_INFO_TEXT } from './score.js';
 import { NEED_BY_ID, needPhrase } from './ontology.js';
@@ -319,6 +320,9 @@ export function buildEcosystem(up, products, options = {}) {
   const profilesById = new Map();
   const safetyById = new Map();
   for (const p of products || []) {
+    // Nov 5 all-hands: pain medicines are never recommended (eligibility.js); the same here, so a
+    // topical NSAID (Voltaren, added Nov 14) can't reach a shelf through this path either.
+    if (isPainkiller(p)) continue;
     const pp = buildProductProfile(p);
     if (!pp?.product_id || profilesById.has(pp.product_id)) continue;
     profilesById.set(pp.product_id, pp);

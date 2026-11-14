@@ -8,7 +8,7 @@ import '../../styles/match-ui.css';
 
 // "See why" in the app: the same body as the website panel (Nov 5 redesign,
 // founder: short bullets, graphic, no over-explaining, deeper factors on Pro).
-export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onFixSafety = null }) {
+export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack, onUpdateHealth, onAddNeed = null, onFixSafety = null }) {
   const details = getProductMatchDetailsForProduct(product, quizAnswers, null, matchOpts);
   const title = whyFitTitle(details);
   return (
@@ -20,7 +20,7 @@ export default function WhyMatchScreen({ product, quizAnswers, matchOpts, onBack
         <h1>{title}</h1>
       </header>
       <div className="ayna-match-scroll ay-w2">
-        <WhyFit product={product} quizResults={quizAnswers} matchOpts={matchOpts} onUpdateHealth={onUpdateHealth} onFixSafety={onFixSafety} />
+        <WhyFit product={product} quizResults={quizAnswers} matchOpts={matchOpts} onUpdateHealth={onUpdateHealth} onAddNeed={onAddNeed} onFixSafety={onFixSafety} />
         <p className="ay-w2-fine">{WHY_FIT_FINE} <a href="https://www.aynahealth.co/how-it-works" target="_blank" rel="noreferrer">How we match ↗</a></p>
         <LegalFooter />
       </div>

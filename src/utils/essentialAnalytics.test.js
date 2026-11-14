@@ -43,7 +43,7 @@ describe('essential analytics tier', () => {
   });
 
   it('sends only pageviews, pageleaves, errors and new-account counts before opt-in', () => {
-    expect([...ESSENTIAL_EVENTS].sort()).toEqual(['$pageleave', '$pageview', 'app_error', 'signed_up']);
+    expect([...ESSENTIAL_EVENTS].sort()).toEqual(['$exception', '$pageleave', '$pageview', 'app_error', 'app_error_uncaught', 'signed_up']);
     for (const name of ['pdp_viewed', 'recommendation_viewed', 'app_opened', '$identify', 'perf_timing']) {
       expect(beforeSend({ event: name, properties: {} }, UNDECIDED)).toBeNull();
     }
@@ -173,3 +173,19 @@ describe('essential analytics tier', () => {
     expect(main).toContain("opt_out_capturing_by_default: GPC_ENABLED || STORED_ANALYTICS_PREF !== 'granted'");
   });
 });
+
+// Notion AYNA-339: app errors outside React and PostHog Error tracking events reach PostHog before
+// opt-in, carrying only the redacted error fields (no URL details, no person, no free text).
+describe('error events before opt-in', () => {
+  it('keeps only the redacted error fields on $exception and app_error_uncaught', () => {
+    for (const name of ['$exception', 'app_error_uncaught']) {
+      const out = beforeSend({ event: name, properties: { errorMessage: 'x is not a function', errorName: 'TypeError', $exception_list: [{ type: 'TypeError', value: 'x is not a function' }], view: 'shop', searchQuery: 'vaginal dryness', email: 'a@b.co', $current_url: 'https://aynahealth.co/product/monistat?q=itch' } }, UNDECIDED);
+      expect(out).not.toBeNull();
+      expect(out.properties.errorMessage).toBe('x is not a function');
+      expect(out.properties.searchQuery).toBeUndefined();
+      expect(out.properties.email).toBeUndefined();
+      expect(out.properties.$current_url).toBe('https://aynahealth.co/product');
+    }
+  });
+});
+

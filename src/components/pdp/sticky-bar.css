@@ -1,0 +1,19 @@
+/* Product bar that stays in view (StickyProductBar.jsx). Brand colours only; white only behind the photo. */
+.ay-stickybar { position: fixed; left: 0; right: 0; top: 0; z-index: 40; transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform .22s ease-out, opacity .18s ease-out; background: #ffedac; color: #3e2723; border-bottom: 1.5px solid #3e2723; }
+.ay-stickybar.is-shown { transform: none; opacity: 1; pointer-events: auto; }
+.ay-stickybar__in { box-sizing: border-box; display: flex; align-items: center; gap: 14px; max-width: 1152px; margin: 0 auto; padding: 8px 24px; }
+.ay-stickybar__img { flex: none; width: 48px; height: 48px; border-radius: 10px; overflow: hidden; background: #ffffff; border: 1px solid #3e2723; display: grid; place-items: center; }
+.ay-stickybar__img img { width: 100%; height: 100%; object-fit: contain; }
+.ay-stickybar__txt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ay-stickybar__txt b { font: 700 16px/1.25 'Figtree', system-ui, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ay-stickybar__txt small { font: 500 14px/1.2 'Figtree', system-ui, sans-serif; }
+.ay-stickybar .ayv-buy { flex: none; min-height: 44px !important; width: auto !important; margin: 0 !important; padding: 0 20px !important; white-space: nowrap; }
+:is([data-theme*='dark'], [data-ay-theme='brand-dark']) .ay-stickybar { background: #3e2723; color: #ffedac; border-bottom-color: #ffedac; }
+:is([data-theme*='dark'], [data-ay-theme='brand-dark']) .ay-stickybar__img { border-color: #ffedac; }
+@media (max-width: 640px) {
+  .ay-stickybar__in { padding: 8px 16px; gap: 10px; }
+  .ay-stickybar__img { width: 40px; height: 40px; }
+  .ay-stickybar__txt b { font-size: 15px; }
+  .ay-stickybar .ayv-buy { padding: 0 14px !important; font-size: 14px !important; }
+}
+@media (prefers-reduced-motion: reduce) { .ay-stickybar { transition: none; } }

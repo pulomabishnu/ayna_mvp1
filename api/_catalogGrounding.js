@@ -1,3 +1,4 @@
+import { isListedProduct } from '../src/data/hiddenProducts.js';
 /* global process */
 /**
  * PRODUCT INTEGRITY — shared catalog grounding for every AI route.
@@ -34,7 +35,8 @@ async function loadPublishedDbProducts() {
       .eq('is_active', true)
       .order('id', { ascending: true });
     if (error) throw new Error(error.message);
-    const rows = (data || []).filter(isPublishable).map(toClientProduct);
+    // The same listing rules as Shop and /api/products (hidden, duplicates, prescription, CBD).
+    const rows = (data || []).filter(isPublishable).map(toClientProduct).filter(isListedProduct);
     dbCache = { at: Date.now(), rows };
     return rows;
   } catch (e) {

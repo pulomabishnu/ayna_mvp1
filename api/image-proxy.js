@@ -77,7 +77,11 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', CACHE_HEADER);
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Content-Security-Policy', PROXIED_IMAGE_CSP);
-    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    // Nov 14 ("there are still a lot of missing pics" in the iPhone app): the app loads from
+    // capacitor://localhost, a different origin, and WebKit enforces CORP on <img>. 'same-origin'
+    // blocked every proxied photo in the app. These are public product photos with their own sandbox
+    // CSP above, so any origin may show them.
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     res.setHeader('Vary', 'Accept');
     if (req.method === 'HEAD') return res.status(200).end();
     return res.status(200).send(bytes);

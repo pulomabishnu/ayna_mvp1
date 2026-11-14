@@ -2194,7 +2194,7 @@ export default function MyEcosystem({
                         {webView === 'picks' && <WebEcoPicks needs={pickNeeds} pctFor={pctFor} onOpenProduct={onOpenProduct} onAdd={(p) => onToggleProduct?.(p)} isOwned={(id) => Boolean(myProducts[id])} onExplore={typeof onGoToSearch === 'function' ? () => onGoToSearch({ query: '' }) : null} />}
                         {webView === 'saved' && <WebEcoSaved saved={savedList} pctFor={pctFor} onOpenProduct={onOpenProduct} onAdd={(p) => onToggleProduct?.(p)} isOwned={(id) => Boolean(myProducts[id])} />}
                         {webView === 'routine' && (
-                            <WebEcoRoutine source={{ userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts }} onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn}>
+                            <WebEcoRoutine source={{ userId: user?.id || null, quizAnswers: quizResults, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts }} onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn} onAddToRoutine={onToggleProduct ? (p) => onToggleProduct(p) : null}>
                                 {routines.routines.length > 0 && <NeedRoutines state={routines} variant="web" id="eco-routines" onOpenProduct={onOpenProduct} onCheckIn={onOpenCheckIn} />}
                             </WebEcoRoutine>
                         )}

@@ -39,7 +39,7 @@ import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
-import { appErrorProperties, redactErrorMessage } from './utils/errorAnalytics'
+import { appErrorProperties, redactErrorMessage, exceptionProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { applyConsentTier } from './utils/essentialAnalytics'
 import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
@@ -319,10 +319,12 @@ class ErrorBoundary extends React.Component {
     try {
       // What broke and where: redacted message, nearest component (or the
       // current screen), code/status. $pathname comes from posthog-js.
-      posthog.capture('app_error', appErrorProperties(error, info, {
+      const props = appErrorProperties(error, info, {
         isChunkLoadError: isChunkLoadError(error),
         view: typeof window !== 'undefined' ? window.__aynaView : '',
-      }));
+      });
+      posthog.capture('app_error', props);
+      posthog.capture('$exception', exceptionProperties(props));
     } catch { /* analytics unavailable */ }
 
     if (!isChunkLoadError(error)) return;
@@ -426,15 +428,21 @@ window.addEventListener('error', (e) => {
     const m = String(e?.message || '');
     if (/ResizeObserver loop|^Script error\.?$/i.test(m) || seenUncaught.has(m) || seenUncaught.size > 20) return;
     seenUncaught.add(m);
-    posthog.capture('app_error_uncaught', { errorMessage: redactErrorMessage(m), source: String(e?.filename || '').split('/').pop().slice(0, 80), line: e?.lineno || null });
+    const props = { errorName: String(e?.error?.name || 'Error').slice(0, 64), errorMessage: redactErrorMessage(m), source: String(e?.filename || '').split('/').pop().slice(0, 80), line: e?.lineno || null, view: String(window.__aynaView || '').slice(0, 64) };
+    posthog.capture('app_error_uncaught', props);
+    posthog.capture('$exception', exceptionProperties({ ...props, handled: false }));
   } catch { /* analytics unavailable */ }
 });
 window.addEventListener('unhandledrejection', (e) => {
   try {
     const m = String(e?.reason?.message || e?.reason || '');
+    // A request she cancelled (typing on, leaving a screen) is not an error.
+    if (e?.reason?.name === 'AbortError') return;
     if (seenUncaught.has(m) || seenUncaught.size > 20) return;
     seenUncaught.add(m);
-    posthog.capture('app_error_uncaught', { errorMessage: redactErrorMessage(m), kind: 'promise' });
+    const props = { errorName: String(e?.reason?.name || 'UnhandledRejection').slice(0, 64), errorMessage: redactErrorMessage(m), kind: 'promise', view: String(window.__aynaView || '').slice(0, 64) };
+    posthog.capture('app_error_uncaught', props);
+    posthog.capture('$exception', exceptionProperties({ ...props, handled: false }));
   } catch { /* analytics unavailable */ }
 });
 // Anonymous journey step counter: one "landed" per visit (journeyStep.js).

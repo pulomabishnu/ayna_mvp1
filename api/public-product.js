@@ -1,3 +1,4 @@
+import { isListedProduct } from '../src/data/hiddenProducts.js';
 /* global process */
 
 /**
@@ -159,7 +160,8 @@ export default async function handler(req, res) {
 
     if (catalogError) throw new Error(catalogError.message);
 
-    const catalogRow = (catalogRows || []).filter(isPublishable).find(
+    // Not listed (hidden, a duplicate, prescription-only or CBD): no public page.
+    const catalogRow = (catalogRows || []).filter(isPublishable).filter((row) => isListedProduct(catalogRowToClient(row))).find(
       (row) => publicProductSlug(row) === slug || slugify(row.name) === slug
     );
 

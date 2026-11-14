@@ -37,4 +37,15 @@ describe('api/image-proxy', () => {
     expect(PROXIED_IMAGE_CSP).toContain('sandbox');
     expect(res.headers['x-content-type-options']).toBe('nosniff');
   });
+
+  // Nov 14: the iPhone app runs on capacitor://localhost; 'same-origin' made WebKit block every proxied
+  // photo there ("a lot of missing pics"). Checked on the live site: blocked from another origin.
+  it('lets the app (another origin) show proxied photos', async () => {
+    const body = new Uint8Array([0xff, 0xd8, 0xff]);
+    safeFetch.mockResolvedValue({ ok: true, headers: new Headers({ 'content-type': 'image/jpeg' }), arrayBuffer: async () => body.buffer });
+    const res = mockRes();
+    await handler(req({ 'sec-fetch-dest': 'image' }), res);
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['cross-origin-resource-policy']).toBe('cross-origin');
+  });
 });

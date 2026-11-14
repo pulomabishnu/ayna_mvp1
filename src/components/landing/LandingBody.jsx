@@ -371,6 +371,12 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
         <div className="lb-end wlx-end">
           <h2 className="lb-end__h">Find what fits <span>your body.</span></h2>
           <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
+          {/* Notion AYNA-340: Google's "preferred sources" deeplink (developers.google.com/search/docs/
+              appearance/preferred-sources). A plain link, no Google script on the page. */}
+          <a className="lb-end__gsrc" href="https://www.google.com/preferences/source?q=aynahealth.co" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>
+            Add ayna as a preferred source on Google<span className="sr-only"> (opens Google in a new tab)</span>
+          </a>
         </div>
       </div>
     </section>

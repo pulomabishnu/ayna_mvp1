@@ -69,7 +69,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://us.i.posthog.com https://us-assets.i.posthog.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' https:"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://us.i.posthog.com https://us-assets.i.posthog.com; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' https:"
         }
       ]
     },
@@ -1325,6 +1325,11 @@
       "permanent": true
     },
     {
+      "source": "/product/p-ostrichpillow-eye-mask",
+      "destination": "/product/ostrichpillow-eye-mask",
+      "permanent": true
+    },
+    {
       "source": "/product/p-panoxyl-bpo-10-wash",
       "destination": "/product/panoxyl-10-benzoyl-peroxide-acne-foaming-wash",
       "permanent": true
@@ -1777,6 +1782,11 @@
     {
       "source": "/product/p-viv-for-your-v-viv-organic-cotton-tampons",
       "destination": "/product/viv-for-your-v-viv-organic-cotton-tampons",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-voltaren-arthritis-pain-gel",
+      "destination": "/product/voltaren-arthritis-pain-gel-diclofenac-sodium-1",
       "permanent": true
     },
     {

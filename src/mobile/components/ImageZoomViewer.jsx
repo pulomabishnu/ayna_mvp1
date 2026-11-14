@@ -58,12 +58,19 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
     };
   }, [onClose, go]);
 
-  // Keeps a zoomed photo from being dragged fully off screen.
+  // Pan limits come from the photo's own size, not the stage's (Notion AYNA-347, "it zooms in but
+  // doesn't let you move around the image"): a square photo in a wide stage could be pushed off into
+  // blank white on one axis and barely moved on the other. Each edge of the photo can reach the
+  // stage's edge and no further.
+  const imgRef = useRef(null);
   const bound = (scale, x, y) => {
     const rect = stageRef.current?.getBoundingClientRect();
     if (!rect || scale <= 1) return { scale: 1, x: 0, y: 0 };
-    const maxX = (rect.width * (scale - 1)) / 2;
-    const maxY = (rect.height * (scale - 1)) / 2;
+    const img = imgRef.current;
+    const w = (img?.offsetWidth || rect.width) * scale;
+    const h = (img?.offsetHeight || rect.height) * scale;
+    const maxX = Math.max(0, (w - rect.width) / 2);
+    const maxY = Math.max(0, (h - rect.height) / 2);
     return { scale, x: clamp(x, -maxX, maxX), y: clamp(y, -maxY, maxY) };
   };
 
@@ -138,7 +145,13 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
       setSwipeX(0);
       if (Math.abs(dx) > SWIPE_PX) { go(dx < 0 ? 1 : -1); return; }
     }
-    // Touch and pen double taps here; a mouse double click uses onDoubleClick.
+    // A mouse click (not a drag) zooms in where she clicked, and out again: the usual on shopping sites.
+    if (!g.moved && event.type === 'pointerup' && event.pointerType === 'mouse') {
+      if (viewRef.current.scale > 1) setView({ scale: 1, x: 0, y: 0 });
+      else zoomAt(event.clientX, event.clientY, DOUBLE_TAP_SCALE);
+      return;
+    }
+    // Touch and pen double taps here.
     if (!g.moved && event.type === 'pointerup' && event.pointerType !== 'mouse') {
       const now = Date.now();
       const prev = lastTap.current;
@@ -153,6 +166,9 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
   };
 
   const zoomed = view.scale > 1.01;
+  // Said the way she'll do it: a mouse clicks and drags, a phone pinches.
+  const finePointer = typeof window !== 'undefined' && window.matchMedia?.('(hover: hover) and (pointer: fine)')?.matches;
+  const hint = zoomed ? (finePointer ? 'Drag or scroll to move around. Click to zoom out.' : 'Drag to move around. Double tap to zoom out.') : (finePointer ? 'Click to zoom in.' : 'Pinch or double tap to zoom.');
   const src = images[index];
   const label = name ? `${name} photos` : 'Product photos';
 
@@ -187,15 +203,16 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        onDoubleClick={(event) => {
-          // Mouse only: touch double taps are handled in onPointerUp.
-          if (lastPointerType.current !== 'mouse') return;
-          if (viewRef.current.scale > 1) setView({ scale: 1, x: 0, y: 0 });
-          else zoomAt(event.clientX, event.clientY, DOUBLE_TAP_SCALE);
+        // Trackpad or wheel: scrolling moves a zoomed photo; pinch on a trackpad (ctrl + wheel) zooms.
+        onWheel={(event) => {
+          const v = viewRef.current;
+          if (event.ctrlKey) { zoomAt(event.clientX, event.clientY, clamp(v.scale * Math.exp(-event.deltaY / 200), 1, MAX_SCALE)); return; }
+          if (v.scale > 1) setView(bound(v.scale, v.x - event.deltaX, v.y - event.deltaY));
         }}
       >
         {src && (
           <img
+            ref={imgRef}
             key={src}
             src={src}
             alt={count > 1 ? `${name}, photo ${index + 1} of ${count}` : name}
@@ -210,12 +227,12 @@ export default function ImageZoomViewer({ images = [], startIndex = 0, name = ''
             <button type="button" className="ay-zoom-btn" aria-label="Previous photo" onClick={() => go(-1)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
             </button>
-            <span className="ay-zoom-hint">Pinch or double tap to zoom. Swipe for more photos.</span>
+            <span className="ay-zoom-hint">{hint} Swipe for more photos.</span>
             <button type="button" className="ay-zoom-btn" aria-label="Next photo" onClick={() => go(1)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </button>
           </>
-        ) : <span className="ay-zoom-hint">Pinch or double tap to zoom.</span>}
+        ) : <span className="ay-zoom-hint">{hint}</span>}
       </div>
     </div>
   );

@@ -48,14 +48,19 @@ function Icon({ d }) { return <svg viewBox="0 0 24 24" aria-hidden="true"><path 
 
 function Sheet({ open, onClose, labelledBy, children }) {
   const ref = useRef(null);
+  // Notion AYNA-352 (Puloma: "the keyboard keeps going away" typing her own goal): onClose is a new
+  // function on every render, so with it in the deps each keystroke re-ran this effect, which put focus
+  // back on the opener and then on the close button. Focus moves only when the sheet opens or closes.
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     if (!open) return undefined;
     const opener = document.activeElement;
     ref.current?.querySelector('.ay-tp-sheet__x')?.focus({ preventScroll: true });
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e) => { if (e.key === 'Escape') closeRef.current?.(); };
     window.addEventListener('keydown', onKey);
     return () => { window.removeEventListener('keydown', onKey); try { opener?.focus?.({ preventScroll: true }); } catch { /* gone */ } };
-  }, [open, onClose]);
+  }, [open]);
   if (!open || typeof document === 'undefined') return null;
   const host = document.querySelector('.ayna-mobile') || document.body;
   return createPortal(

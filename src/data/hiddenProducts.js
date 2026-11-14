@@ -46,7 +46,20 @@ export function isRxOnlyProduct(p) {
     return wtb.some((s) => s.includes('pharmacy with prescription') || s.includes('clinic insertion') || s.includes('clinic administered'));
 }
 
+// No CBD for now (Notion AYNA-341, Nov 13 2026: "Remove any and all CBD-containing products ... since
+// Stripe has a policy on what we're allowed to sell"). Stripe lists CBD among restricted businesses.
+// Any product that names CBD, CBDA or cannabidiol in its name, tags or ingredients is not shown, from the
+// bundled catalog or the live feed; the rows stay in product_catalog. Hemp or cannabis SEED oil and seed
+// extract (Dame Aloe Lube, Refilled serum) have no CBD and stay. On Nov 14 this hid Foria Awaken
+// Arousal Oil with CBD and Vella Pleasurewave Arousal Lotion (cannabidiol isolate).
+const CBD_RX = /\bcbda?\b|cannabidiol/i;
+export function isCbdProduct(p) {
+    if (!p) return false;
+    const text = [p.name, p.description, p.summary, p.ingredients, p.materials, ...(Array.isArray(p.tags) ? p.tags : [])].filter(Boolean).join(' ');
+    return CBD_RX.test(text);
+}
+
 /** True when a product may be shown to users. */
 export function isListedProduct(p) {
-    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id] && !isRxOnlyProduct(p);
+    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id] && !isRxOnlyProduct(p) && !isCbdProduct(p);
 }

@@ -26,6 +26,7 @@ const CATEGORY_STARTERS = categoryStarterOptions();
 import { scoreSearchMatch, correctedSearchQuery, searchArticles, analyzeSearch } from '../../utils/search/index.js';
 import SearchAssist from '../../components/search/SearchAssist.jsx';
 import { fetchSearchSuggestions } from '../../utils/fetchSearchSuggestions.js';
+import { analyticsPlatform } from '../../utils/analyticsPlatform.js';
 import { trackApp } from '../utils/appAnalytics.js';
 import { featuredShopOrder, rankShopForProfile } from '../utils/shopOrder.js';
 import { hasQuizAnswers } from '../utils/personalReads.js';
@@ -364,10 +365,13 @@ export default function BrowseScreen({
   const searchScored = filtered;
   // PostHog: one search_performed once she stops typing (same event as the
   // website; the query text itself is never sent, only its length).
+  // Notion AYNA-344: the app searches its catalog first and asks the AI only when nothing matched, so
+  // only searchKind 'ai' searches are followed by ai_search_completed / ai_search_failed; 'catalog'
+  // ones skip the AI on purpose (filter them out of the instrumentation graph).
   const searchResultCount = searchScored.length;
   useEffect(() => {
     if (searchTermRaw.length < 2) return undefined;
-    const t = setTimeout(() => trackApp('search_performed', { queryLength: searchTermRaw.length, category: activeGroup, resultCount: searchResultCount }), 1200);
+    const t = setTimeout(() => trackApp('search_performed', { queryLength: searchTermRaw.length, category: activeGroup, resultCount: searchResultCount, platform: analyticsPlatform(Boolean(window.Capacitor?.isNativePlatform?.()), window.Capacitor?.getPlatform?.()), searchKind: searchResultCount > 0 ? 'catalog' : 'ai', aiSearch: searchResultCount === 0 }), 1200);
     return () => clearTimeout(t);
     // resultCount is read at fire time; re-running on it would double-count.
     // eslint-disable-next-line react-hooks/exhaustive-deps
