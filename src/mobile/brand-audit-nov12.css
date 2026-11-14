@@ -62,3 +62,41 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hd-takeaway__k { margin: 0; font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hd-takeaway__t { margin: 0; font: 700 20px/1.25 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-hd-takeaway__ask { justify-self: start; min-height: 44px; padding: 0; border: 0; background: none; color: #f7badd; font: 600 15px/1 var(--ay-font-ui, 'Figtree', sans-serif); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* Audit (Nov 13, dark): the Your data question buttons were a see-through butter tint; solid espresso, butter outline. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ay-db-ask button { background: #3e2723 !important; border: 1.5px solid #ffedac !important; color: #ffedac !important; }
+
+/* Audit (Nov 13, founder: "light on light", "fix spacing everywhere"). */
+/* Home highlight chart: the line was blue (#769ebe); espresso on light, butter on dark. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-hhl__chart .ay-db-line { stroke: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ay-hhl__chart .ay-db-line { stroke: #ffedac !important; }
+/* Profile week footer: butter text and arrow on butter in light mode. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile:not([data-theme*='dark']) .ay-you-week-foot { color: #3e2723 !important; border-top-color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-you-week-foot > svg { opacity: 1 !important; color: inherit; }
+/* ayna Pro row (pink): its icons were butter on pink. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .yb-row--pro :is(svg, .yb-row__icon, .yb-row__go) { color: #3e2723 !important; stroke: #3e2723 !important; }
+/* Dark mode: routine step titles were espresso on espresso (invisible). */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ay-rt2__txt :is(b, span, small, a) { color: #ffedac !important; }
+/* Dark mode: Mood, Energy and Pain in the log were butter words on a pink track; espresso words, the picked one butter on espresso. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-mcal__seg { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-mcal__seg button:not(.is-on) { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-mcal__seg button.is-on { background: #3e2723 !important; color: #ffedac !important; }
+/* Dark mode: "Question 1 of 7" was espresso on espresso. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .aq-count { color: #ffedac !important; }
+/* Community tabs: equal room either side of the word (the pills are narrow, so 10px). */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .am-seg { padding-left: 10px !important; padding-right: 10px !important; }
+/* Pink rows and the pink sheet close button: espresso icon and words in both themes (were butter on pink). */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-you--v2 .yb--list .yb-list:not(.yb-list--pro) > li:nth-child(2) .yb-row,
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-you--v2 .yb--list .yb-list:not(.yb-list--pro) > li:nth-child(2) .yb-row * { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .yb-row--pro svg:first-child { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ay-tp-sheet__x { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ay-tp-sheet__x svg { stroke: #3e2723 !important; }
+/* Profile week footer arrow follows the text colour. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-you-week-foot svg, :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-you-week-foot svg * { stroke: currentColor !important; color: inherit !important; }
+/* About (dark): the scrapbook's butter and pink papers keep espresso words; the espresso tile keeps butter. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-scrapbook :is(.ayna-scrapbook__paper, .ayna-scrapbook__team-note) { color: #3e2723 !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-scrapbook :is(.ayna-scrapbook__paper, .ayna-scrapbook__team-note) :is(h1, h2, h3, p, span, strong, b, li, a, small, em) { color: #3e2723 !important; }
+/* About: the espresso step tile ("04 Your shop") had espresso words in both themes. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4),
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4) :is(h1, h2, h3, p, strong, b, li, a, small, em) { color: #ffedac !important; }
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ayna-scrapbook .ayna-scrapbook__paper .ayna-scrapbook__gate:nth-child(4) span { color: #f7badd !important; }
