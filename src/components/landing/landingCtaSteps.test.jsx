@@ -24,10 +24,10 @@ const click = (el) => act(() => { el.dispatchEvent(new MouseEvent('click', { bub
 const byText = (sel, text) => [...host.querySelectorAll(sel)].filter((n) => n.textContent.trim().startsWith(text));
 
 describe('landing buttons, one step each', { timeout: 30000 }, () => {
-  it('each main button (Take the 1-minute quiz) is counted by its place, plus sign_up_free_clicked', () => {
+  it('each main button (Take the free 1-minute quiz) is counted by its place, plus sign_up_free_clicked', () => {
     const onStartQuiz = vi.fn();
     mount(<WebLanding onStartQuiz={onStartQuiz} />);
-    const buttons = byText('button.ls-btn', 'Take the 1-minute quiz');
+    const buttons = byText('button.ls-btn', 'Take the free 1-minute quiz');
     expect(buttons).toHaveLength(2); // problem section, testimonials
     buttons.forEach(click);
     click(host.querySelector('button.hd-start'));

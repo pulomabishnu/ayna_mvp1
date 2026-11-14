@@ -18,11 +18,6 @@ const PAIN_ICONS = {
   person: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /><path d="m17 4 3 3M20 4l-3 3" /></>,
 };
 
-/** One line under every main button: what it costs her (nothing) and how long it takes. */
-export function CtaNote({ className = '' }) {
-  return <p className={`ls-note ${className}`.trim()}>Free. See your top matches before you sign up.</p>;
-}
-
 /* ---------- the problem, from her side ----------
    Nov 6 (founder: "stop with the boxes, use more interactive things"): three pains in big type;
    picking one opens what ayna does about it. No cards, no sticky notes. */
@@ -35,7 +30,7 @@ export function Problem({ cta }) {
           <p className="ls-kick">Sound familiar?</p>
           <h2 id="ls-pain-h" className="lb-h2 ls-h">You’ve done the research. Putting it together is still on you.</h2>
           <p className="ls-pain__lede">ayna connects what you tell us about your body to products and care that fit, and shows you why.</p>
-          {cta && <span className="ls-fix__act"><button type="button" className="ls-btn" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button><CtaNote /></span>}
+          {cta && <span className="ls-fix__act"><button type="button" className="ls-btn" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button></span>}
         </div>
         <ul className="ls-pains">
           {PAINS.map((p, i) => {
@@ -82,7 +77,7 @@ export function Testimonials({ cta }) {
         <div className="ls-dots" role="group" aria-label="Choose a quote">
           {BETA_QUOTES.map((q, n) => <button key={q.q} type="button" aria-label={`Quote ${n + 1} of ${BETA_QUOTES.length}`} aria-pressed={n === i} onClick={() => { setI(n); setHeld(true); }} />)}
         </div>
-        {cta && <div className="ls-center"><button type="button" className="ls-btn is-butter" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button><CtaNote className="is-light" /></div>}
+        {cta && <div className="ls-center"><button type="button" className="ls-btn is-butter" onClick={cta.go}>{cta.label}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg></button></div>}
       </div>
     </section>
   );

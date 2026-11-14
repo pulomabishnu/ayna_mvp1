@@ -11,7 +11,7 @@ import { Rain, HeroSearch, BrandBar } from './kit.jsx';
 import { useProStatus } from '../../pro/useProStatus.js';
 import './web-landing.css';
 import HowItWorksDemo from './HowItWorksDemo.jsx';
-import { Problem, Testimonials, Faq, CtaNote } from './LandingStory.jsx';
+import { Problem, Testimonials, Faq } from './LandingStory.jsx';
 import './landing-story.css';
 import { wideRainCols, seededRandom, rainSeed } from './rainData.js';
 import { trackLandingCta } from '../../utils/funnelEvents.js';
@@ -53,9 +53,9 @@ function Hero({ cta, onSearch, banner = null, draftLine = null }) {
         <div className="wl-hero__in">
           {/* One promise on the website and the app (landing audit 4 and 9). */}
           <h1 id="hm-hero-title" className="wl-title">Women’s health products, <span>matched to you.</span></h1>
-          <p className="wl-one">Answer a few questions. See what fits your body, and why.</p>
+          <p className="wl-one">Shop what fits your body.</p>
           <SlideToStart className="wl-sts" tour="landing-start" size="lg" hint={null} label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
-          {draftLine || (!/Home/.test(cta.label) && <CtaNote className="is-light wl-ctanote" />)}
+          {draftLine}
           {/* Nov 9 (founder): the tester quote lives in its own section below, not under the button. */}
           <HeroSearch onSearch={onSearch} className="wl-search" />
           {banner && <div className="wl-banner">{banner}</div>}
@@ -84,8 +84,8 @@ export default function WebLanding({ signedIn = false, userId = null, hasProfile
       ? { label: 'Finish your free quiz', slide: 'Slide to finish your free quiz', go: () => { countJourneyStep('cta_finish_quiz'); trackLandingCta('finish_quiz', 'web', 'Finish your free quiz'); onResumeQuiz(); } }
       // Nov 12 (founder delegated the label): the button says what happens next, the same words as
       // the app. The event name stays sign_up_free so the funnel numbers keep one series.
-      : { label: 'Take the 1-minute quiz', slide: 'Take the 1-minute quiz', go: () => { trackLandingCta('sign_up_free', 'web', 'Take the 1-minute quiz'); onStartQuiz?.(); } };
-  // The main button ("Take the 1-minute quiz") sits in five places; each is counted as its own step (cta_signup_<place>).
+      : { label: 'Take the free 1-minute quiz', slide: 'Take the free 1-minute quiz', go: () => { trackLandingCta('sign_up_free', 'web', 'Take the free 1-minute quiz'); onStartQuiz?.(); } };
+  // The main button ("Take the free 1-minute quiz") sits in five places; each is counted as its own step (cta_signup_<place>).
   const signUp = !home && !(quizDraft && onResumeQuiz);
   const ctaAt = (place) => (signUp ? { ...cta, go: () => { countJourneyStep(`cta_signup_${place}`); cta.go(); } } : cta);
   const draftLine = !home && quizDraft && onResumeQuiz ? (
