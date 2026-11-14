@@ -62,5 +62,5 @@ export function buildShopperProfile(intake, myProducts = []) {
   if (rest) shelf.push({ label: 'Other', value: rest });
   const TRUST_SHORT = { 'Clinical or scientific evidence': 'Evidence', 'Reviews and experiences from other women': 'Real reviews', 'Brand reputation or expert recommendations': 'Experts + brands' };
   const trust = (intake.trustRanking || []).map((t) => TRUST_SHORT[t] || t).slice(0, 3);
-  return { title: persona?.title || 'Your shelf', kind, tagline, rows, shelf, total: myProducts.length, trust };
+  return { title: persona?.title || 'Your products', kind, tagline, rows, shelf, total: myProducts.length, trust };
 }

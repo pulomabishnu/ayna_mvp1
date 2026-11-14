@@ -96,7 +96,7 @@ export default function LandingStories({ paused = false, onStartQuiz, onViewArti
           </div>
         ) : s.visual === 'shelf' && SHELF.length >= 2 ? (
           <div className="lst__widget lst__widget--shelf" aria-hidden="true">
-            <span className="lst__widget-tab">Your shelf</span>
+            <span className="lst__widget-tab">Your products</span>
             <ul>{SHELF.map((p) => <li key={p.id}><img src={p.image} alt="" loading="lazy" /><span>{p.brand || p.name}</span></li>)}</ul>
             <i className="lst__ledge" />
             <span className="lst__burst lst__burst--sky">matched<br />to you</span>

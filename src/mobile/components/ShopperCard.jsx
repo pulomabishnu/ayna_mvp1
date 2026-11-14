@@ -26,7 +26,7 @@ export default function ShopperCard({ profile }) {
       </header>
       {total > 0 && shelf.length > 0 && (
         <div className="ay-shopper2__shelf">
-          <div className="ay-shopper2__shelf-head"><span>Your shelf</span><b>{total} pick{total === 1 ? '' : 's'}</b></div>
+          <div className="ay-shopper2__shelf-head"><span>Your products</span><b>{total} pick{total === 1 ? '' : 's'}</b></div>
           <div className="ay-shopper2__bar" role="img" aria-label={shelf.map((x) => `${x.label} ${x.value}`).join(', ')}>
             {shelf.map((x, i) => <i key={x.label} style={{ flexGrow: x.value, '--o': Math.max(0.35, 1 - i * 0.18) }} />)}
           </div>

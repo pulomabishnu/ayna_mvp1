@@ -297,6 +297,8 @@ function seedEcosystemFromAnswers(quizAnswers, matchOpts) {
 
 // Which quiz-end step (connect / plan) this tab was on, so a full-page sign-in
 // redirect (Oura, WHOOP, Google, Apple) comes back to it. Tab-only storage.
+const RESUME_KEY = 'ayna_resume_v1';
+const RESUME_SCREENS = new Set(['ayna', 'explore', 'library', 'community', 'profile', 'saved']);
 const QUIZ_STEP_KEY = 'ayna_quiz_step';
 const DEV_DEMO_USER = devPreviewOn() ? { id: 'dev-health-demo', email: 'demo@localhost', user_metadata: { full_name: 'Demo' } } : null;
 function quizStepToResume() {
@@ -353,13 +355,25 @@ export default function MobileApp() {
     hasProfile: Boolean(hasEcosystem || session.lastQuizAnswers),
     hasDraft: hasSavedIntakeDraft(),
   }));
+  // Nov 12 run-through (Eliz: "it kicks me back to the summary after I leave it for a bit"): iOS can reload
+  // the app's web view after it sits in the background, which restarted it on Home. Where she was (the tab
+  // and Home's view) is kept for this session and reopened, for up to 30 minutes.
+  const [resumed] = useState(() => {
+    try {
+      const r = JSON.parse(sessionStorage.getItem(RESUME_KEY) || 'null');
+      if (!r || Date.now() - r.at > 30 * 60 * 1000 || !RESUME_SCREENS.has(r.screen)) return null;
+      return r;
+    } catch { return null; }
+  });
   const [screen, setScreenRaw] = useState(initialRoute.screen);
   const screenNowRef = useRef(initialRoute.screen);
+  const resumedRef = useRef(resumed);
   screenNowRef.current = screen;
   // Home's view: 'home' (one-screen dashboard), 'dashboard', 'chat', 'products'
   // (chat-first variant: 'chat', 'products', 'dashboard').
   const homeRoot = chatFirst ? 'chat' : 'home';
   const [homeView, setHomeView] = useState(initialRoute.view || homeRoot);
+
   // Every way in still works: 'today' and 'ayna' open Home, 'ask' the chat.
   const setScreen = (next) => {
     const r = aynaRoute(next, homeVariant);
@@ -548,13 +562,19 @@ export default function MobileApp() {
     const t = window.setTimeout(() => setLoadedAccountId(id), 10000);
     return () => window.clearTimeout(t);
   }, [authUser?.id, loadedAccountId]);
+  // Only a signed-in session is remembered (signed out, Home is the landing).
+  useEffect(() => {
+    try { if (authUser && RESUME_SCREENS.has(screen)) sessionStorage.setItem(RESUME_KEY, JSON.stringify({ screen, view: homeView, at: Date.now() })); } catch { /* storage blocked */ }
+  }, [authUser, screen, homeView]);
   // The landing opened on purpose (the ayna wordmark, founder Oct 27 01:13)
   // stays up for a signed-in account; only the cold-start landing hands over to Home.
   const landingPinnedRef = useRef(false);
   useEffect(() => {
     if (screen !== 'landing') { landingPinnedRef.current = false; return; }
     if (authLoading || !authUser || landingPinnedRef.current) return;
-    Promise.resolve().then(() => setScreen('ayna'));
+    // Signed in: back where she was if the app restarted under her (resumedRef), else Home.
+    const back = resumedRef.current; resumedRef.current = null;
+    Promise.resolve().then(() => { setScreen(back?.screen || 'ayna'); if (back?.screen === 'ayna' && back.view) setHomeView(back.view); });
   }, [authLoading, authUser, hasEcosystem, screen]);
   // Signed out with nothing on this phone, Home is the landing: never an empty
   // dashboard, whatever sent her there (a late auth answer, a swipe, Back, a
@@ -903,7 +923,9 @@ export default function MobileApp() {
       // Mid quiz-end steps: stay there so her new answers get applied.
       // Never pull her out of the first-run steps (her Wrapped right after sign-up, Nov 10:
       // the saved matches loading back sent her to Home and skipped it).
-      if (remoteProducts.length > 0 && !session.pendingQuiz && !FIRST_RUN_SCREENS.has(screenNowRef.current)) setScreen('ayna');
+      // Nov 12 run-through (Eliz: the app "kicks you back" after sitting idle): her account reloading (a token
+      // refresh after the phone wakes) no longer pulls her off the tab she is on; only the landing hands over to Home.
+      if (remoteProducts.length > 0 && !session.pendingQuiz && !FIRST_RUN_SCREENS.has(screenNowRef.current) && !RESUME_SCREENS.has(screenNowRef.current)) setScreen('ayna');
       setLoadedAccountId(userId);
     })().catch((error) => {
       console.warn('[Ayna] mobile ecosystem sync failed:', error);

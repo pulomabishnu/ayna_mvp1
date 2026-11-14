@@ -90,6 +90,8 @@ function ProductRows({ products, inRoutine, onOpenProduct, onAddToRoutine }) {
   );
 }
 
+const SHOW_DAY_RAIL = false;
+
 export default function TodayPlan({
   entry = null, pregnant = false, postCycle = false, insight = null, picks = [], myProductIds = [],
   onOpenLog, onOpenRead, onExplore, onAddGoal, goalsAdded = [], onOpenProduct, onAddToRoutine, onOpenInsight,
@@ -175,7 +177,9 @@ export default function TodayPlan({
   const products = h ? fits(h) : [];
   return (
     <section className={`ay-tp is-${layout}`} aria-label="For today">
-      {today && !open1 && (() => {
+      {/* Nov 12 run-through (Puloma; Ameera's next step "remove Thursday and the how are you feeling today"):
+          the day rail and the mood prompt are off. Logging is the period and symptom log. */}
+      {SHOW_DAY_RAIL && today && !open1 && (() => {
         // Nov 11 (founder: "make the today cooler"): the inspo's day rail. This week, today in pink,
         // a dot under each day she logged. Tap today to log.
         const d0 = new Date(`${today}T12:00:00`);
@@ -195,7 +199,7 @@ export default function TodayPlan({
         );
       })()}
       {today && when('Now')}
-      {today && !open1 && (
+      {SHOW_DAY_RAIL && today && !open1 && (
         // Inspo ("Hello Alex! How are you feeling today?"): one tap logs her mood for today.
         <div className="ay-tp-feel">
           <p className="ay-tp-feel__q">{name ? `Hi ${name}, how are you feeling today?` : 'How are you feeling today?'}</p>

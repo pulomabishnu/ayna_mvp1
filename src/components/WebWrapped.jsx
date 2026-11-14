@@ -239,6 +239,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
                 <div className="ay-wr-needs__row">{a.items.slice(0, 3).map((p) => <span key={p.id}>{tapPlate(p, 'ay-wr-needs__plate')}<small className="ay-wr-needs__name">{p.brand || p.name}</small></span>)}</div>
               </li>
             ))}</ul>
+            {/* Nov 11 run-through (Puloma: Wrapped showed 4 needs, the ecosystem showed all): say how many more. */}
+            {byArea.length > 4 && <p className="ay-wr-tip">Plus {byArea.length - 4} more {byArea.length - 4 === 1 ? (byNeed.length ? 'need' : 'area') : groupWord} in your ecosystem.</p>}
             <p className="ay-wr-tip">Tap a product to see it.</p>
           </>}
           {active === 'match' && first && <>

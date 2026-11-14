@@ -501,6 +501,15 @@ export function ttcOptional(intake) {
   return !ttcRequired(intake) && (hasNeed(intake, 'Fertility support') || hasNeed(intake, 'Ovulation tracking or support'));
 }
 // UTI frequency: the four UTI-like symptoms only, never bladder leakage.
+// Nov 12 run-through (Puloma: "frequent urination" went straight to a UTI question; rephrase it to ask how
+// often). Picking only frequency or urgency (no burning, no repeat UTIs) asks about that, not about UTIs.
+export function utiOnlyFrequency(intake) {
+  const picked = (intake?.supportSelections || []).filter((x) => UTI_TRIGGER.has(x));
+  return picked.length > 0 && picked.every((x) => x === 'Frequent urination' || x === 'Urinary urgency');
+}
+export function utiQuestionTitle(intake) {
+  return utiOnlyFrequency(intake) ? 'How often do you need to pee more than usual?' : FOLLOWUP_QUESTIONS.utiFrequency;
+}
 export function utiRequired(intake) {
   return arrayHasAny(intake.supportSelections, UTI_TRIGGER);
 }
@@ -1010,7 +1019,7 @@ export function getIntakeSteps(intake) {
     ...(flowRequired(intake) && periodQuestionsApply(intake) ? [req(flowStep)] : []),
     ...(painRequired(intake) && periodQuestionsApply(intake) ? [req({ id: 'periodPain', section: 'support', title: 'Your period pain', type: 'pain', info: 'How much cramps or pain usually affect your day. Higher pain moves heat, TENS and pain relief options up your list.' })] : []),
     ...(ttcStepOwn ? [req(ttcStep)] : []),
-    ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: FOLLOWUP_QUESTIONS.utiFrequency, subtitle: 'Burning, urgency or peeing more often', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
+    ...(utiRequired(intake) ? [req({ id: 'utiFrequency', section: 'support', title: utiQuestionTitle(intake), subtitle: utiOnlyFrequency(intake) ? 'Or a sudden urge to go' : 'Burning, urgency or peeing more often', type: 'utiFrequency', info: 'How often UTI-type symptoms come back. Symptoms right now point you to testing and care first; repeat symptoms bring prevention forward.' })] : []),
     ...(postpartumStepOwn ? [req({ id: 'postpartumTiming', section: 'support', title: FOLLOWUP_QUESTIONS.postpartumTiming, type: 'postpartumTiming', info: 'How long since you gave birth. Recovery, nursing and hair needs change a lot over the first year.' })] : []),
     req({ id: 'conditions', section: 'safety', title: 'Diagnosed with?', subtitle: 'Clinician diagnosed only', type: 'conditions', info: 'Only conditions a clinician has diagnosed. Some products are not a good fit with certain conditions, so we filter those out.' }),
     req({ id: 'allergies', section: 'safety', title: 'Allergies or sensitivities?', type: 'allergies', info: 'Anything you react to. Products with these ingredients or materials will not show up in your picks.' }),

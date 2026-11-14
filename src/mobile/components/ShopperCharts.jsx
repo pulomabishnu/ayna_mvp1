@@ -8,7 +8,7 @@ export function ShelfDonut({ shelf = [], total = 0 }) {
   const R = 15.915; // circumference 100
   const offsets = shelf.reduce((acc, s, i) => [...acc, (i ? acc[i - 1] : 25) - (i ? (shelf[i - 1].value / total) * 100 : 0)], []);
   return <figure className="ay-chart ay-donut">
-    <figcaption>Your shelf</figcaption>
+    <figcaption>Your products by type</figcaption>
     <div className="ay-donut-body">
       <svg viewBox="0 0 42 42" role="img" aria-label={shelf.map((s) => `${s.label} ${s.value}`).join(', ')}>
         <circle cx="21" cy="21" r={R} className="ay-donut-track" />
