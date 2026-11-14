@@ -22,7 +22,7 @@ export function landingCtaCopy() {
     const v = client.getFeatureFlag?.('landing-cta-copy');
     if (typeof v === 'string' && CTA_COPY[v]) return v;
   } catch { /* flags not loaded */ }
-  return 'sign_up_free'; // Nov 12: the header button says "Take the quiz" (the hero says "Take the 1-minute quiz"); same event key
+  return 'sign_up_free'; // Nov 12: the header button says "Take the quiz" (the hero says "Take the free 1-minute quiz", Puloma Nov 13); same event key
 }
 const SURFACES = new Set(['web', 'app', 'mobile_web']);
 const SAFE_ID = /^[a-zA-Z][a-zA-Z0-9_]{0,40}$/;
