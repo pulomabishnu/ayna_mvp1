@@ -1735,7 +1735,8 @@ export function buildProductProfile(product) {
     freshness,         // { state: 'fresh'|'aging'|'stale'|'unknown', lastVerified, ageDays }
     pricing,           // { upfront, per_month, per_month_source, reusable }
     effort,            // { level, label }
-    mechanism: mechanismFor(matchedRules, formats),
+    // modality: heat vs TENS for cramp devices (backlog Nov 14), so a shelf can mix them.
+    mechanism: { ...mechanismFor(matchedRules, formats), modality: f.t(/\btens\b|electrical nerve stimulation/) ? 'tens' : f.t(/\bheat|heating|warmth/) ? 'heat' : null },
     claim_evidence: claimEvidence,
     // Product passport (src/data/passport). Confidence only, plus safety unknowns.
     passport: {

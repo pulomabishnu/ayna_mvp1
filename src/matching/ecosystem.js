@@ -185,6 +185,13 @@ export function defaultPriceRule(up) {
   };
 }
 const MIN_SHELF = 3;
+// Backlog Nov 14 (Liliane: "cramps only gave me heating pads"): heat and TENS share one engine rule
+// (cramp_device), so a shelf could fill with heat. Telling them apart lets the diversity penalty mix them.
+export function mechKey(pp) {
+  const rule = pp?.mechanism?.rules?.[0] || '';
+  if (rule !== 'cramp_device') return rule;
+  return `cramp_device:${pp.mechanism?.modality || 'other'}`;
+}
 
 export function diversify(sorted, profilesById, up, limit = sorted.length, selectedCounts = null) {
   const pool = sorted.map((r, i) => ({
@@ -239,10 +246,13 @@ export function diversify(sorted, profilesById, up, limit = sorted.length, selec
         const op = profilesById.get(o.productId);
         if (!pp || !op) continue;
         if (pp.brand.key && pp.brand.key === op.brand.key) pen += DIVERSITY_PENALTY.brand;
-        if (pp.mechanism?.rules?.[0] && pp.mechanism.rules[0] === op.mechanism?.rules?.[0]) pen += DIVERSITY_PENALTY.mechanism;
+        if (mechKey(pp) && mechKey(pp) === mechKey(op)) pen += DIVERSITY_PENALTY.mechanism;
         if (pp.formats?.length && pp.formats.join() === (op.formats || []).join()) pen += DIVERSITY_PENALTY.format;
       }
-      const k = c.key - Math.min(pen, 4);
+      // A third pick of the same kind (e.g. heat) costs extra, so another kind wins when one qualifies (backlog Nov 14).
+      const k2 = mechKey(pp);
+      if (k2 && k2.includes(':') && out.filter((o) => mechKey(profilesById.get(o.productId)) === k2).length >= 2) pen += 3;
+      const k = c.key - Math.min(pen, 6);
       if (k > bestKey) { bestKey = k; bestIdx = idx; }
     });
     out.push(pool.splice(bestIdx, 1)[0].r);
