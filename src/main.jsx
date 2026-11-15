@@ -4,6 +4,7 @@ import { devPreviewOn } from './utils/devPreview.js';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import { firstTouch } from './utils/campaignAttribution.js';
 import { Capacitor } from '@capacitor/core'
 import './styles/fonts.css'
 import './styles/ay-tokens.css'
@@ -254,6 +255,8 @@ if (!POSTHOG_KEY) {
       // Every event says where it came from, so app and website separate
       // with one filter: platform = ios_app / android_app / web.
       ph.register({ platform: ANALYTICS_PLATFORM });
+      // First-touch source on every event, so the TikTok funnel can be followed past the landing page.
+      try { const ft = firstTouch(); if (ft.first_utm_source) ph.register(ft); } catch { /* storage blocked */ }
       if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);
       // D1 / D7 / D30: one app_opened per local day (no health details).
       trackAppOpened({ surface: Capacitor.isNativePlatform() ? 'app' : eventSurface() });

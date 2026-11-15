@@ -60,6 +60,8 @@ const KEEP = new Set([
   '$device_type', '$raw_user_agent', '$browser_language', '$browser_language_prefix', '$timezone',
   '$timezone_offset', '$screen_height', '$screen_width', '$viewport_height', '$viewport_width',
   '$referring_domain', '$is_identified', '$process_person_profile', 'utm_source', 'utm_medium',
+  // First-touch source and medium (no campaign name) so the sign-up funnel can be split by source.
+  'first_utm_source', 'first_utm_medium',
 ]);
 // app_error's own coarse fields (built by appErrorProperties, message redacted).
 const KEEP_FOR_ERRORS = new Set(['errorName', 'errorMessage', 'component', 'view', 'isChunkLoadError', 'kind', 'source', 'line', '$exception_list', '$exception_level', '$exception_fingerprint']);
