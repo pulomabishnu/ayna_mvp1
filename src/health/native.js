@@ -184,9 +184,13 @@ export function sleepRows(samples, fallbackOrigin) {
       ? s.stages.map((g) => ({ state: g.stage, minutes: g.durationMinutes, end: g.endDate }))
       : [{ state: s.sleepState || 'asleep', minutes: (Date.parse(s.endDate) - Date.parse(s.startDate)) / 60000, end: s.endDate }];
     for (const seg of segments) {
-      if (!ASLEEP.has(seg.state) || !(seg.minutes > 0)) continue;
+      if (!(seg.minutes > 0)) continue;
       const key = `${origin}|${localDay(seg.end)}`;
-      const cur = acc.get(key) || { total: 0, deep: 0, rem: 0 };
+      const cur = acc.get(key) || { total: 0, deep: 0, rem: 0, inBed: 0 };
+      // Eliz, founder call 11/14 ("sleep from the phone, like Flo"): an iPhone with no watch only
+      // records time in bed (Sleep Focus / bedtime). Kept aside, used only when nothing measured sleep.
+      if (seg.state === 'inBed') { cur.inBed += seg.minutes; acc.set(key, cur); continue; }
+      if (!ASLEEP.has(seg.state)) continue;
       cur.total += seg.minutes;
       if (seg.state === 'deep') cur.deep += seg.minutes;
       if (seg.state === 'rem') cur.rem += seg.minutes;
@@ -197,6 +201,8 @@ export function sleepRows(samples, fallbackOrigin) {
   for (const [key, v] of acc) {
     const [origin, day] = key.split('|');
     if (v.total > 0) rows.push({ metric: 'sleep_minutes', day, value: Math.round(Math.min(v.total, 1440)), origin, method: 'derived' });
+    // Time in bed stands in for sleep only when that source measured no sleep that night (an estimate, like Flo's).
+    else if (v.inBed > 0) rows.push({ metric: 'sleep_minutes', day, value: Math.round(Math.min(v.inBed, 1440)), origin, method: 'derived' });
     if (v.deep > 0) rows.push({ metric: 'sleep_deep_minutes', day, value: Math.round(v.deep), origin, method: 'derived' });
     if (v.rem > 0) rows.push({ metric: 'sleep_rem_minutes', day, value: Math.round(v.rem), origin, method: 'derived' });
   }

@@ -126,3 +126,16 @@ describe('Apple Health: one permission sheet, asked once', () => {
     expect(AynaCycle.requestAuthorization).toHaveBeenCalledWith();
   });
 });
+
+describe('iPhone sleep without a watch (Eliz 11/14)', () => {
+  it('time in bed stands in only when no sleep was measured that night', async () => {
+    const { sleepRows } = await import('./native.js');
+    const phoneOnly = sleepRows([{ sourceId: 'com.apple.health.ABC', sleepState: 'inBed', startDate: '2026-11-13T23:00:00', endDate: '2026-11-14T07:00:00' }], 'apple_health');
+    expect(phoneOnly.find((r) => r.metric === 'sleep_minutes').value).toBe(480);
+    const withWatch = sleepRows([
+      { sourceId: 'com.apple.health.ABC', sleepState: 'inBed', startDate: '2026-11-13T23:00:00', endDate: '2026-11-14T07:00:00' },
+      { sourceId: 'com.apple.health.ABC', sleepState: 'asleep', startDate: '2026-11-13T23:30:00', endDate: '2026-11-14T06:30:00' },
+    ], 'apple_health');
+    expect(withWatch.filter((r) => r.metric === 'sleep_minutes').map((r) => r.value)).toEqual([420]);
+  });
+});
