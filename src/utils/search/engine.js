@@ -517,6 +517,11 @@ export function createSearchEngine(config = {}) {
         if (nameJoined.includes(` ${qw.join(' ')} `) || nameW.join('').includes(qw.join(''))) s += 8;
       }
       const head = qw[qw.length - 1];
+      // Backlog Nov 14 ("joint pain" listed period and UTI products): "<where> pain" needs the where.
+      if (['pain', 'ache', 'relief'].includes(head) && qw.length >= 2) {
+        const where = qw.slice(0, -1).filter((w) => w.length > 2 && w !== 'pain');
+        if (where.length && !where.some((w) => wordHits(w, e.hay) || wordHits(w, normalizeText(item.category || '')))) s = 0;
+      }
       if (HEAD_NOUNS.has(head)) {
         const kindW = [...nameW, ...normalizeText(`${(item.tags || []).join(' ')} ${item.subcategory || ''}`).split(' ').filter(Boolean).map(singular)];
         const isKind = kindW.some((w) => w === head || (w.length > head.length + 2 && w.endsWith(head)));
