@@ -199,7 +199,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           );
         })()}
         <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
-        <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect ? 1 : 0)} minutes · all optional</p>
+        <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect && !connected ? 1 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">
           {canMore && (
             <li style={{ '--i': 0 }}>
