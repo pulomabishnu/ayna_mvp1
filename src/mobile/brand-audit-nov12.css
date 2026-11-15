@@ -153,3 +153,6 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 .ayna-mobile .ay-dpn a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-block; min-height: 44px; line-height: 44px; }
 .ayna-mobile .ay-qc-foot .ay-dpn { text-align: center; margin: 0 0 8px; }
 .ayna-mobile .ay-hc-privacy { margin: 20px 0 8px; }
+/* Nov 14 (focus group, Zoleka: "add it to every page, will make a pink box"): the footer's
+   Send app feedback is a pink pill on every page, not a plain link. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .ay-legal .ay-legal__feedback { display: inline-flex !important; align-items: center; min-height: 44px; padding: 0 18px !important; border: 1.5px solid #3e2723 !important; border-radius: 999px !important; background: #f7badd !important; color: #3e2723 !important; text-decoration: none !important; margin-bottom: 6px; }

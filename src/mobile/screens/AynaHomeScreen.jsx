@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { openFeedback } from '../components/FeedbackSheet.jsx';
 import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
@@ -147,8 +146,8 @@ export default function AynaHomeScreen(props) {
             onAddGoal={onAddGoal ? (g, opts) => { onAddGoal(g, opts); setGoalsAdded((x) => [...x, g]); } : null} goalsAdded={goalsAdded}
             onOpenInsight={todayInsight?.metric ? () => openMetric(todayInsight.metric) : null}
             log={dayLog} today={today} name={firstName} onLogSaved={setDayLog} />
-          {/* Focus group, Nov 11: TestFlight's feedback is hidden; a visible way to tell us. */}
-          <button type="button" className="ay-fb-pill" onClick={() => openFeedback()}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z" /></svg>Something off? Send feedback</button>
+          {/* Focus group, Nov 11: a visible way to tell us. Nov 14: it is the pink Send app feedback pill in
+              the footer of every page now, so Home no longer shows a second one here. */}
           {/* Founder, Nov 12 ("way too overcrowded"): For today is the plan above; the extra deck of
               cards under it is gone. Safety and care still show above For today. */}
           {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
