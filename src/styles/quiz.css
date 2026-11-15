@@ -657,3 +657,6 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
 .aq-gloss-list { display: grid; gap: 14px; margin: 0; max-height: 55vh; overflow-y: auto; }
 .aq-gloss-list dt { font-weight: 700; font-size: 16px; }
 .aq-gloss-list dd { margin: 2px 0 0; font-size: 15px; line-height: 1.45; }
+
+/* Backlog Nov 14: "Select all that apply" above every multi-select. */
+.aq-multi-hint { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: inherit; opacity: .78; }

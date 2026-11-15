@@ -153,7 +153,10 @@ export function QuizBlock({ surface = 'app', stepKey = 'interstitial', kicker, t
  * expand: { [item]: node } opens inline right after that chip while it is picked (Fig-style sub-options).
  */
 export function Chips({ items, selected = [], onToggle, labels = {}, muted = [], single = false, label, expand = {}, icons, display, compact = false }) {
+  // Backlog Nov 14 (Liliane, M12, FG11): every multi-select says so, every single-choice doesn't.
+  const hint = !single && items.length > 2 ? <p className="aq-multi-hint">Select all that apply</p> : null;
   return (
+    <>{hint}
     <div className={`aq-chips${compact ? ' is-compact' : ''}`} role={single ? 'radiogroup' : 'group'} aria-label={label}>
       {items.map((item) => {
         const on = selected.includes(item);
@@ -169,7 +172,7 @@ export function Chips({ items, selected = [], onToggle, labels = {}, muted = [],
           sub && on ? <div key={`${item}-sub`} className="aq-sub">{sub}</div> : null,
         ];
       })}
-    </div>
+    </div></>
   );
 }
 
