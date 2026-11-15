@@ -126,6 +126,14 @@ export function setPerimenopausePeriods(intake, value) {
 
 export const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 export const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
+// Backlog Nov 14 (Spoorthi: "what does occasionally / moderate mean?"): each level says what it looks like.
+// The saved value stays the plain word, so matching is unchanged.
+export const PERIOD_PAIN_LABELS = {
+  Mild: 'Mild: noticeable, but my day is the same',
+  Moderate: 'Moderate: I take something for it or slow down',
+  Severe: 'Severe: I miss plans, school or work',
+  'Very severe': "Very severe: I can't get up, or pain medicine doesn't help",
+};
 // Backlog Nov 14 (Ivy, M12): when she picked only frequent urination / urgency, the answers are about how
 // often, not about UTIs. They map to no UTI modifier, so the engine treats it as frequency, not infection.
 export const URINE_FREQUENCY = ['A few times a week', 'Most days', 'Every day', 'It wakes me up at night', 'Not sure'];

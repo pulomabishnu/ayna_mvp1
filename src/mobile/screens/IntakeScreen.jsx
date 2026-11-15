@@ -55,6 +55,7 @@ import {
   PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW,
   PERIOD_PAIN,
+  PERIOD_PAIN_LABELS,
   POSTPARTUM_TIMING,
   PREGNANCY_TRIMESTER,
   PRICE_RANGES,
@@ -864,7 +865,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (step.type === 'flow' || step.type === 'pain') {
       const key = step.type === 'flow' ? 'periodFlow' : 'periodPain';
       const opts = step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN;
-      return <Rows label={step.title} options={opts} value={intake[key]} onChange={(v) => set(key, v)} />;
+      return <Rows label={step.title} options={opts} labels={step.type === 'pain' ? PERIOD_PAIN_LABELS : undefined} value={intake[key]} onChange={(v) => set(key, v)} />;
     }
     if (step.type === 'utiFrequency') return <Rows label={step.title} options={utiOptions(intake)} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
     if (step.type === 'ttcDuration') return <Rows label={step.title} options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;

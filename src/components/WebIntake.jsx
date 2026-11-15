@@ -8,7 +8,7 @@ import {
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BREASTFEEDING_STATUS,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
   LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
-  PERIOD_FLOW, PERIOD_PAIN, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS, PRODUCT_FORMAT_LABELS,
+  PERIOD_FLOW, PERIOD_PAIN, PERIOD_PAIN_LABELS, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS, PRODUCT_FORMAT_LABELS,
   STOP_REASONS, SUPPORT_GROUPS, VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming,
   utiOptions, buildSnapshot, isMultiSelectStep,
   getLifeStages, isMinorAge, normalizeSuggestion, readIntakeDraft, reconstructIntakeFromSnapshot,
@@ -709,7 +709,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       }
       // House Blend slider (uniqueness pass A): the same options, saved verbatim.
       case 'flow': return <Rows label={step.title} options={PERIOD_FLOW} value={intake.periodFlow} onChange={(v) => set('periodFlow', v)} />;
-      case 'pain': return <Rows label={step.title} options={PERIOD_PAIN} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
+      case 'pain': return <Rows label={step.title} options={PERIOD_PAIN} labels={PERIOD_PAIN_LABELS} value={intake.periodPain} onChange={(v) => set('periodPain', v)} />;
       case 'utiFrequency': return <Rows options={utiOptions(intake)} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
       case 'ttcDuration': return <Rows options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
       case 'postpartumTiming': return <>
