@@ -41,6 +41,10 @@
     {
       "path": "/api/today-reminders?sweep=1",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/status",
+      "schedule": "23 12 * * *"
     }
   ],
   "headers": [
