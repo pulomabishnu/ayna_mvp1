@@ -102,8 +102,11 @@ describe('buildUserProfile layers', () => {
     expect(up.shopping.formats.preferred).toEqual(['gummy']);
   });
 
-  it('price not important removes the budget curve', () => {
-    expect(buildUserProfile(intake({ priceRange: ['Price is not a major factor for me', '$25–$75'] })).shopping.budget).toBe(null);
+  it('price not important removes the budget curve; a range she also picked wins (Puloma, Nov 12)', () => {
+    expect(buildUserProfile(intake({ priceRange: ['Price is not a major factor for me'] })).shopping.budget).toBe(null);
+    const both = buildUserProfile(intake({ priceRange: ['Price is not a major factor for me', '$25–$75'] }));
+    expect(both.shopping.budget).toMatchObject({ max: 75 });
+    expect(both.shopping.priceNotImportant).toBe(false);
   });
 
   it('trust weights follow the ranking, equal when untouched', () => {

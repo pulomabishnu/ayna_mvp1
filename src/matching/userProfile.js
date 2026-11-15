@@ -646,12 +646,12 @@ export function buildUserProfile(intakeInput, options = {}) {
   const notImportant = ranges.includes(PRICE_NOT_IMPORTANT);
   const bounds = ranges.map((r) => PRICE_RANGE_BOUNDS[r]).filter(Boolean);
   let budget = null;
-  if (bounds.length && !notImportant) budget = { min: Math.min(...bounds.map((b) => b[0])), max: Math.max(...bounds.map((b) => b[1])), source: 'selected' };
+  // Puloma, Nov 12 (an expensive sleep pod after a budget AND "not a major factor"): when she picks a
+  // range too, the range she named wins; "not a major factor" alone means price isn't scored.
+  if (bounds.length) budget = { min: Math.min(...bounds.map((b) => b[0])), max: Math.max(...bounds.map((b) => b[1])), source: 'selected' };
   else if (!notImportant && freeText.max_price && freeText.max_price.weight >= 1) budget = { min: 0, max: freeText.max_price.value, source: 'free_text' };
   if (notImportant && bounds.length) {
-    // Both "not a major factor" and a range: "not a major factor" is the
-    // broader statement, so price is not scored; the conflict is recorded.
-    contradictions.push({ code: 'budget_range_vs_not_important', affects: ['price'], text: 'You chose a budget and also said price is not a major factor, so we did not rank by price.' });
+    contradictions.push({ code: 'budget_range_vs_not_important', affects: ['price'], text: 'You chose a budget and also said price is not a major factor, so we used the budget you chose.' });
   }
   if (budget?.source === 'selected' && freeText.max_price?.weight >= 1 && freeText.max_price.value < budget.max) {
     contradictions.push({ code: 'budget_range_vs_free_text', affects: ['price'], text: 'The price limit you typed is lower than the range you picked. We used the range you picked.' });
@@ -885,7 +885,7 @@ export function buildUserProfile(intakeInput, options = {}) {
     shopping: {
       formats: { preferred: preferredFormats, noPreference: formatNoPreference || (!preferredFormats.length), explicitNoPreference: formatNoPreference, disliked: dislikedFormats, strict: strictFormats, unresolved: customFormats },
       budget,
-      priceNotImportant: notImportant,
+      priceNotImportant: notImportant && !budget,
       largePurchaseFrequency: intake.largePurchaseFrequency || null,
       priceSensitivity: priceSensitivitySignals,
       usageBurden: usageBurdenSignals,
