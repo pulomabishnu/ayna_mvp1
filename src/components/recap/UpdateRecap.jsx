@@ -64,9 +64,9 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
         lead={<button type="button" className="ays-icon" onClick={prev} disabled={index === 0} aria-label="Previous slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>} />
       <p className="sr-only" aria-live="polite">{`Slide ${index + 1} of ${slides.length}`}</p>
       <div className="ays-stage" {...gest.bind}>
-        <section className="ays-card ay-ur-card" key={`${s.kind}-${index}`}>
+        <section className={`ays-card ay-ur-card is-${s.kind}`} key={`${s.kind}-${index}`}>
           {s.kind === 'intro' && <>
-            <p className="ay-ur-kicker">{SOURCE_LABEL[diff.source] || 'Your profile changed'}</p>
+            <p className="ay-ur-kicker is-small">{SOURCE_LABEL[diff.source] || 'Your profile changed'}</p>
             <p className="ay-ur-big">Your ayna, updated</p>
             <dl className="ay-ur-stats">
               {added > 0 && <div><dt>New matches</dt><dd>{added}</dd></div>}
@@ -111,7 +111,7 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
             <p className="ay-ur-sub">They fit your earlier answers better. They're still in Shop, and anything in your routine stays there.</p>
           </>}
           {s.kind === 'done' && <>
-            <p className="ay-ur-kicker">That's what changed</p>
+            <p className="ay-ur-kicker is-small">That's what changed</p>
             <p className="ay-ur-big">{undone ? 'Change undone' : 'All set'}</p>
             <div className="ay-ur-stack">
               {onSeeAll && <button type="button" className="ay-ur-btn is-solid" onClick={(e) => { stop(e); onSeeAll(); }}>See all your matches</button>}

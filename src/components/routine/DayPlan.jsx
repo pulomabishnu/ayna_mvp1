@@ -143,12 +143,16 @@ function History({ med, store }) {
   </li>)}</ul>;
 }
 
+const TICK = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
+
+/* One row on the day rail (inspo, Nov 11 rules: plain rows on a rail, no stacked boxes, one round
+   check per row). Tap the circle to tick it off; tap the row for Skip, Snooze, Undo. */
 function PlanItem({ it, day, isToday, onChanged }) {
+  const [open, setOpen] = useState(false);
   const med = it.type === 'med';
   const goal = it.type === 'goal';
   const act = (status) => {
     if (goal) {
-      if (status !== 'done') return;
       toggleDone(it.id, day);
       toast(`${it.title}: done`, { label: 'Undo', onClick: () => toggleDone(it.id, day) });
       return;
@@ -163,33 +167,40 @@ function PlanItem({ it, day, isToday, onChanged }) {
       if (!r.ok) { toast("Couldn't save. Try again."); return; }
       if (!r.duplicate) toast(`${it.title}: ${status === 'done' ? 'done' : 'skipped'}`, { label: 'Undo', onClick: () => undoActivity(r.record.id) });
     }
+    setOpen(false);
     onChanged?.();
   };
-  const undo = () => { if (goal) toggleDone(it.id, day); else if (it.record?.id) (med ? undoDose : undoActivity)(it.record.id); toast('Undone'); };
-  const final = it.state === 'done' || it.state === 'skipped';
-  const needFeel = it.type === 'activity' && it.state === 'done' && it.checkIn && !it.record?.feel;
-  return <li className={`ay-dp-item is-${it.state}`}>
-    <span className="ay-dp-item__time">{it.time ? fmtTime(it.time) : 'Any time'}</span>
-    <div className="ay-dp-item__body">
-      <div className="ay-dp-item__head">
-        <span className="ay-dp-item__kind">{med ? 'Medication' : goal ? 'Your goal' : 'Activity'}</span>
-        <span className={`ay-dp-pill is-${it.state}`}>{med && it.state === 'done' ? 'Taken' : STATE_WORD[it.state]}</span>
-      </div>
-      <b className="ay-dp-item__title">{it.title}</b>
-      {it.sub && <span className="ay-dp-item__sub">{it.sub}</span>}
-      {final
-        ? <div className="ay-dp-item__acts"><button type="button" className="ay-dp__ghost" onClick={undo}>Undo</button></div>
-        : <div className="ay-dp-item__acts" role="group" aria-label={`${it.title}${it.time ? ` at ${fmtTime(it.time)}` : ''}`}>
-          <button type="button" className="ay-dp__primary is-small" onClick={() => act(med ? 'taken' : 'done')}>{med ? 'Taken' : 'Done'}</button>
-          {!goal && <button type="button" className="ay-dp__ghost" onClick={() => act('skipped')}>Skip</button>}
-          {med && isToday && ['due', 'missed', 'snoozed'].includes(it.state) && <button type="button" className="ay-dp__ghost" onClick={() => act('snoozed')}>Snooze 15 min</button>}
-        </div>}
+  const undo = () => { if (goal) toggleDone(it.id, day); else if (it.record?.id) (med ? undoDose : undoActivity)(it.record.id); toast('Undone'); setOpen(false); };
+  const done = it.state === 'done';
+  const needFeel = it.type === 'activity' && done && it.checkIn && !it.record?.feel;
+  const word = done ? (med ? 'Taken' : 'Done') : it.state === 'due' ? null : it.state === 'any' ? null : STATE_WORD[it.state];
+  const sub = [it.sub, goal ? 'Your goal' : null, !med && it.record?.feel ? `Felt ${it.record.feel} after` : null].filter(Boolean).join(' · ');
+  const hasMore = !goal || done;
+  const id = `ay-dp-more-${it.key.replace(/[^a-z0-9]/gi, '')}`;
+  return <li className={`ay-dp-row is-${it.state}`}>
+    <span className="ay-dp-row__time">{it.time ? fmtTime(it.time) : ''}</span>
+    <span className="ay-dp-row__dot" aria-hidden="true" />
+    <div className="ay-dp-row__body">
+      <button type="button" className="ay-dp-row__main" aria-expanded={hasMore ? open : undefined} aria-controls={hasMore ? id : undefined} onClick={() => hasMore && setOpen((v) => !v)} disabled={!hasMore}>
+        <b>{it.title}{it.state === 'due' && <em className="ay-dp-now">Now</em>}</b>
+        {(sub || word) && <span>{[sub, word].filter(Boolean).join(' · ')}</span>}
+      </button>
+      {open && <div id={id} className="ay-dp-row__more" role="group" aria-label={`More for ${it.title}`}>
+        {done || it.state === 'skipped'
+          ? <button type="button" className="ay-dp__ghost" onClick={undo}>Undo</button>
+          : <>
+            {!goal && <button type="button" className="ay-dp__ghost" onClick={() => act('skipped')}>Skip</button>}
+            {med && isToday && ['due', 'missed', 'snoozed'].includes(it.state) && <button type="button" className="ay-dp__ghost" onClick={() => act('snoozed')}>Snooze 15 min</button>}
+          </>}
+      </div>}
       {needFeel && <div className="ay-dp-feel" role="group" aria-label={`How do you feel after ${it.title}?`}>
         <span>How do you feel now?</span>
         {FEELS.map((x) => <button key={x.id} type="button" onClick={() => { setFeel(it.record.id, x.id); toast('Saved to your check-ins'); }}>{x.label}</button>)}
       </div>}
-      {!med && it.record?.feel && <span className="ay-dp-item__sub">Felt {it.record.feel} after</span>}
     </div>
+    <button type="button" className="ay-dp-check" aria-pressed={done}
+      aria-label={done ? `${it.title}: ${med ? 'taken' : 'done'}. Undo` : `Mark ${it.title} ${med ? 'taken' : 'done'}`}
+      onClick={() => (done ? undo() : act(med ? 'taken' : 'done'))}>{TICK}</button>
   </li>;
 }
 
@@ -215,25 +226,31 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
   return <section className="ay-dp" aria-labelledby="ay-dp-h" data-tour="day-plan">
     <div className="ay-dp__top">
       <H id="ay-dp-h" className="ay-dp__h">{heading}</H>
-      {items.length > 0 && <span className="ay-dp__count" aria-live="polite">{done} of {items.length} done</span>}
+      <button type="button" className="ay-dp-add" onClick={() => setSheet({ type: 'add', tab: 'med' })} aria-label="Add to your plan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
     </div>
+    {items.length > 0 && <div className="ay-dp-progress" aria-live="polite">
+      <span>{done} of {items.length} done</span>
+      <i aria-hidden="true"><b style={{ width: `${Math.round((done / items.length) * 100)}%` }} /></i>
+    </div>}
     {!compact && <div className="ay-dp-days-nav" role="group" aria-label="Day">
       <button type="button" className="ay-dp__ghost" onClick={() => setOffset((o) => o - 1)} aria-label="Previous day">‹</button>
       <span>{dayWord}</span>
       <button type="button" className="ay-dp__ghost" onClick={() => setOffset((o) => o + 1)} aria-label="Next day" disabled={offset >= 7}>›</button>
-      {offset !== 0 && <button type="button" className="ay-dp__ghost" onClick={() => setOffset(0)}>Today</button>}
+      {offset !== 0 && <button type="button" className="ay-dp__ghost" onClick={() => setOffset(0)}>Back to today</button>}
     </div>}
     {items.length === 0
-      ? <p className="ay-dp__muted">{offset === 0 ? 'Add your medications and the things you do each day. ayna lays them out by time and you tick them off.' : 'Nothing planned this day.'}</p>
-      : <ol className="ay-dp__list">{items.map((it) => <PlanItem key={it.key} it={it} day={day} isToday={offset === 0} />)}</ol>}
+      ? <div className="ay-dp-empty">
+        <p>{offset === 0 ? 'Your medications and the things you do each day, by time. Tick them off as you go.' : 'Nothing planned this day.'}</p>
+        {offset === 0 && <div className="ay-dp-empty__acts">
+          <button type="button" className="ay-dp__primary" onClick={() => setSheet({ type: 'add', tab: 'med' })}>Add a medication</button>
+          <button type="button" className="ay-dp__ghost" onClick={() => setSheet({ type: 'add', tab: 'act' })}>Add an activity</button>
+        </div>}
+      </div>
+      : <ol className="ay-dp__rail">{items.map((it) => <PlanItem key={it.key} it={it} day={day} isToday={offset === 0} />)}</ol>}
     {offset === 0 && asNeeded.length > 0 && <div className="ay-dp-asneeded"><span>As needed</span>{asNeeded.map((m) => <button key={m.id} type="button" className="ay-dp__ghost" onClick={() => {
       const t = new Date(); const r = recordDose({ medId: m.id, day, time: `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`, status: 'taken' });
       if (r.ok) toast(`${m.name}: logged`, { label: 'Undo', onClick: () => undoDose(r.dose.id) });
     }}>Log {m.name}</button>)}</div>}
-    <div className="ay-dp__add">
-      <button type="button" className="ay-dp__primary" onClick={() => setSheet({ type: 'med' })}>Add medication</button>
-      <button type="button" className="ay-dp__outline" onClick={() => setSheet({ type: 'act' })}>Add activity</button>
-    </div>
     <ReminderNote status={remStatus} />
 
     {!compact && (activeMeds.length > 0 || stoppedMeds.length > 0 || myActs.length > 0) && <details className="ay-dp-manage">
@@ -264,6 +281,14 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
       {!planRemindersAvailable() && <p className="ay-dp__muted">Reminders work in the ayna app on your phone.</p>}
     </details>}
 
+    {sheet?.type === 'add' && <Sheet title="Add to your plan" onClose={close}>
+      <div className="ay-dp-seg ay-dp-seg--top" role="group" aria-label="What to add">
+        {[['med', 'Medication'], ['act', 'Activity']].map(([k, label]) => <button key={k} type="button" aria-pressed={sheet.tab === k} onClick={() => setSheet({ type: 'add', tab: k })}>{label}</button>)}
+      </div>
+      {sheet.tab === 'med'
+        ? <MedForm key="med" onDone={(_, st) => { setRemStatus(st); close(); }} />
+        : <ActivityForm key="act" onDone={(_, st) => { setRemStatus(st); close(); }} />}
+    </Sheet>}
     {sheet?.type === 'med' && <Sheet title={sheet.item ? `Edit ${sheet.item.name}` : 'Add a medication'} onClose={close}><MedForm initial={sheet.item || null} onDone={(_, st) => { setRemStatus(st); close(); }} /></Sheet>}
     {sheet?.type === 'act' && <Sheet title={sheet.item ? `Edit ${sheet.item.title}` : 'Add an activity'} onClose={close}><ActivityForm initial={sheet.item || null} onDone={(_, st) => { setRemStatus(st); close(); }} /></Sheet>}
     {sheet?.type === 'history' && <Sheet title={`${sheet.item.name}: history`} onClose={close}><History med={sheet.item} store={meds} /></Sheet>}
