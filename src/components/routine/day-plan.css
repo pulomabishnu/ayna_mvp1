@@ -66,7 +66,7 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 :is([data-theme='dark'], [data-theme='brand-dark']) :is(.ay-dp-seg, .ay-dp-days, .ay-dp-ideas) button[aria-pressed='true'] { background: #ffedac; color: #3e2723; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-sheet .ay-dp__primary, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp > .ay-dp__add .ay-dp__primary { background: #ffedac; color: #3e2723; }
 :is([data-theme='dark'], [data-theme='brand-dark']) :is(.ay-dp-check, .ay-dp-switch) input { accent-color: #f7badd; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-form__lead, :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp__note { color: #3e2723; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp__note { color: #3e2723; }
 
 /* Day rail (Nov 15 redo, founder: "use the inspo, clean and minimal, not stacking boxes").
    Time | rail dot | name and one line | one round check. Spacing groups, no boxes. */
