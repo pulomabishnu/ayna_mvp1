@@ -660,3 +660,8 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
 
 /* Backlog Nov 14: "Select all that apply" above every multi-select. */
 .aq-multi-hint { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: inherit; opacity: .78; }
+
+/* Backlog Nov 14: one-tap common medicines and supplements under the field. */
+.ip-quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.ip-quick__chip { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px dashed currentColor; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.ip-quick__chip:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }

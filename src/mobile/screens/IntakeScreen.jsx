@@ -51,6 +51,7 @@ import {
   LIFE_STAGE_LABELS,
   LIFE_STAGE_VALUE_BY_LABEL,
   MEDICATION_SUGGESTIONS,
+  MEDICATION_QUICK_PICKS,
   MIDLIFE_LIFE_STAGES,
   PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW,
@@ -307,7 +308,7 @@ function TokenList({ values, onRemove }) {
   );
 }
 
-function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6 }) {
+function TokenInput({ values, onChange, placeholder, suggestions = [], suggestionLimit = 6, quick = [] }) {
   const [draft, setDraft] = useState('');
   const matches = useMemo(
     () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(option))), suggestionLimit),
@@ -329,6 +330,7 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
         {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
       </label>
       <SuggestList draft={draft} matches={matches} onPick={addValue} />
+      {!draft && quick.some((q) => !values.includes(q)) && <div className="ip-quick" aria-label="Common picks">{quick.filter((q) => !values.includes(q)).map((q) => <button type="button" key={q} className="ip-quick__chip" onClick={() => addValue(q)}>+ {q}</button>)}</div>}
       <TokenList values={values} onRemove={(index) => onChange(values.filter((_, idx) => idx !== index))} />
     </div>
   );
@@ -898,7 +900,6 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {intake.allergyStatus === 'Yes' && (
           <div className="ip-gap">
             <TokenInput values={intake.allergyItems} onChange={(v) => set('allergyItems', v)} placeholder="Allergy or sensitivity" suggestions={ALLERGIES} suggestionLimit={8} />
-            {intake.allergyItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
           </div>
         )}
       </>
@@ -909,8 +910,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         <Segmented options={MEDICATION_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.takesCurrent} onChange={(value) => setIntake((prev) => ({ ...prev, takesCurrent: value, currentMedicationItems: value === 'Yes' ? prev.currentMedicationItems : [] }))} />
         {intake.takesCurrent === 'Yes' && (
           <div className="ip-gap">
-            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} />
-            {intake.currentMedicationItems.length === 0 && <p className="ip-hint ip-hint--need">Add at least one, or pick None.</p>}
+            <TokenInput values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medicine or supplement" suggestions={MEDICATION_SUGGESTIONS} suggestionLimit={10} quick={MEDICATION_QUICK_PICKS} />
           </div>
         )}
       </>

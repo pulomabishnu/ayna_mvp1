@@ -7,7 +7,7 @@ import {
   firstOptionalResumeStepId, firstUnansweredStepId, isStepAnswered, markSkipped, splitIntakeSteps, toggleLifeStageSelection,
   ALLERGIES, AVOID_GROUPS, AVOID_INGREDIENTS, AVOID_PAIRS, BRAND_OPENNESS, BREASTFEEDING_STATUS,
   CONDITIONS, EMPTY, FOLLOWUP_QUESTIONS, FREE_TEXT_PROMPTS, FSA_HSA, INTAKE_DRAFT_KEY, LARGE_PURCHASE_FREQUENCY, LIFE_STAGES,
-  LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
+  LIFE_STAGE_LABELS, LIFE_STAGE_VALUE_BY_LABEL, MEDICATION_SUGGESTIONS, MEDICATION_QUICK_PICKS, MIDLIFE_LIFE_STAGES, PERIMENOPAUSE_LAST_PERIOD,
   PERIOD_FLOW, PERIOD_PAIN, PERIOD_PAIN_LABELS, POSTPARTUM_TIMING, PREGNANCY_TRIMESTER, PRICE_RANGES, PRODUCT_FORMATS, PRODUCT_FORMAT_LABELS,
   STOP_REASONS, SUPPORT_GROUPS, VASOMOTOR_TIMING_OPTIONS, needsVasomotorTiming, toggleVasomotorTiming,
   utiOptions, buildSnapshot, isMultiSelectStep,
@@ -70,7 +70,7 @@ function AddCustom({ query, options, onAdd }) {
   return <button type="button" className="qz-chip is-dashed" onClick={() => onAdd(value)}>+ Add “{value}”</button>;
 }
 
-function Tokens({ values, onChange, placeholder, suggestions = [], limit = 8 }) {
+function Tokens({ values, onChange, placeholder, suggestions = [], limit = 8, quick = [] }) {
   const [draft, setDraft] = useState('');
   const matches = useMemo(() => rankedSuggestions(draft, suggestions.filter((o) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(o))), limit), [draft, suggestions, values, limit]);
   const add = (raw) => {
@@ -92,6 +92,7 @@ function Tokens({ values, onChange, placeholder, suggestions = [], limit = 8 }) 
       <button type="button" className="is-add" onClick={() => add(draft)}>+ Add “{draft.trim()}”</button>
       {matches.map((m) => <button type="button" key={m} onClick={() => add(m)}>{m}</button>)}
     </div>}
+    {!draft.trim() && quick.some((q) => !values.includes(q)) && <div className="ip-quick" aria-label="Common picks">{quick.filter((q) => !values.includes(q)).map((q) => <button type="button" key={q} className="ip-quick__chip" onClick={() => add(q)}>+ {q}</button>)}</div>}
     {values.length > 0 && <div className="qz-tokens">{values.map((v, i) => <span key={`${v}-${i}`} className="qz-token">{v}<button type="button" aria-label={`Remove ${v}`} onClick={() => onChange(values.filter((_, idx) => idx !== i))}>×</button></span>)}</div>}
   </div>;
 }
@@ -733,7 +734,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
       </>;
       case 'medications': return <>
         <Rows options={MEDICATION_STATUS} labels={SAFETY_ANSWER_LABELS} value={intake.takesCurrent} onChange={(v) => setIntake((prev) => ({ ...prev, takesCurrent: v, currentMedicationItems: v === 'Yes' ? prev.currentMedicationItems : [] }))} />
-        {intake.takesCurrent === 'Yes' && <Tokens values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} limit={10} />}
+        {intake.takesCurrent === 'Yes' && <Tokens values={intake.currentMedicationItems} onChange={(v) => set('currentMedicationItems', v)} placeholder="Medication, supplement, or birth control" suggestions={MEDICATION_SUGGESTIONS} limit={10} quick={MEDICATION_QUICK_PICKS} />}
       </>;
       case 'products': return <ProductHistory products={intake.productHistory} onChange={(v) => set('productHistory', v)} />;
       case 'avoidRepeat': {

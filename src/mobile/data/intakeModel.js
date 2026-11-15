@@ -1122,3 +1122,6 @@ export const LEARN_INTERESTS = [
   'Vaginal health', 'Sexual health', 'Sleep', 'Mood', 'Skin and hair', 'Nutrition',
 ];
 
+
+/** One-tap picks under the medicines field (backlog Nov 14, Ivy/Spoorthi): the most common, all in MEDICATION_SUGGESTIONS. */
+export const MEDICATION_QUICK_PICKS = ['Birth control pill', 'Multivitamin', 'Vitamin D', 'Iron', 'Magnesium', 'Omega-3', 'Melatonin'];
