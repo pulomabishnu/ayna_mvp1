@@ -73,6 +73,8 @@ function ArticleDetailContent({ article, onBack, topic = null, nextRead, onNext,
             {teaser}
           </div>
         )}
+        {/* Founder call, Nov 14 (Eliz: the app's reads didn't look like the website's): the same meta line as web. */}
+        {source && <p className="ay-read-checked">{readMinutes} min read <span aria-hidden="true">·</span> Checked against {source}</p>}
 
         <ReadBody
           body={body}
