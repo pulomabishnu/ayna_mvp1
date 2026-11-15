@@ -11,6 +11,7 @@
  * rows useHealthData already holds.
  */
 import { resolveDaily, series } from './dedupe.js';
+import { tempUnit } from './tempUnit.js';
 import { METRICS } from './metrics.js';
 import { periodStarts, fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
 import { localToday } from '../utils/localDate.js';
@@ -61,6 +62,15 @@ export function formatMetric(metric, value, { signed = false } = {}) {
   const sign = signed && value > 0 ? '+' : signed && value < 0 ? '-' : '';
   const v = signed ? Math.abs(value) : value;
   if (unit === 'min') return `${sign}${fmtMinutes(v)}`;
+  if (unit === 'degC' && tempUnit() === 'F') {
+    // Same shape in °F: deviations are a change (x1.8), readings convert fully.
+    const dev = metric === 'temp_deviation_c' || signed;
+    const f = dev ? v * 1.8 : v * 9 / 5 + 32;
+    const places = metric === 'temp_deviation_c' ? 1 : 1;
+    const shown = Number(f.toFixed(places));
+    if (shown === 0) return `${(0).toFixed(places)} °F`;
+    return `${metric === 'temp_deviation_c' && !signed && value > 0 ? '+' : sign}${metric === 'temp_deviation_c' && !signed && value < 0 ? '-' : ''}${Math.abs(shown).toFixed(places)} °F`;
+  }
   if (unit === 'degC') {
     const places = metric === 'temp_deviation_c' ? 2 : 1;
     const shown = Number(v.toFixed(places));

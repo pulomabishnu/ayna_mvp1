@@ -15,6 +15,7 @@
  *   after can't show cause.
  */
 import { resolveDaily, series } from './dedupe.js';
+import { tempUnit, tempDelta, tempReading } from './tempUnit.js';
 import { periodStarts, fmtMinutes } from './insights.js';
 import { estimatePhase } from './phase.js';
 import { fitFor, LEVEL_WORD } from './weekPicks.js';
@@ -46,8 +47,8 @@ const COMPARE = [
   { metric: 'sleep_minutes', label: 'Sleep', flat: 20, fmt: (v) => fmtMinutes(v) },
   { metric: 'hrv_rmssd_ms', label: 'Heart rate variability', flat: 0.1, pct: true, fmt: (v) => `${Math.round(v)} ms` },
   { metric: 'hrv_sdnn_ms', label: 'Heart rate variability', flat: 0.1, pct: true, fmt: (v) => `${Math.round(v)} ms` },
-  { metric: 'temp_deviation_c', label: 'Temperature', flat: 0.15, fmt: (v) => `${v > 0 ? '+' : v < 0 ? '-' : ''}${Math.abs(v).toFixed(2)}\u00a0°C` },
-  { metric: 'basal_temp_c', label: 'Temperature', flat: 0.15, fmt: (v) => `${v.toFixed(2)}\u00a0°C` },
+  { metric: 'temp_deviation_c', label: 'Temperature', flat: 0.15, fmt: (v) => `${v > 0 ? '+' : v < 0 ? '-' : ''}${tempUnit() === 'F' ? tempDelta(v) : `${Math.abs(v).toFixed(2)}\u00a0°C`}` },
+  { metric: 'basal_temp_c', label: 'Temperature', flat: 0.15, fmt: (v) => (tempUnit() === 'F' ? tempReading(v) : `${v.toFixed(2)}\u00a0°C`) },
 ];
 const PHASE_WORD = { period: 'period', follicular: 'stretch before ovulation', ovulation: 'stretch of possible ovulation days', luteal: 'stretch after ovulation' };
 

@@ -18,6 +18,7 @@
  * Research notes with quotes: see the commit message and EVIDENCE below.
  */
 import { resolveDaily, series } from './dedupe.js';
+import { tempDelta } from './tempUnit.js';
 import { estimatePhase } from './phase.js';
 import { fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
 import { localToday } from '../utils/localDate.js';
@@ -241,8 +242,8 @@ export function tempInsight(resolved, today, ctx, { hormonalBC = false } = {}) {
   const deg = Math.max(0.2, Math.round(rise.rise * 10) / 10).toFixed(1);
   const sources = [EVIDENCE.bbt];
   let text = rise.days <= 4
-    ? `Your temperature rose about ${deg}\u00a0°C over the last ${rise.days} days`
-    : `Your temperature has stayed about ${deg}\u00a0°C higher for ${rise.days} days, since ${fmtDay(rise.start)}`;
+    ? `Your temperature rose about ${tempDelta(Number(deg))} over the last ${rise.days} days`
+    : `Your temperature has stayed about ${tempDelta(Number(deg))} higher for ${rise.days} days, since ${fmtDay(rise.start)}`;
   if (hormonalBC) {
     text += '.';
     sources.length = 0;

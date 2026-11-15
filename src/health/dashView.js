@@ -12,6 +12,7 @@
  * - chartSummary: one sentence under every chart.
  */
 import { buildDashboard, formatMetric, isFlat } from './dashboard.js';
+import { tempDelta } from './tempUnit.js';
 import { fmtMinutes, RECENT_DAYS, BASELINE_DAYS } from './insights.js';
 import { explainWeek } from './weekInsights.js';
 
@@ -92,7 +93,7 @@ export function findingTitle(insight) {
       if (insight.latestDays != null) return `Cycle: your last one was ${insight.latestDays} days, about ${insight.shorterBy} shorter than your usual`;
       break;
     case 'temp-rise':
-      if (insight.deg != null) return `Temperature: about ${insight.deg}\u00a0°C higher for ${insight.days} days`;
+      if (insight.deg != null) return `Temperature: about ${tempDelta(Number(insight.deg))} higher for ${insight.days} days`;
       break;
     case 'period-soon':
       if (insight.daysToPeriod != null) return `Period: due ${insight.daysToPeriod <= 0 ? 'today' : insight.daysToPeriod === 1 ? 'tomorrow' : `in about ${insight.daysToPeriod} days`}, estimated`;
