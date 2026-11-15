@@ -89,7 +89,7 @@ function perNeed(answers, matchOpts = undefined) {
         : info ? `Held back for now: we don’t have ${info.replace(/ for this product$/, '')} for these yet, and you told us something that makes it matter.`
           : 'Held back for now: we can’t confirm these are safe for what you told us.';
       // Nov 5: an empty shelf that is empty on purpose (pregnancy, bleeding after menopause) says why.
-      const why = all.length ? '' : sh.emptyReason === 'care_first' ? 'Best checked by a clinician, not a product.' : sh.emptyReason === 'clinician_first_for_stage' ? sh.qualityNote || '' : '';
+      const why = all.length ? '' : sh.emptyReason === 'care_first' ? (sh.qualityNote || 'Best checked by a clinician, not a product.') : sh.emptyReason === 'clinician_first_for_stage' ? sh.qualityNote || '' : '';
       return { id: sh.needId, groupId: sh.groupId || null, needIds: sh.needIds || [sh.needId], members: sh.members || null, label: sh.label, products, services, held, needsAnswers, heldWhy, why, careFirst: !all.length && sh.emptyReason === 'care_first' };
     });
     // Nov 4: one "check with a clinician" line when a need she picked calls for it (spotting, UTI now, severe pain).
