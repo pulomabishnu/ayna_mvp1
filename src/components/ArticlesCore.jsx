@@ -434,7 +434,7 @@ const ARTICLES = [
     id: 'endometriosis-basics',
     image: '/articles/endometriosis-basics.webp',
     title: 'Endometriosis: Symptoms, Diagnosis, and Care',
-    source: 'ACOG, EndoFound, UpToDate',
+    source: 'ACOG, EndoFound, UpToDate, ESUR',
     tags: ['Chronic pain', 'Reproductive health'],
     teaser: 'What endometriosis is, how it\'s diagnosed, and treatment options. From pain management to surgery and fertility support.',
     body: (
@@ -442,11 +442,14 @@ const ARTICLES = [
         <p>Endometriosis is a condition where tissue similar to the uterine lining grows outside the uterus (e.g., on the ovaries, pelvic lining, bowel). It can cause painful periods, chronic pelvic pain, pain with sex, and sometimes bowel or bladder symptoms. In some people it also affects fertility. Diagnosis can be suspected by history and exam; imaging (ultrasound, sometimes MRI) or laparoscopy may be used to confirm.</p>
         <p>Treatment depends on your symptoms and goals. Options include pain management (NSAIDs, hormonal birth control, or other hormone-suppressing medications), pelvic floor physical therapy for pain and muscle tension, and surgery to remove or ablate lesions when appropriate. There is no cure, but symptoms can be managed. If you're trying to conceive, a specialist can discuss fertility-preserving or assisted-reproduction options.</p>
         <p><strong>When to seek care:</strong> Severe period or pelvic pain, pain with sex, heavy bleeding, or difficulty conceiving. Early diagnosis can help you get effective treatment and avoid unnecessary delay.</p>
+        {/* Trevina, 1:1 Oct 7: "MRI timing for endo". From the ESUR guideline (European Radiology, 2017). */}
+        <p><strong>If you're having an MRI for endometriosis:</strong> European radiologists' guideline says there is no evidence for booking it at a particular point in your cycle. It recommends fasting for a few hours beforehand (studies used 3 to 6 hours) and arriving with a moderately full bladder, not a very full one. Some clinics also ask you to prepare your bowel. Follow your own clinic's instructions.</p>
         <p><strong>Sources:</strong></p>
         <ul className="ay-lib-sources" style={{ paddingLeft: '1.5rem', listStyle: 'none' }}>
           <li><a href="https://www.acog.org/womens-health/faqs/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ACOG – Endometriosis</a></li>
           <li><a href="https://www.endofound.org/endometriosis" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Endometriosis Foundation of America – Endometriosis</a></li>
           <li><a href="https://www.uptodate.com/contents/endometriosis-beyond-the-basics" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>UpToDate – Endometriosis (patient education)</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5486785/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', fontWeight: 600 }}>ESUR guidelines: MR imaging of pelvic endometriosis (European Radiology, 2017)</a></li>
         </ul>
       </>
     ),
