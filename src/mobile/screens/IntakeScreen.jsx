@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { defineOption } from '../data/glossary.js';
 import { mapIntakeToLegacyQuizProfile } from '../../utils/healthIntake.js';
 import { ChipList, SearchField, AgeDial, TrustPodium, StickyNote, TopicPicker } from '../components/intake/IntakeControls.jsx';
-import { QuizFrame, QuizBlock, Chips, Rows, SubQuestion, GlossaryCard } from '../../components/quiz/QuizKit.jsx';
+import { QuizFrame, QuizBlock, Chips, Rows, SubQuestion, GlossaryCard, GlossaryList } from '../../components/quiz/QuizKit.jsx';
 import { isShortHelper } from '../../components/quiz/quizText.js';
 import { conditionDisplayName } from '../../utils/conditionRename.js';
 import MedicalNote, { MEDICAL_TERMS_URL } from '../../components/MedicalNote.jsx';
@@ -633,6 +633,31 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const visibleSteps = onboarding ? onboardingSteps : phase === 'optional' ? optionalSteps : requiredSteps;
   const currentIndex = Math.max(0, visibleSteps.findIndex((s) => s.id === stepId));
   const step = atCheckpoint ? { id: CHECKPOINT_STEP, section: 'checkpoint', title: '', type: 'checkpoint' } : (visibleSteps[currentIndex] || visibleSteps[0]);
+  // Focus group (Angelina, Nov 11): press-and-hold has no visual cue, so every question with defined
+  // terms also gets a visible "What these words mean" button that lists them (the hold still works).
+  const [termList, setTermList] = useState(null);
+  const [termCount, setTermCount] = useState(0);
+  const termsOnScreen = useCallback(() => {
+    const root = typeof document !== 'undefined' ? document.querySelector('[data-tour="quiz-hold"]') : null;
+    if (!root) return [];
+    const seen = new Set();
+    const out = [];
+    for (const el of root.querySelectorAll('button, label, [role="radio"]')) {
+      const raw = el.textContent.replace(/\s+/g, ' ').trim();
+      const value = LIFE_STAGE_VALUE_BY_LABEL[raw] || raw;
+      const hit = defineOption(value, step?.type) || (step?.type === 'price' && defineOption(value, 'largePurchase'));
+      const term = hit ? (hit.term === value ? raw : hit.term) : '';
+      if (hit && !seen.has(term)) { seen.add(term); out.push({ term, definition: hit.definition }); }
+    }
+    return out;
+  }, [step?.type]);
+  // Count the defined terms once this question is on screen, so the button only shows when it helps.
+  useEffect(() => {
+    setTermList(null);
+    if (!HOLD_TIP_TYPES.has(step?.type)) { setTermCount(0); return undefined; }
+    const t = setTimeout(() => setTermCount(termsOnScreen().length), 60);
+    return () => clearTimeout(t);
+  }, [step?.id, step?.type, termsOnScreen]);
   const isLast = currentIndex === visibleSteps.length - 1;
   // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
   useEffect(() => {
@@ -1037,7 +1062,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       lead={onboarding && obPart === 'core' && currentIndex === 0 ? <MedicalNote href={MEDICAL_TERMS_URL} className="ip-med-note" /> : null}
       hint={!ready ? missingAnswerHint(step.id, intake) : null}
       cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
-      below={phase === 'optional' && !isLast ? <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button> : null}
+      below={(termCount > 0 || (phase === 'optional' && !isLast)) ? <>
+        {termCount > 0 && <button type="button" className="aq-link aq-terms" onClick={() => setTermList(termsOnScreen())}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>What these words mean</button>}
+        {phase === 'optional' && !isLast && <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button>}
+      </> : null}
       // No swipe or scroll-past-the-end to change question (focus group, Nov 9: a small
       // swipe while scrolling the choices jumped to the next step). Continue and Back only.
       rootProps={{}}
@@ -1048,6 +1076,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {/* Nov 14: the quiz intro belongs to the first quiz only, not to "Answer the safety questions" after it. */}
         {introEnabled && onboarding && obPart === 'core' && currentIndex === 0 && <QuizWelcome />}
         {glossary && <GlossaryCard term={glossary.term} definition={glossary.definition} onClose={() => setGlossary(null)} />}
+        {termList && termList.length > 0 && <GlossaryList items={termList} onClose={() => setTermList(null)} />}
       </>}
     >
       {multi && helperShort && <p className="aq-caption">Pick all that apply</p>}

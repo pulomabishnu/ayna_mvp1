@@ -195,6 +195,26 @@ export function Rows({ options, value, onChange, labels = {}, label }) {
   );
 }
 
+/** Every term on this question with its plain meaning, from the visible info button (focus group, Angelina, Nov 11). */
+export function GlossaryList({ items, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return (
+    <div className="aq-sheet-scrim" onClick={onClose}>
+      <div className="aq-sheet aq-sheet--list" role="dialog" aria-label="What these words mean" onClick={(e) => e.stopPropagation()}>
+        <h2 className="aq-sheet-title">What these words mean</h2>
+        <dl className="aq-sheet-body aq-gloss-list">
+          {items.map((it) => <div key={it.term}><dt>{it.term}</dt><dd>{it.definition}</dd></div>)}
+        </dl>
+        <button type="button" className="aq-sheet-close" onClick={onClose}>Got it</button>
+      </div>
+    </div>
+  );
+}
+
 /** Press-and-hold definition card (same content both surfaces). */
 export function GlossaryCard({ term, definition, onClose }) {
   useEffect(() => {
