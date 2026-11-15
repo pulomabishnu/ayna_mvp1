@@ -117,7 +117,9 @@ function cycleFor(resolved, today, days) {
   const lengths = starts.slice(1)
     .map((d, i) => ({ start: starts[i], days: Math.round((toTime(d) - toTime(starts[i])) / DAY) }))
     .filter((c) => c.days >= 15 && c.days <= 60)
-    .slice(-6);
+    // Founder call, Nov 14 (Eliz): the dial said "of about 28" while the next-period estimate used 31.
+    // Both now average the same last 4 cycles (insights.js cycleSection), so they agree.
+    .slice(-4);
   const lastStart = starts[starts.length - 1] || null;
   const cycleDay = lastStart ? Math.round((end - toTime(lastStart)) / DAY) + 1 : null;
   // Days of flow in a row from the last start (her own logs), for the ring.
