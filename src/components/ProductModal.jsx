@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import IngredientCheck from './pdp/IngredientCheck.jsx';
 import BrandStrip from './ui/ay/BrandStrip.jsx';
 import { PlateName } from './cards/CardBits.jsx';
 import { useResearchState } from '../data/researchLoader';
@@ -882,6 +883,7 @@ export default function ProductModal({
             <ProductVideos product={product} />
             {/* Founder, Nov 11: safety right under the four sections. */}
             <div className="ay-pdp-safetyafter">{warningLine}</div>
+            <IngredientCheck product={product} />
           </div>
         </div>
 

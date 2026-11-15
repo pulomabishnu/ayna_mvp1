@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import IngredientCheck from '../../components/pdp/IngredientCheck.jsx';
 import { createPortal } from 'react-dom';
 import { useSheetDrag } from '../hooks/useSheetDrag.js';
 import ProductImage from './ProductImage.jsx';
@@ -147,6 +148,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <ProductEvidence key={product.id} product={product} glance={glance} loading={!loaded} swipeTabs syncHash={false} safetyLead={topWarning} fit={{ details, hasProfile: Boolean(details && details.matchStatus !== 'no-profile'), onShowWhy }} askSlot={onAsk ? <ProductAsk productName={name} onAsk={onAsk} hasProfile={Boolean(details && details.matchStatus !== 'no-profile')} /> : null} endCta={buyLink('is-compact')} />
             {/* Founder, Nov 11: safety right under the four sections. */}
             <SafetyLine lines={safetyLineFor(product, glance, undefined, { answers: answers || (pregnancyFirst ? { lifeStageSelections: ['pregnant'] } : null) }).lines} />
+            <IngredientCheck product={product} />
             {renderFull && <button type="button" className="ay-psheet__more" onClick={() => setFull(true)}>Read more <span aria-hidden="true">→</span><span className="sr-only"> about {name} on its full page</span></button>}
           </div>
         </>)}

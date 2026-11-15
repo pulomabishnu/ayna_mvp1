@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import IngredientCheck from '../../components/pdp/IngredientCheck.jsx';
 import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
 import { trackApp } from '../utils/appAnalytics.js';
 import { productIdentity, countBuyClick } from '../../utils/productEventProps.js';
@@ -570,6 +571,7 @@ export default function ProductDetailScreen({
           {/* Founder, Nov 11: safety sits right under ayna summary, Clinical opinion, Scientific
               literature and Reviews, not above them. Always visible: her IUD first, TSS for cups. */}
           <div className="ay-pdp-safetyafter"><SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} /></div>
+          <IngredientCheck product={product} />
 
           {/* Team direction 9: the first screen is Buy, Save and the match row.
               Routine, variants, "Not for me", connections and other stores sit here. */}

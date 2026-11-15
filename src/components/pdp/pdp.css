@@ -3083,3 +3083,11 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count,
 #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count * { background: #3e2723 !important; color: #ffedac !important; border-color: #3e2723 !important; font-size: 13px !important; }
 #pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4#pdp-v4 .ay-gal .ay-gal__count * { background: transparent !important; }
+
+/* Ingredient check (UCLA 10/1): what the label says it is free of. */
+.ay-ingcheck { margin: 16px 0; padding: 14px 16px; border: 1.5px solid #3e2723; border-radius: 18px; color: #3e2723; }
+.ay-ingcheck h3 { margin: 0 0 6px; font-family: inherit; font-size: 17px; font-weight: 700; line-height: 1.25; color: inherit; }
+.ay-ingcheck p { margin: 4px 0 0; font-family: inherit; font-size: 15px; line-height: 1.4; color: inherit; }
+.ay-ingcheck .ay-ingcheck__fine { font-size: 13px; }
+:is([data-theme*='dark']) .ay-ingcheck { border-color: #ffedac; color: #ffedac; }
+html body .ayna-mobile:is(#ic1, .ayna-mobile):is(#ic2, .ayna-mobile):is(#ic3, .ayna-mobile):is(#ic4, .ayna-mobile) .ay-pdp-passport > .ay-ingcheck { margin: 16px var(--d-gutter, 20px) !important; }
