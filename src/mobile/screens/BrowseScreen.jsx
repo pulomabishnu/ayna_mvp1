@@ -480,6 +480,17 @@ export default function BrowseScreen({
     </p>
   );
   const filterKey = `${searchTerm}|${personalized}|${activeGroup}|${JSON.stringify(filters)}|${sortBy}`;
+  const searchGroups = (() => {
+    if (!searchTermRaw || filters.category !== 'all' || servicesMode || !filtered.length) return null;
+    const groups = new Map();
+    for (const p of filtered) {
+      const t = typeOf(p.category) || 'other';
+      if (!groups.has(t)) groups.set(t, []);
+      groups.get(t).push(p);
+    }
+    if (groups.size < 2) return null;
+    return [...groups.entries()].map(([t, items]) => [t, sentenceCase(CATEGORY_LABELS[t] || t.replaceAll('-', ' ')), items]);
+  })();
 
   useEffect(() => {
     // Nothing to fetch, and nothing to reset either: the render logic below
@@ -676,7 +687,16 @@ export default function BrowseScreen({
                 </p>
               )}
               {filtered.length > 0 && moreResults.length > 0 && <h2 className="ay-shop-results-label">Your matches</h2>}
-              {filtered.length > 0 && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {/* Vivian, focus group 10/1: "group search results by product type". With a search and no type
+                  picked, results come in groups (4 each, best first) with "See all" setting that type. */}
+              {searchGroups && <div className="ay-shop-groups">{searchGroups.map(([type, label, items]) => (
+                <section key={type} className="ay-shop-group" aria-labelledby={`ay-sg-${type}`}>
+                  <h2 id={`ay-sg-${type}`} className="ay-shop-results-label">{label} <small>{items.length}</small></h2>
+                  <ProductGrid key={`${filterKey}|${type}`} products={items.slice(0, 4)} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />
+                  {items.length > 4 && <button type="button" className="ay-shop-group__all" onClick={() => setFilters((current) => ({ ...current, category: type }))}>See all {items.length} {label.toLowerCase()}</button>}
+                </section>
+              ))}</div>}
+              {filtered.length > 0 && !searchGroups && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
                 <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />

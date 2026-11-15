@@ -188,3 +188,10 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 .ayna-mobile .ay-rg__move button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 .ayna-mobile .ay-rg__move button:disabled { visibility: hidden; }
 .ayna-mobile .ay-rg__move svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Shop search grouped by product type (Vivian 10/1). */
+.ayna-mobile .ay-shop-group + .ay-shop-group { margin-top: 22px; padding-top: 16px; border-top: 1.5px solid #3e2723; }
+.ayna-mobile .ay-shop-group .ay-shop-results-label small { font-size: 13px; font-weight: 600; margin-left: 4px; }
+.ayna-mobile .ay-shop-group__all { display: block; min-height: 44px; margin: 8px 20px 0; padding: 0 18px; border: 1.5px solid #3e2723; border-radius: 999px; background: transparent; color: #3e2723; font: 600 15px/1 'Figtree', system-ui, sans-serif; cursor: pointer; }
+.ayna-mobile[data-theme*='dark'] .ay-shop-group + .ay-shop-group { border-top-color: #ffedac; }
+.ayna-mobile[data-theme*='dark'] .ay-shop-group__all { border-color: #ffedac; color: #ffedac; }
