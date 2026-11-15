@@ -51,6 +51,8 @@ describe('health source catalog', () => {
     expect(statusLine({ status: 'paused' }).text).toBe('Paused');
     expect(statusLine({ status: 'needs_reauth' }).text).toBe('Reconnect needed');
     expect(statusLine({ status: 'connected', last_synced_at: null }).text).toBe('Not synced yet');
+    // Apple Health / Health Connect with nothing read (e.g. "Don't Allow") is not shown as working.
+    expect(statusLine({ status: 'connected', platform: 'ios', last_synced_at: null })).toEqual({ text: 'No data yet. Check permissions', tone: 'warn' });
     expect(statusLine({ status: 'disconnected' })).toBeNull();
   });
 });

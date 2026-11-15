@@ -231,5 +231,8 @@ export function statusLine(connection, now = Date.now()) {
   if (connection.status === 'paused') return { text: 'Paused', tone: 'warn' };
   if (connection.status === 'needs_reauth') return { text: 'Reconnect needed', tone: 'alert' };
   if (connection.status === 'error') return { text: "Couldn't sync", tone: 'alert' };
+  // Backlog Nov 14 (FG9: "it said Synced after I tapped Don't Allow"): connected but nothing read yet is
+  // not shown as working. iOS never says a read was refused, so no data is the only signal.
+  if (!connection.last_synced_at) return { text: connection.platform === 'ios' || connection.platform === 'android' ? 'No data yet. Check permissions' : 'Not synced yet', tone: 'warn' };
   return { text: formatSynced(connection.last_synced_at, now), tone: 'on' };
 }
