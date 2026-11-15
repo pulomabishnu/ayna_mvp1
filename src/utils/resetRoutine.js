@@ -7,7 +7,9 @@ import { clearCachedLlmRecommendations } from './fetchLlmRecommendations.js';
  * routine plan, which time of day each product sits in, and routine
  * follow-ups. Saved products, posts and check-ins are untouched.
  */
-export const ECOSYSTEM_RESET_COPY = 'This resets your whole ecosystem: your products, your ayna picks, your routine and your quiz answers. Your saved products, posts and check-ins stay.';
+// Founder decision (Ameera, Nov 15): redoing the quiz keeps her products and adds new matches (the
+// default, "Edit my answers"); starting fresh is this separate, clearly destructive step.
+export const ECOSYSTEM_RESET_COPY = 'This deletes your products, your ayna picks, your routine and your quiz answers, so you can start over. Your saved products, posts and check-ins stay. This can\u2019t be undone. To keep your products and just add new matches, use Edit my answers instead.';
 
 export function resetRoutineData(storage = globalThis.localStorage) {
   try { replaceRoutinePrefs({}, storage); } catch { /* storage blocked */ }
