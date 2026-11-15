@@ -496,3 +496,9 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts { gap: 6px !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts__row { margin: 0 !important; padding: 0 !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp2-opts :is(dt, dd) { padding: 0 !important; }
+
+/* Eliz, founder call Nov 14: "product images in the app are too small" (the photo was a 104px
+   thumbnail). The photo leads the page, full width on its white plate; name and price sit under it. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { flex-direction: column !important; align-items: stretch !important; gap: 14px; padding: 12px 12px 16px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero { width: min(100%, 280px) !important; max-width: none !important; margin: 0 auto !important; border-radius: 18px; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { padding: 0 4px !important; }

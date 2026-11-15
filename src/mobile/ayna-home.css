@@ -229,3 +229,5 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ayna-bottom-nav.is-4-tabs { grid-t
 /* The full care card on Home: no "Today" label (Nov 12). */
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-care-full { margin: 8px 0 16px !important; padding: 0 !important; }
 .ayna-mobile:is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile):is(#ds-a, .ayna-mobile) .ay-homescreen .ay-today__list.is-care-full .ay-today__kicker { display: none !important; }
+/* Eliz 11/14 (images too small): the quick-look sheet's photo a size up. */
+.ayna-mobile.ayna-mobile .ay-psheet__img { width: 160px; height: 160px; }
