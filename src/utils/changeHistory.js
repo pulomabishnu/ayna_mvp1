@@ -15,6 +15,8 @@ export function readChanges(storage = globalThis.localStorage) {
 export function addChange(diff, { storage = globalThis.localStorage, now = new Date() } = {}) {
   if (!diff || diff.level === 0) return null;
   const { after, ...rest } = diff; // the full new snapshot isn't needed to replay
+  // Her answers themselves (medicines, conditions) are never kept in the history: only which part changed.
+  rest.profile = (rest.profile || []).map((f) => ({ label: f.label, count: (f.added?.length || 0) + (f.removed?.length || 0) }));
   const entry = { id: `c_${now.getTime().toString(36)}`, at: now.toISOString(), source: diff.source, level: diff.level, lines: diffLines(diff), diff: rest, seen: diff.level < 3 };
   const list = [entry, ...readChanges(storage)].slice(0, MAX);
   try { storage?.setItem(CHANGES_KEY, JSON.stringify(list)); } catch { return null; }

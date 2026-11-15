@@ -14,17 +14,18 @@ import './update-recap.css';
  * with nothing to say is never shown. Interactive: open a product, Add to routine, Not for me,
  * Undo the change, see all matches, see the change history. No auto-advance, so she reads at her pace.
  */
-const SURFACE = { intro: 'is-espresso', needs: 'is-pink', top: 'is-butter', added: 'is-butter', moved: 'is-pink', removed: 'is-butter', done: 'is-espresso' };
+const SURFACE = { profile: 'is-butter', try: 'is-pink', intro: 'is-espresso', needs: 'is-pink', top: 'is-butter', added: 'is-butter', moved: 'is-pink', removed: 'is-butter', done: 'is-espresso' };
 
 function Plate({ product }) {
   return <span className="ay-ur-plate"><ProductTileImage product={product} alt="" letterNode={<span aria-hidden="true">{(product?.brand || product?.name || '?').slice(0, 1)}</span>} /></span>;
 }
 
-export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenProduct, onAdd, inEcosystem = () => false, onNotForMe, onUndo = null, onSeeAll, onHistory }) {
+export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenProduct, onAdd, inEcosystem = () => false, onNotForMe, onUndo = null, onSeeAll, onHistory, onAddGoal = null, goalTipFor = () => null }) {
   const slides = useMemo(() => (diff ? recapSlides(diff) : []), [diff]);
   const [index, setIndex] = useState(0);
   const [undone, setUndone] = useState(false);
   const [hidden, setHidden] = useState({});
+  const [goalState, setGoalState] = useState(null); // 'added' | 'dismissed' | 'learn'
   const ref = useRef(null);
   const last = index === slides.length - 1;
   const next = () => { haptic('selection'); setIndex((i) => Math.min(slides.length - 1, i + 1)); };
@@ -70,12 +71,29 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
             <p className="ay-ur-kicker is-small">{SOURCE_LABEL[diff.source] || 'Your profile changed'}</p>
             <p className="ay-ur-big">Your ayna, updated</p>
             <dl className="ay-ur-stats">
+              {diff.profile?.length > 0 && <div><dt>Answers updated</dt><dd>{diff.profile.length}</dd></div>}
               {added > 0 && <div><dt>New matches</dt><dd>{added}</dd></div>}
               {needsChanged > 0 && <div><dt>Needs changed</dt><dd>{needsChanged}</dd></div>}
               {diff.moved.length > 0 && <div><dt>Moved</dt><dd>{diff.moved.length}</dd></div>}
               {diff.matchesRemoved.length > 0 && <div><dt>Out of your top 6</dt><dd>{diff.matchesRemoved.length}</dd></div>}
             </dl>
             
+          </>}
+          {s.kind === 'profile' && <>
+            <p className="ay-ur-kicker">Your health profile was updated</p>
+            <ul className="ay-ur-fields">{s.fields.map((f) => <li key={f.label}><b>{f.label}</b>{f.added ? <>{f.added.length > 0 && <span>Added: {f.added.slice(0, 3).join(', ')}{f.added.length > 3 ? '…' : ''}</span>}{f.removed.length > 0 && <span>Removed: {f.removed.slice(0, 3).join(', ')}{f.removed.length > 3 ? '…' : ''}</span>}</> : <span>{f.count} {f.count === 1 ? 'change' : 'changes'}</span>}</li>)}</ul>
+            <p className="ay-ur-sub">Saved to your profile. Change it anytime in Profile › Your quiz answers.</p>
+          </>}
+          {s.kind === 'try' && <>
+            <p className="ay-ur-kicker">Something small to try</p>
+            <p className="ay-ur-big is-name">{s.goal.text}</p>
+            <p className="ay-ur-sub">For {String(s.goal.forNeed || '').toLowerCase()}. A suggestion, not medical advice. Nothing is added unless you choose.</p>
+            {goalState === 'learn' && (() => { const t = goalTipFor(s.goal); return t ? <p className="ay-ur-sub">{t.text}{t.source ? <> <a href={t.source.url} target="_blank" rel="noopener noreferrer" onClick={stop}>{t.source.label}</a></> : null}</p> : <p className="ay-ur-sub">No more detail for this one yet.</p>; })()}
+            {goalState === 'added' ? <p className="ay-ur-pct">Added to your goals</p> : goalState === 'dismissed' ? <p className="ay-ur-sub">Okay, not suggested again here.</p> : <span className="ay-ur-acts is-center">
+              {onAddGoal && <button type="button" className="ay-ur-btn is-solid" onClick={(e) => { stop(e); haptic('success'); onAddGoal(s.goal); setGoalState('added'); }}>Add to my goals</button>}
+              <button type="button" className="ay-ur-btn" onClick={(e) => { stop(e); setGoalState('dismissed'); }}>Not interested</button>
+              {goalState !== 'learn' && <button type="button" className="ay-ur-link" onClick={(e) => { stop(e); setGoalState('learn'); }}>Learn more</button>}
+            </span>}
           </>}
           {s.kind === 'needs' && <>
             <p className="ay-ur-kicker">What ayna covers now</p>

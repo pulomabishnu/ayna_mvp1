@@ -49,3 +49,7 @@
 .ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-kicker.is-small { font: 700 15px/1.3 var(--s-ui); letter-spacing: .02em; opacity: .9; }
 .ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-card.is-top { align-items: center; text-align: center; }
 .ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-card.is-top .ay-ur-kicker { align-self: flex-start; text-align: left; }
+.ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-fields { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-fields li { display: grid; gap: 4px; }
+.ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-fields b { font: 700 16px/1.3 var(--s-ui); color: var(--s-fg); }
+.ay-ur.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-ur-fields span { font: 500 15px/1.4 var(--s-ui); color: var(--s-fg); overflow-wrap: anywhere; }

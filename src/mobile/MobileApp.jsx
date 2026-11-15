@@ -167,7 +167,9 @@ import { countJourneyStep } from '../utils/journeyStep.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 import { proDoor, retakeDoor } from '../pro/proDoor.js';
-import { diffPersonalization, snapshotOf, toastFor, diffLines } from '../matching/personalizationDiff.js';
+import { diffPersonalization, snapshotOf, toastFor, diffLines, profileChanges, goalSuggestion } from '../matching/personalizationDiff.js';
+import { GOAL_PRESETS, readGoals as readMyGoals, addGoal as addMyGoal, goalTip } from '../health/myGoals.js';
+import { TODAY_HELP } from '../health/todayHelp.js';
 import { addChange } from '../utils/changeHistory.js';
 import { shownMatchPercent } from '../utils/matchDisplay.js';
 import UpdateRecap from '../components/recap/UpdateRecap.jsx';
@@ -1107,11 +1109,20 @@ export default function MobileApp() {
     if (ref.owner !== owner || !ref.answers || !answers || !arm) { committedRef.current = { owner, answers }; return undefined; }
     if (answersKey(ref.answers) === answersKey(answers)) return undefined;
     const before = ref.answers;
+    // Honest state while it works (founder brief Nov 15): saved, now updating; the result follows.
+    if (arm.source !== 'undo') toast('Saved. Updating your matches…');
     // Wait a beat: a failed save rolls back, and then nothing changed.
     const t = window.setTimeout(() => {
       committedRef.current = { owner, answers };
       changeArmRef.current = null;
-      const d = diffPersonalization(snapshotFor(before), snapshotFor(answers), { source: arm.source === 'undo' ? 'answer' : arm.source });
+      const sb = snapshotFor(before);
+      const sa = snapshotFor(answers);
+      let profile = [];
+      try { profile = profileChanges(reconstructIntakeFromSnapshot(before.fullHealthIntake || before), reconstructIntakeFromSnapshot(answers.fullHealthIntake || answers)); } catch { /* answers in an old shape */ }
+      const needsAdded = sa.needs.filter((n) => !sb.needs.some((m) => m.id === n.id));
+      let goal = null;
+      try { goal = goalSuggestion(needsAdded, GOAL_PRESETS, readMyGoals()); } catch { /* goals unavailable */ }
+      const d = diffPersonalization(sb, sa, { source: arm.source === 'undo' ? 'answer' : arm.source, profile, goal });
       if (arm.source === 'undo') { toast('Change undone. Your matches are back to before.'); return; }
       addChange(d);
       const products = [...(d.newTop ? [d.newTop] : []), ...d.matchesAdded.filter((p) => p.id !== d.newTop?.id)].map((p) => getProductById(p.id)).filter(Boolean);
@@ -1986,6 +1997,8 @@ export default function MobileApp() {
         onUndo={recap.undo || null}
         onSeeAll={() => { setRecap(null); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
         onHistory={() => { setRecap(null); setChangesOpen(true); }}
+        onAddGoal={(g) => { addMyGoal({ text: g.text, topic: g.topic }); }}
+        goalTipFor={(g) => { const help = TODAY_HELP[g.topic]; const text = goalTip(g, help); return text ? { text, source: help?.sources?.[0] || null } : null; }}
       />}
       {changesOpen && <ChangeHistory onClose={() => setChangesOpen(false)} onReplay={(e) => { setChangesOpen(false); setRecap({ diff: e.diff }); }} />}
       <UpdatePop

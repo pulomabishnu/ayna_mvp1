@@ -43,3 +43,22 @@ describe('UpdateRecap', () => {
     expect(onClose).toHaveBeenCalled();
   });
 });
+
+describe('UpdateRecap: profile and something to try', () => {
+  it('shows what changed and adds a goal only when she taps it', async () => {
+    const d = diffPersonalization(before, after, { profile: [{ label: 'Life stage', added: ['Perimenopause'], removed: [] }], goal: { topic: 'pain', text: 'Stretch for 10 minutes', forNeed: 'Cramps' } });
+    const onAddGoal = vi.fn();
+    await act(async () => root.render(<UpdateRecap diff={d} onClose={() => {}} onAddGoal={onAddGoal} goalTipFor={() => ({ text: 'Gentle movement may ease period pain.', source: { label: 'MedlinePlus', url: 'https://medlineplus.gov/' } })} />));
+    const dlg = () => document.querySelector('[role="dialog"]');
+    await act(async () => btn('Next').click());
+    expect(dlg().textContent).toContain('Your health profile was updated');
+    expect(dlg().textContent).toContain('Perimenopause');
+    while (!dlg().textContent.includes('Something small to try')) await act(async () => btn('Next').click());
+    expect(onAddGoal).not.toHaveBeenCalled();
+    await act(async () => btn('Learn more').click());
+    expect(dlg().textContent).toContain('Gentle movement');
+    await act(async () => btn('Add to my goals').click());
+    expect(onAddGoal).toHaveBeenCalledWith(expect.objectContaining({ text: 'Stretch for 10 minutes' }));
+    expect(dlg().textContent).toContain('Added to your goals');
+  });
+});

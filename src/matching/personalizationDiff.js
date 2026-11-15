@@ -13,6 +13,46 @@
  */
 const TOP = 6; // what she sees as "your matches" on Home and Explore
 
+/** The answers people recognise, with the word ayna uses for each (her own values are shown back to her, never stored in the history). */
+export const PROFILE_FIELDS = [
+  ['lifeStageSelections', 'Life stage'],
+  ['supportSelections', 'What you want help with'],
+  ['vasomotorTimingSelections', 'When hot flashes happen'],
+  ['diagnosisSelections', 'Conditions you shared'],
+  ['allergySelections', 'Sensitivities'],
+  ['allergyItems', 'Sensitivities'],
+  ['currentMedicationItems', 'Medicines and supplements'],
+  ['avoidIngredients', 'Ingredients to avoid'],
+  ['preferredFormats', 'Product types you like'],
+  ['priceRange', 'Budget'],
+];
+const asList = (v) => (Array.isArray(v) ? v.map((x) => (typeof x === 'string' ? x : x?.name || x?.label || '')).filter(Boolean) : v ? [String(v)] : []);
+
+/** What she changed in her answers, field by field (added / removed values). */
+export function profileChanges(before = {}, after = {}) {
+  const out = [];
+  for (const [key, label] of PROFILE_FIELDS) {
+    const b = asList(before?.[key]);
+    const a = asList(after?.[key]);
+    const added = a.filter((x) => !b.includes(x));
+    const removed = b.filter((x) => !a.includes(x));
+    if (!added.length && !removed.length) continue;
+    const prev = out.find((o) => o.label === label);
+    if (prev) { prev.added.push(...added); prev.removed.push(...removed); } else out.push({ label, added, removed });
+  }
+  return out;
+}
+
+/** One small thing to try for a need she just added: a preset goal (with its .gov tip), never auto-added. */
+export function goalSuggestion(needsAdded = [], presets = [], existingGoals = []) {
+  const have = new Set(existingGoals.map((g) => String(g.text || '').toLowerCase()));
+  for (const n of needsAdded) {
+    const p = presets.find((x) => x.needId === n.id && !have.has(x.text.toLowerCase()));
+    if (p) return { ...p, forNeed: n.label };
+  }
+  return null;
+}
+
 export function snapshotOf({ needs = [], matches = [] } = {}) {
   return {
     needs: needs.filter((n) => n?.id).map((n) => ({ id: n.id, label: n.label || n.phrase || n.id })),
@@ -20,7 +60,7 @@ export function snapshotOf({ needs = [], matches = [] } = {}) {
   };
 }
 
-export function diffPersonalization(before, after, { source = 'answer', top = TOP } = {}) {
+export function diffPersonalization(before, after, { source = 'answer', top = TOP, profile = [], goal = null } = {}) {
   const b = snapshotOf(before || {});
   const a = snapshotOf(after || {});
   const bNeeds = new Map(b.needs.map((n) => [n.id, n]));
@@ -48,7 +88,7 @@ export function diffPersonalization(before, after, { source = 'answer', top = TO
   if (newTop || matchesAdded.length >= 2 || matchesRemoved.length >= 2) level = 2;
   if (needsAdded.length || needsRemoved.length || matchesAdded.length >= 3 || (source === 'quiz' && (newTop || matchesAdded.length))) level = 3;
 
-  return { source, level, needsAdded, needsRemoved, matchesAdded, matchesRemoved, moved, percentChanges, newTop, changes, after: a };
+  return { source, level, needsAdded, needsRemoved, matchesAdded, matchesRemoved, moved, percentChanges, newTop, changes, after: a, profile, goal };
 }
 
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -76,10 +116,11 @@ export function toastFor(d) {
 
 /**
  * The full-screen recap's slides, built only from the diff (no slide for something that didn't change).
- * kinds: intro, needs, top, added, moved, removed, done
+ * kinds: intro, profile, needs, top, added, moved, removed, try, done
  */
 export function recapSlides(d) {
   const slides = [{ kind: 'intro' }];
+  if (d.profile?.length) slides.push({ kind: 'profile', fields: d.profile.slice(0, 4) });
   if (d.needsAdded.length || d.needsRemoved.length) slides.push({ kind: 'needs', added: d.needsAdded, removed: d.needsRemoved });
   if (d.newTop) slides.push({ kind: 'top', product: d.newTop, was: d.newTop.was });
   const added = d.matchesAdded.filter((p) => !(d.newTop && p.id === d.newTop.id));
@@ -87,6 +128,7 @@ export function recapSlides(d) {
   const moves = d.moved.filter((m) => !(d.newTop && m.id === d.newTop.id)).slice(0, 4);
   if (moves.length || d.percentChanges.length) slides.push({ kind: 'moved', moves, percents: d.percentChanges.slice(0, 4) });
   if (d.matchesRemoved.length) slides.push({ kind: 'removed', products: d.matchesRemoved });
+  if (d.goal) slides.push({ kind: 'try', goal: d.goal });
   slides.push({ kind: 'done' });
   return slides;
 }

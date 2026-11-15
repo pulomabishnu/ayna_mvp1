@@ -4,7 +4,8 @@ import { createPortal } from 'react-dom';
 import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthComing, monthKey, periodDaySet, shiftMonth } from '../../health/monthCalendar.js';
 import './metric-sheet.css';
 import './month-sheet.css';
-import { LOG_SAVED_EVENT, readLog, saveLogEntry } from '../../health/dailyLog.js';
+import { LOG_SAVED_EVENT, readLog, saveLogEntry, addDays } from '../../health/dailyLog.js';
+import { cyclePosition } from '../../components/rundown/buildRundown.js';
 import { topSymptom, topSymptomLine } from '../../health/topSymptom.js';
 import { announceLogChange } from '../../health/todayHelp.js';
 import { haptic } from '../../utils/haptics.js';
@@ -83,11 +84,20 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
     window.clearTimeout(noteTimer.current);
     if (ok) noteTimer.current = window.setTimeout(() => setSaveNote(''), 1800);
   };
+  // A period log can move her next-period estimate: say exactly how (founder brief Nov 15, level 2).
+  const nextDate = () => { try { const p = cyclePosition(readLog(), today); return p ? addDays(today, p.daysToNext) : null; } catch { return null; } };
   const setFlow = (v) => {
     if (!canLogPicked) return;
     const want = pickedFlow === v ? null : v;
+    const was = nextDate();
     saveLogEntry(picked, { flow: want });
     confirm('flow', want);
+    const now = nextDate();
+    if (now && now !== was) {
+      const f = (d) => new Date(`${d}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      setSaveNote(`Saved. Next period estimate: about ${f(now)}${was ? ` (was ${f(was)})` : ''}`);
+      window.clearTimeout(noteTimer.current);
+    }
     const next = readLog();
     setOwnLog(next);
     onSaved?.(next);
@@ -169,7 +179,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
                 </div>
               </div>
             ))}
-            {canLogPicked && <p className={`ay-mcal__saved${saveNote && saveNote !== 'Saved' ? ' is-error' : ''}`} role="status">{saveNote}</p>}
+            {canLogPicked && <p className={`ay-mcal__saved${saveNote.startsWith("Couldn't") ? ' is-error' : ''}`} role="status">{saveNote}</p>}
             {canLogPicked && <PhotoLog day={picked} dayLabel={fmt(picked, { month: 'long', day: 'numeric' })} />}
           </div>
         )}

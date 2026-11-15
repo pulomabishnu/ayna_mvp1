@@ -73,3 +73,35 @@ describe('change history', () => {
     expect(list[0].at > list[1].at).toBe(true);
   });
 });
+
+import { profileChanges, goalSuggestion } from './personalizationDiff.js';
+
+describe('profile changes and goal suggestion', () => {
+  it('lists what she changed, field by field', () => {
+    const p = profileChanges(
+      { lifeStageSelections: ['Regular periods'], currentMedicationItems: ['Iron'], priceRange: ['$'] },
+      { lifeStageSelections: ['Perimenopause'], currentMedicationItems: ['Iron', 'Vitamin D'], priceRange: ['$'] },
+    );
+    expect(p).toEqual([
+      { label: 'Life stage', added: ['Perimenopause'], removed: ['Regular periods'] },
+      { label: 'Medicines and supplements', added: ['Vitamin D'], removed: [] },
+    ]);
+    expect(profileChanges({ priceRange: ['$'] }, { priceRange: ['$'] })).toEqual([]);
+  });
+  it('suggests one preset for a need she just added, never one she already has', () => {
+    const presets = [{ topic: 'pain', text: 'Stretch for 10 minutes', needId: 'pain.menstrual_cramp', tip: 2 }];
+    expect(goalSuggestion([cramps], presets, [])).toMatchObject({ text: 'Stretch for 10 minutes', forNeed: 'Cramps' });
+    expect(goalSuggestion([cramps], presets, [{ text: 'stretch for 10 minutes' }])).toBeNull();
+    expect(goalSuggestion([sleep], presets, [])).toBeNull();
+  });
+  it('slides include profile and try only when present; history keeps no answer values', () => {
+    const after = { needs: [sleep, cramps], matches: base.matches };
+    const d = diffPersonalization(base, after, { profile: [{ label: 'Medicines and supplements', added: ['Vitamin D'], removed: [] }], goal: { text: 'Stretch for 10 minutes', forNeed: 'Cramps' } });
+    expect(recapSlides(d).map((s) => s.kind)).toEqual(['intro', 'profile', 'needs', 'try', 'done']);
+    const store = (() => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) }; })();
+    addChange(d, { storage: store });
+    const saved = JSON.stringify(readChanges(store));
+    expect(saved).not.toContain('Vitamin D');
+    expect(readChanges(store)[0].diff.profile).toEqual([{ label: 'Medicines and supplements', count: 1 }]);
+  });
+});
