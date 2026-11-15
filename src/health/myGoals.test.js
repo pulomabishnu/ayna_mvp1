@@ -10,7 +10,7 @@ describe('myGoals (her own goals)', () => {
     addGoal({ text: 'sleep 7 hours most nights' }, { storage: s });
     const g = readGoals(s);
     expect(g).toHaveLength(1);
-    expect(g[0]).toMatchObject({ topic: 'sleep', perWeek: 5 });
+    expect(g[0]).toMatchObject({ topic: 'sleep', perWeek: 7 }); // Nov 12: goals are daily tasks
   });
   it('a goal with no clear topic keeps none', () => { expect(topicFor('Drink more water')).toBe(null); });
   it('stops at five goals', () => {

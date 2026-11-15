@@ -109,7 +109,7 @@ export default function TodayPlan({
     window.addEventListener(GOALS_CHANGED_EVENT, on);
     return () => window.removeEventListener(GOALS_CHANGED_EVENT, on);
   }, []);
-  const [draft, setDraft] = useState({ text: '', perWeek: 5 });
+  const [draft, setDraft] = useState({ text: '', perWeek: 7 });
   const [goalOpen, setGoalOpen] = useState(null);
   // Founder, Nov 12 ("do we have to use boxes?"): two layouts to compare before picking one.
   //   'bento'    the tiles as they were
@@ -126,7 +126,7 @@ export default function TodayPlan({
     // A preset (or her words naming one) also tells the matcher, quietly, so her picks follow it.
     const preset = GOAL_PRESETS.find((x) => x.topic === (g.topic === undefined ? topicFor(g.text) : g.topic));
     if (preset && onAddGoal && !goalsAdded.includes(preset.needId)) onAddGoal(preset.needId, { quiet: true });
-    setDraft({ text: '', perWeek: 5 });
+    setDraft({ text: '', perWeek: 7 });
     // Founder, Nov 12 ("it should suggest products for your goal"): the new goal opens straight
     // to its tip and the products for it.
     const made = next.find((x) => !before.has(x.id));
@@ -226,11 +226,11 @@ export default function TodayPlan({
       {today && (() => {
         // Inspo ("Today's Progress"): one dark card, rings that fill toward her own target.
         const rows = goals.map((g) => ({ g, w: weekFor(g, log, today) }));
-        const onTrack = rows.filter((r) => r.w.met).length;
+        const doneToday = rows.filter((r) => r.w.doneToday).length;
         if (!rows.length) {
           return (
             <div className="ay-tp-goals is-empty is-compact">
-              <div className="ay-tp-goals__top"><div className="ay-tp-goals__head is-static"><b>Your goals</b><span>Pick one to track this week</span></div></div>
+              <div className="ay-tp-goals__top"><div className="ay-tp-goals__head is-static"><b>Your goals</b><span>Pick something small to do today</span></div></div>
               <div className="ay-tp-goals__presets">{GOAL_PRESETS.slice(0, 4).map((p) => <button key={p.topic} type="button" onClick={() => saveGoal({ text: p.text, topic: p.topic })}>{p.text}</button>)}<button type="button" className="is-own" onClick={() => setOpen('addgoal')}>+ Your own</button></div>
             </div>
           );
@@ -239,18 +239,18 @@ export default function TodayPlan({
           // Founder, Nov 12: smaller, no pill buttons; the header opens all her goals.
           <div className="ay-tp-goals is-compact">
             <div className="ay-tp-goals__top">
-              <button type="button" className="ay-tp-goals__head" onClick={() => setOpen('goals')} aria-label={`Your goals: ${onTrack} of ${rows.length} on track this week. Open your goals`}>
+              <button type="button" className="ay-tp-goals__head" onClick={() => setOpen('goals')} aria-label={`Your goals: ${doneToday} of ${rows.length} done today. Open your goals`}>
                 <b>Your goals<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></b>
-                <span>{onTrack} of {rows.length} on track this week</span>
+                <span>{doneToday} of {rows.length} done today</span>
               </button>
               {goals.length < MAX_GOALS && <button type="button" className="ay-tp-goals__add" onClick={() => setOpen('addgoal')}>+ Add</button>}
             </div>
             <ul className="ay-tp-goals__list">{rows.slice(0, 3).map(({ g, w }) => (
               <li key={g.id}>
                 <button type="button" className="ay-tp-goals__row" onClick={() => { setGoalOpen(g.id); setOpen('goal'); }}>
-                  <svg className="ay-tp-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
+                  <svg className="ay-tp-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / 7) * 94.25} 94.25` }} /></svg>
                   <b>{g.text}</b>
-                  <small>{w.count}/{w.of}</small>
+                  <small>{w.count} this week</small>
                 </button>
                 <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => { haptic(w.doneToday ? 'light' : 'success'); setGoals(toggleDone(g.id, today)); }}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
@@ -314,16 +314,12 @@ export default function TodayPlan({
       <Sheet open={open === 'addgoal'} onClose={() => setOpen(null)} labelledBy="ay-tp-add-h">
         <p className="ay-tp-sheet__kicker">Your goals</p>
         <h2 id="ay-tp-add-h">Set a goal</h2>
-        <p className="ay-tp-sheet__lead">Pick one or write your own. Tick it on the days you do it; for sleep, pain, energy, mood and PMS, good days in your log count too.</p>
+        <p className="ay-tp-sheet__lead">Pick a small thing to do, or write your own. Tick it on the days you do it.</p>
         <div className="ay-tp-goals__presets is-sheet">{GOAL_PRESETS.filter((p) => !goals.some((g) => g.topic === p.topic)).map((p) => (
           <button key={p.topic} type="button" className={draft.text === p.text ? 'is-on' : ''} onClick={() => setDraft((d) => ({ ...d, text: p.text, topic: p.topic }))}>{p.text}</button>
         ))}</div>
         <label className="ay-tp-goalform__label" htmlFor="ay-tp-goal-text">Or in your words</label>
-        <input id="ay-tp-goal-text" className="ay-tp-goalform__input" type="text" maxLength={60} placeholder="e.g. Walk 20 minutes" value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value, topic: undefined }))} />
-        <p className="ay-tp-goalform__label" id="ay-tp-goal-week">How many days a week?</p>
-        <div className="ay-tp-goalform__seg" role="radiogroup" aria-labelledby="ay-tp-goal-week">{[3, 5, 7].map((n) => (
-          <button key={n} type="button" role="radio" aria-checked={draft.perWeek === n} className={draft.perWeek === n ? 'is-on' : ''} onClick={() => setDraft((d) => ({ ...d, perWeek: n }))}>{n === 7 ? 'Every day' : `${n} days`}</button>
-        ))}</div>
+        <input id="ay-tp-goal-text" className="ay-tp-goalform__input" type="text" maxLength={60} placeholder="e.g. Drink a glass of water at lunch" value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value, topic: undefined }))} />
         <button type="button" className="ay-tp-goal ay-tp-goal--wide" disabled={!draft.text.trim() || goals.length >= MAX_GOALS} onClick={() => saveGoal(draft)}>{goals.length >= MAX_GOALS ? `Up to ${MAX_GOALS} goals` : 'Save goal'}</button>
       </Sheet>
 
@@ -337,8 +333,8 @@ export default function TodayPlan({
           return (
             <li key={g.id}>
               <div className="ay-tp-goallist__row">
-                <svg className="ay-tp-ring is-big" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / w.of) * 94.25} 94.25` }} /></svg>
-                <div><b>{g.text}</b><span>{w.count} of {w.of} days this week</span></div>
+                <svg className="ay-tp-ring is-big" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" className="is-bg" /><circle cx="18" cy="18" r="15" className="is-fg" style={{ strokeDasharray: `${Math.min(1, w.count / 7) * 94.25} 94.25` }} /></svg>
+                <div><b>{g.text}</b><span>{w.doneToday ? 'Done today' : 'Not yet today'} · {w.count} {w.count === 1 ? 'day' : 'days'} this week</span></div>
                 <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => { haptic(w.doneToday ? 'light' : 'success'); setGoals(toggleDone(g.id, today)); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
               </div>
               {help && <p className="ay-tp-goallist__tip">{help.tips[0]}</p>}

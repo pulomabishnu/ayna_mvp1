@@ -21,12 +21,15 @@ export const GOALS_KEY = 'ayna_my_goals_v1';
 export const GOALS_CHANGED_EVENT = 'ayna:goals-changed';
 export const MAX_GOALS = 5;
 
+// Run-through, Nov 12 (Puloma; Ameera decided): goals are small things to do, not outcomes on a
+// number of days a week ("walk 30 minutes today" gets done; "more energy, 5 days" doesn't).
+// Each keeps its topic, so good days in her log still count and the right products show.
 export const GOAL_PRESETS = [
-  { topic: 'sleep', text: 'Sleep better', needId: 'sleep.trouble' },
-  { topic: 'pain', text: 'Fewer cramp days', needId: 'pain.menstrual_cramp' },
-  { topic: 'energy', text: 'More energy', needId: 'energy.fatigue' },
-  { topic: 'mood', text: 'Better mood', needId: 'mood.low' },
-  { topic: 'pms', text: 'Easier PMS', needId: 'cycle.pms' },
+  { topic: 'energy', text: 'Walk 30 minutes', needId: 'energy.fatigue' },
+  { topic: 'sleep', text: 'Screens off 30 minutes before bed', needId: 'sleep.trouble' },
+  { topic: 'mood', text: '10 minutes outside', needId: 'mood.low' },
+  { topic: 'pain', text: 'Stretch for 10 minutes', needId: 'pain.menstrual_cramp' },
+  { topic: 'pms', text: 'Log how I feel today', needId: 'cycle.pms' },
 ];
 
 // Her own words still find a topic when they clearly name one ("sleep 7 hours" -> sleep).
@@ -61,7 +64,7 @@ function write(mutate, storage) {
 }
 
 /** Adds a goal; returns the list. Ignores blanks, duplicates (same words) and a 6th goal. */
-export function addGoal({ text, topic, perWeek = 5 } = {}, { storage = globalThis.localStorage, now = new Date() } = {}) {
+export function addGoal({ text, topic, perWeek = 7 } = {}, { storage = globalThis.localStorage, now = new Date() } = {}) {
   const clean = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 60);
   if (!clean) return readGoals(storage);
   const goals = readGoals(storage);
