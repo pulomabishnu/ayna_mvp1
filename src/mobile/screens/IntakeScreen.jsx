@@ -66,6 +66,7 @@ import {
   needsVasomotorTiming,
   toggleVasomotorTiming,
   UTI_FREQUENCY,
+  utiOptions,
   WARNING_BG,
   WARNING_BORDER,
   WARNING_BORDER_SOFT,
@@ -865,7 +866,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       const opts = step.type === 'flow' ? PERIOD_FLOW : PERIOD_PAIN;
       return <Rows label={step.title} options={opts} value={intake[key]} onChange={(v) => set(key, v)} />;
     }
-    if (step.type === 'utiFrequency') return <Rows label={step.title} options={UTI_FREQUENCY} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
+    if (step.type === 'utiFrequency') return <Rows label={step.title} options={utiOptions(intake)} value={intake.utiFrequency} onChange={(v) => set('utiFrequency', v)} />;
     if (step.type === 'ttcDuration') return <Rows label={step.title} options={ttcDurationOptions(intake)} value={intake.ttcDuration} onChange={(v) => set('ttcDuration', v)} />;
     if (step.type === 'postpartumTiming') return (
       <>

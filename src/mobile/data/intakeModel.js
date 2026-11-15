@@ -126,6 +126,10 @@ export function setPerimenopausePeriods(intake, value) {
 
 export const PERIOD_FLOW = ['Very light', 'Light', 'Moderate', 'Heavy', 'Very heavy', 'It varies', 'I do not currently get periods', 'Not sure'];
 export const PERIOD_PAIN = ['None', 'Mild', 'Moderate', 'Severe', 'Very severe', 'It varies', 'Not sure'];
+// Backlog Nov 14 (Ivy, M12): when she picked only frequent urination / urgency, the answers are about how
+// often, not about UTIs. They map to no UTI modifier, so the engine treats it as frequency, not infection.
+export const URINE_FREQUENCY = ['A few times a week', 'Most days', 'Every day', 'It wakes me up at night', 'Not sure'];
+export function utiOptions(intake) { return utiOnlyFrequency(intake) ? URINE_FREQUENCY : UTI_FREQUENCY; }
 export const UTI_FREQUENCY = ['This is the first time', 'Rarely', 'A few times a year', 'About monthly', 'More than once a month', 'I am experiencing them right now', 'Not sure'];
 export const POSTPARTUM_TIMING = ['Less than 6 weeks ago', '6 weeks–3 months ago', '3–6 months ago', '6–12 months ago', 'More than 12 months ago'];
 export const PREGNANCY_TRIMESTER = ['First trimester', 'Second trimester', 'Third trimester', 'Not sure', 'Prefer not to say'];
