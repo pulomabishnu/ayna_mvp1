@@ -15,6 +15,11 @@ const PUSH_NOTE = {
  * Compare", in a line, never a popup. Remind me later offers 3 days, a week
  * or a month and links back to this product from Saved.
  */
+// Backlog Nov 14 (Spoorthi: "where did my save go?"): the confirmation names where Saved lives.
+function savedWhere() {
+  try { return document.querySelector('.ayna-mobile') ? 'Profile › Saved' : 'My Ecosystem › Saved'; } catch { return 'Saved'; }
+}
+
 export function SaveFollowUp({ product, onCompare, onClose, inline = false }) {
   const [step, setStep] = useState(() => (reminderFor(product?.id) ? 'has' : 'idle'));
   const [result, setResult] = useState(null);
@@ -30,7 +35,7 @@ export function SaveFollowUp({ product, onCompare, onClose, inline = false }) {
     <div className={`ay-svf${inline ? ' is-inline' : ''}`} role="group" aria-label={`After saving ${product.name}`}>
       {step === 'idle' || step === 'has' ? (
         <p className="ay-svf__row">
-          <span className="ay-svf__lead">{inline ? 'Saved.' : `Saved ${product.name}.`}</span>
+          <span className="ay-svf__lead">{`Saved to ${savedWhere()}.`}</span>
           <button type="button" className="ay-svf__link" onClick={() => setStep('remind')}>{step === 'has' && existing ? `Reminder set for ${fmtRemindDay(existing.at)}. Change` : 'Remind me later'}</button>
           {onCompare && <><span aria-hidden="true" className="ay-svf__dot">·</span><button type="button" className="ay-svf__link" onClick={() => onCompare(product)}>Compare</button></>}
         </p>
