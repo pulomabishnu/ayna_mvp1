@@ -36,6 +36,7 @@ import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
 import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
+import DayPlan from '../../components/routine/DayPlan.jsx';
 import { useRoutines } from '../../components/routine/useRoutines.js';
 import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
 import { openTodayLog } from '../../components/today/openLog.js';
@@ -434,6 +435,8 @@ export default function EcosystemScreen({
         : <p className="eco-list__empty">Tap the heart on any product to save it here.</p>}
     </section>}
     {view === 'routine' && <>
+      {/* Founder brief Nov 15 (P1): her medications and activities as today's timeline, ticked off here. */}
+      <div className="eco-list"><DayPlan /></div>
       {/* Glance first: the day timeline with her products by when she uses them; the full plans fold away. */}
       <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} onShop={() => { const d = rootRef.current?.querySelector('.eco-more'); if (d) { d.open = true; rootRef.current.querySelector('.ayna-plan-shop, #ay-eco-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }} /></div>
       <details className="eco-more">

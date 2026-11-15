@@ -5,6 +5,7 @@ import MobileHeader from '../components/MobileHeader.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { getSelectedNeeds } from '../../data/products.js';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
+import DayPlan from '../../components/routine/DayPlan.jsx';
 import HealthDashboard from '../components/HealthDashboard.jsx';
 import { usesHormonalBC } from '../../health/weekInsights.js';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -64,6 +65,8 @@ export default function TodayScreen({
       <HealthDashboard view={homeTop ? 'data' : 'today'} authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined, community: rundownCommunity, onOpenPost: onOpenCommunityPost, onRundownFinish }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
       <div className="ay-today-routines">
+        {/* Founder brief Nov 15: today's medications and activities first, to tick off. */}
+        <DayPlan compact />
         {/* Founder Oct 26 21:45: her routine as a day timeline, not a list of lines. */}
         <section className="ay-today-routines__plates" aria-labelledby="ay-today-routine-h">
           <h2 id="ay-today-routine-h">Your routine</h2>

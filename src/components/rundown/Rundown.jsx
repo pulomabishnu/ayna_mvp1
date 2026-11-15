@@ -22,6 +22,8 @@ import { onboardingDoneAt, onboardingJustFinished } from '../../health/onboardin
 import './rundown.css';
 import ItemMenu from '../today/ItemMenu.jsx';
 import { rebookIfOn } from '../today/rundownPush.js';
+import { planSummary } from '../../health/dayPlan.js';
+import { localDay as planDay } from '../../health/medications.js';
 
 const REMIND_TEXT = {
   scheduled: 'We will send “Your daily rundown is ready.” tomorrow morning, if notifications are on in the ayna app.',
@@ -137,6 +139,8 @@ export default function Rundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
     matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory: memAtOpen, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
+    // Her day plan, read when the rundown builds (on this phone only).
+    ...(() => { try { const y = new Date(); y.setDate(y.getDate() - 1); return { plan: planSummary(planDay()), planYesterday: planSummary(planDay(y), { now: new Date() }) }; } catch { return {}; } })(),
   }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memAtOpen, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;

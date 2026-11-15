@@ -340,6 +340,23 @@ export function buildRundown(input = {}) {
     });
   }
 
+  // Her day plan (founder brief Nov 15: the rundown syncs with her routine). Only what she added:
+  // counts, the next step, and how she said she felt after an activity yesterday.
+  const plan = input.plan;
+  if (plan && plan.total > 0) {
+    const left = plan.total - plan.done - plan.skipped;
+    const y = input.planYesterday;
+    const felt = (y?.feels || [])[0];
+    const yLine = y && y.total > 0 ? `Yesterday: ${y.done} of ${y.total} done${y.missed ? `, ${y.missed} not logged` : ''}.` : null;
+    add({
+      key: `plan:today:${today}`, category: 'goal', kind: 'text', kicker: 'Your plan today',
+      title: left > 0 ? `${plan.total} ${plan.total === 1 ? 'thing' : 'things'} on your plan. ${plan.done} done.` : `Everything on today's plan is ticked off.`,
+      changed: [plan.next ? `Next: ${plan.next.title}${plan.next.time ? ` at ${plan.next.time}` : ''}.` : null, yLine].filter(Boolean).join(' ') || null,
+      canDo: felt ? `You said you felt ${felt.feel} after ${felt.title.toLowerCase()} yesterday.` : 'Tick things off on your Routine tab.',
+      signature: `${plan.total}:${plan.done}:${plan.skipped}`,
+    });
+  }
+
   // 4. Current symptoms: one micro check-in for her top need, if today is not logged for it.
   const todays = log?.[today] || {};
   const checkNeed = needs.find((n) => CHECKIN_BY_NEED[n] && todays[CHECKIN_BY_NEED[n].field] == null);
