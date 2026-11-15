@@ -25,8 +25,8 @@ export function comingUp(cycle, estimate, today, { hormonalBC = false, hasProduc
   }
   if (estimate?.day && daysBetween(today, estimate.day) >= 0) {
     const pms = addDays(estimate.day, -5);
-    if (daysBetween(today, pms) >= 0) out.push({ day: pms, title: 'Restock before your period', sub: hasProducts ? 'Your shopping list is below your routine.' : '', expect: 'Cramps can start a day or two before your period.', source: EVIDENCE.cramps, tone: 'butter' });
-    out.push({ day: estimate.day, title: 'Next period, estimated', sub: 'From your last cycles. Can be off by a few days.', expect: hormonalBC ? '' : 'Cycle length can change from month to month.', source: hormonalBC ? null : EVIDENCE.cycle, tone: 'pink' });
+    if (!estimate.lateDays && daysBetween(today, pms) >= 0) out.push({ day: pms, title: 'Restock before your period', sub: hasProducts ? 'Your shopping list is below your routine.' : '', expect: 'Cramps can start a day or two before your period.', source: EVIDENCE.cramps, tone: 'butter' });
+    out.push({ day: estimate.day, title: estimate.lateDays ? 'Period due' : 'Next period, estimated', sub: estimate.lateDays ? estimate.basis : 'From your last cycles. Can be off by a few days.', expect: hormonalBC ? '' : 'Cycle length can change from month to month.', source: hormonalBC ? null : EVIDENCE.cycle, tone: 'pink' });
   }
   return out.sort((a, b) => a.day.localeCompare(b.day)).slice(0, 4);
 }

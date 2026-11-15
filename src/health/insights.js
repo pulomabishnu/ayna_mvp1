@@ -122,7 +122,16 @@ function cycleSection(resolved, today) {
       : `Your last ${recentLengths.length} cycles were all about ${avg} days long.`,
     change: { direction: 'flat', text: `Your recent cycles averaged ${avg} days` },
     explanation: varied ? 'Your cycle length has varied more over your last few cycles.' : 'Your cycle length has been fairly regular.',
-    estimate: cycleDay <= 60 ? { label: 'Next period, estimated', day: expected, basis: `Based on your last ${recentLengths.length} cycles. Estimates can be off by several days.` } : null,
+    // Backlog Nov 14 (M14: "predictions stayed on stale dates"): once the expected day has passed with no
+    // period logged, the estimate says it is due now and how late it is, never a date in the past.
+    estimate: cycleDay <= 60 ? (() => {
+      const late = Math.round((toTime(today) - toTime(expected)) / DAY);
+      if (late > 0) {
+        const when = new Date(`${expected}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return { label: 'Period due', day: today, expectedDay: expected, lateDays: late, basis: `Expected around ${when}, ${late} ${late === 1 ? 'day' : 'days'} later than your average cycle. Log it when it starts and the estimate updates. Cycles can vary by a week.` };
+      }
+      return { label: 'Next period, estimated', day: expected, basis: `Based on your last ${recentLengths.length} cycles. Estimates can be off by several days.` };
+    })() : null,
     affects: varied ? 'If irregular cycles are one of your goals, cycle picks are a stronger fit for you right now.' : null,
     sources: sourcesOf(pts), trend: recentLengths.map((n, i) => ({ day: starts[starts.length - recentLengths.length + i], value: n })), unit: 'days',
     signal: varied ? { needId: 'cycle.irregular', summary: 'Your cycle length has been changing more than before', metric: 'menstrual_flow' } : null,

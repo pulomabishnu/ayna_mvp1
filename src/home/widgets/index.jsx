@@ -73,7 +73,7 @@ function CycleChart({ size, ctx }) {
       <ol className="ay-w-cycle" aria-label={`Period days in the last ${t.days.length} days: ${t.days.filter((d) => d.period).length}`}>
         {t.days.map((d) => <li key={d.day} className={d.period ? 'is-period' : ''} title={fmtDay(d.day)} />)}
       </ol>
-      <p className="ay-w__sub">{est ? `Next period, estimated: ${fmtDay(est.day)}` : `${fmtDay(t.days[0].day)} to today`}</p>
+      <p className="ay-w__sub">{est ? (est.lateDays ? `Period due: ${est.lateDays} ${est.lateDays === 1 ? 'day' : 'days'} later than usual` : `Next period, estimated: ${fmtDay(est.day)}`) : `${fmtDay(t.days[0].day)} to today`}</p>
     </Card>
   );
 }
