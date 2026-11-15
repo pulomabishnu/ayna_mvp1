@@ -65,4 +65,5 @@ export function localEstimate(priceMain, locale = visitorLocale()) {
   return `≈ ${body}${per}`;
 }
 
-export const PRICE_REGION_NOTE = 'Prices in US dollars. Most retailers ship to the US; check the retailer for international shipping.';
+// Founder decision (Ameera, Nov 15): prices stay in USD; the local amount is a clearly labelled estimate.
+export const PRICE_REGION_NOTE = 'Prices are in US dollars, which is what the retailer charges. The amount in your currency is an estimate from European Central Bank rates (Oct 21, 2026). Most retailers ship to the US only; check the retailer for international shipping.';

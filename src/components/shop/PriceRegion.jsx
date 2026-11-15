@@ -15,5 +15,5 @@ export function PriceRegionNote({ className = '' }) {
 export function LocalPriceEstimate({ price, locale, className = '' }) {
   const text = localEstimate(price, locale);
   if (!text) return null;
-  return <small className={`ay-price-local ${className}`.trim()}><span className="sr-only">About </span>{text.replace(/^≈\s*/, '≈ ')}</small>;
+  return <small className={`ay-price-local ${className}`.trim()}><span className="sr-only">About </span>{text.replace(/^≈\s*/, '≈ ')} estimate</small>;
 }

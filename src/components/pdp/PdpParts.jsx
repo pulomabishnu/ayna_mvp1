@@ -1,3 +1,5 @@
+import { localEstimate } from '../../utils/localPrice.js';
+import { LocalPriceEstimate, PriceRegionNote } from '../shop/PriceRegion.jsx';
 import React, { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { apiUrl } from '../../utils/apiUrl.js';
@@ -352,12 +354,18 @@ export function MatchLockup({ state, breakdown = null, onAskWhy = null, onFull =
 /** Price 22/600 (web) or 20/600 (app), then ayna's own per-cycle or per-day maths, muted, prefixed with ≈. */
 export function PriceRow({ main = '', perUse = null, notes = [] }) {
   if (!main && !perUse && !notes.length) return null;
+  // Outside the US (founder decision, Nov 15): the USD price stays; a labelled local estimate and one line on why.
+  const local = main ? localEstimate(main) : '';
   return (
-    <p className="ayv-pricerow">
-      {main && <span className="ayv-pricerow__main">{main}</span>}
-      {perUse && <span className="ayv-pricerow__per is-chip" title={perUse.math}>{perUse.text}<span className="sr-only">. {perUse.math}</span></span>}
-      {!perUse && notes.length > 0 && <span className="ayv-pricerow__per">{notes.join(' · ')}</span>}
-    </p>
+    <>
+      <p className="ayv-pricerow">
+        {main && <span className="ayv-pricerow__main">{main}</span>}
+        {local && <LocalPriceEstimate price={main} />}
+        {perUse && <span className="ayv-pricerow__per is-chip" title={perUse.math}>{perUse.text}<span className="sr-only">. {perUse.math}</span></span>}
+        {!perUse && notes.length > 0 && <span className="ayv-pricerow__per">{notes.join(' · ')}</span>}
+      </p>
+      {local && <PriceRegionNote className="ayp-buy__fine" />}
+    </>
   );
 }
 
