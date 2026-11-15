@@ -674,15 +674,18 @@ export const PRODUCT_VARIANTS_NOV2026 = {
     ]
   },
   "p-lola-pad": {
-    "sourceUrl": "https://mylola.com/products/first-period-kit",
-    "verifiedAt": "2026-11-04",
+    // Nov 15 (founder flag): this used to point at the $44 First Period Kit, not a pack of pads.
+    // Now the pads page itself, read Nov 15: Pads with Wings, $11.00 for 12 one-time
+    // ($9.50 for 12 with a monthly subscription).
+    "sourceUrl": "https://mylola.com/products/pads",
+    "verifiedAt": "2026-11-15",
     "variants": [
       {
         "id": "N1-011",
-        "label": "First Period Kit",
-        "priceLabel": "$44.00",
-        "url": "https://mylola.com/products/first-period-kit",
-        "image": "https://mylola.com/cdn/shop/files/LOL_DTC_LOL1060_ENG_050625_PI3_a085e9ce-34d3-47f3-af91-e85e4702fdf8.jpg?v=1755545188"
+        "label": "Pads with Wings, 12",
+        "priceLabel": "$11.00",
+        "url": "https://mylola.com/products/pads",
+        "image": "https://mylola.com/cdn/shop/files/Copy_of_new-pad-organic-wings_c8d9e879-3ab7-4e23-a304-d1f69b41b4e1.jpg?v=1775247327"
       }
     ]
   },
