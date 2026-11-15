@@ -204,6 +204,8 @@ export default function HealthHome({
   rows = [], sections = [], matchContext = null, today, needIds = [], hormonalBC = false,
   products = [], routineProducts = [], routineOutcomes = {}, matches = [], onOpenProduct, onAsk, onAddGoal, onOpenRoutine, onExplore = null, onOpenCheckin, footer = null, surface = 'app',
   todayFeed = null,
+  // Right under the rings (founder brief Nov 15: last night's sleep, with or without a wearable).
+  afterRings = null,
   // The app shows its title row ("Your data" + ring); the website's band carries it (hello=false).
   hello: showTitle = true,
   helloAside = null,
@@ -472,6 +474,7 @@ export default function HealthHome({
     <div className="ay-db-summary">
       {surface === 'web' && todayFeed && <RundownEntry onShown={setRundownShown} />}
       {hasData && <ScoreRings cycle={cycle} hormonalBC={hormonalBC} sleep={chartOf('sleep_minutes')} activity={steps} onOpen={(area) => setSheet(area === 'cycle' ? 'cycle' : area === 'sleep' ? 'sleep_minutes' : 'steps')} onConnect={onConnect} />}
+      {afterRings}
       {highlight}
       {glanceBlock}
       <div className="ay-db-cols">

@@ -118,3 +118,17 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg--top button { border-color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg--top button[aria-pressed='true'] { background: #ffedac; color: #3e2723; }
 @media (prefers-reduced-motion: reduce) { .ay-dp-progress b, .ay-dp-check svg { transition: none; } }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp .ay-dp__primary { background: #ffedac; color: #3e2723; }
+
+/* Motion (Ameera, Nov 15: smooth, small): sheets rise from the bottom, rows' extras drop in, checks pop. */
+.ay-dp-sheet { animation: ay-dp-fade 180ms ease-out both; }
+.ay-dp-sheet__panel { animation: ay-dp-rise 220ms cubic-bezier(.2, .8, .2, 1) both; }
+.ay-dp-row__more, .ay-dp-feel { animation: ay-dp-drop 180ms ease-out both; }
+.ay-dp-check { transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 120ms ease-out; }
+.ay-dp-check[aria-pressed='true'] svg { animation: ay-dp-pop 220ms cubic-bezier(.2, .8, .2, 1.4) both; }
+.ay-dp-row { transition: opacity 160ms ease-out; }
+@keyframes ay-dp-fade { from { opacity: 0; } }
+@keyframes ay-dp-rise { from { transform: translateY(24px); opacity: .6; } }
+@keyframes ay-dp-drop { from { opacity: 0; transform: translateY(-4px); } }
+@keyframes ay-dp-pop { from { transform: scale(.4); } }
+@media (prefers-reduced-motion: reduce) { .ay-dp-sheet, .ay-dp-sheet__panel, .ay-dp-row__more, .ay-dp-feel, .ay-dp-check[aria-pressed='true'] svg { animation: none; } .ay-dp-check, .ay-dp-row { transition: none; } }

@@ -275,19 +275,25 @@ export function sleepCard(healthRows, today) {
   const s = sleepData(healthRows, today);
   if (!s) return null;
   const key = `data:sleep:${today}`;
-  const common = { key, category: 'data', topic: 'sleep', kind: 'sleep', tone: 'ink', kicker: 'Last night', seeData: { tab: 'sleep' }, lastNight: s.lastNight, usual: s.usual };
+  // Where last night came from (founder brief Nov 15): an iPhone with no watch records time in bed,
+  // and nights she typed are her own estimate. Both are said plainly.
+  const nightRows = (healthRows || []).filter((r) => r?.day === s.lastDay);
+  const source = nightRows.some((r) => r.metric === 'sleep_minutes' && r.origin === 'entered' && r.method === 'user_entered') && !nightRows.some((r) => r.metric === 'sleep_minutes' && r.origin !== 'entered')
+    ? 'entered' : nightRows.some((r) => r.metric === 'sleep_in_bed_minutes') ? 'in_bed' : 'measured';
+  const fromLine = source === 'entered' ? 'From the bedtime and wake-up time you entered (an estimate).' : source === 'in_bed' ? "From your iPhone's time in bed (an estimate: time in bed, not sleep)." : 'From your connected sleep data.';
+  const common = { key, category: 'data', topic: 'sleep', kind: 'sleep', tone: 'ink', kicker: 'Last night', seeData: { tab: 'sleep' }, lastNight: s.lastNight, usual: s.usual, sleepSource: source };
   if (s.usual == null) {
     return {
       ...common, title: `You slept ${FMT.minutes(s.lastNight)}.`,
       body: `ayna learns your usual after ${DATA_RULES.sleepMinNights} nights (${s.nights} so far), then shows how last night compares.`,
       nights: s.nights, learning: true,
-      basisLine: 'From your connected sleep data.',
+      basisLine: fromLine,
       followUps: ['How much sleep do adults need?'],
       explain: { kind: 'sleep_data', lastNight: s.lastNight },
     };
   }
   const usualLine = `Your usual: ${FMT.minutes(s.usual)}.`;
-  const sleepBasis = `Your usual is your average over your last ${s.nights} nights, from your connected sleep data.`;
+  const sleepBasis = `Your usual is your average over your last ${s.nights} nights. ${fromLine}`;
   if (s.diff <= -DATA_RULES.sleepChangeMinutes) {
     return {
       ...common, pct: s.pct,

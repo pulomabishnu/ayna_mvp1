@@ -31,7 +31,7 @@ describe('cleanRow', () => {
     expect(errors).toEqual({ unknown_metric: 1, not_an_object: 1 });
   });
   it('maps categories to metrics', () => {
-    expect(metricsForCategories(['sleep'])).toEqual(['sleep_minutes', 'sleep_deep_minutes', 'sleep_rem_minutes']);
+    expect(metricsForCategories(['sleep'])).toEqual(['sleep_minutes', 'sleep_deep_minutes', 'sleep_rem_minutes', 'sleep_in_bed_minutes']);
   });
 });
 

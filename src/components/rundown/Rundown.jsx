@@ -23,6 +23,7 @@ import './rundown.css';
 import ItemMenu from '../today/ItemMenu.jsx';
 import { rebookIfOn } from '../today/rundownPush.js';
 import { planSummary } from '../../health/dayPlan.js';
+import { enteredSleepRows } from '../../health/sleepReport.js';
 import { localDay as planDay } from '../../health/medications.js';
 
 const REMIND_TEXT = {
@@ -136,7 +137,9 @@ export default function Rundown({
     });
   }, [products, saved, intake, catalogReady, healthProfile, matchOpts]);
   const daily = useMemo(() => buildRundown({
-    today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries, healthRows: t.healthRows,
+    today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries,
+    // Nights she typed (no watch) count too, only where nothing else recorded that night.
+    healthRows: (() => { try { return [...(t.healthRows || []), ...enteredSleepRows(t.healthRows || [])]; } catch { return t.healthRows; } })(),
     matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory: memAtOpen, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
     // Her day plan, read when the rundown builds (on this phone only).

@@ -58,6 +58,9 @@ export const METRICS = {
   sleep_minutes: { category: 'sleep', label: 'Sleep', unit: 'min', min: 0, max: 1440, kind: 'level', decimals: 0 },
   sleep_deep_minutes: { category: 'sleep', label: 'Deep sleep', unit: 'min', min: 0, max: 1440, kind: 'level', decimals: 0 },
   sleep_rem_minutes: { category: 'sleep', label: 'REM sleep', unit: 'min', min: 0, max: 1440, kind: 'level', decimals: 0 },
+  // A night when only time in bed was recorded (an iPhone with no watch or ring): same value as sleep_minutes
+  // that night, kept so ayna can say it is an estimate (Eliz, Nov 14; founder brief Nov 15).
+  sleep_in_bed_minutes: { category: 'sleep', label: 'Time in bed (estimate)', unit: 'min', min: 0, max: 1440, kind: 'level', decimals: 0 },
   menstrual_flow: { category: 'cycle', label: 'Period flow', unit: 'flow_level', min: 0, max: 4, kind: 'level', decimals: 0 },
   basal_temp_c: { category: 'temperature', label: 'Basal body temperature', unit: 'degC', min: 34, max: 39, kind: 'level', decimals: 2 },
   skin_temp_night_c: { category: 'temperature', label: 'Overnight skin temperature', unit: 'degC', min: 25, max: 40, kind: 'level', decimals: 2 },

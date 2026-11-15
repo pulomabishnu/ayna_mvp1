@@ -202,7 +202,11 @@ export function sleepRows(samples, fallbackOrigin) {
     const [origin, day] = key.split('|');
     if (v.total > 0) rows.push({ metric: 'sleep_minutes', day, value: Math.round(Math.min(v.total, 1440)), origin, method: 'derived' });
     // Time in bed stands in for sleep only when that source measured no sleep that night (an estimate, like Flo's).
-    else if (v.inBed > 0) rows.push({ metric: 'sleep_minutes', day, value: Math.round(Math.min(v.inBed, 1440)), origin, method: 'derived' });
+    else if (v.inBed > 0) {
+      const value = Math.round(Math.min(v.inBed, 1440));
+      rows.push({ metric: 'sleep_minutes', day, value, origin, method: 'derived' });
+      rows.push({ metric: 'sleep_in_bed_minutes', day, value, origin, method: 'derived' });
+    }
     if (v.deep > 0) rows.push({ metric: 'sleep_deep_minutes', day, value: Math.round(v.deep), origin, method: 'derived' });
     if (v.rem > 0) rows.push({ metric: 'sleep_rem_minutes', day, value: Math.round(v.rem), origin, method: 'derived' });
   }

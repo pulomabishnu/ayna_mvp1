@@ -7,6 +7,8 @@ import { dashboardContext } from '../utils/dashboardAsk.js';
 import { useAskHealthPref } from '../../health/askHealthPref.js';
 import { buildDashboard } from '../../health/dashboard.js';
 import { localToday, useHealthData } from '../hooks/useHealthData.js';
+import SleepReport from '../../components/sleep/SleepReport.jsx';
+import { enteredSleepRows, nightsFrom, SLEEP_EVENT } from '../../health/sleepReport.js';
 import { HealthStarter } from './HealthBento.jsx';
 import HealthHome, { HealthEmpty } from './HealthHome.jsx';
 import TodayFeed from '../../components/today/TodayFeed.jsx';
@@ -39,15 +41,21 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
   useEffect(() => {
     const on = () => setLogTick((n) => n + 1);
     window.addEventListener(LOG_SAVED_EVENT, on);
-    return () => window.removeEventListener(LOG_SAVED_EVENT, on);
+    window.addEventListener(SLEEP_EVENT, on);
+    return () => { window.removeEventListener(LOG_SAVED_EVENT, on); window.removeEventListener(SLEEP_EVENT, on); };
   }, []);
-  const rows = useMemo(() => { let log = {}; try { log = readLog(); } catch { /* storage blocked */ } return [...(health.insightRows || []), ...flowRowsFromLog(log)]; }, [health.insightRows, logTick]); // eslint-disable-line react-hooks/exhaustive-deps
+  const rows = useMemo(() => { let log = {}; try { log = readLog(); } catch { /* storage blocked */ } const base = [...(health.insightRows || []), ...flowRowsFromLog(log)]; return [...base, ...enteredSleepRows(base)]; }, [health.insightRows, logTick]); // eslint-disable-line react-hooks/exhaustive-deps
   const week = useMemo(() => buildDashboard(rows, { days: 30, today }), [rows, today]);
   const { sections } = health.insights;
   const ready = sections.filter((s) => s.status === 'ready');
   const estimate = sections.find((s) => s.id === 'cycle')?.estimate || null;
   // Today with ayna leads every state (signed out and offline too: the log is local first).
   const feedProducts = useMemo(() => [...products, ...matches], [products, matches]);
+  // Founder brief Nov 15: in Your data, last night's sleep with or without a wearable.
+  // Shown once: only when no watch or ring measured her sleep (time in bed, typed nights, or nothing yet).
+  // With measured sleep the Sleep ring and tab already say it (Ameera, Nov 15: no repeats).
+  const measuredSleep = useMemo(() => { try { const n = nightsFrom(rows, {}); return [...n.values()].some((x) => x.kind === 'measured'); } catch { return false; } }, [rows]);
+  const sleepReport = dataView && !measuredSleep ? <SleepReport healthRows={rows} today={today} /> : null;
   const todayFeed = dataView ? null : (
     <TodayFeed
       variant="app"
@@ -68,7 +76,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
   if (!authUser?.id) {
     return (
       <div className="ay-hd">
-        <HealthEmpty today={today} onConnect={onSignIn} goalCount={selectedNeedIds.length} signedOut todayFeed={todayFeed} title={dataView ? 'Your data' : 'Your health'}>
+        <HealthEmpty today={today} onConnect={onSignIn} goalCount={selectedNeedIds.length} signedOut todayFeed={todayFeed || sleepReport} title={dataView ? 'Your data' : 'Your health'}>
           <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
       </div>
@@ -96,7 +104,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
   if (week.empty && !sections.length) {
     return (
       <div className="ay-hd">
-        <HealthEmpty today={today} onConnect={onConnect} onOpenCheckin={onOpenCheckin} goalCount={selectedNeedIds.length} todayFeed={todayFeed} title={dataView ? 'Your data' : 'Your health'}>
+        <HealthEmpty today={today} onConnect={onConnect} onOpenCheckin={onOpenCheckin} goalCount={selectedNeedIds.length} todayFeed={todayFeed || sleepReport} title={dataView ? 'Your data' : 'Your health'}>
           {/* Still useful before any data: her goals matched to her products, from the quiz. */}
           <HealthStarter needIds={selectedNeedIds} products={products} matches={matches} onOpenProduct={onOpenProduct} onConnect={null} compact />
         </HealthEmpty>
@@ -148,6 +156,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
         footer={<OutlineButton onClick={onConnect}>Manage connected apps</OutlineButton>}
         surface="app"
         todayFeed={todayFeed}
+        afterRings={sleepReport}
       />
     </div>
   );

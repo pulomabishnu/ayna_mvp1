@@ -730,7 +730,7 @@ export default function MobileApp() {
   // Keep it booked at launch (no permission prompt here), and a tap opens Today.
   useEffect(() => {
     syncRundownReminder({ ask: false }).catch(() => {});
-    const offPlan = onPlanReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('ayna'); setHomeView('dashboard'); });
+    const offPlan = onPlanReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
     const offRundown = onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
     return () => { offPlan(); offRundown(); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

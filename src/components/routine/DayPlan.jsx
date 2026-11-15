@@ -9,6 +9,7 @@ import {
 import { syncPlanReminders, planRemindersAvailable } from '../../health/planReminders.js';
 import { readGoals, toggleDone, GOALS_CHANGED_EVENT } from '../../health/myGoals.js';
 import { toast } from '../../utils/toast.js';
+import { haptic } from '../../utils/haptics.js';
 import './day-plan.css';
 
 /**
@@ -74,7 +75,7 @@ export function MedForm({ initial = null, onDone }) {
   };
   const err = (k) => errors[k] && <span className="ay-dp-form__err" id={`ay-dp-err-${k}`}>{errors[k]}</span>;
   return <form className="ay-dp-form" onSubmit={submit} noValidate>
-    <p className="ay-dp-form__lead">Enter it the way your prescriber wrote it. ayna doesn't check doses or give dosing advice. If you miss a dose, follow your label or ask your pharmacist.</p>
+    <p className="ay-dp-form__lead">As your prescriber wrote it. ayna never gives dosing advice.</p>
     <label>Medication name<input value={f.name} onChange={(e) => set('name', e.target.value)} autoComplete="off" aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? 'ay-dp-err-name' : undefined} />{err('name')}</label>
     <div className="ay-dp-form__row">
       <label>Dose<input value={f.dose} onChange={(e) => set('dose', e.target.value)} inputMode="decimal" placeholder="e.g. 50" aria-invalid={Boolean(errors.dose)} />{err('dose')}</label>
@@ -101,7 +102,7 @@ export function MedForm({ initial = null, onDone }) {
         <label>Start<input type="date" value={f.start} onChange={(e) => set('start', e.target.value)} /></label>
         <label>End (optional)<input type="date" value={f.end} onChange={(e) => set('end', e.target.value)} aria-invalid={Boolean(errors.end)} />{err('end')}</label>
       </div>
-      <label className="ay-dp-check"><input type="checkbox" checked={f.remind} onChange={(e) => set('remind', e.target.checked)} />Remind me at these times<small>The lock screen won't say the medication's name.</small></label>
+      <label className="ay-dp-check"><input type="checkbox" checked={f.remind} onChange={(e) => set('remind', e.target.checked)} />Remind me at these times<small>The lock screen never shows the name.</small></label>
     </>}
     <label>Notes (optional)<input value={f.notes} onChange={(e) => set('notes', e.target.value)} placeholder="e.g. with food" /></label>
     {err('form')}
@@ -128,7 +129,7 @@ export function ActivityForm({ initial = null, onDone }) {
     <fieldset className="ay-dp-days"><legend>Days (none picked = every day)</legend>
       {WEEKDAYS.map((d, i) => <button key={d} type="button" aria-pressed={f.days.includes(i)} onClick={() => set('days', f.days.includes(i) ? f.days.filter((x) => x !== i) : [...f.days, i])}>{d}</button>)}
     </fieldset>
-    <label className="ay-dp-check"><input type="checkbox" checked={f.checkIn} onChange={(e) => set('checkIn', e.target.checked)} />Ask how I feel after<small>One tap: better, same or worse. It shows up in your rundown.</small></label>
+    <label className="ay-dp-check"><input type="checkbox" checked={f.checkIn} onChange={(e) => set('checkIn', e.target.checked)} />Ask how I feel after<small>Better, same or worse, in one tap.</small></label>
     {f.time && <label className="ay-dp-check"><input type="checkbox" checked={f.remind} onChange={(e) => set('remind', e.target.checked)} />Remind me</label>}
     <button type="submit" className="ay-dp__primary">{initial ? 'Save changes' : 'Add to my plan'}</button>
   </form>;
@@ -181,7 +182,7 @@ function PlanItem({ it, day, isToday, onChanged }) {
     <span className="ay-dp-row__time">{it.time ? fmtTime(it.time) : ''}</span>
     <span className="ay-dp-row__dot" aria-hidden="true" />
     <div className="ay-dp-row__body">
-      <button type="button" className="ay-dp-row__main" aria-expanded={hasMore ? open : undefined} aria-controls={hasMore ? id : undefined} onClick={() => hasMore && setOpen((v) => !v)} disabled={!hasMore}>
+      <button type="button" className="ay-dp-row__main" aria-expanded={hasMore ? open : undefined} aria-controls={hasMore ? id : undefined} onClick={() => { if (!hasMore) return; haptic('selection'); setOpen((v) => !v); }} disabled={!hasMore}>
         <b>{it.title}{it.state === 'due' && <em className="ay-dp-now">Now</em>}</b>
         {(sub || word) && <span>{[sub, word].filter(Boolean).join(' · ')}</span>}
       </button>
@@ -200,7 +201,7 @@ function PlanItem({ it, day, isToday, onChanged }) {
     </div>
     <button type="button" className="ay-dp-check" aria-pressed={done}
       aria-label={done ? `${it.title}: ${med ? 'taken' : 'done'}. Undo` : `Mark ${it.title} ${med ? 'taken' : 'done'}`}
-      onClick={() => (done ? undo() : act(med ? 'taken' : 'done'))}>{TICK}</button>
+      onClick={() => { haptic(done ? 'light' : 'success'); if (done) undo(); else act(med ? 'taken' : 'done'); }}>{TICK}</button>
   </li>;
 }
 

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { StoryTop } from '../story/StoryShell.jsx';
 import { storyTheme, useStoryGestures } from '../story/storyKit.js';
 import ProductTileImage from '../ProductTileImage.jsx';
+import { haptic } from '../../utils/haptics.js';
 import { recapSlides, SOURCE_LABEL } from '../../matching/personalizationDiff.js';
 import '../story/story.css';
 import './update-recap.css';
@@ -26,7 +27,7 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
   const [hidden, setHidden] = useState({});
   const ref = useRef(null);
   const last = index === slides.length - 1;
-  const next = () => setIndex((i) => Math.min(slides.length - 1, i + 1));
+  const next = () => { haptic('selection'); setIndex((i) => Math.min(slides.length - 1, i + 1)); };
   const prev = () => setIndex((i) => Math.max(0, i - 1));
   const gest = useStoryGestures({ onPrev: prev, onNext: next, onClose });
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
         <span className="ay-ur-name"><b>{p.name}</b>{(p.brand || extra) && <small>{[p.brand, extra].filter(Boolean).join(' · ')}</small>}</span>
       </button>
       <span className="ay-ur-acts">
-        {onAdd && <button type="button" className="ay-ur-btn" aria-pressed={mine} onClick={(e) => { stop(e); onAdd(prod); }}>{mine ? 'In your routine' : 'Add to routine'}</button>}
+        {onAdd && <button type="button" className="ay-ur-btn" aria-pressed={mine} onClick={(e) => { stop(e); haptic('success'); onAdd(prod); }}>{mine ? 'In your routine' : 'Add to routine'}</button>}
         {onNotForMe && !mine && <button type="button" className="ay-ur-link" onClick={(e) => { stop(e); onNotForMe(prod); setHidden((h) => ({ ...h, [p.id]: true })); }}>Not for me</button>}
       </span>
     </li>;
@@ -74,7 +75,7 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
               {diff.moved.length > 0 && <div><dt>Moved</dt><dd>{diff.moved.length}</dd></div>}
               {diff.matchesRemoved.length > 0 && <div><dt>Out of your top 6</dt><dd>{diff.matchesRemoved.length}</dd></div>}
             </dl>
-            <p className="ay-ur-sub">Here is exactly what changed. Tap to go on.</p>
+            
           </>}
           {s.kind === 'needs' && <>
             <p className="ay-ur-kicker">What ayna covers now</p>
@@ -90,7 +91,7 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
             {s.was && <p className="ay-ur-sub">Was: {s.was.name}{s.was.percent != null ? ` (${s.was.percent}%)` : ''}</p>}
             <span className="ay-ur-acts is-center">
               <button type="button" className="ay-ur-btn is-solid" onClick={(e) => { stop(e); onOpenProduct?.(full(s.product)); }}>See why</button>
-              {onAdd && <button type="button" className="ay-ur-btn" aria-pressed={inEcosystem(s.product.id)} onClick={(e) => { stop(e); onAdd(full(s.product)); }}>{inEcosystem(s.product.id) ? 'In your routine' : 'Add to routine'}</button>}
+              {onAdd && <button type="button" className="ay-ur-btn" aria-pressed={inEcosystem(s.product.id)} onClick={(e) => { stop(e); haptic('success'); onAdd(full(s.product)); }}>{inEcosystem(s.product.id) ? 'In your routine' : 'Add to routine'}</button>}
             </span>
           </>}
           {s.kind === 'added' && <>
@@ -103,12 +104,12 @@ export default function UpdateRecap({ diff, resolve = (x) => x, onClose, onOpenP
               {s.moves.map((m) => <li key={m.id}><b>{m.name}</b><span className={m.to < m.from ? 'is-up' : 'is-down'}>#{m.from} → #{m.to}</span></li>)}
               {s.percents.filter((p) => !s.moves.some((m) => m.id === p.id)).map((p) => <li key={`p-${p.id}`}><b>{p.name}</b><span className={p.to > p.from ? 'is-up' : 'is-down'}>{p.from}% → {p.to}%</span></li>)}
             </ul>
-            <p className="ay-ur-sub">Ranks and scores come from the same match engine as Shop.</p>
+            
           </>}
           {s.kind === 'removed' && <>
             <p className="ay-ur-kicker">Out of your top 6</p>
             <ul className="ay-ur-list">{s.products.map((p) => <li key={p.id} className="ay-ur-row"><button type="button" className="ay-ur-open" onClick={(e) => { stop(e); onOpenProduct?.(full(p)); }}><Plate product={full(p)} /><span className="ay-ur-name"><b>{p.name}</b><small>Was #{p.rank}</small></span></button></li>)}</ul>
-            <p className="ay-ur-sub">They fit your earlier answers better. They're still in Shop, and anything in your routine stays there.</p>
+            <p className="ay-ur-sub">Still in Shop. Your routine keeps them.</p>
           </>}
           {s.kind === 'done' && <>
             <p className="ay-ur-kicker is-small">That's what changed</p>

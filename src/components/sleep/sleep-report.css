@@ -1,0 +1,35 @@
+/* SleepReport.jsx: one number, one short line, Details behind a dropdown (Ameera, Nov 15:
+   nothing word-heavy; dropdowns and buttons; small, smooth motion). Brand colours only. */
+.ay-sr { display: grid; gap: 4px; margin: 24px 0; color: var(--ay-fg, #3e2723); }
+.ay-sr__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr .ay-sr__h { margin: 0 !important; font: 700 22px/1.2 var(--ay-app-heading, var(--ay-font-display, inherit)) !important; color: inherit !important; }
+.ay-sr__enter { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; border-radius: 999px; border: 1.5px solid currentColor; font: 700 14px/1 var(--ay-font-ui, inherit); transition: transform 150ms ease-out; }
+.ay-sr__enter:active { transform: scale(.96); }
+.ay-sr__enter:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.ay-sr__big { margin: 4px 0 0; font: 800 48px/1 var(--ay-font-display, inherit); letter-spacing: -.02em; animation: ay-sr-in 220ms ease-out both; }
+.ay-sr__approx { font-size: .6em; margin-right: 4px; vertical-align: .2em; opacity: .8; }
+.ay-sr__short { margin: 0; font: 600 15px/1.35 var(--ay-font-ui, inherit); }
+.ay-sr__short.is-shorter { display: inline-flex; justify-self: start; padding: 4px 10px; border-radius: 999px; background: #f7badd; color: #3e2723; }
+.ay-sr__cta { justify-self: start; margin-top: 8px; animation: ay-sr-in 220ms ease-out both; }
+.ay-sr__more { margin-top: 4px; }
+.ay-sr__more > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; font: 700 14px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; }
+.ay-sr__more > summary::-webkit-details-marker { display: none; }
+.ay-sr__more > summary svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; transition: transform 180ms ease-out; }
+.ay-sr__more[open] > summary svg { transform: rotate(180deg); }
+.ay-sr__more > summary:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }
+.ay-sr__body { display: grid; gap: 6px; padding-bottom: 4px; animation: ay-sr-drop 200ms ease-out both; }
+.ay-sr__body p { margin: 0; font: 500 14px/1.45 var(--ay-font-ui, inherit); }
+.ay-sr__muted { opacity: .85; }
+.ay-sr__body a { color: inherit; font-weight: 700; text-underline-offset: 3px; }
+.ay-sr__goal { justify-self: start; margin-left: -10px; }
+@keyframes ay-sr-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes ay-sr-drop { from { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .ay-sr__big, .ay-sr__cta, .ay-sr__body { animation: none; } .ay-sr__more > summary svg, .ay-sr__enter { transition: none; } }
+/* A dashboard rule pinned sections absolutely; this one sits in the flow. */
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr { position: relative !important; inset: auto !important; width: auto !important; height: auto !important; clip: auto !important; overflow: visible !important; margin: 0 !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr { border: 0 !important; padding: 0 !important; background: none !important; box-shadow: none !important; color: inherit !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr p { white-space: normal !important; color: inherit !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr .ay-sr__big { font: 800 48px/1 var(--ay-font-display, inherit) !important; letter-spacing: -.02em !important; margin: 4px 0 0 !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr .ay-sr__short { font: 600 15px/1.35 var(--ay-font-ui, inherit) !important; margin: 0 !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr .ay-sr__short.is-shorter { color: #3e2723 !important; }
+html body :is(#sr1, .app-container, .ayna-mobile):is(#sr2, .app-container, .ayna-mobile) .ay-sr.ay-sr .ay-sr__body p { font: 500 14px/1.45 var(--ay-font-ui, inherit) !important; margin: 0 !important; }

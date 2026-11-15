@@ -37,7 +37,7 @@ describe('DayPlan', () => {
     await act(async () => root.render(<DayPlan />));
     await act(async () => btn('Add a medication').click());
     const dialog = document.querySelector('[role="dialog"]');
-    expect(dialog.textContent).toContain("doesn't check doses");
+    expect(dialog.textContent).toContain('never gives dosing advice');
     const [name, dose] = dialog.querySelectorAll('input');
     await act(async () => { type(name, 'Levothyroxine'); type(dose, '50'); });
     const time = dialog.querySelector('input[type="time"]');
