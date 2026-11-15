@@ -185,6 +185,16 @@ export function defaultPriceRule(up) {
   };
 }
 const MIN_SHELF = 3;
+const FAMILY_STAGES = ['ttc', 'pregnant', 'postpartum'];
+const FAMILY_NEED = /fertility|pregnan|postpartum|prenatal|lactation|ttc|ovulation/;
+export function familyOnlyOffStage(pp, up, needId) {
+  const ls = pp?.life_stage || {};
+  const designed = Object.keys(ls).filter((k) => ls[k] === 'designed_for');
+  const other = Object.keys(ls).filter((k) => !FAMILY_STAGES.includes(k) && ['designed_for', 'relevant'].includes(ls[k]));
+  if (!designed.length || other.length || !designed.every((k) => FAMILY_STAGES.includes(k))) return false;
+  if (FAMILY_NEED.test(String(needId || ''))) return false;
+  return !(up?.physiology?.lifeStages || []).some((st) => FAMILY_STAGES.includes(st));
+}
 // Backlog Nov 14 (Liliane: "cramps only gave me heating pads"): heat and TENS share one engine rule
 // (cramp_device), so a shelf could fill with heat. Telling them apart lets the diversity penalty mix them.
 export function mechKey(pp) {
@@ -362,6 +372,9 @@ export function buildEcosystem(up, products, options = {}) {
         continue;
       }
       if (r.filtered) { excludedCount += 1; continue; }
+      // Backlog Nov 14 (Subhra: "PCOS on birth control got fertility and pregnancy products"): a product made
+      // only for trying to conceive, pregnancy or postpartum stays off other shelves unless she is in that stage.
+      if (familyOnlyOffStage(pp, up, need.id)) { excludedCount += 1; continue; }
       const qualification = qualificationForEcosystem(r, pp, minScore);
       if (qualification.effectiveScore < qualification.floor || !r.explainable) { belowThreshold += 1; continue; }
       if (r.restricted && !options.includeRestricted) {
