@@ -4,6 +4,7 @@ import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthC
 import './metric-sheet.css';
 import './month-sheet.css';
 import { LOG_SAVED_EVENT, readLog, saveLogEntry } from '../../health/dailyLog.js';
+import { topSymptom, topSymptomLine } from '../../health/topSymptom.js';
 import { announceLogChange } from '../../health/todayHelp.js';
 import { haptic } from '../../utils/haptics.js';
 
@@ -158,6 +159,11 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
         )}
 
         {!estimate && <p className="ay-mcal__empty">{hasCycle ? 'Log the first day of your last 3 periods and ayna estimates your next one.' : "Tap the first day of your last period and pick a flow. Log your last 3 and ayna estimates your next one, even if you don't use another period app."}</p>}
+
+        {/* UCLA focus group 10/1: "top symptom this month". From her own log only. */}
+        {topSymptom(log, today) && (
+          <p className="ay-mcal__top"><small>Your top symptom this month</small><b>{topSymptomLine(topSymptom(log, today))}</b></p>
+        )}
 
         {soon.length > 0 && (
           <section className="ay-mcal__soon" aria-labelledby="ay-mcal-soon">

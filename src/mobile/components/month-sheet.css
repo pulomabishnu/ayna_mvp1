@@ -72,3 +72,8 @@
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-mcal__seg { background: #f7badd; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-mcal__seg button.is-on { background: #f7badd; color: #3e2723; }
 .ay-mcal__quick { margin-top: 12px; }
+
+/* Top symptom this month (UCLA focus group 10/1). */
+.ay-mcal .ay-mcal__top { display: grid; gap: 2px; margin: 16px 0 0; padding: 12px 14px; border: 1.5px solid var(--mc-fg); border-radius: 16px; color: var(--mc-fg) !important; }
+.ay-mcal .ay-mcal__top small { font-family: inherit; font-size: 13px; font-weight: 600; }
+.ay-mcal .ay-mcal__top b { font-family: inherit; font-size: 17px; font-weight: 700; line-height: 1.3; }
