@@ -24,13 +24,23 @@ export const MAX_GOALS = 5;
 // Run-through, Nov 12 (Puloma; Ameera decided): goals are small things to do, not outcomes on a
 // number of days a week ("walk 30 minutes today" gets done; "more energy, 5 days" doesn't).
 // Each keeps its topic, so good days in her log still count and the right products show.
+// `tip`: which TODAY_HELP line (todayHelp.js, each from a .gov page) says why this exact goal helps.
+// Null when no line there is about it (Nov 14 sweep: Walk 30 minutes showed the water-and-meals tip).
 export const GOAL_PRESETS = [
-  { topic: 'energy', text: 'Walk 30 minutes', needId: 'energy.fatigue' },
-  { topic: 'sleep', text: 'Screens off 30 minutes before bed', needId: 'sleep.trouble' },
-  { topic: 'mood', text: '10 minutes outside', needId: 'mood.low' },
-  { topic: 'pain', text: 'Stretch for 10 minutes', needId: 'pain.menstrual_cramp' },
-  { topic: 'pms', text: 'Log how I feel today', needId: 'cycle.pms' },
+  { topic: 'energy', text: 'Walk 30 minutes', needId: 'energy.fatigue', tip: 1 },
+  { topic: 'sleep', text: 'Screens off 30 minutes before bed', needId: 'sleep.trouble', tip: 2 },
+  { topic: 'mood', text: 'Call or text a friend', needId: 'mood.low', tip: 1 },
+  { topic: 'pain', text: 'Stretch for 10 minutes', needId: 'pain.menstrual_cramp', tip: 2 },
+  { topic: 'pms', text: 'Log how I feel today', needId: 'cycle.pms', tip: null },
 ];
+
+/** The one sourced line for a goal: its preset's own tip, or the topic's first tip for a goal in her words. */
+export function goalTip(goal, help) {
+  if (!goal || !help) return null;
+  const preset = GOAL_PRESETS.find((p) => p.text === goal.text);
+  if (preset) return preset.tip == null ? null : help.tips[preset.tip] || null;
+  return help.tips[0] || null;
+}
 
 // Her own words still find a topic when they clearly name one ("sleep 7 hours" -> sleep).
 const TOPIC_WORDS = [
@@ -51,7 +61,9 @@ function announce() {
 
 export function readGoals(storage = globalThis.localStorage) {
   const items = bucketOf(loadState(GOALS_KEY, storage)).items;
-  return Object.values(items).filter((g) => g && g.id && g.text).sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+  // Her own order first (moveGoal), then oldest first.
+  const ord = (g) => (Number.isFinite(g.order) ? g.order : Infinity);
+  return Object.values(items).filter((g) => g && g.id && g.text).sort((a, b) => (ord(a) - ord(b)) || String(a.createdAt).localeCompare(String(b.createdAt)));
 }
 
 function write(mutate, storage) {
@@ -73,6 +85,20 @@ export function addGoal({ text, topic, perWeek = 7 } = {}, { storage = globalThi
   const t = topic === undefined ? topicFor(clean) : topic;
   const week = [3, 5, 7].includes(Number(perWeek)) ? Number(perWeek) : 5;
   return write((items) => ({ ...items, [id]: { id, topic: t || null, text: clean, perWeek: week, done: [], createdAt: now.toISOString() } }), storage);
+}
+
+/** Moves a goal up (-1) or down (+1) in her list (Zoleka, focus group 11/11: "let people rearrange"). */
+export function moveGoal(id, dir, storage = globalThis.localStorage) {
+  const list = readGoals(storage);
+  const at = list.findIndex((g) => g.id === id);
+  const to = at + (dir < 0 ? -1 : 1);
+  if (at < 0 || to < 0 || to >= list.length) return list;
+  const next = [...list];
+  [next[at], next[to]] = [next[to], next[at]];
+  return write((items) => Object.fromEntries(Object.entries(items).map(([k, g]) => {
+    const i = next.findIndex((x) => x.id === k);
+    return [k, i >= 0 ? { ...g, order: i } : g];
+  })), storage);
 }
 
 export function removeGoal(id, storage = globalThis.localStorage) {

@@ -181,3 +181,10 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 .ayna-mobile .ayna-shop-filter-fields .ay-avoid.ay-shop-avoid { margin: 0 !important; padding: 4px 0 14px !important; }
 .ayna-mobile .ayna-shop-filter-fields .ay-avoid.ay-shop-avoid > .ay-avoid__label { margin-bottom: 8px !important; }
 .ayna-mobile .ayna-shop-filter-sheet:focus { outline: none !important; }
+
+/* Routine goals: up/down to rearrange (Zoleka 11/11). Two 44px targets in one column. */
+.ayna-mobile .ay-rg li > span:not(.ay-rg__move) { flex: 1; }
+.ayna-mobile .ay-rg li > .ay-rg__move { flex: none; display: flex; flex-direction: column; gap: 0; margin-left: -10px; }
+.ayna-mobile .ay-rg__move button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+.ayna-mobile .ay-rg__move button:disabled { visibility: hidden; }
+.ayna-mobile .ay-rg__move svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }

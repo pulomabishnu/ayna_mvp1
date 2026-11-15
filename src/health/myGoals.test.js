@@ -42,3 +42,33 @@ describe('myGoals (her own goals)', () => {
     expect(readGoals(s).map((g) => g.text)).toEqual(['Mine']);
   });
 });
+
+describe('goalTip (Nov 14 sweep)', () => {
+  it('each preset shows the line about that goal, never another one', async () => {
+    const { goalTip, GOAL_PRESETS } = await import('./myGoals.js');
+    const { TODAY_HELP } = await import('./todayHelp.js');
+    const tip = (text) => { const p = GOAL_PRESETS.find((x) => x.text === text); return goalTip({ text, topic: p.topic }, TODAY_HELP[p.topic]); };
+    expect(tip('Walk 30 minutes')).toMatch(/walk/i);
+    expect(tip('Screens off 30 minutes before bed')).toMatch(/phone/i);
+    expect(tip('Call or text a friend')).toMatch(/friend/i);
+    expect(tip('Stretch for 10 minutes')).toMatch(/movement/i);
+    expect(tip('Log how I feel today')).toBeNull();
+  });
+});
+
+describe('moveGoal (Zoleka 11/11)', () => {
+  it('moves a goal up and down and keeps the order', async () => {
+    const { addGoal, moveGoal, readGoals } = await import('./myGoals.js');
+    const mem = new Map(); const storage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+    addGoal({ text: 'A' }, { storage, now: new Date('2026-11-01T00:00:00Z') });
+    addGoal({ text: 'B' }, { storage, now: new Date('2026-11-02T00:00:00Z') });
+    addGoal({ text: 'C' }, { storage, now: new Date('2026-11-03T00:00:00Z') });
+    const c = readGoals(storage).find((g) => g.text === 'C');
+    moveGoal(c.id, -1, storage);
+    expect(readGoals(storage).map((g) => g.text)).toEqual(['A', 'C', 'B']);
+    moveGoal(c.id, -1, storage);
+    expect(readGoals(storage).map((g) => g.text)).toEqual(['C', 'A', 'B']);
+    moveGoal(c.id, -1, storage);
+    expect(readGoals(storage).map((g) => g.text)).toEqual(['C', 'A', 'B']);
+  });
+});

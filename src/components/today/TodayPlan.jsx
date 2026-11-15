@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { todayHelp, TODAY_HELP, productsForTopic, announceLogChange } from '../../health/todayHelp.js';
-import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, topicFor } from '../../health/myGoals.js';
+import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, topicFor, goalTip } from '../../health/myGoals.js';
 import { saveLogEntry, readLog } from '../../health/dailyLog.js';
 import ProductTileImage from '../ProductTileImage.jsx';
 import { haptic } from '../../utils/haptics.js';
@@ -337,7 +337,7 @@ export default function TodayPlan({
                 <div><b>{g.text}</b><span>{w.doneToday ? 'Done today' : 'Not yet today'} · {w.count} {w.count === 1 ? 'day' : 'days'} this week</span></div>
                 <button type="button" className={`ay-tp-goals__tick${w.doneToday ? ' is-on' : ''}`} aria-pressed={w.doneToday} aria-label={`${g.text}: did it today`} onClick={() => { haptic(w.doneToday ? 'light' : 'success'); setGoals(toggleDone(g.id, today)); }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></button>
               </div>
-              {help && <p className="ay-tp-goallist__tip">{help.tips[0]}</p>}
+              {goalTip(g, help) && <p className="ay-tp-goallist__tip">{goalTip(g, help)}</p>}
               {prods.length > 0 && <p className="ay-tp-goallist__sub">Products for this goal</p>}
               {prods.length > 0 && <ProductRows products={prods} inRoutine={inRoutine} onOpenProduct={(p) => { setOpen(null); onOpenProduct?.(p); }} onAddToRoutine={addToRoutine} />}
               {onExplore && <button type="button" className="ay-tp-link ay-tp-goallist__rm" onClick={() => { setOpen(null); onExplore(help?.shop || g.text); }}>{prods.length ? 'See more in Shop' : 'Find products for this'}</button>}
