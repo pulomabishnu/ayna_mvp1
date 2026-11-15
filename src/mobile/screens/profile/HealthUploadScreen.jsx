@@ -122,8 +122,18 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       setRows(out.candidates.map((c) => ({ ...c, origin })));
       setMeta({ kind: 'image', unrecognized: 0, ignored: [], fromImage: true });
       setStep('review');
-    } catch {
-      setError("We couldn't read that image. Type in what you see below instead.");
+    } catch (e) {
+      // Say what went wrong (it used to be the same line for every failure).
+      const code = String(e?.code || '');
+      setError({
+        image_too_large: 'That image is too large. Try a cropped screenshot.',
+        not_signed_in: 'Sign in to read a screenshot.',
+        auth_required: 'Sign in to read a screenshot.',
+        pro_required: 'Reading screenshots is part of ayna Pro. You can type the numbers in below.',
+        rate_limited: "You've read a lot of screenshots today. Try again tomorrow, or type the numbers below.",
+        extraction_disabled: "Screenshot reading is off right now. Type in what you see below instead.",
+        network: "You're offline or the connection dropped. Try again, or type the numbers below.",
+      }[code] || "We couldn't read that image. Type in what you see below instead.");
       setTyping(true);
     } finally { setBusy(false); }
   };
