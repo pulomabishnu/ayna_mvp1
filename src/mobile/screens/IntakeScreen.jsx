@@ -317,11 +317,13 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     onChange([...values, next]);
     setDraft('');
   };
+  // Typed text is kept when she leaves the field without tapping Add (backlog Nov 14, Alyson/Ivy).
+  const wrapRef = useRef(null);
   return (
-    <div className="ip-token-input">
+    <div className="ip-token-input" ref={wrapRef}>
       <label className="ip-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(matches[0] || draft); }} placeholder={placeholder} aria-label={placeholder} />
+        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={(e) => { if (draft.trim() && !(e.relatedTarget && wrapRef.current?.contains(e.relatedTarget))) addValue(draft); }} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(matches[0] || draft); }} placeholder={placeholder} aria-label={placeholder} />
         {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
       </label>
       <SuggestList draft={draft} matches={matches} onPick={addValue} />

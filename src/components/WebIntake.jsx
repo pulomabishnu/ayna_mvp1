@@ -79,10 +79,14 @@ function Tokens({ values, onChange, placeholder, suggestions = [], limit = 8 }) 
     onChange([...values, next]);
     setDraft('');
   };
-  return <div className="qz-tokens-wrap">
+  // Backlog Nov 14 (Alyson, Ivy): what she typed is kept even if she never taps "+ Add" or Enter.
+  // Leaving the field adds it, unless she is tapping one of the suggestions below it.
+  const wrapRef = useRef(null);
+  const keepTyped = (e) => { if (draft.trim() && !(e.relatedTarget && wrapRef.current?.contains(e.relatedTarget))) add(draft); };
+  return <div className="qz-tokens-wrap" ref={wrapRef}>
     <label className="qz-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-      <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) { e.preventDefault(); add(draft); } }} placeholder={placeholder} aria-label={placeholder} />
+      <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={keepTyped} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) { e.preventDefault(); add(draft); } }} placeholder={placeholder} aria-label={placeholder} />
     </label>
     {draft.trim() && <div className="qz-suggest" role="listbox">
       <button type="button" className="is-add" onClick={() => add(draft)}>+ Add “{draft.trim()}”</button>

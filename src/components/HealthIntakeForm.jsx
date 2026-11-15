@@ -577,7 +577,12 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
             setDraft(e.target.value);
             setOpen(true);
           }}
-          onBlur={() => window.setTimeout(() => setOpen(false), 140)}
+          onBlur={(e) => {
+            // Typed text is kept when she leaves the field without tapping Add (backlog Nov 14).
+            const into = e.relatedTarget && e.currentTarget.closest('.ayna-token-card')?.contains(e.relatedTarget);
+            if (!into && draft.trim()) addValue(draft);
+            window.setTimeout(() => setOpen(false), 140);
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && hasDraft) {
               e.preventDefault();
