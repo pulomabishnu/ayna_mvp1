@@ -62,7 +62,7 @@ describe('the app landing: one screen (founder, Oct 27 10:40)', () => {
     expect(html).not.toMatch(/class="lk-bar[ "]/);
     // "your body." is pink text, nothing boxed behind it.
     expect(html).not.toContain('<mark');
-    expect(text(html)).toContain('In an emergency, call 911.');
+    expect(text(html)).toContain('In an emergency, call 911 or your local emergency number.');
     expect(text(html)).toContain('Explore first');
     // Nothing below the first screen: no feature sections, no Pro, no founders.
     expect(html).not.toMatch(/<h2/);
@@ -148,7 +148,7 @@ describe('the website landing: the v2 home, optimized for desktop', () => {
     expect(host.querySelector('a[href="/pro"]').textContent).toContain('See what Pro includes');
     expect(page).toContain('Built by three women who wanted better answers.');
     const last = host.querySelector('#ay-landing').lastElementChild;
-    expect(last.textContent).toContain('In an emergency, call 911.');
+    expect(last.textContent).toContain('In an emergency, call 911 or your local emergency number.');
     expect(host.innerHTML).not.toContain('—');
   });
 
