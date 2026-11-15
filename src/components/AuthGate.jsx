@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { authErrorText } from '../utils/authErrorText.js';
 import { picksAreasLine } from '../utils/needAreas.js';
 import { getSupabaseClient, setRememberMe } from '../utils/supabaseClient';
 import { devPreviewOn } from '../utils/devPreview.js';
@@ -302,7 +303,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
-      setError(err.message || 'We couldn’t sign you in. Check your email and password, then try again.');
+      setError(authErrorText(err, 'We couldn’t sign you in. Check your email and password, then try again.'));
     } finally {
       setLoading(false);
     }
@@ -321,7 +322,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       if (error) throw error;
       setResendMsg(CODE_COPY.resent);
     } catch (err) {
-      setResendMsg(err.message || 'Could not resend right now. Try again in a moment.');
+      setResendMsg(authErrorText(err, 'Could not resend right now. Try again in a moment.'));
     } finally {
       setResending(false);
     }
@@ -348,7 +349,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // in (founder, Oct 29). ProfileSetupStep calls onAuthenticated when done.
       setProfileSetup({ user: data.user || data.session.user, session: data.session });
     } catch (err) {
-      setError(err.message || CODE_COPY.wrongOrExpired);
+      setError(authErrorText(err, CODE_COPY.wrongOrExpired));
     } finally {
       setLoading(false);
     }
@@ -394,7 +395,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       setPhoneNumber(e164);
       setPhoneStep('code');
     } catch (err) {
-      setError(err.message || 'Could not send a code right now. Please try again.');
+      setError(authErrorText(err, 'Could not send a code right now. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -457,7 +458,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || 'Could not sign in with Google.');
+      setError(authErrorText(err, 'Could not sign in with Google.'));
       setGoogleLoading(false);
     }
   };
@@ -492,7 +493,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       });
       if (error) throw error;
     } catch (err) {
-      setError(err.message || 'Could not sign in with Apple.');
+      setError(authErrorText(err, 'Could not sign in with Apple.'));
       setAppleLoading(false);
     }
   };

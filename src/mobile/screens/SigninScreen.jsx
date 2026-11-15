@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { authErrorText } from '../../utils/authErrorText.js';
 import ProfileSetupStep from '../../components/ProfileSetupStep.jsx';
 import { picksAreasLine } from '../../utils/needAreas.js';
 import LegalFooter from '../components/LegalFooter.jsx';
@@ -300,7 +301,7 @@ export default function SigninScreen({
       else onAuthenticated(firstName || undefined);
     } catch (e) {
       if (e.code === 'email_already_exists') setMode('signin');
-      setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
+      setError(authErrorText(e, 'We couldn’t sign you in. Check your connection and try again.'));
     } finally {
       setLoading(false);
     }
@@ -317,7 +318,7 @@ export default function SigninScreen({
     } catch (e) {
       // Same as the website: an account that was never verified goes to the code step, not a dead end.
       if (isEmailNotConfirmed(e)) { setCheckNote(CODE_COPY.emailNotConfirmed); setEmailCode(''); setMode('check-email'); return; }
-      setError(e.message || 'We couldn’t sign you in. Check your connection and try again.');
+      setError(authErrorText(e, 'We couldn’t sign you in. Check your connection and try again.'));
     } finally {
       setLoading(false);
     }
@@ -339,7 +340,7 @@ export default function SigninScreen({
     try {
       await onGoogleSignIn();
     } catch (e) {
-      setError(e.message || 'Could not start Google sign-in.');
+      setError(authErrorText(e, 'Could not start Google sign-in.'));
     } finally {
       setGoogleLoading(false);
     }
@@ -356,7 +357,7 @@ export default function SigninScreen({
     try {
       await onAppleSignIn();
     } catch (e) {
-      setError(e.message || 'Could not start Apple sign-in.');
+      setError(authErrorText(e, 'Could not start Apple sign-in.'));
     } finally {
       setAppleLoading(false);
     }
@@ -369,7 +370,7 @@ export default function SigninScreen({
       await onResendConfirmation(email.trim());
       setResendMsg(CODE_COPY.resent);
     } catch (e) {
-      setResendMsg(e.message || 'Could not resend right now, try again in a moment.');
+      setResendMsg(authErrorText(e, 'Could not resend right now, try again in a moment.'));
     } finally {
       setResending(false);
     }
@@ -385,7 +386,7 @@ export default function SigninScreen({
       setResendMsg(CODE_COPY.verified);
       // onAuthStateChange delivers the session; the check-email effect above then moves on.
     } catch (err) {
-      setCodeError(err.message || CODE_COPY.wrongOrExpired);
+      setCodeError(authErrorText(err, CODE_COPY.wrongOrExpired));
     } finally {
       setVerifying(false);
     }
@@ -500,7 +501,8 @@ export default function SigninScreen({
           </div>
           <div className="ay-auth-or" aria-hidden="true"><span>or</span></div>
 
-          <div className="ay-auth-form">
+          {/* Enter in Email or Password signs in or creates the account (it did nothing before, Nov 14). */}
+          <div className="ay-auth-form" onKeyDown={(e) => { if (e.key === 'Enter' && e.target?.tagName === 'INPUT' && e.target.type !== 'checkbox' && !loading) { e.preventDefault(); (mode === 'signup' ? handleSignUp : handleSignIn)(); } }}>
 
           <Field label="Email" icon={EmailIcon} invalid={Boolean(fieldErrors.email)}>
             <input type="email" autoComplete="email" placeholder="you@email.com" value={email} onChange={(e) => { setEmail(e.target.value); clearField('email'); }} style={inputStyle} {...invalidProps('email')} />
