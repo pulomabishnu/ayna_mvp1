@@ -59,7 +59,14 @@ export function isCbdProduct(p) {
     return CBD_RX.test(text);
 }
 
+/**
+ * Founder call, Nov 14 (Ameera, Puloma, Eliz): ayna no longer recommends period tracker apps; they
+ * compete with ayna's own cycle tracking. Someone who already uses one connects it for her data
+ * (Profile > Health data), which reads from the connection list, not from the catalog. Not deleted.
+ */
+export const PERIOD_TRACKER_APP_IDS = new Set(['d-clue', 'd-stardust', 'd-ovia', 'd-glow', 'd-apple-health', 'd-lively-lively-period-tracker-cycle', 'd-natural-cycles', 'd-flo-app']);
+
 /** True when a product may be shown to users. */
 export function isListedProduct(p) {
-    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id] && !isRxOnlyProduct(p) && !isCbdProduct(p);
+    return Boolean(p?.id) && !p.hidden && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id] && !isRxOnlyProduct(p) && !isCbdProduct(p) && !PERIOD_TRACKER_APP_IDS.has(p.id);
 }

@@ -1,4 +1,4 @@
-import { TEMPORARILY_HIDDEN_IDS, DUPLICATE_OF, isRxOnlyProduct, isListedProduct, isCbdProduct } from './hiddenProducts.js';
+import { TEMPORARILY_HIDDEN_IDS, DUPLICATE_OF, isRxOnlyProduct, isListedProduct, isCbdProduct, PERIOD_TRACKER_APP_IDS } from './hiddenProducts.js';
 import { addNeedToAnswers, needOption } from '../matching/addNeed.js';
 import { NEEDS as ONTOLOGY_NEEDS } from '../matching/ontology.js';
 const NEEDS_BY_ID = Object.fromEntries(ONTOLOGY_NEEDS.map((n) => [n.id, n]));
@@ -919,7 +919,7 @@ export const CATALOG_PRODUCTS = [
     .filter((p) => !isRxOnlyProduct(p) && !TEMPORARILY_HIDDEN_IDS.has(p.id) && !DUPLICATE_OF[p.id])
     .map(withImageOverride);
 
-const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden && !isCbdProduct(p));
+const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden && !isCbdProduct(p) && !PERIOD_TRACKER_APP_IDS.has(p.id));
 export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
 
 /** The public live catalog is the same universe used by Shop and the API. */

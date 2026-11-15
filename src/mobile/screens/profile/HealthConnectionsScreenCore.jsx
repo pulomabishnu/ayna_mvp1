@@ -1,4 +1,5 @@
 import { rememberHealthReturn } from '../../../health/healthReturn.js';
+import DataPrivacyNote from '../../components/DataPrivacyNote.jsx';
 import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 import SuggestBox from '../../../components/SuggestBox.jsx';
@@ -525,6 +526,7 @@ export default function HealthConnectionsScreen({ selectedId, onSelect, onBack, 
           userId={authUser?.id || null}
         />
         {health.status === 'error' && signedIn && <p className="ay-hc-error" role="alert">{"Couldn't load your health data."} <button type="button" className="ay-hc-link" onClick={health.refresh}>Try again</button></p>}
+        <DataPrivacyNote className="ay-hc-privacy" />
       </>
     );
   }

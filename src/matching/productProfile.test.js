@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS } from '../data/products.js';
 import { buildProductProfile, parsePrice, RELEVANCE_RULES, LEVEL } from './productProfile.js';
 import { NEED_BY_ID } from './ontology.js';
 
-const byId = Object.fromEntries(ALL_PRODUCTS.map((p) => [p.id, p]));
+const byId = Object.fromEntries([...CATALOG_PRODUCTS, ...ALL_PRODUCTS].map((p) => [p.id, p]));
 const prof = (id) => buildProductProfile(byId[id]);
 const rel = (id, need) => prof(id).health_need_relevance[need]?.score ?? 0;
 

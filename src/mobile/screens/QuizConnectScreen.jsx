@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DataPrivacyNote from '../components/DataPrivacyNote.jsx';
 import { Capacitor } from '@capacitor/core';
 import HealthConnectionsScreen from './profile/HealthConnectionsScreen.jsx';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
@@ -89,6 +90,7 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
         </ProFeatureGate>
       </div>
       <footer className="ay-qc-foot">
+        <DataPrivacyNote className="ay-qc-privacy" />
         {connected && <p role="status">{health.connected.length === 1 ? '1 source connected' : `${health.connected.length} sources connected`}</p>}
         <button type="button" className={connected ? 'ay-qc-primary' : 'ay-qc-skip'} onClick={onQuizConnectContinue}>{connected ? 'Done' : 'Skip for now'}</button>
       </footer>

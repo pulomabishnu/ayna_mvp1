@@ -246,6 +246,8 @@ export default function AynaHomeScreen(props) {
           onLogged={onLogged}
         />
         </div>
+        {/* Founder call, Nov 14 (Puloma): the privacy policy belongs at the bottom of Home, where her data shows. */}
+        <LegalFooter />
       </div>
       {monthOpen && monthData && (
         <MonthSheet today={today} rows={data.rows} log={dayLog} cycle={cycle} estimate={monthData.estimate} coming={monthData.coming} hormonalBC={hbc}

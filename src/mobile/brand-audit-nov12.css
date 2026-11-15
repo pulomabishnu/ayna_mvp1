@@ -148,3 +148,8 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .am-cover-mode button.is-active { background: #ffedac !important; color: #3e2723 !important; border-color: #ffedac !important; }
 /* Nov 14: the quiz's "More below" pill is a 44px tap. */
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile .aq-more { min-height: 44px !important; }
+/* Nov 14: data privacy line on Connect your data (DataPrivacyNote.jsx). Inherits the screen's ink. */
+.ayna-mobile .ay-dpn { margin: 12px 0 0; font: 500 13px/1.5 var(--ayna-font-ui, 'Figtree'), sans-serif; color: inherit; text-align: left; }
+.ayna-mobile .ay-dpn a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-block; min-height: 44px; line-height: 44px; }
+.ayna-mobile .ay-qc-foot .ay-dpn { text-align: center; margin: 0 0 8px; }
+.ayna-mobile .ay-hc-privacy { margin: 20px 0 8px; }

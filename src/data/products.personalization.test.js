@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-    ALL_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct,
+    ALL_PRODUCTS, CATALOG_PRODUCTS, getRecommendations, getPersonalizedProductIds, getProductMatchDetailsForProduct, getProductRelevanceScore, hydrateCatalogProduct,
     getNeedMatchesForProduct, getEcosystemSeedFromQuiz, getRecommendationMatchesAndRest, getProfileMatchPercentForProduct, getProfileMatchLabelsForProduct,
     getMatchCareFlags, getEcosystemAlternatives, getRecommendationExplanation, isOffShelfProduct,
 } from './products.js';
@@ -125,7 +125,7 @@ describe('personalized relevance scoring', () => {
         const pcosOnly = { fullHealthIntake: { supportSelections: ['PCOS support'], diagnosisSelections: ['PCOS'] } };
         // p-pink-stork-bloat left the catalog on 2026-10-13 (discontinued).
         for (const id of ['p-love-wellness-bloat', 'p-natures-bounty-d3-125mcg', 'p-zinc', 'd-ovia', 'd-glow', 'd-natural-cycles', 'd-initio', 'p-proov-complete']) {
-            const product = ALL_PRODUCTS.find((entry) => entry.id === id);
+            const product = ALL_PRODUCTS.find((entry) => entry.id === id) || CATALOG_PRODUCTS.find((entry) => entry.id === id);
             expect(product, id).toBeTruthy();
             expect(getProductRelevanceScore(product, pcosOnly), id).toBe(0);
         }

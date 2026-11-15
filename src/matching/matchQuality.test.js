@@ -5,7 +5,7 @@
 // Ask's top match (getTopMatch), the product page / Rundown details, Today.
 import { describe, it, expect } from 'vitest';
 import {
-  ALL_PRODUCTS, getEcosystemSeedFromQuiz, getPersonalizedProductIds, getTopMatch, getProductMatchDetailsForProduct, getEcosystemAlternatives,
+  ALL_PRODUCTS, CATALOG_PRODUCTS, getEcosystemSeedFromQuiz, getPersonalizedProductIds, getTopMatch, getProductMatchDetailsForProduct, getEcosystemAlternatives,
 } from '../data/products.js';
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
@@ -18,7 +18,7 @@ import { buildRundown } from '../components/rundown/buildRundown.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
 
 const q = (over) => ({ fullHealthIntake: { ...EMPTY, personalizationCompleted: true, ...over }, personalizationCompleted: true });
-const byId = new Map(ALL_PRODUCTS.map((p) => [p.id, p]));
+const byId = new Map([...CATALOG_PRODUCTS, ...ALL_PRODUCTS].map((p) => [p.id, p])); // Nov 14: hidden period trackers stay checkable
 const pp = (id) => buildProductProfile(byId.get(id));
 const ecoIds = (answers, opts) => new Set(getEcosystemSeedFromQuiz(answers, null, opts).shelves.flatMap((s) => s.productIds));
 const shopIds = (answers, opts) => getPersonalizedProductIds(answers, null, opts);
@@ -27,7 +27,7 @@ function surfaces(answers, opts) {
   const top = getTopMatch(answers, null, opts);
   return { eco: [...ecoIds(answers, opts)], shop: shopIds(answers, opts), top: top ? [top.id] : [] };
 }
-const CYCLE_TOOLS = ALL_PRODUCTS.filter((p) => isCycleTrackingProduct(buildProductProfile(p))).map((p) => p.id);
+const CYCLE_TOOLS = [...byId.values()].filter((p) => isCycleTrackingProduct(buildProductProfile(p))).map((p) => p.id);
 const PERIOD_CATS = new Set(['pad', 'tampon', 'cup', 'disc', 'period-underwear', 'cup-steamer']);
 
 // Everything a midlife user without a cycle might pick, including cycle and fertility options.
@@ -195,7 +195,7 @@ describe('4. catalog ingestion -> validation -> eligibility -> matching', () => 
       'p-mypelvicbra-waistband-extenders', 'p-saalt-cup-steamer', 'p-sootheher-gel-pad-refills',
       // Nov 5 all-hands: painkillers are never recommended.
       'p-advil-ibuprofen-200', 'p-aleve-naproxen-220', 'p-cystex', 'p-winx-uti-pain-relief', 'p-voltaren-arthritis-pain-gel',
-    ].filter((id) => byId.has(id)).sort());
+    ].filter((id) => ALL_PRODUCTS.some((p) => p.id === id)).sort());
     for (const r of report) expect(r.reason).toBeTruthy();
   });
   it('a failed validation or missing facts keeps a listing out', async () => {

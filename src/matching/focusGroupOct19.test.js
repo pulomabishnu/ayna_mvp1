@@ -8,7 +8,9 @@
 // 3. a 39-year-old in perimenopause with regular periods stays matchable for
 //    perimenopause needs and period products.
 import { describe, it, expect } from 'vitest';
-import { ALL_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS, getEcosystemSeedFromQuiz } from '../data/products.js';
+// Nov 14: period tracker apps left the listed catalog (founder call); they stay in CATALOG_PRODUCTS, where the matcher's rules are still checked.
+const anyProduct = (id) => ALL_PRODUCTS.find((p) => p.id === id) || CATALOG_PRODUCTS.find((p) => p.id === id);
 import { EMPTY } from '../mobile/data/intakeModel.js';
 import { buildUserProfile } from './userProfile.js';
 import { buildProductProfile, CYCLE_DEPENDENT_RULES, CYCLE_TRACKING_RULES } from './productProfile.js';
@@ -23,7 +25,7 @@ const ENGINES = ['v1', 'v2'];
 // Every catalog product whose relevance to some need comes from a rule that
 // needs a menstrual cycle to hold (period products, trackers, ovulation tests).
 const cycleRuleNeeds = (id) => {
-  const pp = buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id));
+  const pp = buildProductProfile(anyProduct(id));
   return Object.entries(pp.health_need_relevance).filter(([, e]) => CYCLE_DEPENDENT_RULES.has(e.rule)).map(([needId, e]) => ({ needId, rule: e.rule }));
 };
 
@@ -57,8 +59,8 @@ describe('bug 1: no period/cycle products for someone who does not menstruate', 
         const up = user({ age: '56', lifeStageSelections: [stage], supportSelections: NON_CYCLE_SUPPORT });
         for (const shelf of seed.shelves) {
           for (const id of shelf.productIds) {
-            const r = scoreProductForNeed(buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id)), up, shelf.needId);
-            const rule = buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id)).health_need_relevance[shelf.needId]?.rule;
+            const r = scoreProductForNeed(buildProductProfile(anyProduct(id)), up, shelf.needId);
+            const rule = buildProductProfile(anyProduct(id)).health_need_relevance[shelf.needId]?.rule;
             expect(CYCLE_DEPENDENT_RULES.has(rule), `${id} on ${shelf.needId}`).toBe(false);
             expect(r.filtered).not.toBe('not_menstruating');
           }
@@ -76,13 +78,13 @@ describe('bug 1: no period/cycle products for someone who does not menstruate', 
       const up = user({ age: '55', lifeStageSelections: ['I am in menopause'], supportSelections: ['Irregular periods', 'Missed periods', 'Hot flashes'] });
       const ids = allIds(seed);
       for (const id of ids) {
-        const pp = buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id));
+        const pp = buildProductProfile(anyProduct(id));
         for (const shelf of seed.shelves.filter((s) => s.productIds.includes(id))) {
           expect(CYCLE_TRACKING_RULES.has(pp.health_need_relevance[shelf.needId]?.rule), `${id} on ${shelf.needId}`).toBe(false);
         }
       }
       expect(ids.has('d-clue')).toBe(false);
-      const clue = scoreProductForNeed(buildProductProfile(ALL_PRODUCTS.find((p) => p.id === 'd-clue')), up, 'cycle.irregular');
+      const clue = scoreProductForNeed(buildProductProfile(anyProduct('d-clue')), up, 'cycle.irregular');
       expect(clue.score).toBe(0);
       expect(clue.filtered).toBe('not_menstruating');
     });
@@ -113,11 +115,11 @@ describe('bug 1: no period/cycle products for someone who does not menstruate', 
     expect(paused.shelves[0].productIds.length).toBeGreaterThan(0);
   });
 
-  it('a person with regular periods still gets Clue for irregular cycles (unchanged)', () => {
+  it('a person with regular periods: the matcher still scores Clue for irregular cycles (Clue itself is no longer listed, Nov 14)', () => {
     const seed = seedFor({ age: '27', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Irregular periods'] }, 'v1');
     expect(seed.shelves[0].productIds.length).toBeGreaterThan(0);
     const up = user({ age: '27', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Irregular periods'] });
-    expect(scoreProductForNeed(buildProductProfile(ALL_PRODUCTS.find((p) => p.id === 'd-clue')), up, 'cycle.irregular').score).toBeGreaterThanOrEqual(50);
+    expect(scoreProductForNeed(buildProductProfile(anyProduct('d-clue')), up, 'cycle.irregular').score).toBeGreaterThanOrEqual(50);
   });
 });
 
@@ -160,7 +162,7 @@ describe('bug 2: a format preference does not empty the Ecosystem', () => {
     // Nov 5: womenshealth.gov (PMS) says to track symptoms in a calendar or app, so period trackers
     // now fit PMS. Nothing else that ignores her tea-only choice.
     for (const id of pms.productIds) {
-      const pp = buildProductProfile(ALL_PRODUCTS.find((p) => p.id === id));
+      const pp = buildProductProfile(anyProduct(id));
       expect(pp.category === 'tracker' || pp.formats.every((f) => f === 'app_service' || f === 'drink_tea'), id).toBe(true);
     }
     if (!pms.productIds.length) expect(pms.emptyReason).toBeTruthy();
