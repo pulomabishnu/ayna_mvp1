@@ -73,9 +73,21 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const go = (n) => { const next = shiftMonth(ym, n); setYm(next); setPicked(null); };
   const canLogPicked = Boolean(picked) && picked <= today;
   const pickedFlow = picked ? log?.[picked]?.flow || null : null;
+  // Honest state (founder brief Nov 15): a quiet "Saved" line, or a plain failure if the phone refused it.
+  const [saveNote, setSaveNote] = useState('');
+  const noteTimer = useRef(0);
+  const confirm = (field, want) => {
+    let ok = false;
+    try { ok = (readLog()?.[picked]?.[field] ?? null) === (want ?? null); } catch { ok = false; }
+    setSaveNote(ok ? 'Saved' : "Couldn't save on this phone. Try again.");
+    window.clearTimeout(noteTimer.current);
+    if (ok) noteTimer.current = window.setTimeout(() => setSaveNote(''), 1800);
+  };
   const setFlow = (v) => {
     if (!canLogPicked) return;
-    saveLogEntry(picked, { flow: pickedFlow === v ? null : v });
+    const want = pickedFlow === v ? null : v;
+    saveLogEntry(picked, { flow: want });
+    confirm('flow', want);
     const next = readLog();
     setOwnLog(next);
     onSaved?.(next);
@@ -84,6 +96,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const saveField = (id, v) => {
     if (!canLogPicked) return;
     saveLogEntry(picked, { [id]: v });
+    confirm(id, v);
     haptic(v == null ? 'light' : 'selection');
     announceLogChange(picked);
     const next = readLog();
@@ -156,6 +169,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
                 </div>
               </div>
             ))}
+            {canLogPicked && <p className={`ay-mcal__saved${saveNote && saveNote !== 'Saved' ? ' is-error' : ''}`} role="status">{saveNote}</p>}
             {canLogPicked && <PhotoLog day={picked} dayLabel={fmt(picked, { month: 'long', day: 'numeric' })} />}
           </div>
         )}

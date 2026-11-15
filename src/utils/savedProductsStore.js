@@ -110,6 +110,9 @@ export async function loadSavedForUser(supabase, userId) {
 }
 
 /** Set or clear a saved product in user_ecosystems only. */
+/** True once the account table has no saved column (an old database): saves stay on the phone by design. */
+export function savedRemoteUnavailable() { return remoteColumnMissing; }
+
 export async function setSavedForUser(supabase, userId, product, isSaved) {
   if (!supabase || !userId || !product?.id) return false;
   if (remoteColumnMissing) return false;

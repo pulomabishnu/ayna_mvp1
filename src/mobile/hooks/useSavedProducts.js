@@ -6,7 +6,9 @@ import {
   persistSavedProducts,
   loadSavedForUser,
   setSavedForUser,
+  savedRemoteUnavailable,
 } from '../../utils/savedProductsStore.js';
+import { trackSave } from '../../utils/saveFeedback.js';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
 
 // Mirrors compactProduct() in savedProductsStore.js (not exported there)
@@ -92,10 +94,9 @@ export function useSavedProducts(user) {
     if (user?.id) {
       const supabase = getSupabaseClient();
       if (supabase) {
-        setSavedForUser(supabase, user.id, product, !wasSaved)
-          .catch((error) => {
-            console.warn('[Ayna] mobile saved-product write unavailable:', error?.message || error);
-          });
+        // A failed save says so, with Try again (founder brief Nov 15); the heart stays on this phone.
+        const once = () => setSavedForUser(supabase, user.id, product, !wasSaved).then((ok) => { if (ok === false && !savedRemoteUnavailable()) throw new Error('not_saved'); return ok; });
+        trackSave(once(), 'your saved list', once);
       }
     }
   }, [savedMap, user]);

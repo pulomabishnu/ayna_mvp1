@@ -91,3 +91,7 @@
 .ay-mcal .ay-plog__add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .ay-mcal .ay-plog__err { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--mc-fg); }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-mcal .ay-plog__list button svg { background: #ffedac; stroke: #3e2723; }
+/* Quiet save state under the day's answers (founder brief Nov 15: saving / saved / failed). */
+.ay-mcal__saved { min-height: 18px; margin: 4px 0 0; font: 600 13px/1.4 var(--ay-font-ui, inherit); opacity: .85; transition: opacity 150ms ease-out; }
+.ay-mcal__saved:empty { opacity: 0; }
+.ay-mcal__saved.is-error { opacity: 1; display: inline-block; padding: 2px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; }

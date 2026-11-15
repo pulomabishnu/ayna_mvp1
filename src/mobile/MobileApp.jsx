@@ -170,6 +170,7 @@ import { diffPersonalization, snapshotOf, toastFor, diffLines } from '../matchin
 import { addChange } from '../utils/changeHistory.js';
 import { shownMatchPercent } from '../utils/matchDisplay.js';
 import UpdateRecap from '../components/recap/UpdateRecap.jsx';
+import { trackSave, intakeFailed, batchFailed } from '../utils/saveFeedback.js';
 import ChangeHistory from '../components/recap/ChangeHistory.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
@@ -1234,11 +1235,8 @@ export default function MobileApp() {
       }));
       const supabase = getSupabaseClient();
       if (authUser && supabase) {
-        upsertProductState(supabase, authUser.id, product, {
-          inEcosystem: false,
-          isTracked: false,
-          isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[product.id],
-        }).catch((error) => console.warn('[Ayna] mobile ecosystem remove sync failed:', error));
+        const removeFlags = { inEcosystem: false, isTracked: false, isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[product.id] };
+        { const once = () => upsertProductState(supabase, authUser.id, product, removeFlags).then((r) => { if (batchFailed(r)) throw new Error('not_synced'); return r; }); trackSave(once(), 'your routine', once); }
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
       noteRoutineRemove(product.id);
@@ -1278,16 +1276,17 @@ export default function MobileApp() {
 
     const supabase = getSupabaseClient();
     if (authUser && supabase) {
-      upsertProductState(supabase, authUser.id, ecosystemProduct, {
-        inEcosystem: true,
-        isTracked: true,
-        isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[ecosystemProduct.id],
-      }).catch((error) => {
-        console.warn('[Ayna] mobile ecosystem add sync failed:', error);
-      });
+      const addFlags = { inEcosystem: true, isTracked: true, isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[ecosystemProduct.id] };
+      { const once = () => upsertProductState(supabase, authUser.id, ecosystemProduct, addFlags).then((r) => { if (batchFailed(r)) throw new Error('not_synced'); return r; }); trackSave(once(), 'your routine', once); }
 
       ecosystemFlagsRef.current.trackedProducts[ecosystemProduct.id] = ecosystemProduct;
     }
+  };
+
+  // Answers saved in the background: a failure says so (founder brief Nov 15), signed-out is fine.
+  const saveIntakeTracked = (intake) => {
+    const once = () => saveHealthIntakeForCurrentUser(intake).then((r) => { if (intakeFailed(r)) throw new Error(r.reason || 'save_failed'); return r; });
+    return trackSave(once(), 'your answers', once);
   };
 
   // One quiz answer changed in place (You > Your blend). Same save path as the
@@ -1333,11 +1332,12 @@ export default function MobileApp() {
         ecosystemFlagsRef.current.omittedProducts[product.id] = product;
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
-      upsertProductState(supabase, authUser.id, product, {
+      const omitFlags = {
         inEcosystem: wasOmitted ? myProducts.some((entry) => entry.id === product.id) : false,
         isTracked: wasOmitted ? !!ecosystemFlagsRef.current.trackedProducts[product.id] : false,
         isOmitted: !wasOmitted,
-      }).catch((error) => console.warn('[Ayna] mobile Not for me sync failed:', error));
+      };
+      { const once = () => upsertProductState(supabase, authUser.id, product, omitFlags).then((r) => { if (batchFailed(r)) throw new Error('not_synced'); return r; }); trackSave(once(), 'that change', once); }
     }
   };
 
@@ -1391,7 +1391,7 @@ export default function MobileApp() {
     let added = [];
     if (quiet) {
       updateSession({ lastQuizAnswers: nextAnswers });
-      saveHealthIntakeForCurrentUser(nextAnswers?.fullHealthIntake || nextAnswers).catch(() => {});
+      saveIntakeTracked(nextAnswers?.fullHealthIntake || nextAnswers);
       return true;
     }
     try {
@@ -1406,10 +1406,10 @@ export default function MobileApp() {
     if (added.length) setUpdatePop({ title: `${added.length} new ${added.length === 1 ? 'match' : 'matches'} for ${label}`, sub: 'Added to your products. Tap one to see why it fits, or take it out.', products: added });
     const supabase = getSupabaseClient();
     if (authUser && supabase && added.length) {
-      upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false })
-        .catch((error) => console.warn('[Ayna] mobile goal add sync failed:', error));
+      const batch = () => upsertProductsBatch(supabase, authUser.id, added, { inEcosystem: true, isTracked: false, isOmitted: false }).then((r) => { if (batchFailed(r)) throw new Error('not_synced'); return r; });
+      trackSave(batch(), 'your new matches', batch);
     }
-    saveHealthIntakeForCurrentUser(nextAnswers?.fullHealthIntake || nextAnswers).catch(() => {});
+    saveIntakeTracked(nextAnswers?.fullHealthIntake || nextAnswers);
     return true;
   };
 
@@ -1525,7 +1525,7 @@ export default function MobileApp() {
       // The same check-in as a try, so it reaches her account (src/health/outcomes.js).
       const next = recordRoutineOutcome(session.routineOutcomesByUser?.[authUser.id] || {}, productId, rating);
       const asTry = fromRoutineOutcomes({ [productId]: next[productId] }, ALL_PRODUCTS)[0];
-      if (asTry) { setTriesOwner(authUser.id); saveTry(asTry); syncUserData({ userId: authUser.id, force: true }).catch(() => {}); }
+      if (asTry) { setTriesOwner(authUser.id); saveTry(asTry); { const once = () => syncUserData({ userId: authUser.id, force: true }).then((r) => { if (r && !['synced', 'signed_out', 'waiting', 'not_ready'].includes(r.status)) throw new Error(r.status); return r; }); trackSave(once(), 'your check-in', once); } }
     } : null,
     onToggleRoutineProduct: (id) => updateSession((prev) => {
       const next = { ...(prev.routineExcluded || {}) };
@@ -1696,7 +1696,7 @@ export default function MobileApp() {
       // that one device only, invisible to "Manage/Download my data" and to
       // that user on any other device. No-ops harmlessly when signed out.
       const rawIntake = quizAnswers?.fullHealthIntake || quizAnswers;
-      saveHealthIntakeForCurrentUser(rawIntake).catch(() => {});
+      saveIntakeTracked(rawIntake);
       lastIntakeModeRef.current = mode;
       setScreen('building');
     },
