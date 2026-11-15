@@ -143,7 +143,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const [peek, setPeek] = useState(null);
   const slides = picks.length
     // Nov 3: no "answer more questions" slide before the story; that choice is on the reveal and at the end.
-    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(picks.length >= 3 ? ['top5'] : []), ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
+    ? ['intro', ...(byArea.length ? ['categories'] : []), 'match', ...(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length) ? ['why'] : []), ...(picks.length >= 3 ? ['top5'] : []), ...(checked && !(firstWhyFit && (firstWhyFit.reasons.length || firstWhyFit.checks.length)) ? ['checked'] : []), ...(persona ? ['persona'] : []), 'finish']
     : ['empty'];
 
   // Back from the sign-up step reopens the story on its last slide.
@@ -280,7 +280,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             ); })}</ol>
           </>}
           {active === 'why' && firstWhyFit && <>
-            <div className="ays-words"><p className="ays-kicker">Why it’s your #1</p><Kinetic text={firstWhyFit.forWhat ? `For ${firstWhyFit.forWhat.toLowerCase()}` : 'Made for what you told us'} /></div>
+            <div className="ays-words"><p className="ays-kicker">{first?.name ? `Why ${first.name} is your top match` : 'Why this is your top match'}</p><Kinetic text={firstWhyFit.forWhat ? `For ${firstWhyFit.forWhat.toLowerCase()}` : 'Made for what you told us'} /></div>
             <ul className="ay-wr-why">
               {firstWhyFit.reasons.map((r, i) => <li key={r} style={{ '--d': `${i * 140}ms` }}><span className="ay-wr-why__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg></span>{r}</li>)}
               {firstWhyFit.evidence && <li style={{ '--d': `${firstWhyFit.reasons.length * 140}ms` }}><span className="ay-wr-why__bars" aria-hidden="true">{[1, 2, 3].map((n) => <i key={n} className={n <= firstWhyFit.evidence.level ? 'is-on' : ''} />)}</span>Evidence: {firstWhyFit.evidence.word}</li>}
