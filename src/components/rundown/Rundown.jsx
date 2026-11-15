@@ -189,11 +189,17 @@ export default function Rundown({
 
   // Auto-launch: the first open of the day at or after 8 (autoLaunch.js).
   // Hidden for today from its "…" menu: no auto-open either (safety and care never hide).
+  const heroRef = useRef(null);
   const hasContent = daily.cards.length > 0 && !(memory.hiddenDay === today && !daily.cards.some((c) => c.protected));
   useEffect(() => {
     listenForExternalOpens();
     const check = () => {
       if (document.visibilityState === 'hidden') return;
+      // Backlog Nov 14 (M12: "it threw me back to the rundown after a few seconds"): coming back to the
+      // app opens the rundown only if she is looking at it on Home, never over another page she has open.
+      const el = heroRef.current;
+      if (el && typeof el.checkVisibility === 'function' && !el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) return;
+      if (el) { const r = el.getBoundingClientRect(); if (r.width === 0 || r.right <= 0 || r.left >= window.innerWidth) return; }
       const mem = readRundownMemory();
       let reduced = false;
       try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { reduced = false; }
@@ -299,7 +305,7 @@ export default function Rundown({
     );
   }
   return (
-    <section className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
+    <section ref={heroRef} className={`ay-rd-hero${compact ? ' is-compact' : ''}`} aria-labelledby="ay-rd-hero-h">
       {daily.cards.length > 0 && hiddenToday && (
         <p className="ay-rd-hero__hidden">Your Daily Rundown is hidden for today. <button type="button" onClick={() => hide(false)}>Show it</button></p>
       )}
