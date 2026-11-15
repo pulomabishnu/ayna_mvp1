@@ -135,3 +135,7 @@ html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobi
 html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .aq.aq--app :is(.ip-alert, .aq-note-card) :is(strong, b, p, a, span) { color: #3e2723 !important; }
 html body .ayna-mobile:not([data-theme='dark']):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .aq.aq--app :is(.aq-row, .aq-chip):not(.is-on):not([aria-pressed='true']) { border: 1.5px solid #3e2723 !important; }
 html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .aq.aq--app .aq-row:not(.is-on) .aq-dot { background: transparent !important; border: 1.5px solid #ffedac !important; box-shadow: none !important; }
+
+/* Small iPhones (Arpita 10/29, SE check Nov 14): the chevron pushed the corner circle off "Perimenopause".
+   The website already hides it; the circle and the follow-up that opens are enough. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .aq.aq--app .aq-answer .aq-chip.has-sub > svg.aq-chev { display: none !important; }
