@@ -1071,7 +1071,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       hint={!ready ? missingAnswerHint(step.id, intake) : null}
       cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
       below={(termCount > 0 || (phase === 'optional' && !isLast)) ? <>
-        {termCount > 0 && <button type="button" className="aq-link aq-terms" onClick={() => setTermList(termsOnScreen())}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>What these words mean</button>}
+        {/* Ameera, Nov 15: a short hint instead of a list of every word. Screen readers still get the list. */}
+        {termCount > 0 && <p className="aq-terms aq-terms--hint"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg><span aria-hidden="true">Not sure what one means? Press and hold it.</span><button type="button" className="sr-only" onClick={() => setTermList(termsOnScreen())}>What these words mean</button></p>}
         {phase === 'optional' && !isLast && <button type="button" className="aq-link" onClick={() => finish()}>See my results now</button>}
       </> : null}
       // No swipe or scroll-past-the-end to change question (focus group, Nov 9: a small

@@ -665,3 +665,5 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
 .ip-quick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .ip-quick__chip { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px dashed currentColor; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .ip-quick__chip:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+/* Nov 15: the hold hint (not a link). */
+.aq .aq-terms--hint { justify-content: center; width: 100%; margin: 4px 0 0; font-size: 13px; font-weight: 600; opacity: .85; }

@@ -65,7 +65,7 @@
 .ay-med-wrap { container-type: inline-size; width: 100%; flex: none; }
 .ay-med-wrap .ay-med-note { white-space: nowrap; max-width: none !important; }
 .ay-med-wrap .ay-med-note__short { display: none; }
-@container (max-width: 459px) {
+@container (max-width: 539px) {
   .ay-med-wrap .ay-med-note__full { display: none; }
   .ay-med-wrap .ay-med-note__short { display: inline; }
 }

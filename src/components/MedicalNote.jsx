@@ -17,8 +17,8 @@ export default function MedicalNote({ href = MEDICAL_TERMS_HREF, onOpen = null, 
   return (
     <div className="ay-med-wrap">
       <p className={`ay-med-note${className ? ` ${className}` : ''}`}>
-        <span className="ay-med-note__full">ayna shares information, not <a href={href} onClick={click}>medical advice</a>. In an emergency, call 911 or your local emergency number.</span>
-        <span className="ay-med-note__short">Not <a href={href} onClick={click}>medical advice</a>. In an emergency, call 911 or your local emergency number.</span>
+        <span className="ay-med-note__full">ayna shares information, not <a href={href} onClick={click}>medical advice</a>. Emergency: call 911 or local help.</span>
+        <span className="ay-med-note__short">Not <a href={href} onClick={click}>medical advice</a>. Emergency: call 911 or local help.</span>
       </p>
     </div>
   );
