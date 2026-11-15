@@ -7020,5 +7020,115 @@ export default [
   "source_url": "https://medlineplus.gov/ency/article/003150.htm",
   "reviewer": "research",
   "reviewed": "2026-11-10"
+ },
+ {
+  "product": "p-tampontribe-tampons-bulk-buy",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A tampon, an established period product that FDA regulates as a medical device; use the lowest absorbency needed and never wear one longer than 8 hours (TSS).",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other tampons already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-naya-regular-tampons",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A tampon, an established period product that FDA regulates as a medical device; use the lowest absorbency needed and never wear one longer than 8 hours (TSS).",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other tampons already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-rif-care-organic-cotton-non-applicator-tampons",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A tampon, an established period product that FDA regulates as a medical device; use the lowest absorbency needed and never wear one longer than 8 hours (TSS).",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other tampons already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-viv-for-your-v-viv-organic-cotton-tampons",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A tampon, an established period product that FDA regulates as a medical device; use the lowest absorbency needed and never wear one longer than 8 hours (TSS).",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/tampons",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other tampons already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-tampontribe-pads-bulk-buy",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A pad, an established period product that FDA regulates as a medical device; change it every 4 to 6 hours or as needed.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other pads already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-rif-care-organic-cotton-and-hemp-fiber-menstrual",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A pad, an established period product that FDA regulates as a medical device; change it every 4 to 6 hours or as needed.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other pads already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-viv-for-your-v-viv-bamboo-pads-liners",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A pad, an established period product that FDA regulates as a medical device; change it every 4 to 6 hours or as needed.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-pads-and-liners",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other pads already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-tampontribe-menstrual-cup",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A menstrual cup or disc, an established period product that FDA regulates as a medical device; empty and clean it as the label says.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other cups already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-viv-for-your-v-viv-menstrual-cup",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A menstrual cup or disc, an established period product that FDA regulates as a medical device; empty and clean it as the label says.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other cups already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-viv-for-your-v-viv-disc",
+  "need": "period.product_support",
+  "strength": "primary",
+  "grade": "A",
+  "rationale": "A menstrual cup or disc, an established period product that FDA regulates as a medical device; empty and clean it as the label says.",
+  "source_url": "https://www.fda.gov/medical-devices/menstrual-product-options-facts-and-safe-use/menstrual-cups",
+  "reviewer": "research",
+  "reviewed": "2026-11-14",
+  "note": "Same FDA category page as the other cups already mapped (meeting notes 11/13: products without a %)."
  }
 ];
