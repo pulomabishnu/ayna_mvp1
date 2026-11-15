@@ -319,3 +319,8 @@ html.ay-motion-paused .ayna-mobile:is(#ay, .ayna-mobile) .eco-app .eco-app-stack
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-yp-row__txt em { background: #f7badd; color: #3e2723; }
 .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { border: 1.5px solid #3e2723 !important; background: transparent !important; box-shadow: none !important; }
 .ayna-mobile[data-theme*='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .eco-views { background: transparent !important; border-color: #ffedac !important; }
+
+/* ayna picks grouped by product type (Olga 11/9). */
+.ayna-mobile .eco-app .eco-list__group + .eco-list__group { margin-top: 18px; }
+.ayna-mobile .eco-app .eco-list__type { margin: 0 0 8px; font: 700 15px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: #3e2723; }
+.ayna-mobile[data-theme*='dark'] .eco-app .eco-list__type { color: #ffedac; }

@@ -1,4 +1,6 @@
 import './profile/health-connections.css';
+import { CATEGORY_LABELS } from '../../data/catalogTaxonomy.js';
+import { sentenceCase } from '../../utils/sentenceCase.js';
 import { groupShelves } from '../../matching/shelfGroups.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadMonthlyCheckinStatus } from '../../utils/monthlyCheckinStore.js';
@@ -40,6 +42,18 @@ import '../you-hub-app.css';
 // Shelf tones: pink and espresso only (data-blue is for chart lines, You audit P2).
 const AREA_TONES = ['#F7BADD', '#3E2723', '#F7BADD', '#3E2723', '#F7BADD', '#3E2723'];
 const MIN_SHELF_SCORE = 50;
+
+
+/** Picks grouped by product type, in the order her best match first appears (Olga 11/9). */
+function byType(list) {
+  const groups = new Map();
+  for (const p of list) {
+    const label = sentenceCase(CATEGORY_LABELS[p.category] || String(p.category || 'Other').replaceAll('-', ' '));
+    if (!groups.has(label)) groups.set(label, []);
+    groups.get(label).push(p);
+  }
+  return [...groups.entries()];
+}
 
 function CareLinks({ care, limit = 4 }) {
   if (!care) return null;
@@ -406,7 +420,8 @@ export default function EcosystemScreen({
     </div>}
 
     {view === 'picks' && <section className="eco-list" aria-label="ayna picks for you">
-      {picksForYou.length ? <ul>{picksForYou.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul>
+      {/* Olga, focus group 11/9: "list matches by category". Grouped by product type, best match first inside each. */}
+      {picksForYou.length ? byType(picksForYou).map(([label, items]) => <div key={label} className="eco-list__group"><h3 className="eco-list__type">{label}</h3><ul className="eco-list__rows">{items.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul></div>)
         : <p className="eco-list__empty">No new picks right now. <button type="button" onClick={() => onBrowse?.()}>Explore products</button></p>}
     </section>}
     {view === 'saved' && <section className="eco-list" aria-label="Saved products">
