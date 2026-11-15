@@ -44,18 +44,20 @@ function readCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
-    const { ts, products } = JSON.parse(raw);
+    const { ts, products, inactiveIds } = JSON.parse(raw);
     if (!Array.isArray(products) || !products.length) return null;
     if (Date.now() - ts > CACHE_TTL_MS) return null;
-    return products.filter(isListedProduct).map(applyCatalogCorrections);
+    const list = products.filter(isListedProduct).map(applyCatalogCorrections);
+    list.inactiveIds = Array.isArray(inactiveIds) ? inactiveIds : [];
+    return list;
   } catch {
     return null;
   }
 }
 
-function writeCache(products) {
+function writeCache(products, inactiveIds = []) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), products, inactiveIds }));
   } catch {
     // Quota or private mode, the in-memory memo still serves this session.
   }
@@ -72,7 +74,7 @@ export async function loadProductCatalog() {
   const cached = readCache();
   if (cached) {
     const { adoptLiveCatalog } = await import('../data/products.js');
-    adoptLiveCatalog(cached);
+    adoptLiveCatalog(cached, cached.inactiveIds);
     memo = { products: cached, source: 'cache' };
     return memo;
   }
@@ -91,8 +93,9 @@ export async function loadProductCatalog() {
       const products = Array.isArray(data?.products) ? data.products.filter(isListedProduct).map(applyCatalogCorrections) : [];
       if (!products.length) throw new Error('empty catalog');
       const { adoptLiveCatalog } = await import('../data/products.js');
-      adoptLiveCatalog(products);
-      writeCache(products);
+      const inactiveIds = Array.isArray(data?.inactiveIds) ? data.inactiveIds : [];
+      adoptLiveCatalog(products, inactiveIds);
+      writeCache(products, inactiveIds);
       memo = { products, source: 'api' };
       return memo;
     } catch (e) {

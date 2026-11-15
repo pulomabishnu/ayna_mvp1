@@ -923,10 +923,12 @@ const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden && !isCbdProdu
 export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
 
 /** The public live catalog is the same universe used by Shop and the API. */
-export function adoptLiveCatalog(products) {
+export function adoptLiveCatalog(products, inactiveIds = []) {
     if (!Array.isArray(products) || !products.length) return;
     const byId = new Map(BUNDLED_PRODUCTS.map((p) => [p.id, p]));
     for (const p of products) if (p?.name && isListedProduct(p)) byId.set(p.id, p);
+    // Switched off in Supabase: gone from the app without a new build (bundled copy included).
+    for (const id of inactiveIds || []) byId.delete(id);
     ALL_PRODUCTS = [...byId.values()];
     productByIdIndex = null;
     productByRouteIndex = null;

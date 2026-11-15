@@ -111,6 +111,15 @@ export default async function handler(req, res) {
 
     if (error) throw new Error(error.message);
 
+    // Backlog Nov 14 ("hidden and removed products"): a product switched off in Supabase must leave the
+    // app too. The app merges this feed over its bundled copy, so it needs the ids that are off, or the
+    // bundled entry keeps showing. Ids only; a failure here never blocks the catalog.
+    let inactiveIds = [];
+    try {
+      const off = await client.from('product_catalog').select('id').eq('is_active', false);
+      inactiveIds = (off.data || []).map((r) => r.id).filter(Boolean);
+    } catch { /* ids are optional */ }
+
     const products = (data || []).filter(isPublishable).map(toClientProduct).filter(isListedProduct);
 
     if (products.length === 0) {
@@ -130,7 +139,7 @@ export default async function handler(req, res) {
     // nothing." 300s trades a little origin load during active catalog
     // cleanup for fixes actually being visible within minutes.
     res.setHeader('Cache-Control', 'public, s-maxage=300, must-revalidate');
-    return res.status(200).json({ products, count: products.length, source: 'product_catalog' });
+    return res.status(200).json({ products, count: products.length, inactiveIds, source: 'product_catalog' });
   } catch (e) {
     console.error('[products] query failed:', e?.message);
     return res.status(502).json({ error: 'query_failed', products: [] });
