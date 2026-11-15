@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { shownMatchPercent, PARTIAL_FIT } from '../utils/matchDisplay.js';
 import { createPortal } from 'react-dom';
 import { getProfileMatchPercentForProduct, getProductMatchDetailsForProduct, getEcosystemSeedFromQuiz } from '../data/products.js';
+import { useCatalogReady } from '../data/catalog.js';
 import { whyLine } from '../utils/whyLine';
 import { formatPrice, shownPriceText } from '../utils/formatPrice.js';
 import { groupShelves } from '../matching/shelfGroups.js';
@@ -93,6 +94,9 @@ function TypeWall({ value }) {
 const PERSONA_LINE = { 'The Researcher': 'You follow the evidence. Studies first, then the shelf.', 'The Listener': 'You trust real experiences from women like you.', 'The Curator': 'You go with expert picks and brands you trust.', 'The Explorer': 'You love finding a new brand before everyone else.' };
 
 export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null }) {
+  // Backlog Nov 14 (M11: "only four categories until I left and came back"): re-render when the live
+  // catalog replaces the bundled one, so the first view is the same as the next one.
+  useCatalogReady();
   const picks = products.filter(Boolean);
   const first = picks[0];
   const intake = quizResults?.fullHealthIntake || null;
@@ -112,9 +116,15 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
     if (!quizResults) return [];
     try {
       const byId = new Map(picks.map((p) => [p.id, p]));
-      return groupShelves(getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || [])
+      const groups = groupShelves(getEcosystemSeedFromQuiz(quizResults, healthProfile, matchOpts).shelves || [])
         .map((sh) => ({ label: sh.label, sub: sh.memberLabels || null, items: (sh.productIds || []).map((id) => byId.get(id)).filter(Boolean) }))
         .filter((g) => g.items.length);
+      // Backlog Nov 14 (M11/M12: "38 items but two categories"): every pick she is told about sits in a
+      // group, so the groups add up to the number on the first slide.
+      const placed = new Set(groups.flatMap((g) => g.items.map((p) => p.id)));
+      const rest = picks.filter((p) => !placed.has(p.id));
+      if (groups.length && rest.length) groups.push({ label: 'More picks for you', sub: null, items: rest });
+      return groups;
     } catch { return []; }
   })();
   // Nov 8 (founder: "actually informative"): why the #1 fits, and what ayna checked for her.
