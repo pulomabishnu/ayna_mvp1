@@ -209,7 +209,8 @@ export default function AynaHomeScreen(props) {
         {!hasProfile && quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
         {/* The data is the hero (founder Oct 26 21:46): greeting, three dials, the Rundown bubble and her streak. */}
         <HomeHero name={firstName} today={today} cycle={cycle} hormonalBC={hbc} sleep={chartOf('sleep_minutes')} sleepLog={sleepLog} activity={chartOf('steps')}
-          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={logHere} onMonth={() => setMonthOpen(true)} />
+          onOpenMetric={openMetric} onConnect={authUser ? onOpenHealthData || onConnectHealth : onConnectHealth} streak={streak} onLog={logHere} onMonth={() => setMonthOpen(true)}
+          takeaway={todayInsight ? { line: todayInsight.line, onOpen: todayInsight.metric ? () => openMetric(todayInsight.metric) : null } : null} />
         {/* "Is this still right?" for an old safety answer (src/health/healthRefresh.js). */}
         {authUser && quizAnswers && onUpdateIntake && <HealthRefreshPrompt variant="app" quizResults={quizAnswers} onSave={onUpdateIntake} onUpdate={onEditIntakeStep || null} />}
         {/* .ay-hd: the dashboard's own tokens and card styles, as on the full dashboard. */}

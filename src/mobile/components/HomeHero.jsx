@@ -100,13 +100,20 @@ function HomeWaveEdge() {
   );
 }
 
-export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, sleepLog = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null }) {
+export function HomeHero({ name = '', today, cycle = null, hormonalBC = false, sleep = null, sleepLog = null, activity = null, onOpenMetric = null, onConnect = null, streak = null, onLog = null, onMonth = null, takeaway = null }) {
   const { count, done } = useRundownCount();
   return (
     <section className="ay-hh" aria-labelledby="ay-hh-hi">
       <div className="ay-hh__band">
         <p className="ay-hh__date">{fmtLong(today)}</p>
         <h2 id="ay-hh-hi" className="ay-hh__hi">{hello()}{name ? `, ${name}` : ''}.</h2>
+        {/* Zoleka, focus group 11/11: "one main takeaway, like Oura". The first finding of her week, one line. */}
+        {takeaway?.line && (
+          <button type="button" className="ay-hh__take" onClick={takeaway.onOpen || undefined} disabled={!takeaway.onOpen}>
+            <small>Today&rsquo;s takeaway</small>
+            <span>{takeaway.line}</span>
+          </button>
+        )}
         <ScoreRings bare animate label="Your scores today" cycle={cycle} hormonalBC={hormonalBC} sleep={sleep} sleepLog={sleepLog} activity={activity}
           onOpen={onOpenMetric ? (area) => onOpenMetric(area === 'cycle' ? 'cycle' : area === 'sleep' ? 'sleep_minutes' : activity?.metric || 'steps') : null}
           onConnect={onConnect} onLog={onMonth || onLog} onLogSleep={onLog} />
