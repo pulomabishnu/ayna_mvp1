@@ -644,7 +644,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   const [termList, setTermList] = useState(null);
   const [termCount, setTermCount] = useState(0);
   const termsOnScreen = useCallback(() => {
-    const root = typeof document !== 'undefined' ? document.querySelector('[data-tour="quiz-hold"]') : null;
+    // Puloma, Nov 12: the FSA/HSA question listed "parabens and sulfates". While a question animates
+    // out, the previous one is still in the page; read only the newest answers block (the current step).
+    const roots = typeof document !== 'undefined' ? [...document.querySelectorAll('[data-tour="quiz-hold"]')] : [];
+    const root = roots[roots.length - 1] || null;
     if (!root) return [];
     const seen = new Set();
     const out = [];
@@ -662,7 +665,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     setTermList(null);
     if (!HOLD_TIP_TYPES.has(step?.type)) { setTermCount(0); return undefined; }
     const t = setTimeout(() => setTermCount(termsOnScreen().length), 60);
-    return () => clearTimeout(t);
+    const t2 = setTimeout(() => setTermCount(termsOnScreen().length), 500); // after the step animation
+    return () => { clearTimeout(t); clearTimeout(t2); };
   }, [step?.id, step?.type, termsOnScreen]);
   const isLast = currentIndex === visibleSteps.length - 1;
   // Drop-off (Nov 3): which question is on screen (its name only, never an answer).
