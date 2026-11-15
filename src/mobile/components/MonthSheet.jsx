@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import PhotoLog from './PhotoLog.jsx';
 import { createPortal } from 'react-dom';
 import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthComing, monthKey, periodDaySet, shiftMonth } from '../../health/monthCalendar.js';
 import './metric-sheet.css';
@@ -155,6 +156,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
                 </div>
               </div>
             ))}
+            {canLogPicked && <PhotoLog day={picked} dayLabel={fmt(picked, { month: 'long', day: 'numeric' })} />}
           </div>
         )}
 

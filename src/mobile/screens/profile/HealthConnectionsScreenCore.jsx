@@ -1,4 +1,5 @@
 import { rememberHealthReturn } from '../../../health/healthReturn.js';
+import { deleteAllPhotos } from '../../../health/photoLog.js';
 import DataPrivacyNote from '../../components/DataPrivacyNote.jsx';
 import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
@@ -140,6 +141,7 @@ function DeleteAll({ onRefresh }) {
     setStep('busy');
     try {
       const out = await deleteAllHealthData();
+      await deleteAllPhotos(); // symptom photos live on this phone only (photoLog.js); they go too
       await onRefresh?.();
       setMessage(`Deleted. ${out.deleted ? 'Every health record ayna held for you is gone.' : 'ayna had no stored health records.'}`);
       setStep('done');

@@ -77,3 +77,17 @@
 .ay-mcal .ay-mcal__top { display: grid; gap: 2px; margin: 16px 0 0; padding: 12px 14px; border: 1.5px solid var(--mc-fg); border-radius: 16px; color: var(--mc-fg) !important; }
 .ay-mcal .ay-mcal__top small { font-family: inherit; font-size: 13px; font-weight: 600; }
 .ay-mcal .ay-mcal__top b { font-family: inherit; font-size: 17px; font-weight: 700; line-height: 1.3; }
+
+/* Photo symptom log (UCLA 10/1): on this phone only. */
+.ay-mcal .ay-plog { margin-top: 14px; }
+.ay-mcal .ay-plog__note { margin: 2px 0 8px; font-size: 13px; line-height: 1.35; color: var(--mc-fg); }
+.ay-mcal .ay-plog__list { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 0; padding: 0; }
+.ay-mcal .ay-plog__list li { position: relative; width: 84px; }
+.ay-mcal .ay-plog__list img { display: block; width: 84px; height: 84px; object-fit: cover; border: 1.5px solid var(--mc-fg); border-radius: 14px; }
+.ay-mcal .ay-plog__list small { display: block; margin-top: 2px; font-size: 13px; color: var(--mc-fg); text-align: center; }
+.ay-mcal .ay-plog__list button { position: absolute; top: -10px; right: -10px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+.ay-mcal .ay-plog__list button svg { width: 24px; height: 24px; padding: 4px; box-sizing: border-box; border-radius: 50%; background: #3e2723; fill: none; stroke: #ffedac; stroke-width: 2.4; stroke-linecap: round; }
+.ay-mcal .ay-plog__add { position: relative; display: inline-flex; align-items: center; min-height: 44px; margin-top: 10px; padding: 0 18px; border: 1.5px solid var(--mc-fg); border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--mc-fg); cursor: pointer; }
+.ay-mcal .ay-plog__add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.ay-mcal .ay-plog__err { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--mc-fg); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-mcal .ay-plog__list button svg { background: #ffedac; stroke: #3e2723; }
