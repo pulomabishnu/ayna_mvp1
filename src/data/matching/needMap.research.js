@@ -7151,5 +7151,15 @@ export default [
   "reviewer": "research",
   "reviewed": "2026-11-15",
   "grade_status": "draft_unverified"
+ },
+ {
+  "product": "p-upup-hot-cold-reusable-pack",
+  "need": "pain.joint",
+  "strength": "secondary",
+  "grade": "C",
+  "rationale": "NIAMS lists heat and cold among ways to ease osteoarthritis joint pain; no study of this pack itself.",
+  "source_url": "https://www.niams.nih.gov/health-topics/osteoarthritis/diagnosis-treatment-and-steps-to-take",
+  "reviewer": "research",
+  "reviewed": "2026-11-15"
  }
 ];

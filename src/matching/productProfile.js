@@ -237,6 +237,8 @@ const NOV5_MAP = {
   'p-omron-pocket-pain-pro-tens-unit': { 'pain.joint': SECONDARY },
   // Drug Facts: "for the treatment of arthritis pain" in hand, wrist, elbow, foot, ankle and knee (Nov 14).
   'p-voltaren-arthritis-pain-gel': { 'pain.joint': DIRECT },
+  // NIAMS: heat and cold both ease osteoarthritis joint pain (Nov 15). Comfort, not a treatment.
+  'p-upup-hot-cold-reusable-pack': { 'pain.joint': SECONDARY },
   // A blackout mask: darkness for sleep; it does not treat insomnia.
   'p-ostrichpillow-eye-mask': { 'sleep.trouble': SECONDARY },
   'p-compex-edge-3-0-muscle-stimulator-with-tens-kit': { 'pain.joint': ADJACENT, 'fitness.strength': WEAK },

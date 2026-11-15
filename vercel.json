@@ -1699,6 +1699,11 @@
       "permanent": true
     },
     {
+      "source": "/product/p-upup-hot-cold-reusable-pack",
+      "destination": "/product/up-and-up-hot-cold-reusable-pack",
+      "permanent": true
+    },
+    {
       "source": "/product/p-uqora-control",
       "destination": "/product/uqora-control",
       "permanent": true

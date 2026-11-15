@@ -448,11 +448,13 @@ describe('B. signals, recency, contradictions, behavior', () => {
 
 describe('B. shelves: diversity, roles, explainability and "do we have a good recommendation?"', () => {
   it('returns zero products rather than filler when nothing is good enough', () => {
-    const s = shelf(user({ supportSelections: ['Joint aches'] }), 'pain.joint');
+    // Nov 15: joint aches now has a sourced hot/cold pack (founder), so brain fog is the empty example.
+    const s = shelf(user({ supportSelections: ['Brain fog'] }), 'cognition.brain_fog');
     expect(s.picks).toHaveLength(0);
     expect(s.quality).toBe('none');
-    // Pain relievers can fit joint aches now, but wait for her medicines answer first.
     expect(s.qualityNote).toMatch(/backed well enough|stand behind|safety details/);
+    // Joint aches: only the sourced pack, no filler, never a pain medicine.
+    expect(shelfIds(user({ supportSelections: ['Joint aches'] }), 'pain.joint')).toEqual(['p-upup-hot-cold-reusable-pack']);
   });
 
   it('only explainable products (at least a secondary relationship) can rank as matches', () => {
