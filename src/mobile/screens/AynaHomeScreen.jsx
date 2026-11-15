@@ -116,7 +116,10 @@ export default function AynaHomeScreen(props) {
   // One metric's detail as a bottom sheet (the dials, the highlights and the week tiles all open it).
   const [sheet, setSheet] = useState(null);
   const openMetric = (m) => { if (m === 'cycle' ? cycle : m && chartOf(m)) setSheet(m); else openDashboard(); };
-  const firstName = String(authUser?.user_metadata?.first_name || '').split(' ')[0];
+  // Backlog Nov 14 (M12: "Good afternoon, [first name]"): Google and Apple accounts carry the name as
+  // given_name / full_name, not first_name, so Home showed no name for them.
+  const meta = authUser?.user_metadata || {};
+  const firstName = String(meta.first_name || meta.given_name || meta.full_name || meta.name || '').trim().split(/\s+/)[0] || '';
   const ask = (q, extra) => onAskAyna?.(typeof q === 'string' ? { question: q, ...(extra || {}) } : q);
 
   // One toggle, one view at a time (founder Oct 26 evening): nothing stacked, nothing removed.
