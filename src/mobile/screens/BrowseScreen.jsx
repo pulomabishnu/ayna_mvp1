@@ -65,6 +65,11 @@ const ELIGIBILITY = (item) => {
 const PREFERENCE_TERMS = { 'fragrance-free': ['fragrance free', 'fragrance-free'], 'sensitive-skin': ['sensitive skin'], vegan: ['vegan'], 'cruelty-free': ['cruelty free', 'cruelty-free'], organic: ['organic'], 'clean-ingredients': ['clean ingredients'] };
 const SUSTAINABILITY_TERMS = { reusable: ['reusable', 'reuse'], recyclable: ['recyclable', 'recycled'], 'low-waste': ['low waste', 'zero waste', 'low-waste'], packaging: ['sustainable packaging', 'plastic-free packaging', 'compostable packaging'] };
 
+// One chip per kind of product (Nov 14 sweep: "Pelvic floor", "Pelvic floor exerciser" and
+// "Pelvic floor trainer" were three chips, "Wearable" sat beside "Trackers & wearables").
+const TYPE_MERGE = { 'pelvic-floor-exerciser': 'pelvic-floor', 'pelvic-floor-trainer': 'pelvic-floor', wearable: 'tracker', 'cup-steamer': 'cup' };
+const typeOf = (category) => TYPE_MERGE[category] || category;
+
 const PAGE_SIZE = 20;
 
 function PersonalizedToggle({ on, disabled, onClick }) {
@@ -282,7 +287,8 @@ export default function BrowseScreen({
   const { grabberProps: filterGrabber } = useSheetDrag(() => setShowFilters(false), filterSheetRef);
   useEffect(() => {
     if (!showFilters) return undefined;
-    filterCloseRef.current?.focus();
+    // Focus the sheet itself (screen readers read its label) rather than ringing Close on every open.
+    filterSheetRef.current?.focus({ preventScroll: true });
     const handleFilterKeys = (event) => {
       if (event.key === 'Escape') {
         setShowFilters(false);
@@ -389,7 +395,7 @@ export default function BrowseScreen({
   filtered = filtered.filter((item) => {
     // ayna is 18+: products made for teens are not listed (same rule as the website's Shop, so both count the same).
     if (isTeenProduct(item)) return false;
-    if (filters.category !== 'all' && item.category !== filters.category) return false;
+    if (filters.category !== 'all' && typeOf(item.category) !== filters.category) return false;
     const price = PRICE_VALUE(item);
     if (filters.price === 'under-25' && !(price != null && price < 25)) return false;
     if (filters.price === '25-50' && !(price != null && price >= 25 && price <= 50)) return false;
@@ -614,7 +620,7 @@ export default function BrowseScreen({
       {showDeck && <DiscoverDeck products={filtered} quizAnswers={quizAnswers} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} onOpenProduct={(product) => { setShowDeck(false); onOpenProduct?.(product); }} onClose={() => setShowDeck(false)} />}
       {mode === 'products' && <>
         {showFilters && <div className="ayna-shop-filter-backdrop" onClick={() => setShowFilters(false)}>
-          <div ref={filterSheetRef} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
+          <div ref={filterSheetRef} tabIndex={-1} className="ayna-shop-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters" onClick={(event) => event.stopPropagation()}>
           <button {...filterGrabber} aria-label="Close filters" />
           <div className="ayna-shop-filter-head"><strong>Filters</strong><button ref={filterCloseRef} type="button" aria-label="Close filters" onClick={() => { setShowFilters(false); filterButtonRef.current?.focus(); }}>Close</button></div>
           <div className="ayna-shop-filter-fields">
@@ -624,7 +630,7 @@ export default function BrowseScreen({
           {embedded && <fieldset className="ay-chipgroup"><legend>Area</legend><div className="ay-chipgroup__chips">{SHOP_GROUPS.map((g) => <button key={g.id} type="button" className="ay-chipgroup__chip" aria-pressed={activeGroup === g.id} onClick={() => setActiveGroup(activeGroup === g.id ? 'all' : g.id)}>{g.label}</button>)}</div></fieldset>}
           {FILTER_FIELDS.map(([key, label, options]) => (
             <fieldset key={key} className="ay-chipgroup"><legend>{label}</legend><div className="ay-chipgroup__chips">
-              {(key === 'category' ? [...options, ...[...new Set(products.map((p) => p.category).filter(Boolean))].sort().map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))])] : options).filter(([value]) => value !== 'all').map(([value, text]) => (
+              {(key === 'category' ? [...options, ...[...new Set(products.map((p) => typeOf(p.category)).filter(Boolean))].map((category) => [category, sentenceCase(CATEGORY_LABELS[category] || category.replaceAll('-', ' '))]).sort((a, b) => a[1].localeCompare(b[1]))] : options).filter(([value]) => value !== 'all').map(([value, text]) => (
                 <button key={value} type="button" className="ay-chipgroup__chip" aria-pressed={filters[key] === value} onClick={() => setFilters((current) => ({ ...current, [key]: current[key] === value ? 'all' : value }))}>{text}</button>
               ))}
             </div></fieldset>

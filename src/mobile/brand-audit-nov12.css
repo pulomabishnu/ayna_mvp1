@@ -176,3 +176,8 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 /* Nov 14 (run-through 11/12, Puloma: sign-up hard to read in dark): auth fields are solid espresso
    with a butter outline, not a see-through butter wash. */
 :is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-fresh-auth-field { background: #3e2723 !important; border-color: #ffedac !important; }
+
+/* Shop filters sheet: "Leave out" lines up with Sort and Area (it carried the page's 20px side margin). */
+.ayna-mobile .ayna-shop-filter-fields .ay-avoid.ay-shop-avoid { margin: 0 !important; padding: 4px 0 14px !important; }
+.ayna-mobile .ayna-shop-filter-fields .ay-avoid.ay-shop-avoid > .ay-avoid__label { margin-bottom: 8px !important; }
+.ayna-mobile .ayna-shop-filter-sheet:focus { outline: none !important; }
