@@ -136,7 +136,7 @@ const TITLES = {
   // Nov 3 (founder: "a 5 year old should be able to fill this out"): short, plain words.
   // Nov 9 focus group: people skipped things they live with but don't call a problem
   // (heavy periods) and ended up with an empty profile. Say those count, and where to change it.
-  support: { title: 'What do you want help with?', subtitle: 'Include things you live with too, like heavy periods.' },
+  support: { title: 'What do you want help with?', subtitle: 'Things you deal with, like heavy periods, or just want to improve, like sleep or energy. You don\u2019t need a diagnosis.' },
   periodFlow: { title: 'How heavy is your period flow?', subtitle: 'On a typical heavy day' },
   periodPain: { title: 'How much do period cramps get in your way?' },
   ttcDuration: { title: 'How long have you been trying to get pregnant?' },
@@ -147,7 +147,7 @@ const TITLES = {
   formats: { title: 'Which kinds of products do you like using?' },
   priceRange: { title: 'What would you usually spend on one product?' },
   avoidIngredients: { title: 'Anything you want your products to avoid?', type: 'avoidOnly' },
-  fsaHsa: { title: 'Do you have an FSA or HSA?', subtitle: 'These are accounts, often through work, that let you pay for eligible health costs with money before tax. Some health products qualify.' },
+  fsaHsa: { title: 'Do you have an FSA or HSA?', subtitle: 'US only. These are accounts, often through work, that let you pay for eligible health costs with money before tax. Some health products qualify.' },
   trust: { title: 'What matters most when you pick a product?', subtitle: 'Drag to rank. Evidence comes first unless you change it.' },
   conditions: { title: 'Any diagnosed conditions?', subtitle: 'Only ones a clinician has diagnosed' },
   allergies: { title: 'Any allergies or sensitivities?' },
