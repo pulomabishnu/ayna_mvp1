@@ -226,6 +226,7 @@ function ProductGrid({ products, onOpenProduct, layout = 'grid', quizAnswers = n
 // same real array (same fields/images), revealed progressively as the user
 // scrolls, rather than network-fetched pages.
 export default function BrowseScreen({
+  shopNote = null,
   products = [],
   articles = [],
   savedProducts = {},
@@ -696,7 +697,7 @@ export default function BrowseScreen({
                   {items.length > 4 && <button type="button" className="ay-shop-group__all" onClick={() => setFilters((current) => ({ ...current, category: type }))}>See all {items.length} {label.toLowerCase()}</button>}
                 </section>
               ))}</div>}
-              {filtered.length > 0 && !searchGroups && <ProductGrid onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
+              {filtered.length > 0 && !searchGroups && <ProductGrid afterFirstRow={!searchTermRaw && activeFilterCount === 0 ? shopNote : null} onPickPhrase={!embedded && !searchTermRaw && activeFilterCount === 0 ? (q) => { setSearchValue(q); document.querySelector('.ayna-shop-heading')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } : null} matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={filterKey} products={filtered} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} showOnboarding={!hasEcosystem && ctaVariant !== 'none'} />}
               {moreResults.length > 0 && <>
                 {filtered.length > 0 && <h2 className="ay-shop-results-label">More results</h2>}
                 <ProductGrid matchOpts={matchOpts} savedProducts={savedProducts} onToggleSaved={onToggleSaved} key={`more-${filterKey}`} products={moreResults} services={servicesMode} onOpenProduct={onOpenProduct} layout={cardLayout} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} onStartQuiz={onStartQuiz} />

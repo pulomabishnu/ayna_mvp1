@@ -18,7 +18,7 @@ import '../app-header.css';
  * linked at the bottom. Browsing works with no profile at all.
  */
 export default function ExploreScreen(props) {
-  const { exploreSection = 'overview', onExploreSection, products = [], onOpenSaved } = props;
+  const { exploreSection = 'overview', onExploreSection, products = [], onOpenSaved, onOpenStartups } = props;
   // Shop and Services are their own tabs now (founder, Oct 26): the tab picks the type, so no toggle.
   const kind = exploreSection === 'services' ? 'services' : 'products';
   const { products: catalog, services } = useMemo(() => splitCatalog(products), [products]);
@@ -39,7 +39,15 @@ export default function ExploreScreen(props) {
 
   return <div className="ax ax--embed" data-tour="explore" data-kind={kind}>
     <MobileHeader onOpenSaved={onOpenSaved} />
-    <BrowseScreen key={kind} {...props} products={shown} embedded servicesMode={kind === 'services'} typeToggle={null} bandTitle={kind === 'services' ? 'Services' : 'Shop'} />
+    {/* Zoleka, focus group 11/11 (founders agreed 11/13): new-to-market and waitlist products are listed.
+        They live on the Startups page; Shop points to them after the first row so they aren't buried. */}
+    <BrowseScreen key={kind} {...props} products={shown} embedded servicesMode={kind === 'services'} typeToggle={null} bandTitle={kind === 'services' ? 'Services' : 'Shop'}
+      shopNote={kind === 'products' && onOpenStartups ? (
+        <button type="button" className="ayshop__soon" onClick={onOpenStartups}>
+          <span><b>New and coming soon</b><small>Products on waitlists or in trials, not sold in the US yet</small></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+      ) : null} />
     <p className="ayshop__reads"><a href="/library" onClick={(e) => { e.preventDefault(); onExploreSection?.('resources'); }}>Library: guides and research</a></p>
     <LegalFooter />
   </div>;
