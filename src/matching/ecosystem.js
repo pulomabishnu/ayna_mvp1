@@ -368,6 +368,15 @@ export function buildEcosystem(up, products, options = {}) {
       ? acrossNeeds
       : diversify(sorted, profilesById, up, picksPerNeed, selectedAcrossShelves)).slice(0, picksPerNeed);
     picks.forEach((p) => selectedAcrossShelves.set(p.productId, (selectedAcrossShelves.get(p.productId) || 0) + 1));
+    // Ivy Bell, focus group 10/26 ("as you get older, you pee a lot"): frequency or urgency alone, with no
+    // burning, no repeat UTIs and no UTI now, is usually not an infection. Bladder and pelvic floor options
+    // lead; UTI tests stay on the shelf, after them. Nothing is added or removed.
+    if ((need.id === 'urinary.frequency' || need.id === 'urinary.urgency')
+      && !(up.healthIntent?.needs || []).some((n) => n.id === 'urinary.burning' || n.id === 'urinary.recurrent_uti')
+      && !['right_now', 'first_time', 'recurrent'].includes(need.modifiers?.utiFrequency)) {
+      const isTest = (p) => (profilesById.get(p.productId)?.care_roles || []).includes('testing');
+      picks.sort((a, b) => Number(isTest(a)) - Number(isTest(b)));
+    }
     const roles = assignRoles(acrossNeeds, profilesById, up);
     picks.forEach((p, i) => {
       p.roles = Object.entries(roles).filter(([, id]) => id === p.productId).map(([role]) => role);

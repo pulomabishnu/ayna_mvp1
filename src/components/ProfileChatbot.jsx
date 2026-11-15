@@ -536,7 +536,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
             {home && !sending && (
               <AskStart
                 name={firstName}
-                intro={signedOut ? 'Quick answers need no account; other questions need a free one. Not medical advice.' : 'Uses your profile and checked sources. Not medical advice.'}
+                intro={signedOut ? 'Quick answers need no account; other questions need a free one. Not medical advice. In an emergency, call 911.' : 'Uses your profile and checked sources. Not medical advice. In an emergency, call 911.'}
                 how={how}
                 groups={groups}
                 // A suggested question is sent on tap (founder, Oct 24 22:17); typing waits for Send.
