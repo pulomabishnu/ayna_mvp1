@@ -205,7 +205,7 @@ export const BASICS_PRODUCTS = [
     internal: false,
     healthFunctions: ['vaginal-health'],
     tags: ['vaginal-health', 'discomfort', 'cost'],
-    price: '$6.29 for 1.5 oz (45 g) at Walmart',
+    price: '$9.47 for 1.5 oz (45 g) at Amazon',
     userRating: 4.6,
     whereToBuy: ['Walmart'],
     url: 'https://www.walmart.com/ip/Taro-Clotrimazole-7-Vaginal-Cream-45-g/46008111',

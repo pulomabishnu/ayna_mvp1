@@ -5281,7 +5281,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['skin-hair'],
         tags: ['lilyeve', 'growturn', 'grow:turn', 'hair', 'scalp', 'hair serum', 'thinning', 'shedding', 'caffeine', 'heartleaf', 'exosome', 'korean', 'cosmetic'],
-        price: '$29.70',
+        price: '$21.75 for 3.38 fl oz',
         whereToBuy: ['lilyeveus.com', 'Amazon'],
         url: 'https://www.lilyeveus.com/products/lilyeve-antihairloss-growturn-ampoule100',
         whereToBuyLinks: {

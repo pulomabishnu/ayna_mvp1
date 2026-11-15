@@ -12,6 +12,7 @@ import { isPartnerBrandItem, isPrelaunchPartnerItem } from '../../utils/partnerB
 import { retailerLinks } from './commerce.js';
 import { getPassport } from '../../data/passport/index.js';
 import { formatPrice } from '../../utils/formatPrice.js';
+import { AFFILIATE_LANDS_ON } from '../../data/affiliateDestinations.js';
 
 const SITE = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
 const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } };
@@ -35,7 +36,8 @@ export function buyModel(product, { variant = null, brand = '', name = '', price
   const b = String(brand || product.brand || '').trim();
   const shownName = String(name || product.name || '').trim();
   // A service's own site reads as the service ("Planned Parenthood Direct"), not a domain.
-  const retailer = !url ? '' : amazon ? 'Amazon' : partner && b ? b : isService && shownName.length <= 34 ? shownName : host(url);
+  const lands = AFFILIATE_LANDS_ON[product.id];
+  const retailer = !url ? '' : amazon ? 'Amazon' : lands && url === String(product.affiliateUrl || '').trim() ? lands : partner && b ? b : isService && shownName.length <= 34 ? shownName : host(url);
   const fp = formatPrice(product);
   const price = priceMain != null ? priceMain : (fp.main !== 'Price at retailer' && fp.main.length <= 12 ? fp.main : '');
   const shown = shownName;

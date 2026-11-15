@@ -6,7 +6,7 @@
 export const EXTENDED_PHYSICAL = [
     // ─── MORE PADS ──────────────────────────────────────
     {
-        id: 'p-lola-pad', name: 'LOLA Organic Cotton Pads', brand: 'LOLA', productUrl: 'https://mylola.com/products/pads', category: 'pad', type: 'physical', internal: false, healthFunctions: ['menstrual-collection', 'leak-protection'], tags: ['heavy-flow', 'organic', 'safety-concern'], price: '$11 for 12', userRating: 4.5, whereToBuy: ['Amazon', 'LOLA.com'], url: 'https://mylola.com/', faqUrl: 'https://help.mylola.com/',
+        id: 'p-lola-pad', name: 'LOLA Organic Cotton Pads', brand: 'LOLA', productUrl: 'https://mylola.com/products/pads', category: 'pad', type: 'physical', internal: false, healthFunctions: ['menstrual-collection', 'leak-protection'], tags: ['heavy-flow', 'organic', 'safety-concern'], price: '$25.99 for 36', userRating: 4.5, whereToBuy: ['Amazon', 'LOLA.com'], url: 'https://mylola.com/', faqUrl: 'https://help.mylola.com/',
         // Ayna affiliate partnership, affiliateUrl wins over `url`/`productUrl`
         // for the Buy Now / Visit Site destination (see getBuyUrl in
         // ProductModal.jsx). Product-specific LOLA affiliate link, this

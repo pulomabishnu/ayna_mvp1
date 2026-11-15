@@ -246,7 +246,7 @@ export const PHYSICAL_PRODUCTS = [
         internal: true,
         healthFunctions: ['menstrual-collection'],
         tags: ['heavy-flow', 'organic', 'safety-concern', 'comfort'],
-        price: '$10 for 18',
+        price: '$18.99 for 32',
         userRating: 4.5,
         whereToBuy: ['Amazon', 'LOLA.com'],
         url: 'https://mylola.com/',

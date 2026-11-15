@@ -1275,7 +1275,7 @@ export const NOV_2026_PRODUCTS = [
       "discomfort",
       "fragrance-free"
     ],
-    "price": "$22 (size not listed) (brand page, Nov 2026)",
+    "price": "$22 for 1.7 fl oz",
     "whereToBuy": [
       "Kindra"
     ],

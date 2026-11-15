@@ -205,6 +205,9 @@ Popmask Big Hug Self-Heating Patches|B09GV7J2H1
 Hoolest VeRelief Prime|B0GYBH7BP9
 Queen of the Thrones Ritual Starter - Liver Castor Oil Pack Kit|B09ZPWBQJ6
 Topicals Faded Brightening + Clearing Serum|B09V9QRHCD
+Taro Clotrimazole 1% 7-Day Vaginal Cream|B000RL6N4E
+V Lube Silicone Lubricant|B0DCHK3YMG
+Lilyeve Grow:Turn Ampoule (Hair Serum with Brush)|B0GYYKQL9Z
 `.trim().split('\n');
 
 function normalizeProductName(value) {
