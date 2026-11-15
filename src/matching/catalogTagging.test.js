@@ -12,7 +12,10 @@ import { NEEDS } from './ontology.js';
 // doesn't score (homeopathic, "detox"); device = a device whose stated use is too general.
 // Nov 5 (founder: "all of them should have a match"): every live product is now mapped (NOV5_MAP in
 // productProfile.js, modest fit-by-use levels), so nothing is untagged on purpose.
-const NOT_TAGGED_ON_PURPOSE = {};
+const NOT_TAGGED_ON_PURPOSE = {
+  // Founder decision (Ameera, Nov 15): 5,000 IU is above the NIH adult upper limit; never matched automatically.
+  'p-natures-bounty-d3-125mcg': 'high_dose',
+};
 const NEED_IDS = new Set(NEEDS.map((n) => n.id));
 const live = CATALOG_PRODUCTS.filter((p) => !p.hidden);
 

@@ -1550,6 +1550,13 @@ function requiresConditionFor(product, f) {
   return { condition: 'anemia', text: 'High-dose iron is best considered after iron deficiency is confirmed with a clinician or lab test' };
 }
 
+/**
+ * Never matched automatically (founder decision, Ameera, Nov 15). Still on its own page and in search.
+ * Nature's Bounty D3 is 5,000 IU a day, above the NIH adult upper limit of 4,000 IU
+ * (https://ods.od.nih.gov/factsheets/VitaminD-Consumer/); a clinician may prescribe it, ayna shouldn't match it.
+ */
+export const NOT_AUTO_MATCHED = new Set(['p-natures-bounty-d3-125mcg']);
+
 export function buildProductProfile(product) {
   if (!product) return null;
   const key = product.id ? `${product.id}|${product.name || ''}` : null;
@@ -1640,6 +1647,7 @@ export function buildProductProfile(product) {
   const claimEvidence = claimEvidenceFor(product, brand.name, Object.keys(relevance));
   const passportClaims = passportClaimEvidence(ppLayer.claims);
   const health_need_relevance = Object.fromEntries(Object.entries(relevance)
+    .filter(() => !NOT_AUTO_MATCHED.has(product.id))
     .filter(([, e]) => e.score > 0 || e.contextual.length)
     .map(([need, e]) => [need, {
       score: e.score,
