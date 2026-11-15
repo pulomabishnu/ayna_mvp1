@@ -222,7 +222,46 @@ export function compareSetRows(products = [], { matchFor = null, detailsFor = nu
   rows.push({ id: 'safety', label: 'Safety considerations', values: list.map(safetyOf), full: list.map(safetyFull), hint: 'From the label and the brand’s warnings' });
   rows.push({ id: 'prefs', label: 'Your preferences', values: list.map((p) => preferences(detailsFor ? detailsFor(p) : null)), keep: true });
   rows.push({ id: 'reviews', label: 'Reviews', values: list.map((p) => reviews(p, ratingFor)), keep: true });
+  const pick = pickIfRow(list, rows);
+  if (pick) rows.splice(rows.findIndex((r) => r.id === 'match') + 1, 0, pick);
   return rows.filter((r) => r.keep || r.values.some((v) => v && v !== NOT_ON_FILE));
+}
+
+const dollars = (s) => { const m = String(s || '').replace(/,/g, '').match(/\$(\d+(?:\.\d+)?)/); return m ? Number(m[1]) : null; };
+
+/**
+ * "Pick it if" (Vivian, focus group 10/1: compare similar products and when to pick one).
+ * Built only from the facts already in the table: the lowest price, the lower cost per use,
+ * the longer stated life, FSA/HSA, a different format. Never a judgement the table can't show.
+ * Null when no product has a reason (the row would say nothing).
+ */
+export function pickIfRow(list = [], rows = []) {
+  if (list.length < 2) return null;
+  const byId = Object.fromEntries(rows.map((r) => [r.id, r]));
+  const reasons = list.map(() => []);
+  const prices = (byId.price?.values || []).map(dollars);
+  const known = prices.filter((v) => v != null);
+  if (known.length >= 2) {
+    const min = Math.min(...known);
+    if (known.filter((v) => v === min).length === 1 && Math.max(...known) > min) reasons[prices.indexOf(min)].push('the lowest price matters most');
+  }
+  (byId.perUse?.better || []).forEach((b, i) => { if (b) reasons[i].push('you want the lowest cost per use'); });
+  (byId.life?.better || []).forEach((b, i) => { if (b) reasons[i].push('you want it to last longest'); });
+  (byId.fsa?.better || []).forEach((b, i) => { if (b) reasons[i].push('you pay with FSA/HSA'); });
+  const formats = (byId.format?.values || []).map((f) => (f && f !== NOT_ON_FILE ? String(f) : null));
+  const counts = formats.reduce((m, f) => (f ? { ...m, [f]: (m[f] || 0) + 1 } : m), {});
+  const asWant = (f) => {
+    const w = f.split(' · ')[0].split(',')[0].toLowerCase().trim();
+    if (/^(pills|gummies)/.test(w)) return `you want ${w}`;
+    return `you want ${/^[aeiou]/.test(w) ? 'an' : 'a'} ${w}`;
+  };
+  formats.forEach((f, i) => { if (f && counts[f] === 1 && Object.keys(counts).length > 1) reasons[i].push(asWant(f)); });
+  if (!reasons.some((r) => r.length)) return null;
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  return {
+    id: 'pickIf', label: 'Pick it if', hint: 'From the facts in this table',
+    values: reasons.map((r) => (r.length ? cap(r.slice(0, 2).join(', or ')) : NOT_ON_FILE)),
+  };
 }
 
 /**

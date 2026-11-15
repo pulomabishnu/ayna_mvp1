@@ -96,3 +96,20 @@ describe('objective rows (critique Oct 27: only objective marks, only with data)
     expect(fsa.better).toEqual([false, false]);
   });
 });
+
+describe('Pick it if (Vivian 10/1)', () => {
+  it('names the cheaper one and a different format, from table facts only', async () => {
+    const { pickIfRow } = await import('./compareSet.js');
+    const rows = [
+      { id: 'price', values: ['$40.00', '$12.99'] },
+      { id: 'format', values: ['Device · plug-in', 'Patch or wrap · single use'] },
+    ];
+    const r = pickIfRow([{ id: 'a' }, { id: 'b' }], rows);
+    expect(r.values[0]).toBe('You want a device');
+    expect(r.values[1]).toBe('The lowest price matters most, or you want a patch or wrap');
+  });
+  it('says nothing when nothing tells them apart', async () => {
+    const { pickIfRow } = await import('./compareSet.js');
+    expect(pickIfRow([{}, {}], [{ id: 'price', values: ['$10', '$10'] }, { id: 'format', values: ['Gummies', 'Gummies'] }])).toBeNull();
+  });
+});
