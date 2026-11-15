@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { aynaSourceFor, worksWith } from './aynaIntegrations.js';
-import { ALL_PRODUCTS } from '../data/products.js';
+import { ALL_PRODUCTS, CATALOG_PRODUCTS } from '../data/products.js';
 
-const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id);
+// Period tracker apps left the listed catalog on Nov 14 (founder call); their entries still exist.
+const byId = (id) => ALL_PRODUCTS.find((p) => p.id === id) || CATALOG_PRODUCTS.find((p) => p.id === id);
 
 describe('aynaIntegrations', () => {
   it('adds ayna for the Oura ring, after its platforms and integrations', () => {

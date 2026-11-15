@@ -170,11 +170,6 @@
       "permanent": true
     },
     {
-      "source": "/product/d-apple-health",
-      "destination": "/product/apple-health-cycle-tracking",
-      "permanent": true
-    },
-    {
       "source": "/product/d-balance-menopause",
       "destination": "/product/balance-menopause-and-perimenopause",
       "permanent": true
@@ -200,11 +195,6 @@
       "permanent": true
     },
     {
-      "source": "/product/d-clue",
-      "destination": "/product/clue-period-tracker",
-      "permanent": true
-    },
-    {
       "source": "/product/d-connect-pelvic-floor-fitness",
       "destination": "/product/connect-pelvic-floor-fitness",
       "permanent": true
@@ -222,11 +212,6 @@
     {
       "source": "/product/d-function-health-function-health-membership",
       "destination": "/product/function-health-membership",
-      "permanent": true
-    },
-    {
-      "source": "/product/d-glow",
-      "destination": "/product/glow-period-and-ovulation-tracker",
       "permanent": true
     },
     {
@@ -250,11 +235,6 @@
       "permanent": true
     },
     {
-      "source": "/product/d-lively-lively-period-tracker-cycle",
-      "destination": "/product/lively-period-tracker-cycle",
-      "permanent": true
-    },
-    {
       "source": "/product/d-maven",
       "destination": "/product/maven-clinic",
       "permanent": true
@@ -270,11 +250,6 @@
       "permanent": true
     },
     {
-      "source": "/product/d-natural-cycles",
-      "destination": "/product/natural-cycles",
-      "permanent": true
-    },
-    {
       "source": "/product/d-nurx-bc",
       "destination": "/product/nurx",
       "permanent": true
@@ -282,11 +257,6 @@
     {
       "source": "/product/d-oura",
       "destination": "/product/oura-ring-gen-3",
-      "permanent": true
-    },
-    {
-      "source": "/product/d-ovia",
-      "destination": "/product/ovia-health",
       "permanent": true
     },
     {
@@ -312,11 +282,6 @@
     {
       "source": "/product/d-soonr",
       "destination": "/product/soonr-fertility-app-for-couples",
-      "permanent": true
-    },
-    {
-      "source": "/product/d-stardust",
-      "destination": "/product/stardust-period-tracker",
       "permanent": true
     },
     {
