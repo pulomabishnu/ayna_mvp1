@@ -1,3 +1,4 @@
+import { isGenericReddit, shownCommunityReview } from '../data/reviews/redditSourcing.js';
 import { CompareToggle } from './compare/CompareControls.jsx';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Seal, Ribbon } from './personality/Bits.jsx';
@@ -135,7 +136,7 @@ function hasCommunitySupport(item, reviewBucket) {
     const rating = item?.ratingNote ? null : (getAynaRating(item, reviewBucket) ?? (item?.userRating != null ? Number(item.userRating) : null));
     const reviewCount = Array.isArray(reviewBucket?.reviews) ? reviewBucket.reviews.length : 0;
     const communityLinks = getVerificationLinks(item, 'community');
-    return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(item?.communityReview) || communityLinks.length > 0;
+    return (Number.isFinite(rating) && rating >= 4) || reviewCount > 0 || Boolean(shownCommunityReview(item)) || communityLinks.filter((l) => !isGenericReddit(l?.url)).length > 0;
 }
 
 const SUSTAINABILITY_OPTIONS = [

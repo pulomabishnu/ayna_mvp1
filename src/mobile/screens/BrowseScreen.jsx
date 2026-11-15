@@ -1,3 +1,4 @@
+import { isGenericReddit, shownCommunityReview } from '../../data/reviews/redditSourcing.js';
 import ComingSoon from '../../components/comingSoon/ComingSoon.jsx';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import ShopGroups from '../../components/shop/ShopGroups.jsx';
@@ -405,7 +406,7 @@ export default function BrowseScreen({
     if (filters.rating === '4-plus' && !(RATING_VALUE(item) >= 4)) return false;
     if (filters.ayna === 'best-match' && !(getProfileMatchPercentForProduct(item, quizAnswers, null, matchOpts) >= 50)) return false;
     if (filters.ayna === 'clinician' && !hasClinicalSources(item)) return false;
-    if (filters.ayna === 'community' && !(item.communityReview || getVerificationLinks(item, 'community').length || RATING_VALUE(item) >= 4)) return false;
+    if (filters.ayna === 'community' && !(shownCommunityReview(item) || getVerificationLinks(item, 'community').filter((l) => !isGenericReddit(l?.url)).length || RATING_VALUE(item) >= 4)) return false;
     if (filters.ayna === 'ecosystem' && !myProducts.some((p) => String(p.id) === String(item.id))) return false;
     const eligibility = ELIGIBILITY(item);
     if (filters.eligibility === 'fsa' && !eligibility.fsa) return false;

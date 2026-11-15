@@ -1,3 +1,4 @@
+import { hasUnsourcedRedditSummary, isGenericReddit, shownCommunityReview } from '../../data/reviews/redditSourcing.js';
 /**
  * Everything the team wrote about a product, sorted into the parts of the
  * product page (website and app share it). Rules:
@@ -262,17 +263,19 @@ export function buildEvidence(product, { heroLine = '', glance = null } = {}) {
   };
 
   // Reviews
+  // Founder, Nov 15: no generic Reddit links (subreddit or search) and no Reddit summary without a thread.
+  const redditHidden = hasUnsourcedRedditSummary(product);
   const communityAll = collectLinks([
     // The brand's own reviews page for this product (e.g. alubri.com) comes first.
     ...(product.brandReviewsUrl ? [{ url: product.brandReviewsUrl, text: product.brandReviewsLabel || `${brand || 'Brand'} reviews`, summary: product.brandReviewsSummary || '' }] : []),
     ...(product.communityReviewSourceUrl ? [{ url: product.communityReviewSourceUrl, text: product.communityReviewSourceLabel }] : []),
     ...getVerificationLinks(product, 'community'),
-  ], brand);
+  ].filter((l) => !isGenericReddit(l?.url)), brand);
   const brandRatingText = [product.safety?.opinionAlerts, product.ratingNote, product.communityReview].join(' ');
   const elsewhere = communityAll.filter((l) => ['retail', 'brand'].includes(l.kind.tier)).map((l) => ({ ...l, summary: withoutReviewsMeta(l.summary), rating: parseRating(l.summary) || parseRating(l.title) }));
-  const commAi = clean(product.verificationLinks?.community?.aiSummary);
+  const commAi = redditHidden ? '' : clean(product.verificationLinks?.community?.aiSummary);
   const reviews = {
-    text: paragraphs(meaningful(product.communityReview)).map(withoutReviewsMeta).filter(Boolean),
+    text: paragraphs(meaningful(shownCommunityReview(product))).map(withoutReviewsMeta).filter(Boolean),
     sourceSummary: commAi && normText(commAi) !== normText(product.communityReview) && withoutReviewsMeta(commAi) ? withoutReviewsMeta(commAi) : '',
     ratingNote: withoutReviewsMeta(clean(product.ratingNote)),
     brandRating: parseRating(brandRatingText),

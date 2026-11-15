@@ -41,9 +41,11 @@ describe('buildGlance', () => {
   });
 
   it('labels community copy and manufacturer claims', () => {
-    const g = buildGlance(byId('p-cora-organic-pads'), {});
+    // Cora's "What people say" cites Reddit with no thread link, so it is hidden (founder, Nov 15).
+    expect(allText(buildGlance(byId('p-cora-organic-pads'), {}).sections.find((s) => s.id === 'people'))).not.toMatch(/Reddit/);
+    const g = buildGlance(byId('p-honeypot-pad'), {});
     expect(allText(g.sections.find((s) => s.id === 'people'))).toContain('Not verified');
-    expect(g.sections.find((s) => s.id === 'brand').blocks[0].label).toMatch(/not independently checked/);
+    expect(buildGlance(byId('p-cora-organic-pads'), {}).sections.find((s) => s.id === 'brand').blocks[0].label).toMatch(/not independently checked/);
   });
 
   it('works out size and per-unit price from the listed price only', () => {

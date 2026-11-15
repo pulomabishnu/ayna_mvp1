@@ -1,3 +1,4 @@
+import { isGenericReddit, shownCommunityReview } from '../../data/reviews/redditSourcing.js';
 /**
  * "ayna at a glance": the consolidated product information that is the hero
  * of the product page (website + app). One model, two renderers.
@@ -343,7 +344,7 @@ export function buildGlance(product, ctx = {}) {
   const byType = (types) => sources.filter((s) => types.includes(s.type));
   const evidenceSources = byType(['product_study', 'clinical_guideline', 'regulatory', 'ingredient_research', 'expert_guidance']);
   const brandSources = byType(['manufacturer']);
-  const communitySources = byType(['community']);
+  const communitySources = byType(['community']).filter((s) => !isGenericReddit(s.url));
   const brandVoice = product.clinicianOpinionSource === 'brand';
   const isDigital = product.type === 'digital';
 
@@ -439,7 +440,7 @@ export function buildGlance(product, ctx = {}) {
   push('people', 'What people say', 'people', [
     aynaRating != null && ratingCount > 0 ? { type: 'rating', value: aynaRating, count: ratingCount } : null,
     reviews.length ? { type: 'reviews', items: reviews } : null,
-    { type: 'text', label: 'What people say', text: clean(product.communityReview), note: 'From public posts. Not verified, not medical evidence, and not a safety finding.', refs: communitySources.map((s) => s.n) },
+    { type: 'text', label: 'What people say', text: clean(shownCommunityReview(product)), note: 'From public posts. Not verified, not medical evidence, and not a safety finding.', refs: communitySources.map((s) => s.n) },
     !alert ? { type: 'text', label: 'Things people raise', text: clean(product.safety?.opinionAlerts) } : null,
     { type: 'note', text: clean(product.ratingNote) },
   ]);

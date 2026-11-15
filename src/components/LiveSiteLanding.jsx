@@ -1,3 +1,4 @@
+import { isGenericReddit, shownCommunityReview } from '../data/reviews/redditSourcing.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { hasClinicalSources, CLINICAL_SOURCES_LABEL } from '../utils/clinicalSources';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
@@ -111,7 +112,7 @@ const hasClinicianSupport = hasClinicalSources;
 function hasCommunitySupport(product) {
   const rating = explicitRating(product);
   const communityLinks = getVerificationLinks(product, 'community');
-  return (Number.isFinite(rating) && rating >= 4) || Boolean(product?.communityReview) || communityLinks.length > 0;
+  return (Number.isFinite(rating) && rating >= 4) || Boolean(shownCommunityReview(product)) || communityLinks.filter((l) => !isGenericReddit(l?.url)).length > 0;
 }
 
 function productTypeOptions() {
