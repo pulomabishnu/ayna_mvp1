@@ -82,7 +82,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
           // Prep call, Nov 9: "Log a period" did nothing when tapped. It opens the log now.
           : <Dial center="No data" label="Cycle day" sub="Log a period" onClick={onLog || undefined} aria={`Cycle day: no data yet.${onLog ? ' Log a period.' : ''}`} />}
         {s
-          ? <Dial count={animate} tone="ink" fill={s.fill} dir={s.dir} center={short('sleep_minutes', s.now)} label="Sleep" sub={s.sub} onClick={open('sleep')}
+          ? <Dial count={animate} tone="ink" fill={s.fill} dir={s.dir} center={short('sleep_minutes', s.now)} label="Sleep a night" unit="7-day avg" sub={s.sub} onClick={open('sleep')}
             aria={`Sleep: ${short('sleep_minutes', s.now)} a night this week${sleep.usual ? `, usual ${short('sleep_minutes', sleep.usual)}` : ''}. ${s.sub}.${onOpen ? ' Open sleep.' : ''}`} />
           : sleepLog
             // No watch or ring: her own sleep log (founder, Nov 11).
@@ -90,7 +90,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
               aria={`Sleep from your log: ${sleepLog.latest} last logged. ${sleepLog.sub}.${onLogSleep ? ' Log sleep.' : ''}`} />
             : <Dial center="No data" label="Sleep" sub={onLogSleep ? 'Log sleep' : 'Not connected'} onClick={onLogSleep || undefined} aria={`Sleep: no data yet.${onLogSleep ? ' Log sleep.' : ''}`} />}
         {a
-          ? <Dial count={animate} tone="ink" fill={a.fill} dir={a.dir} center={short(activity.metric, a.now)} label={activity.metric === 'steps' ? 'Steps' : 'Activity'} sub={a.sub} onClick={open('body')}
+          ? <Dial count={animate} tone="ink" fill={a.fill} dir={a.dir} center={short(activity.metric, a.now)} label={activity.metric === 'steps' ? 'Steps a day' : 'Activity'} unit="7-day avg" sub={a.sub} onClick={open('body')}
             aria={`${activity.metric === 'steps' ? 'Steps' : 'Activity'}: ${short(activity.metric, a.now)} a day this week${activity.usual ? `, usual ${short(activity.metric, activity.usual)}` : ''}. ${a.sub}.${onOpen ? ' Open body.' : ''}`} />
           : <Dial center="No data" label="Activity" sub="Not connected" aria="Activity: no data yet." />}
       </div>
