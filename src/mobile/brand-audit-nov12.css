@@ -208,3 +208,11 @@ html body .ayna-mobile:is(#st1,.ayna-mobile):is(#st2,.ayna-mobile):is(#st3,.ayna
 html body .ayna-mobile:is(#st1,.ayna-mobile):is(#st2,.ayna-mobile):is(#st3,.ayna-mobile):is(#st4,.ayna-mobile):is(#st5,.ayna-mobile):is(#st6,.ayna-mobile):is(#st7,.ayna-mobile):is(#st8,.ayna-mobile):is(#st9,.ayna-mobile):is(#st10,.ayna-mobile):is(#st11,.ayna-mobile):is(#st12,.ayna-mobile):is(#st13,.ayna-mobile) .ay-startups-hero :is(h2, p) { color: #3e2723 !important; }
 html body .ayna-mobile:is(#st1,.ayna-mobile):is(#st2,.ayna-mobile):is(#st3,.ayna-mobile):is(#st4,.ayna-mobile):is(#st5,.ayna-mobile):is(#st6,.ayna-mobile):is(#st7,.ayna-mobile):is(#st8,.ayna-mobile):is(#st9,.ayna-mobile):is(#st10,.ayna-mobile):is(#st11,.ayna-mobile):is(#st12,.ayna-mobile):is(#st13,.ayna-mobile) .ay-startups-art i:first-child { background: #ffedac !important; }
 html body .ayna-mobile:is(#st1,.ayna-mobile):is(#st2,.ayna-mobile):is(#st3,.ayna-mobile):is(#st4,.ayna-mobile):is(#st5,.ayna-mobile):is(#st6,.ayna-mobile):is(#st7,.ayna-mobile):is(#st8,.ayna-mobile):is(#st9,.ayna-mobile):is(#st10,.ayna-mobile):is(#st11,.ayna-mobile):is(#st12,.ayna-mobile):is(#st13,.ayna-mobile) .ay-startups-art i:nth-child(2) { background: #3e2723 !important; }
+
+/* Backlog Nov 14: the Add-a-product dialog inside the app (same dialog as the website). Its panel is
+   always butter, so its text stays espresso in dark mode too. */
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__panel,
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__panel :is(h2, p, b, span, small, label, a, button:not(.ay-addprod__primary)) { color: #3e2723 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__head h2 { font: 700 22px/1.15 var(--ay-font-display, inherit) !important; display: block !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__search { font-size: 16px !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__search::-webkit-search-cancel-button { filter: brightness(0) saturate(100%); opacity: .8; }

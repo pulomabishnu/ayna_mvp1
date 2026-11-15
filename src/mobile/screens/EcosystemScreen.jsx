@@ -28,6 +28,9 @@ import FinishQuizCard from '../../components/FinishQuizCard.jsx';
 import { lifeStageClash, STAGE_NOTE_CODE } from '../../components/eco/lifeStageFix.js';
 import { useDismissed, useRevealOnce } from '../../components/eco/ecoMotion.js';
 import { useLatestAnnouncement } from '../../hooks/useLatestAnnouncement.js';
+import AddProductDialog from '../../components/v3/AddProductDialog.jsx';
+import { ALL_PRODUCTS } from '../../data/products.js';
+import { searchProducts } from '../../utils/search/index.js';
 import '../eco-app-best.css';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
@@ -115,6 +118,8 @@ export default function EcosystemScreen({
   });
   const openCheckIn = onGoToday ? () => { onGoToday(); setTimeout(() => openTodayLog('app'), 400); } : null;
   const [sheet, setSheet] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [addQuery, setAddQuery] = useState("");
   // This month's check-in: due until she has done it (signed in only).
   const [checkinDue, setCheckinDue] = useState(false);
   useEffect(() => {
@@ -506,10 +511,16 @@ export default function EcosystemScreen({
     {ecoTab !== 'dashboard' && relatedReads.length > 0 && <section className="ayna-cabinet-reads" aria-labelledby="ayna-cabinet-reads-title"><div className="ayna-cabinet-section-head"><h2 id="ayna-cabinet-reads-title">Read next</h2></div>{relatedReads.slice(0, 3).map((article) => <ArticleCard key={article.id} article={article} compact onClick={() => onOpenArticle?.(article)} />)}</section>}
 
 
+    {addOpen && <AddProductDialog products={addQuery.trim() ? (() => { const r = searchProducts(addQuery) || []; return (r.results || r).map((x) => x.product || x).slice(0, 30); })() : ALL_PRODUCTS.slice(0, 0)} searchTerm={addQuery} onSearch={setAddQuery} myProducts={Object.fromEntries(myProducts.map((p) => [p.id, p]))} onToggleProduct={(p) => { onAddToEcosystem(p); if (String(p?.id || '').startsWith('user-')) { setAddOpen(false); setAddQuery(''); } }} onClose={() => { setAddOpen(false); setAddQuery(''); }} />}
     {/* Settings-style inset list: health, check-in, answers, reset. */}
     <section className="eco-app-list-wrap" aria-labelledby="ay-eco-manage-title">
       <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your ecosystem</h2>
       <ul className="eco-app-list">
+        {/* Backlog Nov 14 (Ivy, Spoorthi): add what she already uses, even if ayna doesn't carry it. */}
+        {onAddToEcosystem && <li><button type="button" onClick={() => setAddOpen(true)}>
+          <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>
+          <span className="eco-app-list__txt"><b>Add a product you already use</b><small>Search ayna, or add your own (like your iron or multivitamin).</small></span>{chev}
+        </button></li>}
         {authUser && onOpenHealthData && ecoTab !== 'dashboard' && <li><button type="button" onClick={() => { if (onEcoTab) { onEcoTab('dashboard'); scrollToTabs(); } else onOpenHealthData(); }}>
           <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" /></svg></span>
           <span className="eco-app-list__txt"><b>{healthConnectedCount ? 'Your health' : 'Bring in your health data'}</b><small>{healthSummary ? `${healthSummary.title}: ${healthSummary.headline}` : healthConnectedCount ? 'Your trends appear after about two weeks of data.' : 'Connect Apple Health, Oura or upload a file to see your trends.'}</small></span>{chev}

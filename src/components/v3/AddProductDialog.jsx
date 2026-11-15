@@ -4,13 +4,14 @@ import { ECOSYSTEM_AREAS, CATEGORY_LABELS } from '../EcosystemBubbles';
 import { toast } from '../../utils/toast';
 import { PlusIcon, CheckIcon, CloseIcon } from '../icons/UiIcons.jsx';
 import { getSupabaseClient } from '../../utils/supabaseClient.js';
+import { apiUrl } from '../../utils/apiUrl.js';
 
 /** Ask the team to research a product she added (api/product-submissions.js). Never blocks. */
 export async function requestResearch(name, { fetchImpl = globalThis.fetch } = {}) {
   try {
     let token = '';
     try { token = (await getSupabaseClient()?.auth.getSession())?.data?.session?.access_token || ''; } catch { /* signed out */ }
-    await fetchImpl('/api/product-submissions', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ name, source: 'ecosystem_add' }) });
+    await fetchImpl(apiUrl('/api/product-submissions'), { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ name, source: 'ecosystem_add' }) });
   } catch { /* the product is still added; research can be requested later */ }
 }
 
