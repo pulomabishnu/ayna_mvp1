@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import PhotoThumbs from './community/PhotoThumbs.jsx';
 import { playlistDoor } from '../pro/proDoor.js';
 import { hasWhy, whyLead } from '../utils/whyLine';
 import { isSafetyHold } from '../utils/matchDisplay';
@@ -1109,7 +1110,8 @@ export default function WebCommunity({ user, products = [], quizResults = null, 
           </>}
           {compose !== 'recommend' && <div className="cm-photo-pick">
             <label className="ay-btn ay-btn--secondary cm-small cm-upload">{photos.length ? 'Change photos' : 'Add photos'}<input type="file" accept="image/*" multiple className="cm-file" aria-label="Add photos" onChange={(e) => { try { const f = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); f.forEach(checkImageFile); setPhotos(f); setError(''); } catch (err) { setError(err.message); } e.target.value = ''; }} /></label>
-            <small>{photos.length ? photos.map((f) => f.name).join(', ') : `Up to ${MAX_POST_PHOTOS}`}</small>
+            <small>{photos.length ? `${photos.length} of ${MAX_POST_PHOTOS}` : `Up to ${MAX_POST_PHOTOS}`}</small>
+            {photos.length > 0 && <PhotoThumbs files={photos} onRemove={(i) => setPhotos((cur) => cur.filter((_, j) => j !== i))} />}
           </div>}
         </section>
         {compose === 'recommend' && <section className="cm-group cm-friends"><h3 className="cm-label">Send to friends</h3>{friendProfiles.length ? friendProfiles.map((f) => <Check key={f.user_id} checked={selectedFriendIds.includes(f.user_id)} onChange={(e) => setSelectedFriendIds((ids) => (e.target.checked ? [...ids, f.user_id] : ids.filter((id) => id !== f.user_id)))}>{f.display_name || f.username}</Check>) : <p className="cm-muted">Add friends from Community profiles first.</p>}</section>}

@@ -1,0 +1,9 @@
+/* Picked photos as thumbnails with a remove button (photo upload, 11/12). */
+.am-photo-thumbs { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 0; padding: 0; }
+.am-photo-thumbs li { position: relative; width: 76px; height: 76px; border: 1.5px solid #3e2723; border-radius: 14px; overflow: hidden; background: #fff; }
+.am-photo-thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.am-photo-thumbs li > span { display: grid; place-items: center; height: 100%; padding: 4px; font-size: 13px; text-align: center; color: #3e2723; word-break: break-all; }
+.am-photo-thumbs button { position: absolute; top: -2px; right: -2px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+.am-photo-thumbs button svg { width: 24px; height: 24px; padding: 4px; border-radius: 50%; background: #3e2723; fill: none; stroke: #ffedac; stroke-width: 2.4; stroke-linecap: round; box-sizing: border-box; }
+:is([data-theme*='dark']) .am-photo-thumbs li { border-color: #ffedac; }
+:is([data-theme*='dark']) .am-photo-thumbs button svg { background: #ffedac; stroke: #3e2723; }

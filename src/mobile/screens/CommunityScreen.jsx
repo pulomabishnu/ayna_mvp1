@@ -1,5 +1,6 @@
 // Topic pods here are the curated ayna list (src/utils/community/topics.js).
 import TopicBands from '../../components/community/TopicBands.jsx';
+import PhotoThumbs from '../../components/community/PhotoThumbs.jsx';
 import { playlistDoor } from '../../pro/proDoor.js';
 // Topics started by members live in src/components/community/topics/ (shared
 // with the website); they stay hidden until their migration runs. See
@@ -1268,7 +1269,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       {compose === 'review' && <div className="am-rating" role="radiogroup" aria-label="Your rating"><span>Your rating</span><div className="am-stars">{[1, 2, 3, 4, 5].map((n) => <button type="button" key={n} role="radio" aria-checked={rating === n} aria-label={`${n} out of 5`} className={n <= rating ? 'is-on' : ''} onClick={() => setRating(n)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z" /></svg></button>)}</div></div>}
       {userTopics.available && compose !== 'review' && compose !== 'recommend' && compose !== 'playlist' && <PostInPicker id="am-post-in" className="is-app" topics={userTopics.mine} value={postTopicId} onChange={setPostTopicId} />}
       <ProductPicker products={products} value={productId} onChange={setProductId} />
-      {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><span className="am-photo-cta">Choose photos</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} />{photos.length > 0 && <small>{photos.map((file) => file.name).join(', ')}</small>}</label>}
+      {compose !== 'playlist' && compose !== 'recommend' && <label className="am-photo-input"><strong>Add photos</strong><span>Up to 4 images</span><span className="am-photo-cta">Choose photos</span><input type="file" accept="image/*" multiple onChange={(e) => { try { const files = Array.from(e.target.files || []).slice(0, MAX_POST_PHOTOS); files.forEach(checkImageFile); setPhotos(files); setError(''); } catch (error) { setError(error.message); } }} /></label>}
+      {compose !== 'playlist' && compose !== 'recommend' && photos.length > 0 && <PhotoThumbs files={photos} onRemove={(i) => setPhotos((cur) => cur.filter((_, j) => j !== i))} />}
       {compose === 'recommend' && <div className="am-friends"><strong>Send to friends</strong>{friendProfiles.length ? friendProfiles.map((friend) => <label key={friend.user_id}><input type="checkbox" checked={selectedFriendIds.includes(friend.user_id)} onChange={(e) => setSelectedFriendIds((ids) => e.target.checked ? [...ids, friend.user_id] : ids.filter((id) => id !== friend.user_id))} /> {friend.display_name || friend.username}</label>) : <p>Add friends in Community profiles first.</p>}</div>}
       {authUser && compose !== 'playlist' && compose !== 'recommend' && <label className="am-anon"><input type="checkbox" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} /> Post anonymously</label>}
       {error && <p className="am-error" role="alert">{error}</p>}

@@ -360,3 +360,4 @@
 .am-discard button { width: 100%; min-height: 48px; border-radius: 99px !important; box-shadow: none !important; }
 .am-posted { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .am-posted-view { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 99px; background: none; color: inherit; font: 600 13px/1 var(--ayna-font-ui); }
+
