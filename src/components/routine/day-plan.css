@@ -4,7 +4,7 @@
 html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna-mobile) .ay-dp .ay-dp__h { margin: 0 !important; font: 700 22px/1.2 var(--ay-app-heading, var(--ay-font-display, inherit)) !important; color: inherit !important; }
 .ay-dp__count { font: 600 14px/1.2 var(--ay-font-ui, inherit); opacity: .85; }
 .ay-dp__muted { margin: 0; font: 500 14px/1.45 var(--ay-font-ui, inherit); opacity: .85; }
-.ay-dp__note { margin: 0; padding: 10px 12px; border-radius: 12px; background: #ffedac; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, inherit); }
+.ay-dp__note { margin: 0; padding: 10px 12px; border-radius: 12px; background: #f7badd; color: #3e2723; font: 600 14px/1.4 var(--ay-font-ui, inherit); }
 .ay-dp__primary, .ay-dp__outline, .ay-dp__ghost { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 999px; font: 700 15px/1 var(--ay-font-ui, inherit); }
 .ay-dp__primary { background: #3e2723; color: #ffedac; }
 .ay-dp__primary.is-small { padding: 0 18px; }
@@ -19,7 +19,7 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 .ay-dp-days-nav .ay-dp__ghost:not(:last-child) { text-decoration: none; font-size: 22px; min-width: 44px; }
 
 .ay-dp__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.ay-dp-item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 12px; border-radius: 16px; background: var(--ay-calm-box, #fff); color: var(--ay-calm-fg, #3e2723); border: var(--ay-calm-border, 1.5px solid #3e2723); }
+.ay-dp-item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 12px; border-radius: 16px; background: var(--ay-calm-box, #ffedac); color: var(--ay-calm-fg, #3e2723); border: var(--ay-calm-border, 1.5px solid #3e2723); }
 .ay-dp-item.is-due, .ay-dp-item.is-snoozed { box-shadow: inset 6px 0 0 #f7badd; }
 .ay-dp-item.is-done .ay-dp-item__title, .ay-dp-item.is-skipped .ay-dp-item__title { opacity: .7; }
 .ay-dp-item__time { font: 700 14px/1.3 var(--ay-font-ui, inherit); padding-top: 2px; }
@@ -29,7 +29,7 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 .ay-dp-item__title { font: 700 17px/1.25 var(--ay-font-ui, inherit); overflow-wrap: anywhere; }
 .ay-dp-item__sub { font: 500 14px/1.35 var(--ay-font-ui, inherit); opacity: .85; }
 .ay-dp-item__acts { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 4px; }
-.ay-dp-pill { flex: none; padding: 4px 10px; border-radius: 999px; font: 700 13px/1.2 var(--ay-font-ui, inherit); border: 1.5px solid #3e2723; color: #3e2723; background: #fff; }
+.ay-dp-pill { flex: none; padding: 4px 10px; border-radius: 999px; font: 700 13px/1.2 var(--ay-font-ui, inherit); border: 1.5px solid #3e2723; color: #3e2723; background: #ffedac; }
 .ay-dp-pill.is-done { background: #3e2723; color: #ffedac; }
 .ay-dp-pill.is-due, .ay-dp-pill.is-snoozed { background: #f7badd; }
 .ay-dp-pill.is-missed { background: #ffedac; }
@@ -53,13 +53,13 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 
 /* Sheet */
 .ay-dp-sheet { position: fixed; inset: 0; z-index: 1200; background: rgba(62, 39, 35, .45); display: flex; align-items: flex-end; justify-content: center; }
-.ay-dp-sheet__panel { width: min(560px, 100%); max-height: 92dvh; overflow: auto; box-sizing: border-box; padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 20px 20px 0 0; background: #fffaf0; color: #3e2723; }
+.ay-dp-sheet__panel { width: min(560px, 100%); max-height: 92dvh; overflow: auto; box-sizing: border-box; padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 20px 20px 0 0; background: #ffedac; color: #3e2723; }
 .ay-dp-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .ay-dp-sheet__title { margin: 0; font: 800 19px/1.25 var(--ay-font-display, inherit); }
 .ay-dp-form { display: grid; gap: 14px; }
-.ay-dp-form__lead { margin: 0; padding: 10px 12px; border-radius: 12px; background: #ffedac; font: 500 14px/1.45 var(--ay-font-ui, inherit); }
+.ay-dp-form__lead { margin: 0; padding: 10px 12px; border-radius: 12px; background: #f7badd; font: 500 14px/1.45 var(--ay-font-ui, inherit); }
 .ay-dp-form label { display: grid; gap: 6px; font: 700 14px/1.3 var(--ay-font-ui, inherit); }
-.ay-dp-form input:not([type='checkbox']), .ay-dp-form select { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1.5px solid #3e2723; background: #fff; color: #3e2723; font: 500 16px/1.2 var(--ay-font-ui, inherit); }
+.ay-dp-form input:not([type='checkbox']), .ay-dp-form select { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1.5px solid #3e2723; background: #ffedac; color: #3e2723; font: 500 16px/1.2 var(--ay-font-ui, inherit); }
 .ay-dp-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ay-dp-form__err { color: #3e2723; background: #f7badd; border-radius: 8px; padding: 4px 8px; font: 600 13px/1.3 var(--ay-font-ui, inherit); }
 .ay-dp-form fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px; }

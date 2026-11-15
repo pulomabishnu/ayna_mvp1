@@ -166,6 +166,11 @@ import { countJourneyStep } from '../utils/journeyStep.js';
 import ProPaywallHost from '../components/ProPaywallHost.jsx';
 import { openProPaywall, proLimitFeature } from '../pro/paywall.js';
 import { proDoor, retakeDoor } from '../pro/proDoor.js';
+import { diffPersonalization, snapshotOf, toastFor, diffLines } from '../matching/personalizationDiff.js';
+import { addChange } from '../utils/changeHistory.js';
+import { shownMatchPercent } from '../utils/matchDisplay.js';
+import UpdateRecap from '../components/recap/UpdateRecap.jsx';
+import ChangeHistory from '../components/recap/ChangeHistory.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -1058,15 +1063,54 @@ export default function MobileApp() {
   // event, never during onboarding or while another sheet is open.
   const suggestRef = useRef({ quiz: null, connected: null });
   const popSuggest = (update) => { if (!update?.products?.length && !update?.tips?.length) return; setUpdatePop({ mode: 'suggest', ...update }); };
-  // a) Quiz answers changed: the new matches she doesn't have yet.
+  // a) Her answers changed (founder brief Nov 15: three levels of feedback, from the real before/after).
+  //    Only after something she did (an answer, a quiz update, a check-in, an undo), never because an
+  //    account loaded. Both snapshots use the same engine and options, so only her change shows.
+  //    0-1: a toast; 2: the pop-up; 3: the full-screen recap. Every change goes to "What's changed".
+  const changeArmRef = useRef(null);
+  const armChange = (source) => { changeArmRef.current = { source, at: Date.now() }; };
+  const committedRef = useRef({ owner: undefined, answers: null });
+  const [recap, setRecap] = useState(null);
+  const [changesOpen, setChangesOpen] = useState(false);
+  const answersKey = (a) => { try { return JSON.stringify(a?.fullHealthIntake || a || null); } catch { return ''; } };
+  const snapshotFor = (answers) => {
+    if (!answers) return snapshotOf({});
+    let needs = [];
+    try { needs = getSelectedNeeds(answers).map((n) => ({ id: n.id, label: n.phrase || n.label })); } catch { /* none */ }
+    const matches = seedEcosystemFromAnswers(answers, matchOpts).slice(0, 8).map((p) => {
+      let percent = null;
+      try { const d = getProductMatchDetailsForProduct(p, answers, null, matchOpts); if (d?.matchStatus === 'scored') percent = shownMatchPercent(d.percent); } catch { /* unscored */ }
+      return { ...p, percent };
+    });
+    return snapshotOf({ needs, matches });
+  };
   useEffect(() => {
-    const before = suggestRef.current.quiz;
-    if (!before) return;
-    suggestRef.current.quiz = null;
-    const fresh = suggestedEcosystemProducts.filter((p) => !before.includes(p.id));
-    const list = (fresh.length ? fresh : suggestedEcosystemProducts).slice(0, 3);
-    popSuggest({ kicker: 'Your answers are updated', title: fresh.length ? `${fresh.length} new ${fresh.length === 1 ? 'match' : 'matches'} for you` : 'Your top matches now', sub: 'From what you just told ayna. Tap one to see why it fits, or add it to your routine.', products: list });
-  }, [suggestedEcosystemProducts]); // eslint-disable-line react-hooks/exhaustive-deps
+    const owner = authUser?.id || null;
+    const ref = committedRef.current;
+    const answers = lastQuizAnswers;
+    const arm = changeArmRef.current && Date.now() - changeArmRef.current.at < 15 * 60000 ? changeArmRef.current : null;
+    if (ref.owner !== owner || !ref.answers || !answers || !arm) { committedRef.current = { owner, answers }; return undefined; }
+    if (answersKey(ref.answers) === answersKey(answers)) return undefined;
+    const before = ref.answers;
+    // Wait a beat: a failed save rolls back, and then nothing changed.
+    const t = window.setTimeout(() => {
+      committedRef.current = { owner, answers };
+      changeArmRef.current = null;
+      const d = diffPersonalization(snapshotFor(before), snapshotFor(answers), { source: arm.source === 'undo' ? 'answer' : arm.source });
+      if (arm.source === 'undo') { toast('Change undone. Your matches are back to before.'); return; }
+      addChange(d);
+      const products = [...(d.newTop ? [d.newTop] : []), ...d.matchesAdded.filter((p) => p.id !== d.newTop?.id)].map((p) => getProductById(p.id)).filter(Boolean);
+      const undo = () => handleUpdateIntake(before.fullHealthIntake || before, { source: 'undo' });
+      if (d.level === 3) { setRecap({ diff: d, undo }); return; }
+      if (d.level === 2 && products.length) {
+        const lines = diffLines(d);
+        setUpdatePop({ mode: 'suggest', kicker: 'Your matches changed', title: lines[0], sub: lines.slice(1).join('. ') || 'From what you just told ayna. Tap one to see why it fits.', products: products.slice(0, 3) });
+        return;
+      }
+      toast(toastFor(d), d.level >= 1 ? { label: "See what changed", onClick: () => setChangesOpen(true) } : null);
+    }, 700);
+    return () => window.clearTimeout(t);
+  }, [lastQuizAnswers, authUser?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   // c) She logged something that brings a topic (low energy, pain...): what may help, and products for it.
   useEffect(() => {
     const onChange = (e) => {
@@ -1248,18 +1292,20 @@ export default function MobileApp() {
 
   // One quiz answer changed in place (You > Your blend). Same save path as the
   // quiz; matches re-rank from the new answers. Rolls back if nothing saved.
-  const handleUpdateIntake = async (rawIntake) => {
+  const handleUpdateIntake = async (rawIntake, { source = 'answer' } = {}) => {
     if (!rawIntake) return false;
     const previous = lastQuizAnswers;
     // Only the answers she changed get a new time (src/matching/factFreshness.js).
     const nextIntake = stampFactUpdates(rawIntake, previous?.fullHealthIntake || previous || null);
-    suggestRef.current.quiz = suggestedEcosystemProducts.map((p) => p.id);
+    armChange(source);
     updateSession({ lastQuizAnswers: mapIntakeToLegacyQuizProfile(nextIntake) });
     try {
       const r = await saveHealthIntakeForCurrentUser(nextIntake);
       if (r?.saved || r?.localSaved) return true;
     } catch { /* rolled back below */ }
+    // Honest state (founder brief Nov 15): say it failed and that nothing changed, with a retry.
     updateSession({ lastQuizAnswers: previous });
+    toast("Couldn't save. Your answers are back to before.", { label: 'Try again', onClick: () => handleUpdateIntake(rawIntake, { source }) });
     return false;
   };
 
@@ -1529,6 +1575,7 @@ export default function MobileApp() {
     onPersonalize: () => { setIntakeMode('add'); setIntakeAtOptional(true); setEditingHealthProfile(true); setScreen('quiz'); },
     onFixLifeStages: () => { setIntakeMode('add'); setIntakeAtOptional(false); setIntakeAtStep('lifeStage'); setEditingHealthProfile(true); setScreen('quiz'); },
     onRequestEcosystemReset: () => setResetDialogOpen(true),
+    onOpenChanges: () => setChangesOpen(true),
     onUpdateHealth: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onEditProfile: () => { setIntakeMode('add'); setEditingHealthProfile(true); setScreen('quiz'); },
     onComplete: (quizAnswers) => {
@@ -1542,6 +1589,7 @@ export default function MobileApp() {
       // Not saved as her answers yet: first the optional health step, then her plan.
       // Anonymous daily count, new quiz only (same rule as quiz_started).
       if (intakeMode === 'new') countJourneyStep('quiz_completed');
+      else armChange('quiz');
       trackApp('intake_completed', {
         concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0,
         mode: intakeMode,
@@ -1561,6 +1609,7 @@ export default function MobileApp() {
     // onboarding "Connect your health data" step (deep round 2).
     onCheckinComplete: (quizAnswers) => {
       trackApp('intake_completed', { concernsCount: Array.isArray(quizAnswers?.primaryConcerns) ? quizAnswers.primaryConcerns.length : 0, mode: 'checkin' });
+      armChange('checkin');
       updateSession({ pendingQuiz: { answers: quizAnswers, mode: 'add', fromCheckin: true } });
       setPlanAddedGoals({});
       setResumeQuizDraft(false);
@@ -1910,6 +1959,19 @@ export default function MobileApp() {
         onProfile={() => { setAskAynaOpen(false); authResumeRef.current = null; setOverlay({ type: 'profile' }); }}
       />}
       <FeedbackSheet authUser={realAuthUser || null} />
+      {recap && <UpdateRecap
+        diff={recap.diff}
+        resolve={(p) => getProductById(p.id) || p}
+        onClose={() => setRecap(null)}
+        onOpenProduct={(p) => { setRecap(null); setOverlay({ type: 'product', item: p }); }}
+        onAdd={(p) => handleAddToEcosystem(p)}
+        inEcosystem={(id) => myProducts.some((x) => x.id === id)}
+        onNotForMe={(p) => handleToggleOmit(p)}
+        onUndo={recap.undo || null}
+        onSeeAll={() => { setRecap(null); setOverlay(null); setBrowseQuery(''); setExploreSection('overview'); setScreen('explore'); }}
+        onHistory={() => { setRecap(null); setChangesOpen(true); }}
+      />}
+      {changesOpen && <ChangeHistory onClose={() => setChangesOpen(false)} onReplay={(e) => { setChangesOpen(false); setRecap({ diff: e.diff }); }} />}
       <UpdatePop
         update={updatePop}
         onClose={() => setUpdatePop(null)}

@@ -94,7 +94,7 @@ export default function EcosystemScreen({
   myProducts = [], authUser = null, suggestedEcosystemProducts = [],
   relatedReads = [], savedProducts = {}, headerInitial = 'A', onOpenProduct,
   onOpenArticle, onOpenSaved, onBrowse, onGoCommunity, onRetake,
-  onRequestEcosystemReset, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
+  onRequestEcosystemReset, onOpenChanges, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
   healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
@@ -535,6 +535,10 @@ export default function EcosystemScreen({
         {onRetake && <li><button type="button" onClick={onRetake}>
           <span className="eco-app-list__ic is-butter" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" /></svg></span>
           <span className="eco-app-list__txt"><b>Your quiz answers</b><small>Something changed? Update them anytime.</small></span>{chev}
+        </button></li>}
+        {onOpenChanges && <li><button type="button" onClick={onOpenChanges}>
+          <span className="eco-app-list__ic is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 7v5l3 2M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg></span>
+          <span className="eco-app-list__txt"><b>What's changed</b><small>Each time your matches changed, and why.</small></span>{chev}
         </button></li>}
         <li><button type="button" className="is-destructive" onClick={onRequestEcosystemReset}>
           <span className="eco-app-list__ic is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg></span>
