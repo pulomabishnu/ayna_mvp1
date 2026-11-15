@@ -396,6 +396,10 @@ export default function MobileApp() {
   // scroll pagination) is exactly as the user left it, not reset to a
   // fresh mount. Closing the overlay just reveals it again.
   const [overlay, setOverlay] = useState(() => { const t = import.meta.env.DEV && new URLSearchParams(window.location.search).get('overlay'); return t ? { type: t } : null; }); // { type: 'product' | 'article', item }
+  // Nov 14 sweep (Trevina 10/7: "Update profile doesn't show everything"): Profile > Your quiz answers
+  // opened the quiz underneath the Profile overlay, so she saw Profile with a stray Continue button.
+  // The quiz is a full screen; any overlay closes when it opens.
+  useEffect(() => { if (screen === 'quiz' && overlay) setOverlay(null); }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
   // PostHog: one $screen per screen or overlay (the "Mobile App (TestFlight)"
   // dashboard breaks down by $screen_name), and a product open, logged the
   // same way as the website's product_card_opened. window.__aynaView lets an
