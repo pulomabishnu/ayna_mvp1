@@ -104,3 +104,11 @@ html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobi
 /* Audit (Nov 12): 13px minimum text on Profile. */
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-you2-stats span,
 .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-you2 small { font-size: 13px !important; }
+
+/* Backlog Nov 14: tap the avatar to change the profile picture. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-ava.is-edit { cursor: pointer; min-width: 44px; min-height: 44px; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-ava.is-edit input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-ava__cam { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--y-ink); pointer-events: none; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-ava__cam svg { width: 17px; height: 17px; fill: none; stroke: var(--y-butter); stroke-width: 1.8; stroke-linejoin: round; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-ava.is-edit:focus-within { outline: 3px solid var(--y-ink); outline-offset: 6px; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-you--v2 .ay-you2-photomsg { font-size: 13px !important; }

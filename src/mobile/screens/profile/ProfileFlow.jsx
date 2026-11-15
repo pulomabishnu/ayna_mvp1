@@ -41,13 +41,13 @@ import './about-scrapbook.css';
 import { buildShopperProfile } from '../../utils/shopperProfile.js';
 import BadgesPanel from '../../../components/BadgesPanel.jsx';
 import ShopperCard from '../../components/ShopperCard.jsx';
-import { getMyCommunityProfile, getProfileStats, listPlaylists } from '../../../utils/community/communityStore.js';
+import { getMyCommunityProfile, getProfileStats, listPlaylists, setAvatarPath } from '../../../utils/community/communityStore.js';
 import ProductImage from '../../components/ProductImage.jsx';
 import { ARTICLES } from '../../../components/Articles.jsx';
 import { buildDashboard, formatMetric } from '../../../health/dashboard.js';
 import { estimatePhase } from '../../../health/phase.js';
 import { localToday, useHealthData } from '../../hooks/useHealthData.js';
-import { publicMediaUrl } from '../../../utils/community/imageUpload.js';
+import { publicMediaUrl, uploadCommunityImage, deleteCommunityImage, checkImageFile } from '../../../utils/community/imageUpload.js';
 import { fetchWithTimeout } from '../../../utils/network.js';
 import RelativeTime from '../../../components/ui/RelativeTime.jsx';
 import ConfirmButton from '../../../components/ui/ConfirmButton.jsx';
@@ -312,16 +312,18 @@ function useMyCommunity(userId) {
         listPlaylists(supabase, { section: 'mine', limit: HUB_PLAYLIST_LIMIT + 1 }),
       ]);
       if (cancelled) return;
-      setData({
+      setData((d) => ({
+        ...d,
         userId,
-        profile,
+        profile: d.profile && d.profile.avatar_url !== profile.avatar_url && d.userId === userId ? d.profile : profile,
         stats: stats.status === 'fulfilled' ? stats.value : null,
         playlists: playlists.status === 'fulfilled' ? playlists.value || [] : [],
-      });
+      }));
     })();
     return () => { cancelled = true; };
   }, [userId]);
-  return data.userId === userId ? data : { profile: null, stats: null, playlists: [] };
+  const setProfile = (profile) => setData((d) => ({ ...d, profile }));
+  return data.userId === userId ? { ...data, setProfile } : { profile: null, stats: null, playlists: [], setProfile };
 }
 
 const HUB_PLAYLIST_LIMIT = 5;
@@ -479,8 +481,24 @@ function greetingForNow(date = new Date()) {
 }
 
 function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz, onRequestEcosystemReset = null }) {
-  const { profile, stats, playlists } = useMyCommunity(authUserId);
+  const { profile, stats, playlists, setProfile } = useMyCommunity(authUserId);
   const [avatarFailed, setAvatarFailed] = useState(false);
+  // Backlog Nov 14 (M11): change the profile picture right here, not only from the Community profile
+  // reached through the follower count.
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoMsg, setPhotoMsg] = useState('');
+  const changePhoto = async (file) => {
+    const supabase = getSupabaseClient();
+    if (!supabase || !authUserId || !file) return;
+    setPhotoBusy(true); setPhotoMsg('');
+    try {
+      checkImageFile(file);
+      const up = await uploadCommunityImage(supabase, file, { folder: 'avatars', userId: authUserId });
+      try { const next = await setAvatarPath(supabase, authUserId, up.path); setProfile(next || { ...profile, avatar_url: up.path }); setAvatarFailed(false); setPhotoMsg('Profile picture updated.'); }
+      catch (e) { await deleteCommunityImage(supabase, up.path).catch(() => {}); throw e; }
+    } catch (e) { setPhotoMsg(e?.message && e.message.length < 120 ? e.message : "That photo couldn't be uploaded. Try another one."); }
+    finally { setPhotoBusy(false); }
+  };
   const showPhoto = profile?.avatar_url && !avatarFailed;
   const recent = useMemo(() => buildRecent({ myProducts, savedProducts, readProgress }), [myProducts, savedProducts, readProgress]);
   const shownPlaylists = playlists.slice(0, HUB_PLAYLIST_LIMIT);
@@ -618,13 +636,23 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
       <header className="ay-you-head ay-you-band">
         <div className="ay-you-id">
           {/* Nov 2 redo (founder: "it's ugly"; inspo folder profile screen): a round photo in a pink ring. */}
-          <span className={`ay-you2-ava${showPhoto ? ' has-photo' : ''}`} aria-hidden="true">
-            {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : <b>{realName ? initial : 'a'}</b>}
-          </span>
+          {profile ? (
+            <label className={`ay-you2-ava is-edit${showPhoto ? ' has-photo' : ''}`}>
+              {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : <b aria-hidden="true">{realName ? initial : 'a'}</b>}
+              <span className="ay-you2-ava__cam" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg></span>
+              <span className="sr-only">{photoBusy ? 'Uploading photo' : 'Change profile picture'}</span>
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,image/gif" disabled={photoBusy} onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ''; if (f) changePhoto(f); }} />
+            </label>
+          ) : (
+            <span className={`ay-you2-ava${showPhoto ? ' has-photo' : ''}`} aria-hidden="true">
+              {showPhoto ? <img src={publicMediaUrl(profile.avatar_url)} alt="" onError={() => setAvatarFailed(true)} /> : <b>{realName ? initial : 'a'}</b>}
+            </span>
+          )}
           <span className="ay-you-names">
             {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
             <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout></> : <Shout as="span" size="l" className="ay-you-shout">{greetingForNow()}</Shout>}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
+            {photoMsg && <span className="ay-you2-photomsg" role="status">{photoMsg}</span>}
           </span>
         </div>
         {stats && openMyProfile && (
