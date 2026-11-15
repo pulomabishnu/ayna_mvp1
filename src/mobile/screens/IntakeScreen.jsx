@@ -90,7 +90,7 @@ import {
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
 import { trackQuizStep } from '../../utils/funnelEvents.js';
-import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../data/onboardingFlow.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics, pruneForTopics, pruneVasomotor } from '../data/onboardingFlow.js';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
 const HOLD_TIP_TYPES = new Set(['aboutYou', 'lifeStage', 'support', 'topics', 'conditions', 'allergies', 'formats', 'price', 'avoidOnly', 'wantOnly', 'fsaHsa']);
 
@@ -685,7 +685,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     if (current.includes(value)) next = current.filter((x) => x !== value);
     else if (exclusiveValues.includes(value)) next = [value];
     else next = [...current.filter((x) => !exclusiveValues.includes(x)), value];
-    return { ...prev, [key]: next };
+    return key === 'supportSelections' ? pruneVasomotor({ ...prev, [key]: next }) : { ...prev, [key]: next };
   });
   const toggleLifeStage = (value) => setIntake((prev) => {
     const next = toggleLifeStageSelection(getLifeStages(prev), value);
@@ -713,7 +713,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     }
     setIntake((prev) => {
       const cur = prev.helpTopics || [];
-      return { ...prev, helpTopics: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] };
+      return pruneForTopics({ ...prev, helpTopics: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] });
     });
   };
 

@@ -267,3 +267,21 @@ export function moreRemaining(intake) {
   const skipped = intake.skippedSteps || [];
   return getOnboardingSteps(intake, { part: 'more' }).filter((s) => !isStepAnswered(s.id, intake) && !skipped.includes(s.id)).length;
 }
+
+/**
+ * Topics changed (Ameera, Nov 15: "I chose hot flashes, it asked when, and after I took hot flashes
+ * out the question still stayed at the bottom"). Symptoms that belonged only to a topic she removed
+ * are dropped, and the hot-flash timing answers go once neither hot flashes nor night sweats is picked.
+ */
+export function pruneForTopics(intake) {
+  const topics = (intake?.helpTopics || []).filter((t) => HELP_TOPIC_ITEMS[t]);
+  const allowed = new Set(topics.flatMap((t) => HELP_TOPIC_ITEMS[t]));
+  const support = topics.length ? (intake.supportSelections || []).filter((s) => allowed.has(s) || !Object.values(HELP_TOPIC_ITEMS).some((items) => items.includes(s))) : (intake.supportSelections || []);
+  return pruneVasomotor({ ...intake, supportSelections: support });
+}
+
+/** Hot-flash timing answers only while hot flashes or night sweats are selected. */
+export function pruneVasomotor(intake) {
+  const has = (intake?.supportSelections || []).some((s) => s === 'Hot flashes' || s === 'Night sweats');
+  return has || !(intake?.vasomotorTimingSelections || []).length ? intake : { ...intake, vasomotorTimingSelections: [] };
+}

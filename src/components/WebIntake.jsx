@@ -21,7 +21,7 @@ import SmartSearchInput from './search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../utils/search/index.js';
 import { commonNeedOptions } from '../matching/commonNeeds.js';
 import '../styles/loop-a-quiz.css';
-import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics } from '../mobile/data/onboardingFlow.js';
+import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics, pruneForTopics, pruneVasomotor } from '../mobile/data/onboardingFlow.js';
 import { CATEGORIES } from '../health/metrics.js';
 import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import { QuizFrame, QuizBlock, Chips as KitChips, Rows as KitRows, SubQuestion, GlossaryCard } from './quiz/QuizKit.jsx';
@@ -420,7 +420,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const toggleExclusive = (key, value, exclusive = []) => setIntake((prev) => {
     const cur = Array.isArray(prev[key]) ? prev[key] : (prev[key] ? [prev[key]] : []);
     const next = cur.includes(value) ? cur.filter((x) => x !== value) : exclusive.includes(value) ? [value] : [...cur.filter((x) => !exclusive.includes(x)), value];
-    return { ...prev, [key]: next };
+    return key === 'supportSelections' ? pruneVasomotor({ ...prev, [key]: next }) : { ...prev, [key]: next };
   });
   const addCustom = (key, raw, exclusive = []) => {
     const value = String(raw || '').trim().replace(/\s+/g, ' ').slice(0, 80);
@@ -546,7 +546,7 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const helpOther = helpOtherOpen || String(intake.supportOtherText || '').trim();
   const toggleHelpTopic = (value) => {
     if (value === SOMETHING_ELSE) { setHelpOtherOpen(!helpOther); if (helpOther) set('supportOtherText', ''); return; }
-    setIntake((prev) => ({ ...prev, helpTopics: (prev.helpTopics || []).includes(value) ? prev.helpTopics.filter((x) => x !== value) : [...(prev.helpTopics || []), value] }));
+    setIntake((prev) => pruneForTopics({ ...prev, helpTopics: (prev.helpTopics || []).includes(value) ? prev.helpTopics.filter((x) => x !== value) : [...(prev.helpTopics || []), value] }));
   };
   const body = () => {
     // Optional contextual timing belongs with the selected symptom, never
