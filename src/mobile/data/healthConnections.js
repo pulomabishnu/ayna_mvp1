@@ -83,7 +83,7 @@ export const HEALTH_SOURCES = [
     categories: ['sleep', 'cycle', 'heart', 'activity', 'recovery'],
     reads: 'Planned: sleep, stress, steps, resting heart rate, Body Battery, workouts and cycle data from the Garmin Connect app.',
     never: "We'll never read your location or routes.",
-    pending: "Garmin has to approve ayna for its developer program, and Garmin has paused new applications for now. Until then, some Garmin data can still reach ayna if you sync Garmin Connect to Apple Health or Health Connect.",
+    pending: "Not available yet: Garmin has to approve ayna for its developer program (Starter Access) before ayna can connect directly. Until then, some Garmin data can still reach ayna if you sync Garmin Connect to Apple Health or Health Connect.",
   },
   {
     id: 'upload',
