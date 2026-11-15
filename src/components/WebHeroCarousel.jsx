@@ -94,7 +94,7 @@ export default function WebHeroCarousel({ onStartQuiz, onViewArticles, onViewCom
   const slides = useMemo(() => [
     { key: 'app', label: 'The app', tone: 'butter' },
     { key: 'about', label: 'What ayna does', tone: 'mint' },
-    ...(fact ? [{ key: 'fact', label: 'Daily ayna fact', tone: 'cream' }] : []),
+    ...(fact ? [{ key: 'fact', label: 'Daily health fact (general info)', tone: 'cream' }] : []),
     { key: 'news', label: news ? 'ayna news' : 'New: ayna Community', tone: 'pink' },
   ], [fact, news]);
   const [index, setIndex] = useState(0);
