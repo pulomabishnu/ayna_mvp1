@@ -30,7 +30,9 @@ export function useProAccess(userId = null) {
         }
         if (!controller.signal.aborted) setState({ checking: false, allowed });
       } catch {
-        if (!controller.signal.aborted) setState({ checking: false, allowed: false });
+        // Fail open, like the quiz retake (proApi.js): a slow or failed check must not lock her out of
+        // her own health data. The server still enforces Pro on every health route (hasHealthAccess).
+        if (!controller.signal.aborted) setState({ checking: false, allowed: true, degraded: true });
       }
     })();
     return () => controller.abort();
