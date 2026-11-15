@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import RoutineGoals from '../../components/today/RoutineGoals.jsx';
 import TodayScreen from './TodayScreen.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
 import MobileHeader from '../components/MobileHeader.jsx';
@@ -135,7 +136,7 @@ export default function AynaHomeScreen(props) {
         initial="today"
         // Founder, Nov 11 ("less repetitive"): the dials and highlights already show her week, so
         // Home has no third copy of it; the full week is one tap away in Your data.
-        routine={<><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} /><RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /></>}
+        routine={<><RoutineGoals today={today} log={dayLog} /><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} /><RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /></>}
         today={<>
           {/* Founder, Nov 11: For today is insights and actions (goals, matched products, things to
               add to her routine) as a bento; the check-in itself lives in the period and symptom log. */}
