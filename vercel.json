@@ -1640,6 +1640,11 @@
       "permanent": true
     },
     {
+      "source": "/product/p-theralogix-theracran-one",
+      "destination": "/product/theralogix-theracran-one-cranberry-supplement",
+      "permanent": true
+    },
+    {
       "source": "/product/p-thermacare",
       "destination": "/product/thermacare-menstrual-pain-therapy-heatwraps-4-count",
       "permanent": true
@@ -1647,6 +1652,11 @@
     {
       "source": "/product/p-thinx",
       "destination": "/product/thinx-period-underwear",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-this-works-deep-sleep-heavenly-candle",
+      "destination": "/product/this-works-deep-sleep-heavenly-candle",
       "permanent": true
     },
     {
