@@ -7130,5 +7130,26 @@ export default [
   "reviewer": "research",
   "reviewed": "2026-11-14",
   "note": "Same FDA category page as the other cups already mapped (meeting notes 11/13: products without a %)."
+ },
+ {
+  "product": "p-theralogix-theracran-one",
+  "need": "urinary.recurrent_uti",
+  "strength": "primary",
+  "grade": "B",
+  "rationale": "Cranberry products may lower repeat symptomatic UTIs in women by about 25%, though findings are mixed; not a treatment for a current UTI (NCCIH). AUA lets clinicians offer cranberry prophylaxis (Statement 13, conditional).",
+  "source_url": "https://www.nccih.nih.gov/health/cranberry",
+  "reviewer": "research",
+  "reviewed": "2026-11-15"
+ },
+ {
+  "product": "p-this-works-deep-sleep-heavenly-candle",
+  "need": "sleep.trouble",
+  "strength": "secondary",
+  "grade": null,
+  "rationale": "A wind-down ritual; NCCIH says it is unclear whether lavender aromatherapy helps sleep.",
+  "source_url": null,
+  "reviewer": "research",
+  "reviewed": "2026-11-15",
+  "grade_status": "draft_unverified"
  }
 ];

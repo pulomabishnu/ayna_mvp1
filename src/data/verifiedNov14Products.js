@@ -6,7 +6,64 @@
 // Not added, and why: SOMA's Cool Nights Eyemask (soma.com says it can't find the item, Nov 14);
 // "Mellow Sleep" (no brand site we could verify); a Flamingo magnesium body lotion (shopflamingo.com
 // sells a Gua Sha Calming Lotion with magnesium strips, and the page does not say the lotion has magnesium).
+// Added Nov 15 2026 for the fix list: UTI products (Ivy 10/26, Puloma run-through 11/12: the category
+// showed no products) and sleep candles (Ameera's list). Facts from the pages in researchSources, read Nov 15.
 export const VERIFIED_NOV14_PRODUCTS = [
+  {
+    id: 'p-theralogix-theracran-one',
+    name: 'TheraCran One Cranberry Supplement',
+    brand: 'Theralogix',
+    category: 'supplement',
+    subcategory: 'Urinary health',
+    type: 'physical',
+    price: '$107.74 (90-day supply)',
+    tags: ['uti', 'urinary tract', 'cranberry', 'pac', 'supplement', 'fsa/hsa'],
+    healthFunctions: ['uti-prevention'],
+    fsaHsaEligible: true,
+    regulatoryStatus: 'Dietary supplement',
+    summary: 'A once-a-day cranberry capsule with 36 mg of soluble PACs (the cranberry compounds studied for UTIs), per the maker. NSF certified for content and purity. Meant to help prevent repeat UTIs, not to treat one you have now.',
+    howToUse: { intro: 'Per the maker.', steps: ['One capsule daily with food.'], sourceUrl: 'https://theralogix.com/products/theracran-one-cranberry-supplement', sourceLabel: 'theralogix.com' },
+    ingredients: 'Whole cranberry extract, 500 mg per capsule, with 36 mg soluble PACs (maker).',
+    warnings: [
+      'Not a treatment for a UTI you have now; see a clinician for burning, fever or back pain (NCCIH).',
+      'Do not take it if you are allergic to cranberries (maker).',
+      'Evidence on cranberry and warfarin is mixed; ask your clinician first if you take a blood thinner or other medicine (NCCIH).',
+    ],
+    url: 'https://theralogix.com/products/theracran-one-cranberry-supplement',
+    image: 'https://theralogix.com/cdn/shop/files/TheraCranOne_6e0e54c7-c1a2-461c-9755-bc8da0259295.png?v=1794254396&width=1024',
+    whereToBuy: ['Brand site'],
+    whereToBuyLinks: { 'Brand site': 'https://theralogix.com/products/theracran-one-cranberry-supplement' },
+    researchSources: [
+      { url: 'https://theralogix.com/products/theracran-one-cranberry-supplement', what: 'Price, 36 mg PACs per capsule, dose, NSF certification, FSA/HSA, cranberry allergy note' },
+      { url: 'https://www.nccih.nih.gov/health/cranberry', what: 'May lower repeat symptomatic UTIs in women about 25%, mixed findings; not a treatment; warfarin evidence conflicting' },
+      { url: 'https://www.auanet.org/guidelines/guidelines/recurrent-uti', what: 'AUA Statement 13: clinicians may offer cranberry prophylaxis (conditional, grade C)' },
+    ],
+  },
+  {
+    id: 'p-this-works-deep-sleep-heavenly-candle',
+    name: 'Deep Sleep Heavenly Candle',
+    brand: 'This Works',
+    category: 'sleep',
+    subcategory: 'Wind-down',
+    type: 'physical',
+    price: '$40',
+    tags: ['sleep', 'candle', 'lavender', 'chamomile', 'wind down', 'non-ingestible'],
+    healthFunctions: ['sleep'],
+    summary: 'A 220 g candle scented with lavender and Roman chamomile essential oils, about 40 hours of burn time (retailer). A wind-down ritual: research has not shown that lavender scent improves sleep.',
+    howToUse: { intro: 'A calm-down step before bed.', steps: ['Light it while you wind down and blow it out before you fall asleep; never leave a candle burning unattended.'], sourceUrl: 'https://www.dermstore.com/p/this-works-deep-sleep-heavenly-candle-220g/10524482/', sourceLabel: 'Dermstore' },
+    warnings: [
+      'Lavender aromatherapy can cause headache or coughing in some people (NCCIH).',
+      'Blow it out before sleep; never leave a candle burning unattended.',
+    ],
+    url: 'https://www.dermstore.com/p/this-works-deep-sleep-heavenly-candle-220g/10524482/',
+    image: 'https://static.thcdn.com/productimg/original/10524482-1665372012263221.jpg',
+    whereToBuy: ['Dermstore'],
+    whereToBuyLinks: { Dermstore: 'https://www.dermstore.com/p/this-works-deep-sleep-heavenly-candle-220g/10524482/' },
+    researchSources: [
+      { url: 'https://www.dermstore.com/p/this-works-deep-sleep-heavenly-candle-220g/10524482/', what: 'Name, 220 g, $40, lavender and Roman chamomile oils, about 40 hours burn, in stock Nov 15 2026' },
+      { url: 'https://www.nccih.nih.gov/health/lavender', what: 'Unclear whether lavender aromatherapy helps sleep or anxiety; possibly safe, may cause headache or coughing' },
+    ],
+  },
   {
     id: 'p-ostrichpillow-eye-mask',
     name: 'Ostrichpillow Eye Mask',
