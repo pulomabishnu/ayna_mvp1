@@ -20,8 +20,9 @@ import { READ_SUMMARIES } from '../../data/readPicks.js';
 import { DATA_RULES, deltaCard, periodCard, periodStatus, sleepCard, stepsCard } from './rundownData.js';
 
 export const CATEGORY_RANK = {
-  // Her data comes right after safety and care (founder, Oct 24 23:29).
-  safety: 1, data: 2, goal: 3, change: 4, symptom: 5, pattern: 6, education: 7, match: 8, complement: 8.5, saved: 9, community: 10, win: 11,
+  // Her data comes right after safety and care (founder, Oct 24 23:29). Nov 12 run-through: the one-tap
+  // check-in moves to the start (right after safety), so she acts before reading.
+  safety: 1, symptom: 1.5, data: 2, goal: 3, change: 4, pattern: 6, education: 7, match: 8, complement: 8.5, saved: 9, community: 10, win: 11,
 };
 export const CATEGORIES = Object.keys(CATEGORY_RANK);
 // Ranking heuristics, not clinical thresholds.
