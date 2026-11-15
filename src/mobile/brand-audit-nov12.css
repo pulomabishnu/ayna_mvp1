@@ -173,3 +173,6 @@ html body .ayna-mobile:is(#ay, .ayna-mobile) .ay-askp-head > .ay-chat-top__back 
 .ayna-mobile[data-theme*='dark'] .ay-rg li { border-top-color: #ffedac; }
 .ayna-mobile[data-theme*='dark'] .ay-rg li:first-child { border-top: 0; }
 .ayna-mobile[data-theme*='dark'] .ay-rg__tick.is-on { background: #ffedac; color: #3e2723; border-color: #ffedac; }
+/* Nov 14 (run-through 11/12, Puloma: sign-up hard to read in dark): auth fields are solid espresso
+   with a butter outline, not a see-through butter wash. */
+:is(#ay-b1, html):is(#ay-b2, html):is(#ay-b3, html) .ayna-mobile[data-theme*='dark'] .ayna-fresh-auth-field { background: #3e2723 !important; border-color: #ffedac !important; }
