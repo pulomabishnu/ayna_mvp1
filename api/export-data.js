@@ -145,11 +145,13 @@ export default async function handler(req, res) {
     // Her daily log and what she tried (supabase/daily_log_2026-10-24.sql).
     fetchRows(db, 'user_daily_log', user.id, { select: 'day, pain, flow, pms, sleep, mood, skin, source, method, updated_at' }),
     fetchRows(db, 'user_tries', user.id, { select: 'id, kind, ref, need, started_day, horizon_days, outcome, recorded_day, note, removed, source, method, updated_at' }),
+    // Her day plan: medications she entered, doses, activities (supabase/day_plan_2026-11-15.sql).
+    fetchRows(db, 'user_day_plan', user.id, { single: true, select: 'plan, updated_at' }),
   ]);
 
   const [phone, prefs, intake, ecosystem, healthProfiles, reviews, sms, aiUsage, builds, learningMemory, recalls, deletionRequests,
     cProfile, cPosts, cComments, cFollowing, cFollowers, cPlaylists, cSaved, cHelpful, cReqSent, cReqReceived, cBlocks, cRecs,
-    hConnections, hMetrics, hEvents, hImports, hRequests, smsPrefs, smsEvents, dailyLog, tries] = entries;
+    hConnections, hMetrics, hEvents, hImports, hRequests, smsPrefs, smsEvents, dailyLog, tries, dayPlan] = entries;
   const warnings = entries.map((entry) => entry.warning).filter(Boolean);
   const meta = user.user_metadata || {};
 
@@ -224,6 +226,7 @@ export default async function handler(req, res) {
     accountDeletionRequests: deletionRequests.data || [],
     community,
     dailyLog: dailyLog.data || [],
+    dayPlan: dayPlan.data?.plan || null,
     triesAndOutcomes: tries.data || [],
     connectedHealthData: {
       connections: hConnections.data || [],

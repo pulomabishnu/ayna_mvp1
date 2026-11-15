@@ -116,6 +116,7 @@ export function undoActivity(recordId, storage = globalThis.localStorage) {
   const n = store.records.length;
   store.records = store.records.filter((r) => r.id !== recordId);
   if (store.records.length === n) return { ok: false };
+  store.removed = [...(store.removed || []), recordId].slice(-2000);
   return { ok: write(store, storage).ok };
 }
 

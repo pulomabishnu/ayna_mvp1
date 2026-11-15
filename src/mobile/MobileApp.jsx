@@ -40,7 +40,8 @@ import { useThemeMode } from './hooks/useThemeMode.js';
 import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
 import { syncRundownReminder, onRundownReminderTap } from './utils/localRundown.js';
-import { onPlanReminderTap } from '../health/planReminders.js';
+import { onPlanReminderTap, syncPlanReminders } from '../health/planReminders.js';
+import { syncDayPlan, forgetPlanOnSignOut } from '../health/planCloud.js';
 import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
 import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
 import { useHealthData, DEV_HEALTH_DEMO } from './hooks/useHealthData.js';
@@ -727,6 +728,19 @@ export default function MobileApp() {
     window.addEventListener(PUSH_ASK_EVENT, ask);
     return () => window.removeEventListener(PUSH_ASK_EVENT, ask);
   });
+  // Day plan on every device (founder brief Nov 15): on sign-in, then a few seconds after each change.
+  // Offline or the table not switched on yet: it stays on the phone and tries again next time.
+  useEffect(() => {
+    const uid = authUser?.id;
+    if (!uid) return undefined;
+    let timer = 0;
+    let live = true;
+    const run = () => syncDayPlan({ userId: uid }).then((r) => { if (live && r.status === 'synced') syncPlanReminders().catch(() => {}); }).catch(() => {});
+    run();
+    const onChange = () => { window.clearTimeout(timer); timer = window.setTimeout(run, 2500); };
+    window.addEventListener('ayna:meds-changed', onChange);
+    return () => { live = false; window.clearTimeout(timer); window.removeEventListener('ayna:meds-changed', onChange); };
+  }, [authUser?.id]);
   // Nov 3: the daily Rundown reminder lives on the phone (repeats every day at her time).
   // Keep it booked at launch (no permission prompt here), and a tap opens Today.
   useEffect(() => {
@@ -1216,6 +1230,8 @@ export default function MobileApp() {
     pendingQuizEcosystemRef.current = null;
     resetSession();
     if (authUser) clearLocalSaves();
+    // Her medications and plan are in her account; they leave this phone when she signs out.
+    if (forgetPlanOnSignOut()) syncPlanReminders().catch(() => {});
     signOutSupabase();
     setScreen('landing');
   };

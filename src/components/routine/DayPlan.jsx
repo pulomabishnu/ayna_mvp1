@@ -27,8 +27,9 @@ function useStores() {
     window.addEventListener('ayna:meds-changed', on);
     window.addEventListener('storage', on);
     window.addEventListener(GOALS_CHANGED_EVENT, on);
+    window.addEventListener('ayna:plan-synced', on);
     const id = window.setInterval(on, 60000); // states move with the clock (upcoming -> now -> missed)
-    return () => { window.removeEventListener('ayna:meds-changed', on); window.removeEventListener('storage', on); window.removeEventListener(GOALS_CHANGED_EVENT, on); window.clearInterval(id); };
+    return () => { window.removeEventListener('ayna:meds-changed', on); window.removeEventListener('storage', on); window.removeEventListener(GOALS_CHANGED_EVENT, on); window.removeEventListener('ayna:plan-synced', on); window.clearInterval(id); };
   }, []);
   return useMemo(() => ({ meds: readMeds(), acts: readActivities(), goals: (() => { try { return readGoals(); } catch { return []; } })(), now: new Date() }), [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 }

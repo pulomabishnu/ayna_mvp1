@@ -19,7 +19,7 @@ const NOT_READY_WAIT_MS = 60 * 60 * 1000; // table missing: try again in an hour
 const OFFLINE_WAIT_MS = 2 * 60 * 1000;
 const PULL_DAYS = 400;
 
-async function defaultToken() {
+export async function defaultToken() {
   const supabase = getSupabaseClient();
   if (!supabase) return null;
   const { data } = await supabase.auth.getSession();
@@ -27,7 +27,7 @@ async function defaultToken() {
   return s?.access_token && !s.user?.is_anonymous ? s.access_token : null;
 }
 
-async function defaultFetch(path, init) {
+export async function defaultFetch(path, init) {
   return fetchWithTimeout(apiUrl(path), init);
 }
 
@@ -38,7 +38,7 @@ function writeRetryAt(storage, at) {
   try { storage?.setItem(RETRY_KEY, String(at)); } catch { /* storage blocked */ }
 }
 
-async function call(fetchImpl, token, path, { method = 'GET', body } = {}) {
+export async function call(fetchImpl, token, path, { method = 'GET', body } = {}) {
   let res;
   try {
     res = await fetchImpl(path, { method, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, ...(body ? { body: JSON.stringify(body) } : {}) });

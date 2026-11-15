@@ -171,6 +171,8 @@ export function undoDose(doseId, storage = globalThis.localStorage) {
   const before = store.doses.length;
   store.doses = store.doses.filter((d) => d.id !== doseId);
   if (store.doses.length === before) return { ok: false };
+  // Remembered so another device's copy of this dose doesn't bring it back (planSync.js).
+  store.removed = [...(store.removed || []), doseId].slice(-2000);
   return { ok: writeMeds(store, storage).ok };
 }
 
