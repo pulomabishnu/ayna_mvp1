@@ -71,9 +71,10 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
             count={animate}
             fill={!hormonalBC && cycle.avgLength ? cycle.cycleDay / cycle.avgLength : 0}
             center={String(cycle.cycleDay)}
-            unit={!hormonalBC && cycle.avgLength ? `of ${cycle.avgLength}` : ''}
+            // Eliz, Nov 14 ("day 29 of 28"): past her usual length it says the period is due, not "29 of 28".
+            unit={!hormonalBC && cycle.avgLength ? (cycle.cycleDay > cycle.avgLength ? 'Period due' : `of ${cycle.avgLength}`) : ''}
             label={hormonalBC ? 'Since bleed' : 'Cycle day'}
-            sub={hormonalBC ? 'Days' : 'Estimated'}
+            sub={hormonalBC ? 'Days' : cycle.avgLength && cycle.cycleDay > cycle.avgLength ? `${cycle.cycleDay - cycle.avgLength} ${cycle.cycleDay - cycle.avgLength === 1 ? 'day' : 'days'} past your usual` : 'Estimated'}
             onClick={open('cycle')}
             todayDot={!hormonalBC}
             aria={hormonalBC ? `Day ${cycle.cycleDay} since your last bleed.` : `Cycle day ${cycle.cycleDay}${cycle.avgLength ? ` of about ${cycle.avgLength}` : ''}, estimated.${onOpen ? ' Open cycle.' : ''}`}
