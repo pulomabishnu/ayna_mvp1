@@ -65,14 +65,18 @@ export function appErrorProperties(error, info, { isChunkLoadError = false, view
 /**
  * The same error for PostHog's Error tracking (an $exception event), built only from the redacted
  * fields above: type, redacted message, where. No stack, no user text. Notion AYNA-339.
+ * A chunk-load error has one cause (a stale deploy) wherever it happens, so it gets one
+ * fingerprint without the screen; else each new screen opens a new issue.
  */
-export function exceptionProperties({ errorName = 'Error', errorMessage = '', component = '', view = '', handled = false } = {}) {
+export function exceptionProperties({ errorName = 'Error', errorMessage = '', component = '', view = '', handled = false, isChunkLoadError = false } = {}) {
   const type = String(errorName || 'Error').slice(0, 64);
   const value = String(errorMessage || '').slice(0, 160);
   return {
     $exception_list: [{ type, value, mechanism: { handled: Boolean(handled), synthetic: false } }],
     $exception_level: 'error',
-    $exception_fingerprint: `${type}:${value.replace(/\d+/g, 'n').slice(0, 80)}:${String(component || view || '').slice(0, 40)}`,
+    $exception_fingerprint: isChunkLoadError
+      ? 'chunk-load-error'
+      : `${type}:${value.replace(/\d+/g, 'n').slice(0, 80)}:${String(component || view || '').slice(0, 40)}`,
     errorName: type,
     errorMessage: value,
     component: String(component || '').slice(0, 64),

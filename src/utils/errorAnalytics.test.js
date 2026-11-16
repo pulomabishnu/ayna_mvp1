@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { redactErrorMessage, componentFromStack, appErrorProperties } from './errorAnalytics';
+import { redactErrorMessage, componentFromStack, appErrorProperties, exceptionProperties } from './errorAnalytics';
 
 describe('redactErrorMessage', () => {
   it('keeps the shape of ordinary errors', () => {
@@ -42,5 +42,22 @@ describe('appErrorProperties', () => {
   it('falls back to the current screen when the stack has no usable name', () => {
     const props = appErrorProperties(new Error('boom'), { componentStack: '\n    at Xe (a.js)' }, { view: 'discovery' });
     expect(props).toMatchObject({ component: 'discovery', view: 'discovery' });
+  });
+});
+
+describe('exceptionProperties', () => {
+  it('keeps the screen in the fingerprint for ordinary errors', () => {
+    const a = exceptionProperties({ errorName: 'TypeError', errorMessage: 'boom', view: 'welcome' });
+    const b = exceptionProperties({ errorName: 'TypeError', errorMessage: 'boom', view: 'privacy-policy' });
+    expect(a.$exception_fingerprint).not.toBe(b.$exception_fingerprint);
+  });
+  it('gives every chunk-load error one fingerprint, whatever the screen or browser', () => {
+    const chunkError = (message, view) => exceptionProperties(appErrorProperties(new TypeError(message), {}, { isChunkLoadError: true, view }));
+    const prints = new Set([
+      chunkError('Failed to fetch dynamically imported module: https://aynahealth.co/assets/Welcome-a1b2.js', 'welcome'),
+      chunkError('Failed to fetch dynamically imported module: https://aynahealth.co/assets/Privacy-c3d4.js', 'privacy-policy'),
+      chunkError('Importing a module script failed.', 'discovery'),
+    ].map((p) => p.$exception_fingerprint));
+    expect([...prints]).toEqual(['chunk-load-error']);
   });
 });
