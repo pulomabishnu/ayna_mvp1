@@ -312,3 +312,32 @@
 @keyframes ays-ci-in { from { transform: translateY(18px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-checkin.is-still .ays-ci { animation: none; }
 @media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-checkin .ays-ci { animation: none; } }
+
+/* Nov 16 (founder: "move it up a little, they don't need to be so far; more animations"):
+   the picture sits just above the words (not floating mid-page), and every card moves. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-card.has-art { justify-content: center !important; gap: 28px !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-card.has-art .ays-visual { flex: 0 0 auto !important; min-height: 160px; }
+/* The picture's pieces pop in one by one (period days, bars, rings, dots). */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, svg, span) { animation: ays-pop-in 460ms cubic-bezier(.34, 1.56, .64, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(1) { animation-delay: 80ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(2) { animation-delay: 160ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(3) { animation-delay: 240ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(4) { animation-delay: 320ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(5) { animation-delay: 400ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, .ay-rd-bar, b, i, span):nth-child(n+6) { animation-delay: 480ms; }
+/* The dashed "next" circles keep turning slowly. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, span)[class*='is-next'], .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual :is(li, span)[class*='is-unknown'] { animation: ays-pop-in 460ms cubic-bezier(.34, 1.56, .64, 1) 420ms both, ays-wobble 2.4s ease-in-out 1s infinite; }
+/* Every answer button bounces in, one after another, and squishes when tapped. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-choices > .ay-rd-chip { animation: ays-ci-in 420ms cubic-bezier(.34, 1.56, .64, 1) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-choices > .ay-rd-chip:nth-child(1) { animation-delay: 260ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-choices > .ay-rd-chip:nth-child(2) { animation-delay: 330ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-choices > .ay-rd-chip:nth-child(3) { animation-delay: 400ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-choices > .ay-rd-chip:nth-child(n+4) { animation-delay: 470ms; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-chip:active { transform: scale(.94); transition: transform .1s ease-out; }
+/* Each new card slides in from the right with a little settle. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-card { animation: ays-card-in 380ms cubic-bezier(.2, .9, .3, 1.15) both; }
+@keyframes ays-pop-in { 0% { transform: scale(0) rotate(-12deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes ays-wobble { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(14deg); } }
+@keyframes ays-card-in { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-still :is(.ays-card, .ays-visual *, .ay-rd-choices > .ay-rd-chip) { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) :is(.ays-card, .ays-visual *, .ay-rd-choices > .ay-rd-chip) { animation: none !important; } }
