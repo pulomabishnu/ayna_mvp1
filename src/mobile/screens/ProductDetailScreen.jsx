@@ -484,8 +484,7 @@ export default function ProductDetailScreen({
 
           <div className="ay-pdp3-id ay-pdp-title">
             {brandLine && <div className="ay-pdp-eyebrow ayv-brand">{brandLine}</div>}
-            {/* Focus group (UCLA, Oct 1): the match, big and above the title, as "87% match". */}
-            {matchState?.kind === 'pct' && Number.isFinite(matchState.percent) && <p className="ay-pdp-pct">{matchState.percent}% match</p>}
+            {/* Nov 16 (founder: "we don't need the % match twice"): one match line, under the price, with See why. */}
             <h1>{shownName}</h1>
             {metaLine && <p className="ayv-metaline">{metaLine}</p>}
             <PriceRow main={price ? shownPriceText(shownPrice.main) : ''} perUse={perUse} />

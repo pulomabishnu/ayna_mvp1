@@ -400,7 +400,7 @@ export default function EcosystemScreen({
       </div>}
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
-      {ecoTab !== 'dashboard' && !hasAnything && !quizDraft && (hasAnswers
+      {ecoTab !== 'dashboard' && !hasAnything && !(quizDraft && onResumeQuiz) && (hasAnswers
         ? <EmptyState compact art="search" tone="pink" title="Build your ecosystem" body="Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown." actionLabel="Explore Shop" onAction={() => onBrowse?.()} secondaryLabel={onRetake ? 'Edit my answers' : undefined} onSecondary={onRetake} />
         // Name what is missing (You audit P3): with health data connected it is the products, not everything.
         : healthConnectedCount > 0
