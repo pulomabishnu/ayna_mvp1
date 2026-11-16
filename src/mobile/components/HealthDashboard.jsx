@@ -55,7 +55,9 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
   // Shown once: only when no watch or ring measured her sleep (time in bed, typed nights, or nothing yet).
   // With measured sleep the Sleep ring and tab already say it (Ameera, Nov 15: no repeats).
   const measuredSleep = useMemo(() => { try { const n = nightsFrom(rows, {}); return [...n.values()].some((x) => x.kind === 'measured'); } catch { return false; } }, [rows]);
+  // Before any data: on the page. With data: in the Sleep tab, for everyone (Ameera, Nov 16: one place to go).
   const sleepReport = dataView && !measuredSleep ? <SleepReport healthRows={rows} today={today} /> : null;
+  const sleepSlot = dataView ? <SleepReport healthRows={rows} today={today} /> : null;
   const todayFeed = dataView ? null : (
     <TodayFeed
       variant="app"
@@ -156,7 +158,7 @@ export function HealthDashboardContent({ authUser, selectedNeedIds = [], hormona
         footer={<OutlineButton onClick={onConnect}>Manage connected apps</OutlineButton>}
         surface="app"
         todayFeed={todayFeed}
-        afterRings={sleepReport}
+        sleepSlot={sleepSlot}
       />
     </div>
   );

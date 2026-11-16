@@ -206,6 +206,8 @@ export default function HealthHome({
   todayFeed = null,
   // Right under the rings (founder brief Nov 15: last night's sleep, with or without a wearable).
   afterRings = null,
+  // The Sleep tab's "Last night" (typed or measured) with the way to log a night (Ameera, Nov 16).
+  sleepSlot = null,
   // The app shows its title row ("Your data" + ring); the website's band carries it (hello=false).
   hello: showTitle = true,
   helloAside = null,
@@ -275,8 +277,9 @@ export default function HealthHome({
   const hasRoutine = picks.length > 0 || goals.length > 0 || effects.length > 0 || routineProducts.length > 0 || Boolean(onOpenRoutine);
   const tabs = hasData ? [
     { id: 'summary', label: 'Summary' },
-    ...(week.cycle ? [{ id: 'cycle', label: 'Cycle' }] : []),
-    ...(sleepCharts.length ? [{ id: 'sleep', label: 'Sleep' }] : []),
+    // Nov 16 (Ameera): Cycle and Sleep are always there, so she knows where to go and can log either.
+    { id: 'cycle', label: hormonalBC ? 'Bleeding' : 'Cycle' },
+    { id: 'sleep', label: 'Sleep' },
     ...(bodyCharts.length ? [{ id: 'body', label: 'Body' }] : []),
     // Always offered (same tab set everywhere); without a routine it shows a calm empty state, never sample data.
     { id: 'routine', label: 'Routine' },
@@ -498,8 +501,17 @@ export default function HealthHome({
   const rangeRow = <RangePills ranges={RANGES} value={range} onChange={setRange} />;
 
   const cycleLen = dash.cycle && dash.cycle.lengths.length >= 2 ? { metric: 'cycle_length', label: 'Cycle length', type: 'bar', usual: null, points: dash.cycle.lengths.map((c) => ({ day: c.start, value: c.days })) } : null;
+  const openMonth = () => { let l = {}; try { l = readLog() || {}; } catch { /* no storage */ } setMonthLog(l); };
   const cycleTab = (
     <div className="ay-db-detail">
+      {!cycle && (
+        <section className="ay-db-card" aria-labelledby="ay-db-cycle-none">
+          <h2 id="ay-db-cycle-none" className="ay-db-h2">No {hormonalBC ? 'bleeding' : 'period'} logged yet</h2>
+          <p className="ay-db-muted">Log it here in ayna, or connect the app you already track it in.</p>
+          {surface === 'app' && <StickerButton onClick={openMonth}>Log a period</StickerButton>}
+          {onConnect && <OutlineButton onClick={onConnect}>Connect a cycle app</OutlineButton>}
+        </section>
+      )}
       {cycle && (
         <section className="ay-db-card" aria-labelledby="ay-db-cycle-title">
           <h2 id="ay-db-cycle-title" className="ay-db-h2">{hormonalBC ? 'Bleeding pattern' : phase ? PHASE_WORDS[phase.id] : `Cycle day ${cycle.cycleDay}`}</h2>
@@ -526,8 +538,11 @@ export default function HealthHome({
 
   const sleepMain = sleepCharts[0];
   const sleepRange = sleepMain && rangeChartOf(sleepMain.metric);
-  const sleepTab = sleepMain && (
+  const sleepTab = (
     <div className="ay-db-detail">
+      {sleepSlot}
+      {!sleepMain && !sleepSlot && <p className="ay-db-muted">No sleep yet. Connect a watch, ring or Apple Health, or log a night.</p>}
+      {sleepMain && <>
       <section className="ay-db-card" aria-labelledby="ay-db-sleep-title">
         <div className="ay-db-cardhead">
           <h2 id="ay-db-sleep-title" className="ay-db-h2">{glanceWords(sleepMain)}</h2>
@@ -554,6 +569,7 @@ export default function HealthHome({
           })}
         </div>
       )}
+      </>}
     </div>
   );
 
