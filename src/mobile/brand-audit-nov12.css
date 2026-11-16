@@ -216,3 +216,5 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__panel :is(h2, p, b, spa
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__head h2 { font: 700 22px/1.15 var(--ay-font-display, inherit) !important; display: block !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__search { font-size: 16px !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-addprod__search::-webkit-search-cancel-button { filter: brightness(0) saturate(100%); opacity: .8; }
+/* Nov 16 (Apple Health inspo): dark folds are a soft fill too, no butter outline. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme*="dark"] details.ay-db-fold { background-color: rgba(255, 237, 172, .08) !important; box-shadow: none !important; }

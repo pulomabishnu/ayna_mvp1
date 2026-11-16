@@ -354,3 +354,11 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh
 /* Nov 16 (founder: "very unclean"): the highlight kicker is one plain line, no pill that wraps; no "New" chip. */
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight .ay-db-highlight__kicker { background: none !important; border: 0 !important; padding: 0 !important; white-space: nowrap; color: inherit !important; font: 700 13px/1.3 var(--ay-font-ui) !important; letter-spacing: .02em; text-transform: uppercase; }
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight .ayk-status { display: none !important; }
+/* Nov 16 (founder: "use Apple Health as inspo"): grouped cards are a soft fill, never an outline. Light: a 6%
+   espresso tint on butter; dark: a 8% butter tint on espresso. One radius, generous padding. */
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-db :is(.ay-db-card, .ay-db-fold) {
+  box-shadow: none !important; border: 0 !important; background: rgba(62, 39, 35, .06) !important; border-radius: 18px !important;
+}
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-db :is(.ay-db-card, .ay-db-fold) {
+  background: rgba(255, 237, 172, .08) !important;
+}
