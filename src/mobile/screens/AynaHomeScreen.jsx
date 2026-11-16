@@ -148,7 +148,7 @@ export default function AynaHomeScreen(props) {
           askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
         }}
         on={{
-          ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
+          ask, openLog: () => setMonthOpen(true), // Nov 16: logs right here in a sheet; closing it leaves her where she was. openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
           connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
           openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
           openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,

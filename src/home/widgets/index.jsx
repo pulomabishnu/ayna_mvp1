@@ -83,7 +83,7 @@ function LogChart({ id, field, title, max, size, ctx }) {
   const pts = logSeries(ctx.log, field, ctx.today, days);
   const n = pts.filter((p) => p.value != null).length;
   return (
-    <Card id={id} size={size} title={title} empty={n ? null : size === 'small' ? `No ${title.toLowerCase()} logged yet.` : `No ${title.toLowerCase()} logged in the last ${days} days.`} action={<Act onClick={ctx.on.openLog}>Log today</Act>}>
+    <Card id={id} size={size} title={title} empty={n ? null : size === 'small' ? `No ${title.toLowerCase()} logged yet.` : `No ${title.toLowerCase()} logged in the last ${days} days.`} action={<Act onClick={ctx.on.openLog}>{n ? 'Log today' : `Log ${title.toLowerCase()}`}</Act>}>
       <MiniChart points={pts} kind="curve" min={field === 'pain' ? -0.3 : 0.7} max={max + 0.3} label={`${title} from your log, ${n} of ${days} days logged.`} />
     </Card>
   );

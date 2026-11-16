@@ -3,7 +3,7 @@ import posthog from 'posthog-js';
 import CustomizeHomeSheet from './CustomizeHomeSheet.jsx';
 import { Widget } from './widgets/index.jsx';
 import { REGISTRY } from './widgets/registry.js';
-import { effectiveLayout, resetHomeLayout, setHomeLayoutOwner, writeHomeLayout } from './homeLayout.js';
+import { CAPS, SPACE, effectiveLayout, resetHomeLayout, setHomeLayoutOwner, writeHomeLayout } from './homeLayout.js';
 import { useHomeRemote } from './useHomeRemote.js';
 import { readLog, todayKey } from '../health/dailyLog.js';
 import { readTries } from '../health/outcomes.js';
@@ -45,6 +45,19 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
     on,
   };
 
+  const used = layout.widgets.reduce((n, w) => n + (SPACE[w.size] || 1), 0);
+  const hasRoom = used < (CAPS[surface] || 4);
+  const rowRef = useRef(null);
+  const [rowAt, setRowAt] = useState(0);
+  const cells = () => [...(rowRef.current?.children || [])];
+  const onRowScroll = () => {
+    const row = rowRef.current; if (!row) return;
+    const left = row.scrollLeft; const list = cells();
+    let best = 0; list.forEach((c, i) => { if (Math.abs(c.offsetLeft - row.offsetLeft - left) < Math.abs(list[best].offsetLeft - row.offsetLeft - left)) best = i; });
+    if (row.scrollLeft + row.clientWidth >= row.scrollWidth - 4) best = list.length - 1;
+    setRowAt(best);
+  };
+  const goTo = (i) => { const row = rowRef.current; const c = cells()[i]; if (row && c) row.scrollTo({ left: c.offsetLeft - row.offsetLeft - 20, behavior: 'smooth' }); };
   const shown = layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id));
   const change = (widgets) => { writeHomeLayout(surface, widgets); setLayout({ widgets, custom: true }); };
   const reset = () => { resetHomeLayout(surface); setLayout(effectiveLayout(surface, REGISTRY)); };
@@ -68,13 +81,18 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
         <button type="button" className="ay-homewidgets__edit is-head" aria-haspopup="dialog" onClick={openSheet}>{shown.length ? editLabel : 'Add'}<span className="sr-only"> pinned items</span></button>
       </div>}
       {shown.length > 0 && (
-        <div className="ay-homewidgets__grid">
+        <div className="ay-homewidgets__grid" ref={rowRef} onScroll={title ? onRowScroll : undefined}>
           {/* A row-shaped widget alone (today's health row) keeps the full width. */}
           {shown.map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
           {/* Nov 16 (founder): a "+ Add" tile next to the pinned charts. */}
-          {title && <div className="ay-homewidgets__cell is-small is-add"><button type="button" className="ay-homewidgets__addtile" aria-haspopup="dialog" onClick={openSheet}><span aria-hidden="true">+</span>Add a chart</button></div>}
+          {/* Only while there is room (Home holds 4 spaces: small = 1, large = 2). */}
+          {title && hasRoom && <div className="ay-homewidgets__cell is-small is-add"><button type="button" className="ay-homewidgets__addtile" aria-haspopup="dialog" onClick={openSheet}><span aria-hidden="true">+</span>Add a chart</button></div>}
         </div>
       )}
+      {/* Nov 16 (founder: "make it obvious you can scroll"): dots under the row, like Highlights; tap one to jump. */}
+      {title && shown.length > 1 && <div className="ay-homewidgets__dots" role="group" aria-label="Pinned pages">
+        {Array.from({ length: shown.length + (hasRoom ? 1 : 0) }, (_, i) => <button key={i} type="button" aria-label={i < shown.length ? `Go to pinned ${i + 1}` : 'Go to Add a chart'} aria-current={i === rowAt ? 'true' : undefined} onClick={() => goTo(i)} />)}
+      </div>}
       {/* children: the screen's own links (Home's My dashboard / Your matches) share the row with Edit. */}
       {!title && <div className={`ay-homewidgets__bar${children ? ' has-links' : ''}`}>
         {children}
