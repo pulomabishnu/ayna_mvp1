@@ -9,6 +9,7 @@ import { usePro } from './WhyTrace.jsx';
 import { breakdownFromDetails } from '../../matching/breakdown.js';
 import { matchBreakdownFor } from '../pdp/decision.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
+import { matchBacking } from './matchBacking.js';
 import { openProPaywall } from '../../pro/paywall.js';
 import { ALL_PRODUCTS } from '../../data/catalog.js';
 import { parsePrice, buildProductProfile } from '../../matching/productProfile.js';
@@ -151,6 +152,8 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
         {checks.length > 0 && <div className="ay-w2-tile"><small>Checked for you</small><ul className="ay-w2-chips">{checks.map((c) => <li key={c.code} title={c.text}>{checkWord(c)}</li>)}</ul></div>}
       </section>}
 
+      {shown != null && <Backing product={product} />}
+
       {cautions.length > 0 && <section className="ay-w2-care"><h3>Before you choose</h3><ul className="ay-w2-list is-care">{cautions.map((c) => <li key={c}>{c}</li>)}</ul></section>}
 
       {scored && why.restricted && <section className="ay-w2-care">
@@ -180,6 +183,20 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
  * The same facts as the panel, as plain data, for ayna Wrapped (Nov 8, founder: "your Wrapped,
  * even better … actually informative"). Only what makes it fit, never the gaps; null if not matched.
  */
+function Backing({ product }) {
+  const { clinician, studies } = matchBacking(product);
+  if (!clinician && !studies.length) return null;
+  return <section className="ay-w2-backing">
+    <h3>What backs this</h3>
+    {clinician && <p className="ay-w2-clin">Clinical opinion from <b>{[clinician.who, clinician.credential].filter(Boolean).join(', ')}</b>. Read it under Clinical opinion on this page.</p>}
+    {studies.length > 0 && <ul className="ay-w2-studies">{studies.map((st) => <li key={st.url}>
+      <small>{st.label}</small>
+      <span>{st.claim}</span>
+      <a href={st.url} target="_blank" rel="noopener noreferrer">{st.publisher || 'Source'}<span className="sr-only"> (opens in a new tab)</span></a>
+    </li>)}</ul>}
+  </section>;
+}
+
 export function whyFitSummary(product, quizResults, healthProfile = null, matchOpts) {
   if (!product || !quizResults) return null;
   let details;

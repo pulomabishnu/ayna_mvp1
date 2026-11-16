@@ -225,3 +225,14 @@ body .ay-w2-tile.is-ink > span:last-child { color: #ffedac; }
 body .ay-w2-fine a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
 body .ay-w2 .ay-match-feedback, body .ay-w2-body > :is(.ay-mfb, [class*='feedback']) { margin-top: 0; }
 body .ay-w2-tiles { align-items: start; }
+
+/* Nov 16: "What backs this" (the clinician who wrote about it, and up to three sourced studies). Pink tiles like the
+   Evidence tile, espresso text, no outlines; the same in dark mode (pink stays pink). */
+body .ay-w2-backing { display: grid; gap: 10px; }
+body .ay-w2-backing h3 { margin: 0; }
+body .ay-w2-clin { margin: 0; padding: 14px 16px; border-radius: 18px; background: #f7badd; color: #3e2723; font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); }
+body .ay-w2-studies { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+body .ay-w2-studies li { display: grid; gap: 4px; padding: 14px 16px; border-radius: 18px; background: #f7badd; color: #3e2723; }
+body .ay-w2-studies small { font: 700 13px/1.2 var(--ay-sans-stack, sans-serif); opacity: .8; }
+body .ay-w2-studies span { font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); }
+body .ay-w2-studies a { justify-self: start; min-height: 32px; display: inline-flex; align-items: center; color: #3e2723; font: 700 14px/1.2 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-underline-offset: 3px; }
