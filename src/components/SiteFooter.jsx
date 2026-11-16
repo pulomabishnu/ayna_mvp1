@@ -144,6 +144,8 @@ export default function SiteFooter({
           <a className="ay-foot__link" href="/partners" onClick={(e) => footerGo(e, onViewWaitlist)}>Partner Brands</a>
           <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
           <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
+          {/* Nov 16 (founder): Google's "preferred sources" deeplink (Notion AYNA-340), the same link as the landing page's closing button. */}
+          <a className="ay-foot__link" href="https://www.google.com/preferences/source?q=aynahealth.co" target="_blank" rel="noopener noreferrer">Make ayna a Preferred Source <span aria-hidden="true">↗</span><span className="sr-only"> (opens Google in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in Touch">
