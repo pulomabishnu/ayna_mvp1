@@ -922,11 +922,21 @@ export const CATALOG_PRODUCTS = [
 const BUNDLED_PRODUCTS = CATALOG_PRODUCTS.filter((p) => !p.hidden && !isCbdProduct(p) && !PERIOD_TRACKER_APP_IDS.has(p.id));
 export let ALL_PRODUCTS = BUNDLED_PRODUCTS;
 
+const LINK_FIELDS = ['affiliateUrl', 'productUrl', 'buyUrl', 'whereToBuyLinks'];
+
 /** The public live catalog is the same universe used by Shop and the API. */
 export function adoptLiveCatalog(products, inactiveIds = []) {
     if (!Array.isArray(products) || !products.length) return;
     const byId = new Map(BUNDLED_PRODUCTS.map((p) => [p.id, p]));
-    for (const p of products) if (p?.name && isListedProduct(p)) byId.set(p.id, p);
+    // A live row carries no buy links of its own (product_catalog has no affiliate or product-page
+    // column), so it keeps the bundled ones: LOLA's Buy fell back to mylola.com's homepage (Nov 16).
+    for (const p of products) {
+        if (!p?.name || !isListedProduct(p)) continue;
+        const bundled = byId.get(p.id);
+        const links = {};
+        if (bundled) for (const k of LINK_FIELDS) if (bundled[k] && !p[k]) links[k] = bundled[k];
+        byId.set(p.id, Object.keys(links).length ? { ...p, ...links } : p);
+    }
     // Switched off in Supabase: gone from the app without a new build (bundled copy included).
     for (const id of inactiveIds || []) byId.delete(id);
     ALL_PRODUCTS = [...byId.values()];

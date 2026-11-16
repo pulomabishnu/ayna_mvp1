@@ -1,5 +1,6 @@
 import './profile/health-connections.css';
 import { CATEGORY_LABELS } from '../../data/catalogTaxonomy.js';
+import { cardKind } from '../../utils/productCardFacts.js';
 import { sentenceCase } from '../../utils/sentenceCase.js';
 import { groupShelves } from '../../matching/shelfGroups.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -51,7 +52,7 @@ const MIN_SHELF_SCORE = 50;
 function byType(list) {
   const groups = new Map();
   for (const p of list) {
-    const label = sentenceCase(CATEGORY_LABELS[p.category] || String(p.category || 'Other').replaceAll('-', ' '));
+    const label = cardKind(p) || sentenceCase(CATEGORY_LABELS[p.category] || String(p.category || 'Other').replaceAll('-', ' '));
     if (!groups.has(label)) groups.set(label, []);
     groups.get(label).push(p);
   }

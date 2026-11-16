@@ -1,9 +1,7 @@
 import React from 'react';
 import { CheckIcon } from './icons/UiIcons.jsx';
-import { CATEGORY_LABELS } from '../data/catalogTaxonomy.js';
 import { cardKind, cardMeta, cardPrice } from '../utils/productCardFacts.js';
 import { isKnownPrice } from '../utils/formatPrice.js';
-import { sentenceCase } from '../utils/sentenceCase.js';
 import { productHref, isPlainLeftClick } from '../utils/productRoute';
 import ProductTileImage from './ProductTileImage';
 import { PlateName, SafetyTag } from './cards/CardBits.jsx';
@@ -63,7 +61,7 @@ export default function ProductCard({
   style,
 }) {
   if (!product) return null;
-  const categoryLabel = sentenceCase(CATEGORY_LABELS[product.category] || (product.category ? String(product.category).replace(/-/g, ' ') : 'Product'));
+  const categoryLabel = cardKind(product) || 'Product';
   const shownBrand = brandOf(product) || product.brand || '';
   // Something she added herself (not in the catalog yet): no page to open
   // and no facts to show, so the card says whose it is and stays put.

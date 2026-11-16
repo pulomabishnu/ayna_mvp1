@@ -15,3 +15,14 @@ describe('adoptLiveCatalog (backlog Nov 14: products switched off in Supabase le
     expect(P.ALL_PRODUCTS.find((p) => p.id === p0.id).name).toMatch(/\(edited\)$/);
   });
 });
+
+describe('a live row keeps the bundled buy links (LOLA fell back to its homepage, Nov 16)', () => {
+  it('LOLA pads still buy through the affiliate link after the live catalog loads', async () => {
+    const m = await import('./products.js');
+    const { resolveBuyUrl } = await import('../utils/buyLink.js');
+    m.adoptLiveCatalog([{ id: 'p-lola-pad', name: 'LOLA Organic Cotton Pads', brand: 'LOLA', category: 'pad', url: 'https://mylola.com/' }]);
+    const p = m.getProductById('p-lola-pad');
+    expect(p.affiliateUrl).toBe('https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx');
+    expect(resolveBuyUrl(p)).toBe('https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx');
+  });
+});

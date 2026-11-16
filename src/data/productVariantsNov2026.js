@@ -675,17 +675,18 @@ export const PRODUCT_VARIANTS_NOV2026 = {
   },
   "p-lola-pad": {
     // Nov 15 (founder flag): this used to point at the $44 First Period Kit, not a pack of pads.
-    // Now the pads page itself, read Nov 15: Pads with Wings, $11.00 for 12 one-time
-    // ($9.50 for 12 with a monthly subscription).
-    "sourceUrl": "https://mylola.com/products/pads",
+    // Nov 16 (founder): Buy must be LOLA's affiliate link. That link (lvnta) lands on LOLA's own
+    // Amazon listing B0DG3WYB9Q, read Nov 15: Organic Cotton Pads, Heavy, 36 count, $25.99. The
+    // option shown is the one the link actually sells, so the price on ayna matches the checkout.
+    "sourceUrl": "https://www.amazon.com/dp/B0DG3WYB9Q",
     "verifiedAt": "2026-11-15",
     "variants": [
       {
         "id": "N1-011",
-        "label": "Pads with Wings, 12",
-        "priceLabel": "$11.00",
-        "url": "https://mylola.com/products/pads",
-        "image": "https://mylola.com/cdn/shop/files/Copy_of_new-pad-organic-wings_c8d9e879-3ab7-4e23-a304-d1f69b41b4e1.jpg?v=1775247327"
+        "label": "Heavy pads, 36",
+        "priceLabel": "$25.99",
+        "url": "https://lvnta.com/lv_9s1mlpiV0gHbgRP8fx",
+        "image": "https://m.media-amazon.com/images/I/71j3reiHuBL.jpg"
       }
     ]
   },

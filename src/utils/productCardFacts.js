@@ -16,7 +16,17 @@ export function isSponsoredProduct(item) {
   return item?.sponsored === true || item?.isSponsored === true || String(item?.placementType || '').toLowerCase() === 'sponsored';
 }
 
+// A hot-flash product filed under menopause is named by what it does: hot flashes happen
+// outside menopause too, and a life stage is never assumed from a symptom (Ameera, Nov 16).
+const MIDLIFE = new Set(['menopause', 'perimenopause']);
+const VASOMOTOR = /hot flash|hot flush|night sweat/i;
+export function isVasomotorProduct(product) {
+  if (!product || String(product.id || '').startsWith('d-')) return false;
+  return VASOMOTOR.test([product.name, product.summary, product.description, ...(product.tags || [])].filter(Boolean).join(' '));
+}
+
 export function cardKind(product) {
+  if (MIDLIFE.has(product?.category) && isVasomotorProduct(product)) return 'Hot flashes and night sweats';
   const raw = CATEGORY_LABELS[product?.category] || (product?.category ? String(product.category).replace(/-/g, ' ') : '');
   return raw ? sentenceCase(String(raw).replace(/^[^\w]+\s*/, '')) : '';
 }
