@@ -107,7 +107,6 @@ export default function EcosystemScreen({
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
-  const routineRef = useRef(null);
   // Her routines, one per active need (period pain, PMS, sleep): Start here, Track it, Other options.
   const routineSource = {
     userId: authUser?.id || null, quizAnswers, matchOpts,
@@ -287,7 +286,6 @@ export default function EcosystemScreen({
   // added herself counts too, so the empty message never shows over products she has.
   const hasAnything = currentProducts.length > 0 || myProducts.length > 0 || sections.some((s) => s.picks?.length);
 
-  const checkin = <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>;
 
   // Founder, Nov 9 ("take this out"): the pink panel with five care links is now the small
   // butter care note: one line, Read more, Find care. Still always shown, never behind a tab.
@@ -421,12 +419,8 @@ export default function EcosystemScreen({
     {ecoTab === 'dashboard' && showTabs ? <div className="ay-eco-routine">
       {/* The dashboard tab is part of ayna Pro (founder, PR #87). */}
       <ProFeatureGate feature="dashboard" onEcosystem={() => onEcoTab?.('products')}>
-      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length ? () => routineRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' }) : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
-      {myProducts.length > 0 && <div ref={routineRef} className="ay-eco-plan" id="ay-eco-plan">
-        <Routine products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
-        <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
-      </div>}
-      {onOpenMonthlyCheckin && checkin}
+      <HealthDashboard authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onEcoTab ? () => onEcoTab('products') : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined }} />
+      {/* Nov 16 (founder: Your data is overstimulating): her routine plan and shopping list live in Your products › Routine. */}
       </ProFeatureGate>
     </div> : <>
     {hasAnything && <div className="eco-views" role="tablist" aria-label="Ecosystem lists">

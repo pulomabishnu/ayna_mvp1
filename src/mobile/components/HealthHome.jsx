@@ -442,7 +442,8 @@ export default function HealthHome({
   const copyWeek = async () => { try { await navigator.clipboard.writeText(weekShortText); setCopied(true); } catch { setCopied(false); } };
   const bottom = (
     <div className="ay-db-bottom">
-      {ready.length > 0 && (
+      {/* Nov 16 (founder: Your data is overstimulating): in the app the week summary repeats the highlights. */}
+      {ready.length > 0 && surface !== 'app' && (
         <details className="ay-db-fold">
           <summary>Your week, in short</summary>
           <dl className="ay-db-facts">
@@ -483,11 +484,13 @@ export default function HealthHome({
       <div className="ay-db-cols">
         <div className="ay-db-main">
           {/* Right after the findings they come from (dashboard audit 7.12, 7.13). */}
-          {suggestBlock}
+          {/* Nov 16 (founder: overstimulating): the app's Summary is the rings, one highlight, the week and what's
+              coming up. "Something to add?" lives in the rundown; the monthly check-in on Home. */}
+          {surface !== 'app' && suggestBlock}
           {/* Nov 16 (founder: crowded): Ask stays in the header in the app; the questions block is web only. */}
           {surface !== 'app' && askBlock}
           {!hasData && routineBits}
-          {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
+          {onOpenCheckin && surface !== 'app' && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
         </div>
         <div className="ay-db-rail">
           {routineWorking}

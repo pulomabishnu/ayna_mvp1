@@ -63,7 +63,8 @@ export default function TodayScreen({
     <div className="ay-eco-routine">
       <HealthDashboard view={homeTop ? 'data' : 'today'} authUser={authUser} selectedNeedIds={goalIds} hormonalBC={usesHormonalBC(quizAnswers)} products={myProducts} routineProducts={myProducts.filter((product) => !routineExcluded[product.id])} routineOutcomes={routineOutcomes} matches={suggestedEcosystemProducts} onOpenProduct={onOpenProduct} onConnect={onConnectHealth} onAddGoal={onAddGoal} onOpenRoutine={myProducts.length && onGoEco ? openRoutine : undefined} onOpenCheckin={showCheckin ? onOpenMonthlyCheckin : undefined} onSignIn={() => onRequireAuth?.('health data')} quizAnswers={quizAnswers} onEditAnswers={onEditIntakeStep || onRetake} onSaveToProfile={onUpdateIntake || null} rundown={{ matchOpts, saved: Object.values(savedProducts || {}), onToggleSaved, onWhyMatch: onOpenWhyMatch, onOpenRead: (id) => { const a = articles.find((x) => x.id === id); if (a) onOpenArticle?.(a); }, onExplore: onBrowse ? () => onBrowse() : undefined, onSetUp: !hasProfile && !quizDraft ? onStartQuiz : undefined, community: rundownCommunity, onOpenPost: onOpenCommunityPost, onRundownFinish }} />
       {/* Her routine per need, short (src/components/routine); the full one is in You > My ecosystem. */}
-      <div className="ay-today-routines">
+      {/* Nov 16 (founder: Your data is overstimulating): Your data stops at the data. Her routine is on Home › Routine. */}
+      {!homeTop && <div className="ay-today-routines">
         {/* Founder Oct 26 21:45: her routine as a day timeline, not a list of lines. */}
         <section className="ay-today-routines__plates" aria-labelledby="ay-today-routine-h">
           <h2 id="ay-today-routine-h">Your routine</h2>
@@ -72,8 +73,8 @@ export default function TodayScreen({
             onOpenProduct={onOpenProduct}
             onCheckIn={() => openTodayLog('app')} />
         </section>
-      </div>
-      {hasProfile && onOpenMonthlyCheckin && <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>}
+      </div>}
+      {!homeTop && hasProfile && onOpenMonthlyCheckin && <section className="ayna-home-today ay-eco-checkin"><div><h2>Monthly check-in</h2><p>A few quick questions so your matches keep up with how you feel.</p></div><button type="button" onClick={onOpenMonthlyCheckin}>Start</button></section>}
     </div>
     <LegalFooter />
   </div>;
