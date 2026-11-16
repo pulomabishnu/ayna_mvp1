@@ -294,12 +294,12 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
         try { posthog.capture('health_connection_succeeded', { provider: apiSource }); } catch { /* ignore */ }
         // Connected. Reloading the list and reading her data happen in the
         // background, so the button never waits on them.
-        setMessage('Connected. Your data is syncing now. Your trends show on the Dashboard tab of your ecosystem.');
+        setMessage('Connected. Your data is syncing now. Your trends show in Home › Your data.');
         step('refresh', refresh(), 30000)
           .then(() => step('sync', syncPhoneSource({ force: true }), 120000))
           .then((out) => {
             if (out?.empty) { setDenied(true); setMessage(`Connected, but no data came through yet. Either access was turned off in the ${source.name} sheet or there is no data yet for what you picked. ${source.platform === 'ios' ? 'To check, open the Health app, tap your picture, then Privacy, Apps, ayna, and turn on what you want. Then tap Check again.' : 'To check, open Health Connect, App permissions, ayna. Then tap Check again.'}`); }
-            else if (out && !out.skipped) setMessage('Connected and synced. Your trends show on the Dashboard tab of your ecosystem.');
+            else if (out && !out.skipped) setMessage('Connected and synced. Your trends show in Home › Your data.');
             return refresh();
           })
           .catch(() => setMessage('Connected. Reading your data is taking a while; tap Sync now in a minute.'));

@@ -460,7 +460,7 @@ export default function SigninScreen({
           </header>
 
           {mode === 'signup' && showEcoSummary && (
-            <section className="ay-auth-eco" aria-label="Your ecosystem">
+            <section className="ay-auth-eco" aria-label="Your products">
               <div className="ay-auth-eco-copy">
                 <strong>{picksAreasLine(ecoPicks.length, topAreas.length)}</strong>
                 {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
@@ -560,7 +560,7 @@ export default function SigninScreen({
             else if (canSignUp) setMode('signup');
             else onStartEcosystem?.();
           }}>
-            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Build your ecosystem</b></>}
+            {mode === 'signup' ? 'Already have an account? Sign in' : canSignUp ? <>Don’t have an account? <b>Create one</b></> : <>Don’t have an account? <b>Find your products</b></>}
           </button>
 
           {mode !== 'signup' && <div className="ayna-fresh-auth-trust" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 14, opacity: 0.6 }}>

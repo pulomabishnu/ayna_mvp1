@@ -648,7 +648,7 @@ export default function MobileApp() {
     setAuthMode(mode);
     setScreen('signin');
   };
-  // "Don't have an account? Build your ecosystem": accounts are only made in the
+  // "Don't have an account? Find your products": accounts are only made in the
   // save step after the quiz, so this starts the quiz (or, if she already built
   // one on this device while signed out, returns to its save step).
   const startEcosystemFlow = () => {
@@ -1250,7 +1250,7 @@ export default function MobileApp() {
     setScreen('landing');
   };
 
-  // "Add to ecosystem" from a product detail overlay, was previously wired
+  // "Add to routine" from a product detail overlay, was previously wired
   // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
   // never passed it), so the button did nothing at all.
   const ecoNudgeShownRef = useRef(false);
@@ -1439,7 +1439,7 @@ export default function MobileApp() {
     updateSession({ lastQuizAnswers: nextAnswers, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 });
     let label = needId;
     try { label = getSelectedNeeds(nextAnswers).find((n) => n.id === needId)?.phrase || needId; } catch { /* keep id */ }
-    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your ecosystem.` : `Added ${label} to your goals. No new strong matches for it yet.`);
+    setEcosystemNotice(added.length ? `Added ${label} to your goals. ${added.length} new match${added.length === 1 ? '' : 'es'} in your routine.` : `Added ${label} to your goals. No new strong matches for it yet.`);
     if (added.length) setUpdatePop({ title: `${added.length} new ${added.length === 1 ? 'match' : 'matches'} for ${label}`, sub: 'Added to your products. Tap one to see why it fits, or take it out.', products: added });
     const supabase = getSupabaseClient();
     if (authUser && supabase && added.length) {
@@ -1708,8 +1708,8 @@ export default function MobileApp() {
       });
       if (mode === 'add') {
         setEcosystemNotice(addedProducts.length
-          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your existing ecosystem stayed in place.`
-          : 'No new strong matches this time. Your existing ecosystem stayed in place.');
+          ? `${addedProducts.length} new product${addedProducts.length === 1 ? '' : 's'} added. Your products stayed the same.`
+          : 'No new strong matches this time. Your products stayed the same.');
         if (addedProducts.length) setUpdatePop({ title: `${addedProducts.length} new ${addedProducts.length === 1 ? 'pick' : 'picks'} from your answers`, sub: 'Added to your products. Your existing ones stayed in place.', products: addedProducts });
       } else {
         setEcosystemNotice('');
@@ -1738,7 +1738,7 @@ export default function MobileApp() {
       setScreen('building');
     },
     // The reveal->sign-in funnel is for a first-time, still-anonymous build:
-    // "here's your ecosystem, sign in to save it." Someone already signed in
+    // "here's your products, sign in to save them." Someone already signed in
     // (a monthly check-in, a retaken quiz, an edited profile) already has an
     // account and this same ecosystem attached to it, routing them through
     // "sign in" again after finishing is a dead end, not a next step.
@@ -1894,7 +1894,7 @@ export default function MobileApp() {
   };
 
   if (authLoading || (authUser?.id && !DEV_HEALTH_DEMO && loadedAccountId !== authUser.id)) {
-    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your ecosystem…</p></div></div>;
+    return <div className="ayna-mobile" data-theme={resolvedTheme} style={{ display: 'grid', placeItems: 'center', minHeight: '100dvh', background: 'var(--ayna-bg)' }} role="status" aria-live="polite"><div style={{ textAlign: 'center', color: 'var(--ayna-heading)' }}><div style={{ fontFamily: "var(--ayna-font-display)", fontSize: 34 }}>ayna</div><p style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 400, lineHeight: 1.45, fontSize: 'calc(15px * var(--ayna-text-scale, 1))' }}>Opening your products…</p></div></div>;
   }
 
   return (

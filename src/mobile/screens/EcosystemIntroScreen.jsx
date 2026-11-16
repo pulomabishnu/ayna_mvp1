@@ -24,11 +24,11 @@ export default function EcosystemIntroScreen({ onStartQuiz, onAlreadyHaveAccount
     <div className="ayna-ecosystem-start-scroll ay-intro-body">
       <header className="ay-intro-head">
         {/* Signed out, this is My ecosystem's logged-out state: what it keeps, then one way in (team direction 24). */}
-        <h1>{hasIntakeDraft ? 'Your ecosystem is taking shape' : authUser ? 'Tell us about you' : 'Build your health ecosystem'}</h1>
+        <h1>{hasIntakeDraft ? 'Your products are taking shape' : authUser ? 'Tell us about you' : 'Find your products'}</h1>
         <p>{hasIntakeDraft ? 'Pick up where you left off.' : authUser ? 'Six questions, then your matches.' : 'Keep your concerns, matches, saved products and health insights connected in one place. Six questions to start.'}</p>
       </header>
 
-      <ol className="ay-intro-steps" aria-label="What shapes your ecosystem">
+      <ol className="ay-intro-steps" aria-label="What shapes your products">
         {PARTS.map((part, i) => (
           <li key={part.key} className={i % 2 ? 'is-rose' : 'is-sky'}>
             <span className="ay-intro-num" aria-hidden="true">{i + 1}</span>

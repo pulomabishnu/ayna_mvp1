@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import PhotoLog from './PhotoLog.jsx';
 import { createPortal } from 'react-dom';
 import { checkinDaySet, dayLines, estimatedDaySet, legendFor, monthCells, monthComing, monthKey, periodDaySet, shiftMonth } from '../../health/monthCalendar.js';
 import './metric-sheet.css';
 import './month-sheet.css';
-import { LOG_SAVED_EVENT, readLog, saveLogEntry, addDays } from '../../health/dailyLog.js';
+import { LOG_SAVED_EVENT, readLog, saveLogEntry, addDays, NOTE_MAX } from '../../health/dailyLog.js';
 import { cyclePosition } from '../../components/rundown/buildRundown.js';
 import { topSymptom, topSymptomLine } from '../../health/topSymptom.js';
 import { announceLogChange } from '../../health/todayHelp.js';
@@ -28,6 +27,8 @@ const QUICK = [
   { id: 'energy', label: 'Energy', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'] },
   { id: 'pain', label: 'Pain', values: [0, 1, 2, 3], options: ['None', 'Mild', 'Medium', 'Bad'] },
   { id: 'sleep', label: 'Sleep', values: [1, 2, 3], options: ['Rough', 'Okay', 'Good'] },
+  { id: 'skin', label: 'Skin', values: [1, 2, 3], options: ['Flared', 'Okay', 'Clear'] },
+  { id: 'hair', label: 'Hair', values: [1, 2, 3], options: ['Shedding', 'Okay', 'Good'] },
 ];
 const FLOWS = [['none', 'None'], ['spotting', 'Spotting'], ['light', 'Light'], ['medium', 'Medium'], ['heavy', 'Heavy']];
 
@@ -189,13 +190,22 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
                   </div>
                 </li>;
               })}
+              <li className={`ay-mcal__cat${openCat === 'note' ? ' is-open' : ''}`}>
+                <button type="button" className="ay-mcal__catrow" aria-expanded={openCat === 'note'} aria-controls="ay-mcal-cat-note" onClick={() => setOpenCat(openCat === 'note' ? '' : 'note')}>
+                  <b>Note</b><span>{log?.[picked]?.note ? 'Written' : 'Add'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                </button>
+                <div id="ay-mcal-cat-note" className="ay-mcal__flow" hidden={openCat !== 'note'}>
+                  <textarea className="ay-mcal__note" rows={3} maxLength={NOTE_MAX} aria-label="Note for this day" placeholder="Anything else today? Only you can see this." key={`${picked}:${log?.[picked]?.note || ''}`} defaultValue={log?.[picked]?.note || ''}
+                    onBlur={(e) => { const v = e.target.value.trim(); if (v !== (log?.[picked]?.note || '')) saveField('note', v || null); }} />
+                </div>
+              </li>
               {/* Nov 16 (founder): the full symptom log is the last row here, not a button at the bottom of the sheet. */}
               {onLog && <li className="ay-mcal__cat"><button type="button" className="ay-mcal__catrow" onClick={() => { onClose(); onLog(); }}>
                 <i aria-hidden="true" className="is-more" /><b>Other symptoms</b><span>Add</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
               </button></li>}
             </ul>}
             {canLogPicked && <p className={`ay-mcal__saved${saveNote.startsWith("Couldn't") ? ' is-error' : ''}`} role="status">{saveNote}</p>}
-            {canLogPicked && <PhotoLog day={picked} dayLabel={fmt(picked, { month: 'long', day: 'numeric' })} />}
+            {/* Photos wait for update #1 after the App Store release (founder, Nov 16). */}
           </div>
         )}
 

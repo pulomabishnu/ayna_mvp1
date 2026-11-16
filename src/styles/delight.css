@@ -164,3 +164,7 @@ html body .app-container .ay-ecoprev__stage.is-honest > * { min-width: 0; }
 .ayna-mobile .ay-auth-form label:has(> input[type='checkbox']) { min-height: 44px; }
 .ayna-mobile .ayna-fresh-auth-field input { min-height: 44px; }
 .ayna-mobile .ip-age-input { min-height: 44px; }
+/* Nov 16: a short note under the day's log. */
+.ay-checkin__note { display: grid; gap: 6px; margin-top: 8px; }
+.ay-checkin__note textarea { width: 100%; box-sizing: border-box; min-height: 64px; padding: 10px 12px; border: 0; border-radius: 12px; background: rgba(62, 39, 35, .07); color: inherit; font: 500 16px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; resize: vertical; }
+[data-theme*='dark'] .ay-checkin__note textarea { background: rgba(255, 237, 172, .1); }

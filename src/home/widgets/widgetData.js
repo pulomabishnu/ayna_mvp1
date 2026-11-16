@@ -14,6 +14,7 @@ import { SUMMARY_RANGES } from './registry.js';
 const FIELD = Object.fromEntries(LOG_FIELDS.map((f) => [f.id, f]));
 const wordFor = (field, v) => {
   const f = FIELD[field];
+  if (f?.text) return v ? String(v) : null;
   const i = f ? f.values.indexOf(v) : -1;
   return i >= 0 ? f.options[i] : null;
 };

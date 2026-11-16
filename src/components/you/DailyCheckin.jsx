@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LOG_FIELDS, lastWeek, todayKey, weekTakeaway } from '../../health/dailyLog.js';
+import { LOG_FIELDS, NOTE_MAX, lastWeek, todayKey, weekTakeaway } from '../../health/dailyLog.js';
 import { useDailyLog } from '../../health/useDailyLog.js';
 import { todayHelp } from '../../health/todayHelp.js';
 
@@ -41,7 +41,7 @@ export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle
   const loggedWeek = lastWeek(log, 'day', today).map((d) => ({ day: d.day, logged: Boolean(log[d.day] && LOG_FIELDS.some((f) => log[d.day][f.id] != null)) }));
   // "What kind of pain" sits right under Pain, only once she logged some pain.
   const painKnown = todays.pain != null && todays.pain >= 1;
-  const ordered = LOG_FIELDS.filter((f) => !f.follows).flatMap((f) => [f, ...LOG_FIELDS.filter((x) => x.follows === f.id)]);
+  const ordered = LOG_FIELDS.filter((f) => !f.follows && !f.text).flatMap((f) => [f, ...LOG_FIELDS.filter((x) => x.follows === f.id)]);
   const rows = ordered.filter((f) => (f.follows ? f.follows === 'pain' && painKnown : f.primary || more) && !(noCycle && POST_CYCLE_HIDDEN.has(f.id)))
     .map((f) => (noCycle && POST_CYCLE_LABELS[f.id] ? { ...f, label: POST_CYCLE_LABELS[f.id] } : f));
   return (
@@ -62,6 +62,10 @@ export function DailyCheckinCard({ variant = 'web', log, save, saveState = 'idle
             </span>
           </div>
         ))}
+        {/* Founder, Nov 16: a short note in her own words, kept with the day's log. */}
+        <label className="ay-checkin__note"><span className="ay-checkin__label">Note</span>
+          <textarea rows={2} maxLength={NOTE_MAX} placeholder="Anything else today? Only you can see this." defaultValue={todays.note || ''} key={`${today}:${todays.note || ''}`} onBlur={(e) => { const v = e.target.value.trim(); if (v !== (todays.note || '')) save(today, { note: v || null }); }} />
+        </label>
         {/* Founder, Nov 11: what she logged today brings things that may help, right here. */}
         {help.length > 0 && (
           <div className="ay-checkin__help" aria-live="polite">

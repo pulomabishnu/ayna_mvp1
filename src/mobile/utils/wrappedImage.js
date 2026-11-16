@@ -34,7 +34,7 @@ export async function renderWrappedImage({ title, picks = 0, areas = 0, topAreas
   ctx.fillStyle = C.paper; ctx.beginPath(); ctx.roundRect(x, y, w, h, 56); ctx.fill(); ctx.lineWidth = 6; ctx.stroke();
   ctx.fillStyle = C.ink; ctx.font = `800 104px ${DISPLAY}`;
   let ty = y + 170;
-  wrap(ctx, title || 'My ecosystem', w - 120).slice(0, 2).forEach((l) => { ctx.fillText(l, x + 60, ty); ty += 112; });
+  wrap(ctx, title || 'My products', w - 120).slice(0, 2).forEach((l) => { ctx.fillText(l, x + 60, ty); ty += 112; });
   ty += 20;
   [[`${picks}`, picks === 1 ? 'pick' : 'picks', C.butter], [`${areas}`, areas === 1 ? 'area' : 'areas', C.mint]].forEach(([n, label, fill], i) => {
     const bx = x + 60 + i * 420; pill(ctx, bx, ty, 380, 150, fill);

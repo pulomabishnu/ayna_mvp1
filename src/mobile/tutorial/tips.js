@@ -242,7 +242,7 @@ export const SCREENS = [
     id: 'you',
     root: '[data-tour="you"]',
     tips: [
-      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your ecosystem, saved products and health live here.' },
+      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your products, saves and health live here.' },
       { id: 'you-settings', anchor: '[data-tour="you"] .ay-header-settings', text: 'Turn tips off or replay them in Settings.' },
     ],
   },
@@ -407,7 +407,7 @@ export const WEB_SCREENS = [
     tips: [
       // Big blocks point at their heading, so the anchor fits on screen.
       { id: 'you-know', anchor: '[data-tour="you"] [data-tour="you-know"] h2', text: 'See or change anything ayna uses to match you.' },
-      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your ecosystem, saved products and health live here.' },
+      { id: 'you-sections', anchor: '[data-tour="you"] [data-tour="you-sections"] :is(button, a)', text: 'Your products, saves and health live here.' },
       { id: 'you-settings', anchor: '[data-tour="you"] [aria-label^="Settings & privacy"]', text: 'Turn tips off or replay them in Settings and privacy.' },
     ],
   },

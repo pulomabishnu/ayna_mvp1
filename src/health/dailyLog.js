@@ -45,9 +45,13 @@ export const LOG_FIELDS = [
   { id: 'energy', label: 'Energy', values: [1, 2, 3], options: ['Low', 'Okay', 'Good'], primary: false, better: 'higher' },
   // Founder, Nov 11 ("for pain be more specific, ask about cramps or what kind of pain"). Shown
   // right under Pain once she logs any pain; never on its own.
+  // Founder, Nov 16: hair next to skin, and a short note in her own words.
+  { id: 'hair', label: 'Hair', values: [1, 2, 3], options: ['Shedding', 'Okay', 'Good'], primary: false, better: 'higher' },
+  { id: 'note', label: 'Note', values: null, options: null, primary: false, better: null, text: true },
   { id: 'pain_where', label: 'What kind of pain', values: ['cramps', 'back', 'head', 'pelvic', 'breast', 'other'], options: ['Cramps', 'Lower back', 'Headache', 'Pelvic', 'Breasts', 'Other'], primary: false, better: null, follows: 'pain' },
 ];
 export const LOG_FIELD_IDS = LOG_FIELDS.map((f) => f.id);
+export const NOTE_MAX = 280;
 const FIELD_BY_ID = Object.fromEntries(LOG_FIELDS.map((f) => [f.id, f]));
 /** Flow as a number for comparisons (0 none .. 4 heavy). Matches metrics.js FLOW_LEVELS spacing. */
 export const FLOW_RANK = { none: 0, spotting: 1, light: 2, medium: 3, heavy: 4 };
@@ -76,6 +80,7 @@ const isIso = (v) => typeof v === 'string' && !Number.isNaN(Date.parse(v));
 export function cleanValue(fieldId, value) {
   const f = FIELD_BY_ID[fieldId];
   if (!f || value == null) return null;
+  if (f.text) { const t = typeof value === 'string' ? value.replace(/\s+/g, ' ').trim().slice(0, NOTE_MAX) : ''; return t || null; }
   return f.values.includes(value) ? value : null;
 }
 

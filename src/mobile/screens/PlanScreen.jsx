@@ -58,8 +58,8 @@ export default function PlanScreen({
   const kept = planProducts.filter((p) => !newIds.has(p.id));
   const toBuy = planProducts.filter((p) => p && p.type !== 'digital' && !routineExcluded[p.id]);
   const lead = fresh.length
-    ? `${fresh.length} ${fresh.length === 1 ? 'match' : 'matches'} for your needs${kept.length ? `, plus ${kept.length} already in your ecosystem` : ''}.`
-    : kept.length ? `${kept.length} ${kept.length === 1 ? 'product' : 'products'} in your ecosystem.` : 'Your answers are in.';
+    ? `${fresh.length} ${fresh.length === 1 ? 'match' : 'matches'} for your needs${kept.length ? `, plus ${kept.length} already in your routine` : ''}.`
+    : kept.length ? `${kept.length} ${kept.length === 1 ? 'product' : 'products'} in your routine.` : 'Your answers are in.';
   return (
     <main className="ay-qc ay-plan ay-pl">
       <header className="ay-qc-top">

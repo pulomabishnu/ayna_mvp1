@@ -116,3 +116,6 @@
 
 .ay-mcal__cats [hidden] { display: none !important; }
 .ay-mcal__catrow > i { display: none !important; }
+.ay-mcal__note { width: 100%; box-sizing: border-box; min-height: 80px; padding: 12px 14px; border: 0; border-radius: 12px; background: rgba(62, 39, 35, .07); color: inherit; font: 500 16px/1.4 var(--ay-font-ui, 'Figtree'), sans-serif; resize: vertical; }
+[data-theme*='dark'] .ay-mcal__note { background: rgba(255, 237, 172, .1); }
+.ay-mcal__note:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

@@ -35,7 +35,7 @@ export default function AynaHomeChatScreen(props) {
               <h1 className="sr-only">Products</h1>
               {quizDraft && onResumeQuiz
                 ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
-                : <EmptyState art="spark" title={lastQuizAnswers ? 'Build your ecosystem' : 'Your products live here'} body={lastQuizAnswers ? 'Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore Shop' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
+                : <EmptyState art="spark" title={lastQuizAnswers ? 'Find your products' : 'Your products live here'} body={lastQuizAnswers ? 'Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown.' : 'Create your health profile and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore Shop' : 'Create your health profile'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
               <LegalFooter />
             </div>}
         </div>

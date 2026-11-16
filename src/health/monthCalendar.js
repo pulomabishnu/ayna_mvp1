@@ -84,7 +84,7 @@ export function legendFor(cells, { hormonalBC = false } = {}) {
 }
 
 const fieldWords = (e) => LOG_FIELDS
-  .filter((f) => e?.[f.id] != null && !(f.id === 'flow' && e.flow === 'none'))
+  .filter((f) => !f.text && e?.[f.id] != null && !(f.id === 'flow' && e.flow === 'none'))
   .map((f) => `${f.label} ${String(f.options[f.values.indexOf(e[f.id])] || '').toLowerCase()}`)
   .filter((s) => !/ $/.test(s));
 

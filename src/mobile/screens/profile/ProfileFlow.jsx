@@ -681,7 +681,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
       </header>
 
       <div className="ay-you-body">
-        {!signedIn && <SignedOutCard><b>Build your health ecosystem</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
+        {!signedIn && <SignedOutCard><b>Find your products</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
         {/* The one "Upgrade to ayna Pro" row lives in YouBento (shared with the website), so it shows once. */}
 
         {quizDraft && onResumeQuiz && <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />}
@@ -699,7 +699,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
             onOpenBlend={() => onOpen('blend')}
             tiles={{
               // Ecosystem, Saved and Check-ins are the number strip under her name (Nov 2).
-              eco: signedIn ? null : onOpenEcosystem ? { caption: 'My ecosystem', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
+              eco: signedIn ? null : onOpenEcosystem ? { caption: 'My products', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
               saved: signedIn ? null : onOpenSaved ? { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products, posts, startups', onClick: onOpenSaved } : null,
               checkins: null,
               // Nov 15 (founder, Apple Health as the model): these are one grouped list below, not three coloured tiles.
@@ -713,12 +713,12 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           { key: 'settings', icon: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
         ])}
 
-        {/* Founder, Nov 9: the ecosystem page's "Manage your ecosystem" list, on You too,
+        {/* Founder, Nov 9: the ecosystem page's "Manage your products" list, on You too,
             so changing answers or starting over never needs a hunt (focus group). */}
-        {signedIn && (onEditProfile || onOpenMonthlyCheckin || onRequestEcosystemReset) && group('manage', 'Manage your ecosystem', [
+        {signedIn && (onEditProfile || onOpenMonthlyCheckin || onRequestEcosystemReset) && group('manage', 'Manage your products', [
           onEditProfile && { key: 'quiz-answers', icon: 'beliefs', title: 'Your quiz answers', sub: 'Update anytime', onClick: onEditProfile },
           onOpenMonthlyCheckin && { key: 'monthly', icon: 'checkin', title: 'Monthly check-in', sub: 'Keep your matches current', onClick: onOpenMonthlyCheckin },
-          onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your ecosystem', sub: 'Start your matches over', onClick: onRequestEcosystemReset },
+          onRequestEcosystemReset && { key: 'reset', icon: 'ecosystem', title: 'Reset your products', sub: 'Start your matches over', onClick: onRequestEcosystemReset },
         ])}
       </div>
       {/* The signature strip marks the end of You (founder, Oct 27 13:20). */}
@@ -3032,7 +3032,7 @@ function DeleteAccountScreen({ onBack, onSignOut, onClose }) {
           This can't be undone.
         </div>
         <div style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45, marginBottom: 20 }}>
-          Deleting your account removes your profile, health intake answers, saved products, and ecosystem from our active systems. We may keep limited records where the law requires it, never your health data. We process requests within a week.
+          Deleting your account removes your profile, health intake answers, saved products, and your products list from our active systems. We may keep limited records where the law requires it, never your health data. We process requests within a week.
         </div>
 
         <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', marginBottom: 8 }}>
@@ -3294,7 +3294,7 @@ function PasswordScreen({ onBack, authUser }) {
 const NARROWING_STAGES = [
   { label: 'Pulled in from the open market', value: 3140, fill: '#ffedac', ink: '#3e2723', ring: true },
   { label: 'Relevant to your profile', value: 212, fill: '#F7BADD', ink: '#3e2723' },
-  { label: 'In your ecosystem', value: 14, fill: 'var(--ayna-heading)', ink: 'var(--ayna-bg)' },
+  { label: 'In your routine', value: 14, fill: 'var(--ayna-heading)', ink: 'var(--ayna-bg)' },
 ];
 
 function NarrowingFunnel() {
@@ -3352,7 +3352,7 @@ function HowItWorksScreen({ onBack }) {
       ),
     },
     {
-      n: '04', title: 'Your ecosystem', body: "What's left is ranked, with the reason attached.",
+      n: '04', title: 'Your products', body: "What's left is ranked, with the reason attached.",
       content: (
         <div style={{ marginTop: 12, borderTop: '1px solid var(--d-hair)', padding: '12px 0 0' }}>
           <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(28px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.15 }}>14</div>
@@ -3511,7 +3511,7 @@ export function AboutAynaScreen({ onBack }) {
           <h2>Questions we hear</h2>
           <div className="ayna-scrapbook__question-list">
             <div><strong>Who is it for?</strong><p>Anyone looking for products for their own women's health needs, at any stage of life.</p></div>
-            <div><strong>What's my ecosystem?</strong><p>Your own shelf of the products that fit your answers, each with the reason it fits.</p></div>
+            <div><strong>What's Your products?</strong><p>Your own shelf of the products that fit your answers, each with the reason it fits.</p></div>
             <div><strong>How do you choose what I see?</strong><p>We compare your profile with relevant products and available evidence, then explain the match in your shop.</p></div>
             <div><strong>What information do you look at?</strong><p>Published research, clinical guidance, clinician input, and community experience all add context.</p></div>
             <div><strong>What can I do in Community?</strong><p>Find people and conversations, share posts and reviews, and make playlists of products.</p></div>

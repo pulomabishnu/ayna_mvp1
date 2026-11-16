@@ -46,7 +46,7 @@ const LOCK_LINES = {
   history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   trial: 'More detailed tracking over time, with trend insights. Basic tracking stays free.',
-  dashboard: 'Your cycle, sleep, heart and activity together, with connected health apps and wearables. Your ecosystem stays free.',
+  dashboard: 'Your cycle, sleep, heart and activity together, with connected health apps and wearables. Your products stay free.',
   appointment: 'Organize symptoms, observations and questions before you see a clinician.',
 };
 

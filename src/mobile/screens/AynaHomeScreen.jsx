@@ -204,7 +204,7 @@ export default function AynaHomeScreen(props) {
               <h1 className="sr-only">Your products</h1>
               {quizDraft && onResumeQuiz
                 ? <FinishQuizCard progress={quizDraft} onContinue={onResumeQuiz} onStartOver={onStartOverQuiz} />
-                : <EmptyState art="spark" title={lastQuizAnswers ? 'Build your ecosystem' : 'Take the quiz to see your products'} body={lastQuizAnswers ? 'Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown.' : 'One minute of questions, and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore Shop' : 'Take the quiz'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
+                : <EmptyState art="spark" title={lastQuizAnswers ? 'Find your products' : 'Take the quiz to see your products'} body={lastQuizAnswers ? 'Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown.' : 'One minute of questions, and ayna shows the products that fit you, each with the reason why.'} actionLabel={lastQuizAnswers ? 'Explore Shop' : 'Take the quiz'} onAction={lastQuizAnswers ? () => onBrowse?.() : onStartQuiz} secondaryLabel={lastQuizAnswers ? null : 'Explore products'} onSecondary={() => onBrowse?.()} />}
               <LegalFooter />
             </div>}
         </div>

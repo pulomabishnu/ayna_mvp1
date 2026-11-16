@@ -274,7 +274,7 @@ export default function EcosystemScreen({
   const picksForYou = [...sections.flatMap((sct) => sct.picks || []), ...worthALook].filter((p, i, arr) => p?.id && !myIds.has(p.id) && arr.findIndex((x) => x.id === p.id) === i);
   const savedList = Object.values(savedProducts || {}).filter((p) => p?.id && p.name);
   const pctFor = (p) => { if (!quizAnswers) return null; const d = scoreFor(p, quizAnswers); return d?.percent > 0 && (d.matchStatus || 'scored') === 'scored' ? shownMatchPercent(d.percent) : null; };
-  // Founder, Nov 10: Home said "2 in your ecosystem" while this said "No strong matches". Anything she
+  // Founder, Nov 10: Home said "2 in your routine" while this said "No strong matches". Anything she
   // added herself counts too, so the empty message never shows over products she has.
   const hasAnything = currentProducts.length > 0 || myProducts.length > 0 || sections.some((s) => s.picks?.length);
 
@@ -378,7 +378,7 @@ export default function EcosystemScreen({
         <span className="eco-app-stack__back" aria-hidden="true" />
         <div className="eco-app-stack__card">
           {/* Counted by utils/ecosystemCounts: the same numbers as Wrapped and the website. */}
-          <p className="eco-app-stack__nums" aria-label="Your ecosystem at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
+          <p className="eco-app-stack__nums" aria-label="Your products at a glance"><span><b>{counts.products}</b>{counts.products === 1 ? 'product' : 'products'}</span></p>
           {counts.needs > 0 && <>
             <p className="eco-app-stack__needs"><b>{counts.needsCovered} of {counts.needs}</b> {counts.needs === 1 ? 'need' : 'needs'} covered</p>
             <span className="eco-app-stack__bar" role="progressbar" aria-label={needsCoveredLine(counts)} aria-valuemin={0} aria-valuemax={counts.needs} aria-valuenow={counts.needsCovered}><i style={{ width: `${Math.max(4, Math.round((counts.needsCovered / counts.needs) * 100))}%` }} /></span>
@@ -393,7 +393,7 @@ export default function EcosystemScreen({
       {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !(quizDraft && onResumeQuiz) && (hasAnswers
-        ? <EmptyState compact art="search" tone="pink" title="Build your ecosystem" body="Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown." actionLabel="Explore Shop" onAction={() => onBrowse?.()} secondaryLabel={onRetake ? 'Edit my answers' : undefined} onSecondary={onRetake} />
+        ? <EmptyState compact art="search" tone="pink" title="Find your products" body="Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown." actionLabel="Explore Shop" onAction={() => onBrowse?.()} secondaryLabel={onRetake ? 'Edit my answers' : undefined} onSecondary={onRetake} />
         // Name what is missing (You audit P3): with health data connected it is the products, not everything.
         : healthConnectedCount > 0
           ? <EmptyState compact art="search" tone="pink" title="No products yet" body="Your health data is connected. Answer a few short questions and your matches land here, grouped by need." actionLabel={onStartQuiz ? 'See my matches' : undefined} onAction={onStartQuiz} secondaryLabel="Explore products" onSecondary={() => onBrowse?.()} />
@@ -403,7 +403,7 @@ export default function EcosystemScreen({
       {ecosystemNotice && <p className="ayna-cabinet-notice" role="status">{ecosystemNotice}</p>}
     </section>
 
-    {showTabs && <div className="eco-seg" role="group" aria-label="Ecosystem view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
+    {showTabs && <div className="eco-seg" role="group" aria-label="Your products view" data-on={ecoTab === 'dashboard' ? 'dashboard' : 'products'}>
       <span className="eco-seg__thumb" aria-hidden="true" />
       {[['dashboard', 'Home'], ['products', 'Products']].map(([id, label]) => <button key={id} type="button" aria-pressed={ecoTab === id} className={ecoTab === id ? 'is-on' : ''} onClick={() => onEcoTab(id)}>{label}</button>)}
     </div>}
@@ -415,7 +415,7 @@ export default function EcosystemScreen({
       {/* Nov 16 (founder: Your data is overstimulating): her routine plan and shopping list live in Your products › Routine. */}
       </ProFeatureGate>
     </div> : <>
-    {hasAnything && <div className="eco-views" role="tablist" aria-label="Ecosystem lists">
+    {hasAnything && <div className="eco-views" role="tablist" aria-label="Your products lists">
       {[['mine', 'All', currentProducts.length], ['picks', 'ayna picks', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
         <button key={id} type="button" role="tab" aria-selected={view === id} className={view === id ? 'is-on' : ''} onClick={() => { setView(id); setChip('all'); }}>{label}{n != null && n > 0 && <small>{n}</small>}</button>
       ))}
@@ -492,7 +492,7 @@ export default function EcosystemScreen({
       {visibleSections.length === 0 && careBanner}
 
     </div>
-    {earlierProducts.length > 0 && <section className="ayna-cabinet-more" aria-label="Earlier picks"><details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your ecosystem outside your current shortlist.</p><ul className="eco-list__rows">{earlierProducts.map((product) => <NameRow key={product.id} product={product} pct={pctFor(product)} onOpen={onOpenProduct} />)}</ul></details></section>}
+    {earlierProducts.length > 0 && <section className="ayna-cabinet-more" aria-label="Earlier picks"><details><summary>Earlier picks <span>{earlierProducts.length}</span></summary><p>Kept in your routine outside your current shortlist.</p><ul className="eco-list__rows">{earlierProducts.map((product) => <NameRow key={product.id} product={product} pct={pctFor(product)} onOpen={onOpenProduct} />)}</ul></details></section>}
     </>}
     </>}
 
@@ -502,7 +502,7 @@ export default function EcosystemScreen({
     {addOpen && <AddProductDialog products={addQuery.trim() ? (() => { const r = searchProducts(addQuery) || []; return (r.results || r).map((x) => x.product || x).slice(0, 30); })() : ALL_PRODUCTS.slice(0, 0)} searchTerm={addQuery} onSearch={setAddQuery} myProducts={Object.fromEntries(myProducts.map((p) => [p.id, p]))} onToggleProduct={(p) => { onAddToEcosystem(p); if (String(p?.id || '').startsWith('user-')) { setAddOpen(false); setAddQuery(''); } }} onClose={() => { setAddOpen(false); setAddQuery(''); }} />}
     {/* Settings-style inset list: health, check-in, answers, reset. */}
     <section className="eco-app-list-wrap" aria-labelledby="ay-eco-manage-title">
-      <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your ecosystem</h2>
+      <h2 id="ay-eco-manage-title" className="eco-app-list-h">Manage your products</h2>
       <ul className="eco-app-list">
         {/* Backlog Nov 14 (Ivy, Spoorthi): add what she already uses, even if ayna doesn't carry it. */}
         {onAddToEcosystem && <li><button type="button" onClick={() => setAddOpen(true)}>
@@ -527,7 +527,7 @@ export default function EcosystemScreen({
         </button></li>}
         <li><button type="button" className="is-destructive" onClick={onRequestEcosystemReset}>
           <span className="eco-app-list__ic is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" /></svg></span>
-          <span className="eco-app-list__txt"><b>Reset your ecosystem</b></span>
+          <span className="eco-app-list__txt"><b>Reset your products</b></span>
         </button></li>
       </ul>
     </section>

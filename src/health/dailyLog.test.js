@@ -49,9 +49,18 @@ describe('daily log entries', () => {
     expect(logRange('bad', '2026-10-24', readLog(storage))).toEqual([]);
   });
 
-  it('exposes seven fields with mood, skin and energy behind More', () => {
-    expect(LOG_FIELDS.map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy', 'pain_where']);
+  it('exposes the fields with mood, skin, energy, hair and a note behind More', () => {
+    expect(LOG_FIELDS.map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep', 'mood', 'skin', 'energy', 'hair', 'note', 'pain_where']);
     expect(LOG_FIELDS.filter((f) => f.primary).map((f) => f.id)).toEqual(['pain', 'flow', 'pms', 'sleep']);
+  });
+
+  it('keeps a short note in her words (trimmed, capped), and drops an empty one', async () => {
+    const { cleanValue, NOTE_MAX } = await import('./dailyLog.js');
+    expect(cleanValue('note', '  cramps  after lunch ')).toBe('cramps after lunch');
+    expect(cleanValue('note', 'x'.repeat(400))).toHaveLength(NOTE_MAX);
+    expect(cleanValue('note', '   ')).toBeNull();
+    expect(cleanValue('hair', 2)).toBe(2);
+    expect(cleanValue('hair', 9)).toBeNull();
   });
 
   it('survives blocked storage', () => {

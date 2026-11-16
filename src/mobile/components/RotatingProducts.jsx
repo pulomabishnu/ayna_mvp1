@@ -12,7 +12,7 @@ import { getProductById } from '../../data/products.js';
 // Group, "Auto-forwarding carousels"; W3C APG carousel pattern). Tap the card,
 // swipe it, or use the dots.
 const FEATURES = [
-  { key: 'ecosystem', label: 'Your ecosystem', tone: 'butter' },
+  { key: 'ecosystem', label: 'Your products', tone: 'butter' },
   { key: 'match', label: 'Your match', tone: 'pink' },
   { key: 'ask', label: 'Ask ayna', tone: 'mint' },
   { key: 'discover', label: 'Discover', tone: 'peri' },

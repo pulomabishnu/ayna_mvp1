@@ -1,7 +1,7 @@
 // Shares a LINK to the website (not an image) from ayna Wrapped. The text is
 // a short teaser only: never any of the person's answers or health details.
 export const SITE_URL = 'https://www.aynahealth.co/wrapped/';
-export const SHARE_TEXT = 'I just built my ayna ecosystem. Build yours:';
+export const SHARE_TEXT = 'I just found my products on ayna. Find yours:';
 
 // The website shares its own origin (so previews and staging link to
 // themselves); the native app, whose origin is capacitor:// or a local file,

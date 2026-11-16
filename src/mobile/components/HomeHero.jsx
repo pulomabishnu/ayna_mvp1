@@ -93,13 +93,16 @@ export function RundownStory() {
 // Preserve the original wave from the phone Home without re-enabling
 // decorative scallops globally on the website.
 function HomeWaveEdge() {
-  const d = 'M0 0H240V6' + Array.from({ length: 6 }, (_, i) =>
+  const wave = Array.from({ length: 6 }, (_, i) =>
     `Q${230 - i * 40} 12 ${220 - i * 40} 6Q${210 - i * 40} 0 ${200 - i * 40} 6`
-  ).join('') + 'Z';
+  ).join('');
+  const d = `M0 0H240V6${wave}Z`;
   return (
     <svg className="ayk-edge is-bottom is-ink ay-hh__edge" viewBox="0 0 240 12"
       preserveAspectRatio="none" aria-hidden="true" focusable="false">
       <path d={d} />
+      {/* Dark mode (founder, Nov 16): the hero and page are both espresso, so the edge is a butter squiggle line. */}
+      <path className="ay-hh__squiggle" d={`M240 6${wave}`} vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
@@ -198,7 +201,7 @@ export function HomeShortcuts({ cycle = null, sleep = null, products = [], onDat
             ? shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" className="ay-hsc__plate"><svg className="ay-hsc__plateicon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V7a3 3 0 0 1 6 0v1" /></svg></Plate>)
             : <span className="ay-hsc__none is-plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>}
         </span>
-        <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{products.length ? `${products.length} in your ecosystem` : 'Find what fits you'}</small></span>
+        <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{products.length ? `${products.length} in your routine` : 'Find what fits you'}</small></span>
         <svg className="ay-hsc__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
       </button>
     </div>
