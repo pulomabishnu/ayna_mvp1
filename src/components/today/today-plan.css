@@ -409,3 +409,5 @@
 .ay-tp-goals.is-empty.is-compact .ay-tp-goals__presets button { min-height: 44px; }
 .ay-tp-daily__img i { font-size: 13px; }
 .ay-tp-daily__card small { font-size: 13px; }
+/* Nov 16 (founder: no text cut off): the line wraps in full. */
+html body .ay-tp-tile__line, html body .ay-tp:is(.is-open, .is-timeline) .ay-tp-tile__line { display: block !important; -webkit-line-clamp: unset !important; overflow: visible !important; }

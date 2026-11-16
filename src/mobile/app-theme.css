@@ -188,3 +188,4 @@ html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna
 html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart rect.is-a { opacity: .45 !important; }
 html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart rect.is-c { fill: #f7badd !important; }
 html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart .is-line { stroke: #3e2723 !important; }
+
