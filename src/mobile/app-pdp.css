@@ -502,3 +502,19 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { flex-direction: column !important; align-items: stretch !important; gap: 14px; padding: 12px 12px 16px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero { width: min(100%, 280px) !important; max-width: none !important; margin: 0 auto !important; border-radius: 18px; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { padding: 0 4px !important; }
+
+/* Nov 16 (founder: "weird space ... at least center them"): the three actions fill the row in equal columns,
+   icon over label, on a soft fill (no outlines); the commission note is centered under Buy. */
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills {
+  display: grid !important; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px !important; width: 100%; margin: 12px 0 4px !important;
+}
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button {
+  display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 4px !important;
+  min-height: 64px !important; padding: 8px 4px !important; border: 0 !important; border-radius: 16px !important; background: rgba(62, 39, 35, .06) !important;
+  font: 600 13px/1.2 var(--ay-font-ui, 'Figtree', sans-serif) !important; text-align: center; white-space: normal;
+}
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile)[data-theme*='dark'] #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button,
+html body [data-theme*='dark'] .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button { background: rgba(255, 237, 172, .08) !important; }
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button.is-on { background: #f7badd !important; color: #3e2723 !important; }
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button > svg { width: 22px !important; height: 22px !important; padding: 0 !important; background: transparent !important; }
+html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-commission { text-align: center !important; justify-content: center !important; width: 100%; }

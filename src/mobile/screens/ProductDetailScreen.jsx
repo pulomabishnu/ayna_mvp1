@@ -393,7 +393,8 @@ export default function ProductDetailScreen({
 
   const variantLabels = (product.variants || []).map((v) => String(v?.label || '').replace(/\s*—\s*/g, ', ')).filter(Boolean);
   const variantKind = variantLabels.some((l) => /\d|\b(xs|s|m|l|xl|small|medium|large|regular|super|light|heavy|mini|plus|size|pack|count|oz|ml)\b/i.test(l)) ? 'Sizes' : 'Options';
-  const shopAction = buy?.url ? { href: buy.url, label: buy.label, sr: '(opens the seller’s site)', placement: 'product_detail' } : null;
+  // The price sits right above the button, so the button just says where (founder, Nov 16: repetitive).
+  const shopAction = buy?.url ? { href: buy.url, label: String(buy.label || '').replace(/ · .*$/, ''), sr: '(opens the seller’s site)', placement: 'product_detail' } : null;
   const storesOnFile = !shopAction ? [...new Set((product.whereToBuy || []).map((w) => String(w).trim()).filter(Boolean))].map((w) => (/^app store$/i.test(w) ? 'the App Store' : w)) : [];
   const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
@@ -523,7 +524,7 @@ export default function ProductDetailScreen({
               <span aria-hidden="true">{isSaved ? 'Saved' : 'Save'}</span>
             </button>
             {onAddToEcosystem && <button type="button" className={isInEcosystem ? 'is-on' : undefined} aria-pressed={isInEcosystem} onClick={() => { haptic('light'); onAddToEcosystem?.(); }}>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg><span>{isInEcosystem ? 'Added' : 'Add'}</span><span className="sr-only"> to your routine</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg><span>{isInEcosystem ? 'In routine' : 'Add to routine'}</span><span className="sr-only"> (your routine)</span>
             </button>}
             {onCommunityAction && <button type="button" onClick={() => onCommunityAction('post')}>
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg><span>Post</span><span className="sr-only"> about this product</span>
