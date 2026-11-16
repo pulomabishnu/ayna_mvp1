@@ -128,7 +128,7 @@ export default function AynaHomeScreen(props) {
   // Home, in the order the founder ranked it (Oct 26 21:46): the hero (dials, Rundown bubble, streak),
   // then this week's highlights, then Your data / Your products, then one toggle. TodayFeed keeps safety
   // and care above all of this and hands in her 1 to 3 things for the Today view.
-  const renderViews = ({ things, count, hasCheckIn, flags = {} }) => (
+  const renderViews = ({ count, hasCheckIn, flags = {} }) => (
     <>
       <HomeHighlights items={highlights} today={today} onOpen={openMetric} />
       <div data-tour="home-links">
@@ -140,7 +140,7 @@ export default function AynaHomeScreen(props) {
         initial="today"
         // Founder, Nov 11 ("less repetitive"): the dials and highlights already show her week, so
         // Home has no third copy of it; the full week is one tap away in Your data.
-        routine={<><RoutineGoals today={today} log={dayLog} />{/* The one place for her day plan (Ameera, Nov 15: say each thing once). Goals show just above. */}<DayPlan includeGoals={false} heading="Today's plan" headingLevel={3} /><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} /><RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /></>}
+        routine={<><RoutineGoals today={today} log={dayLog} />{/* The one place for her day plan (Ameera, Nov 15: say each thing once). Goals show just above. */}<DayPlan includeGoals={false} heading="Today's plan" headingLevel={3} /><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} />{/* Nov 16: with no products yet, a second empty timeline under Today's plan repeated it; just the way to Shop. */}{myProducts.length > 0 ? <RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={() => openDashboard()} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /> : onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Add products to your routine</button> : null}</>}
         today={<>
           {/* Founder, Nov 11: For today is insights and actions (goals, matched products, things to
               add to her routine) as a bento; the check-in itself lives in the period and symptom log. */}

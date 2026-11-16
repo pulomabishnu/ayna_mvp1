@@ -172,3 +172,19 @@ html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna
 html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) :is(i, span).ay-db-band { background: #f7badd !important; opacity: 1 !important; }
 
 html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hh__band { background: #3e2723 !important; box-shadow: none !important; }
+
+/* Nov 16 (founder: "home page still messed up" in dark): dark mirrors light. No box around the dials or
+   the log (light has none); the data tile is the one filled tile, butter on espresso (light: espresso on butter). */
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] :is(.ay-dials, .ay-hh-streak) {
+  background: transparent !important; box-shadow: none !important; border: 0 !important;
+}
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data {
+  background: #ffedac !important; box-shadow: none !important; border: 0 !important; color: #3e2723 !important;
+}
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data :is(h2, h3, b, strong, span, small, p, svg) {
+  color: #3e2723 !important;
+}
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart rect { fill: #3e2723 !important; opacity: 1 !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart rect.is-a { opacity: .45 !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart rect.is-c { fill: #f7badd !important; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile)[data-theme='dark'] .ay-hsc__tile.is-data .ay-hsc__chart .is-line { stroke: #3e2723 !important; }
