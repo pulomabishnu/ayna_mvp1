@@ -750,8 +750,12 @@ export default function MobileApp() {
   useEffect(() => {
     syncRundownReminder({ ask: false }).catch(() => {});
     const offPlan = onPlanReminderTap(() => showRoutine());
+    // Nov 16 (founder: "do we need to log again here, it's in the calendar"): My health's "Log today" opens the one
+    // log, Your month on Home, instead of a second check-in card.
+    const openMonth = () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); setHomeView(homeRoot); window.setTimeout(() => window.dispatchEvent(new Event('ayna:open-month')), 250); };
+    window.addEventListener('ayna:open-month-log', openMonth);
     const offRundown = onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
-    return () => { offPlan(); offRundown(); };
+    return () => { offPlan(); offRundown(); window.removeEventListener('ayna:open-month-log', openMonth); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {

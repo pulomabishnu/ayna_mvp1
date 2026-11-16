@@ -10,7 +10,6 @@ import { haptic } from '../../utils/haptics.js';
 import '../intake-play.css';
 import '../../styles/onboarding.css';
 import RecommendationCountPicker from '../components/RecommendationCountPicker.jsx';
-import QuizIntro from './intake/QuizIntro.jsx';
 import QuizWelcome from './intake/QuizWelcome.jsx';
 import SmartSearchInput from '../../components/search/SmartSearchInput.jsx';
 import { rankSearchOptions as rankedSuggestions, matchesSearchOption } from '../../utils/search/index.js';
@@ -1080,7 +1079,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       rootProps={{}}
       answerProps={{ ...(HOLD_TIP_TYPES.has(step.type) ? { 'data-tour': 'quiz-hold' } : {}), onPointerDown: startHold, onPointerUp: endHold, onPointerLeave: endHold, onPointerCancel: endHold, onPointerMove: (e) => { if (Math.abs(e.movementX) + Math.abs(e.movementY) > 6) endHold(); }, onClickCapture: swallowClickAfterHold, onContextMenu: (e) => { if (holdRef.current.fired) e.preventDefault(); } }}
       overlay={<>
-        <QuizIntro variant="app" enabled={introEnabled && !onboarding} />
+        {/* Nov 16 (founder): no "Two helpers" tip; the page before the quiz already explains it. */}
         {/* First quiz on this device: one page on how the quiz works, press-and-hold included (Nov 13). */}
         {/* Nov 14: the quiz intro belongs to the first quiz only, not to "Answer the safety questions" after it. */}
         {introEnabled && onboarding && obPart === 'core' && currentIndex === 0 && <QuizWelcome />}

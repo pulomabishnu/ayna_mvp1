@@ -1,6 +1,5 @@
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
 import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
-import DailyCheckin from '../../../components/you/DailyCheckin.jsx';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from '../../../components/you/BoxWaitlist.jsx';
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FinishQuizCard from '../../../components/FinishQuizCard.jsx';
@@ -133,6 +132,7 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
+  log: <><path d="M5 19h4l10-10-4-4L5 15v4z" /><path d="M13 7l4 4" /></>,
   beliefs: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /><path d="M17.5 4.5l1.5 1.5 2.5-2.5" /></>,
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
   startups: <><path d="M12 3.5l2.2 5.3 5.3 2.2-5.3 2.2L12 18.5l-2.2-5.3L4.5 11l5.3-2.2Z" /><path d="M18.5 17.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z" /></>,
@@ -559,8 +559,9 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
       {group('connected', 'Connected apps', [
         { key: 'healthData', title: 'Health data', sub: healthLocked ? 'Apple Health, Oura and uploads · Pro' : 'Apple Health, Oura and uploads', value: healthLocked ? '' : connectedCount ? `${connectedCount} connected` : '', locked: healthLocked, onClick: openHealthData },
       ])}
-      <DailyCheckin variant="app" userId={authUserId || null} />
+      {/* Nov 16 (founder): no second log here; it's all in Your month on Home. One row opens it. */}
       {group('checkins', 'Check-ins', [
+        { key: 'log', icon: 'log', title: 'Log today', sub: 'Period, mood, pain, sleep and more in Your month', onClick: () => window.dispatchEvent(new Event('ayna:open-month-log')) },
         onOpenMonthlyCheckin && { key: 'checkin', title: 'Monthly check-in', value: checkinCount ? fmtCount(checkinCount) : '', onClick: onOpenMonthlyCheckin },
       ], SHOW_BOX_WAITLIST ? <BoxWaitlist variant="app" /> : null)}
       {group('profile', 'Your profile', [

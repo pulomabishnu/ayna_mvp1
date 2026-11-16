@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import RoutineGoals from '../../components/today/RoutineGoals.jsx';
 import TodayScreen from './TodayScreen.jsx';
 import DayPlan from '../../components/routine/DayPlan.jsx';
@@ -95,6 +95,8 @@ export default function AynaHomeScreen(props) {
   const streak = logStreak(loggedDays, today);
   // "Your month" (the streak row opens it): the existing cycle estimate and coming-up dates, nothing new.
   const [monthOpen, setMonthOpen] = useState(false);
+  // My health › Log today lands here with Your month open (Nov 16).
+  useEffect(() => { const open = () => setMonthOpen(true); window.addEventListener('ayna:open-month', open); return () => window.removeEventListener('ayna:open-month', open); }, []);
   const monthData = useMemo(() => {
     if (!monthOpen) return null;
     // Her own period logs count too (founder, Nov 11), so the estimate works without another app.
