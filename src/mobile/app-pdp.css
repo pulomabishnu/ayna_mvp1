@@ -614,3 +614,13 @@ html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .a
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-askquick { margin: 0 20px !important; padding: 0 !important; width: auto !important; max-width: 100% !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-askquick .ay-askquick__row > button { padding: 14px 16px !important; min-height: 52px !important; }
 #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-pdp-safetyafter { margin: 0 !important; }
+
+/* Nov 15 (founder: "it doesn't change colour anymore when you open one"): the open row fills espresso
+   (butter in dark), its chevron turns down; a pressed row darkens a touch. */
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head { background: #3e2723 !important; color: #ffedac !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head::after { transform: rotate(45deg); }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head { background: #ffedac !important; color: #3e2723 !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__head:active { background-color: rgba(62, 39, 35, .1) !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head :is(b, span, small, .ay-stack__tag) { color: #ffedac !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head :is(b, span, small, .ay-stack__tag) { color: #3e2723 !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile):is(#pg5, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card.is-open > .ay-stack__head .ay-stack__ic { color: #3e2723 !important; }

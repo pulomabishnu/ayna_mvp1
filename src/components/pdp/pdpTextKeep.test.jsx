@@ -124,6 +124,9 @@ const RENAMED_LABELS = [
   'about this product', 'Ask about this product',
   // Nov 11: never "not graded" anywhere (founder); the line reads "Sources on file".
   'Not graded yet',
+  // Nov 15 (founder: "the subheading is repetitive"): the meta line drops a kind that only repeats the name
+  // ("Tablets" under "… 180 Tablets"); the rest of the line stays.
+  'Tablets · 180-day supply',
   'What’s included and details', 'Works with:', 'Check with a clinician first', 'Possible side effects', 'Also worth knowing', 'Downsides to know', 'Label and regulatory facts', 'Labels on file', 'Privacy',
 ];
 const renamed = (c) => RENAMED_LABELS.some((r) => (typeof r === 'string' ? r === c : r.test(c)));

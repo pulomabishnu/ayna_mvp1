@@ -432,7 +432,7 @@ export default function EcosystemScreen({
     </section>}
     {view === 'routine' && <>
       {/* Nov 15 (founder): the timeline only; the long 'Full routines…' fold is gone. */}
-      <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>
+      <div className="eco-list"><RoutineTimeline compact {...routineSource} onRemove={onAddToEcosystem || null} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>
     </>}
 
     {(view === 'mine' || !hasAnything) && <>

@@ -22,3 +22,22 @@ describe('routine timeline: her ecosystem products are in it', () => {
     expect(html).toContain('nhlbi.nih.gov');
   });
 });
+
+describe('routine timeline: Edit routine (founder, Nov 16)', () => {
+  it('Edit shows Remove on her own products and calls onRemove', async () => {
+    const { createRoot } = await import('react-dom/client');
+    const { act } = await import('react');
+    globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+    const host = document.createElement('div'); document.body.appendChild(host);
+    const removed = [];
+    const root = createRoot(host);
+    await act(async () => root.render(<RoutineTimeline products={[pad]} onRemove={(p) => removed.push(p.id)} />));
+    expect(host.querySelector('.ay-rt2__remove')).toBeNull();
+    await act(async () => [...host.querySelectorAll('button')].find((b) => b.textContent === 'Edit routine').click());
+    const btn = host.querySelector('.ay-rt2__remove');
+    expect(btn).not.toBeNull();
+    await act(async () => btn.click());
+    expect(removed).toEqual(['p-test-pad']);
+    await act(async () => root.unmount());
+  });
+});

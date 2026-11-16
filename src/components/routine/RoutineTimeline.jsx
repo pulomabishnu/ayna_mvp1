@@ -73,7 +73,7 @@ function HabitIcon({ title }) {
   if (/heat|warm/.test(t)) return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4c-1.5 2 1.5 3 0 5M12 4c-1.5 2 1.5 3 0 5M16 4c-1.5 2 1.5 3 0 5M4 13h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" /></svg>;
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>;
 }
-function Row({ it, onOpenProduct }) {
+function Row({ it, onOpenProduct, onRemove = null }) {
   const [open, setOpen] = useState(false);
   const id = `ay-rt2-${it.key}`;
   const product = it.kind === 'product';
@@ -94,7 +94,8 @@ function Row({ it, onOpenProduct }) {
       {product && onOpenProduct
         ? <button type="button" className="ay-rt2__main" onClick={() => onOpenProduct(it.product)} aria-label={`${it.title}. Open product.`}>{body}</button>
         : <button type="button" className="ay-rt2__main" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={id}>{body}</button>}
-      {product && hasDetail && <button type="button" className="ay-rt2__how" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>How<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>}
+      {onRemove && <button type="button" className="ay-rt2__remove" onClick={() => onRemove(it.product)} aria-label={`Remove ${it.title} from your routine`}>Remove</button>}
+      {!onRemove && product && hasDetail && <button type="button" className="ay-rt2__how" aria-expanded={open} aria-controls={id} onClick={() => setOpen((v) => !v)}>How<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>}
       {hasDetail && <dl id={id} className="ay-rt2__detail" hidden={!open}>
         {it.when && <div><dt>When</dt><dd>{cap(it.when)}</dd></div>}
         {it.how && <div><dt>How</dt><dd>{it.how}</dd></div>}
@@ -125,8 +126,11 @@ const STARTER = [
   { when: 'Evening', title: 'Same bedtime, phone away', why: 'A regular sleep schedule helps you sleep.', src: { label: 'NHLBI', url: 'https://www.nhlbi.nih.gov/health/insomnia/treatment' } },
 ];
 
-export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, onShop = null, emptyAction = null, max = 3, ecoMax = 4, suggested = [], ...source }) {
+export default function RoutineTimeline({ compact = true, cycle = null, onOpenRoutine, onOpenProduct, onCheckIn, onShop = null, emptyAction = null, max = 3, ecoMax = 4, suggested = [], onRemove = null, ...source }) {
   const { routines } = useRoutines(source);
+  // Nov 16 (founder: "is there a way to edit your routine?"): Edit turns the timeline into cards with Remove on her products.
+  const [editing, setEditing] = useState(false);
+  const mine = new Set((source.products || []).map((p) => String(p?.id)));
   const list = routines.slice(0, max);
   const covered = new Set(list.flatMap((r) => r.start.filter((it) => it.kind === 'product').map((it) => String(it.product?.id))));
   const extras = ecosystemSteps(source.products, covered).slice(0, ecoMax);
@@ -179,12 +183,12 @@ export default function RoutineTimeline({ compact = true, cycle = null, onOpenRo
   if (compact) {
     const productCount = groups.reduce((n, g) => n + g.steps.filter((it) => it.kind === 'product').length, 0);
     return (
-      <div className="ay-rt2" data-tour="routine">
+      <div className={`ay-rt2${editing ? ' is-editing' : ''}`} data-tour="routine">
         <ol className="ay-rt2__list">
           {groups.map((g) => (
             <li key={g.when} className={`ay-rt2__group${g.now ? ' is-now' : ''}`}>
               <p className="ay-rt2__when">{g.when}{g.now && <em>Now</em>}</p>
-              <ul>{g.steps.map((it) => <Row key={it.key} it={it} onOpenProduct={onOpenProduct} />)}</ul>
+              <ul>{g.steps.map((it) => <Row key={it.key} it={it} onOpenProduct={editing ? null : onOpenProduct} onRemove={editing && it.kind === 'product' && mine.has(String(it.product?.id)) ? onRemove : null} />)}</ul>
             </li>
           ))}
           {tracks.length > 0 && (
@@ -197,6 +201,8 @@ export default function RoutineTimeline({ compact = true, cycle = null, onOpenRo
             </li>
           )}
         </ol>
+        {/* Nov 16 (founder): Edit routine sits centred under the timeline. */}
+        {onRemove && productCount > 0 && <div className="ay-rt2__bar"><button type="button" className="ay-rt2__edit" aria-pressed={editing} onClick={() => setEditing((v) => !v)}>{editing ? 'Done' : 'Edit routine'}</button></div>}
         {(onShop && productCount > 0) || onOpenRoutine ? <div className="ay-rt2__foot">
           {onShop && productCount > 0 && <button type="button" className="ay-rt2__shop" onClick={onShop}>Shop {productCount} product{productCount === 1 ? '' : 's'}</button>}
           {onOpenRoutine && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>Edit routine</button>}

@@ -232,7 +232,7 @@ export default function TodayPlan({
           return (
             <div className="ay-tp-goals is-empty is-compact">
               <div className="ay-tp-goals__top"><div className="ay-tp-goals__head is-static"><b>Your goals</b><span>Pick something small to do today</span></div></div>
-              <div className="ay-tp-goals__presets">{GOAL_PRESETS.slice(0, 4).map((p) => <button key={p.topic} type="button" onClick={() => saveGoal({ text: p.text, topic: p.topic })}>{p.text}</button>)}<button type="button" className="is-own" onClick={() => setOpen('addgoal')}>+ Your own</button></div>
+              <div className="ay-tp-goals__presets">{GOAL_PRESETS.slice(0, 4).map((p) => <button key={p.topic} type="button" onClick={() => saveGoal({ text: p.text, topic: p.topic })}>{p.text}</button>)}<button type="button" className="is-own" onClick={() => setOpen('addgoal')}>Write your own</button></div>
             </div>
           );
         }

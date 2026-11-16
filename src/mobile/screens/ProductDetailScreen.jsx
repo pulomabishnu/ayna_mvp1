@@ -1,3 +1,4 @@
+import { repeatsName } from '../../utils/productCardFacts.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import IngredientCheck from '../../components/pdp/IngredientCheck.jsx';
 import BrandStrip from '../../components/ui/ay/BrandStrip.jsx';
@@ -404,7 +405,8 @@ export default function ProductDetailScreen({
   // "Why 92%?": raised / lowered / not known yet from the one engine (matching/breakdown.js).
   const breakdown = matchBreakdownFor(product, quizAnswers ? matchDetails : null);
   const perUse = costPerUse(product);
-  const metaLine = metaLineFor(product, glance, keyFormat(product, brand));
+  // Nov 15 (founder): a first part that only repeats the name is dropped.
+  const metaLine = metaLineFor(product, glance, keyFormat(product, brand)).split(' · ').filter((part, k) => !(k === 0 && repeatsName(part, product?.name, brand))).join(' · ');
   const highlights = highlightsFor(product, glance);
   // The app's 2x2 stat grid in ayna summary: the highlights, then short facts on file (never guessed).
   const stats = (() => {

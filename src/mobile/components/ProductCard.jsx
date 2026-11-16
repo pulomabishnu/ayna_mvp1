@@ -14,7 +14,7 @@ import { matchBadge, isSafetyHold, SAFETY_HOLD, MATCH_UNAVAILABLE } from '../../
 import MatchPill from '../../components/MatchPill.jsx';
 import { saveFeedback } from '../../utils/feedback.js';
 import { whyLine } from '../../utils/whyLine.js';
-import { cardKind, cardMeta, cardPrice } from '../../utils/productCardFacts.js';
+import { cardKind, cardMeta, cardPrice, repeatsName } from '../../utils/productCardFacts.js';
 import { CompareCheck } from '../../components/compare/CompareControls.jsx';
 import { matchBreakdownFor } from '../../components/pdp/decision.js';
 import { PlateName, SafetyTag } from '../../components/cards/CardBits.jsx';
@@ -69,7 +69,8 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
     // The founder's card (Oct 27, "perfect"), same as the website card: square photo →
     // meta line (Pre-order pill, brand · ayna partner · FSA/HSA) → name → category →
     // price (+ her match) → heart. Words from src/utils/productCardFacts.js.
-    const kind = cardKind(product);
+    const kind0 = cardKind(product);
+    const kind = kind0 && !repeatsName(kind0, product?.name, product?.brand) ? kind0 : '';
     const meta = cardMeta(product);
     const facts = cardPrice({ ...product, price: price || priceDisplay });
     // Unknown price: nothing printed (QA3 M8). Pre-order: the pill says it, no "Coming soon" line.

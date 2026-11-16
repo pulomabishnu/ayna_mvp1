@@ -181,3 +181,16 @@ export function cardSafety(product) {
   warnCache.set(product, w);
   return w;
 }
+
+/**
+ * True when a subtitle only repeats the product's name (founder, Nov 15: "Thermacare menstrual pain
+ * therapy heatwraps" under "Menstrual Pain Therapy HeatWraps"). Most of its words already in the name.
+ */
+export function repeatsName(line, name, brand = '') {
+  const words = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 2);
+  const own = new Set([...words(name), ...words(brand)]);
+  const w = words(line);
+  if (!w.length) return false;
+  const hit = w.filter((x) => own.has(x) || own.has(x.replace(/s$/, '')) || own.has(`${x}s`)).length;
+  return hit / w.length >= 0.6;
+}

@@ -10,3 +10,12 @@ describe('hot-flash products are named by what they do, not by a life stage', ()
     expect(kindOf({ id: 'd-z', category: 'menopause', name: 'App', summary: 'Track hot flashes' })).not.toMatch(/hot flash/i);
   });
 });
+
+describe('repeatsName', () => {
+  it('drops a subtitle that only repeats the name', async () => {
+    const { repeatsName } = await import('./productCardFacts.js');
+    expect(repeatsName('Thermacare menstrual pain therapy heatwraps', 'Menstrual Pain Therapy HeatWraps, 4 Count', 'ThermaCare')).toBe(true);
+    expect(repeatsName('Cramp relief', 'Electric Heating Pad', 'VIBOOS')).toBe(false);
+    expect(repeatsName('Sleep', 'Eye Mask', 'Ostrichpillow')).toBe(false);
+  });
+});
