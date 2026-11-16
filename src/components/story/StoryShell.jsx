@@ -22,7 +22,9 @@ export function StoryTop({ count, index, running = false, ms = 0, progress = nul
     <div className="ays-top">
       <ol className="ays-progress" aria-hidden="true">
         {Array.from({ length: count }, (_, k) => {
-          const state = k < index ? 'is-done' : k === index ? `is-now${running && progress == null ? ' is-running' : ''}` : '';
+          // Nov 16 (founder: "make sure these aren't glitching"): pausing freezes the fill where it is
+          // (it used to jump to full), and the fill grows with a transform, not a width change.
+          const state = k < index ? 'is-done' : k === index ? `is-now${(running || paused) && progress == null ? ' is-running' : ''}${paused ? ' is-paused' : ''}` : '';
           const style = k === index ? (progress != null ? { '--ays-fill': progress } : { '--ays-ms': `${ms}ms` }) : undefined;
           return <li key={k} className={state} style={style}><i /></li>;
         })}

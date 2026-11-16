@@ -143,3 +143,15 @@
   --s-bg: #f7badd; --s-fg: #3e2723; --s-muted: #3e2723; --s-line: #3e2723;
   --s-panel: #ffedac; --s-track: #ffedac; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
 }
+
+/* Nov 16: smooth story progress. A soft track, no outline; the fill scales from the left (GPU, no layout),
+   and a paused card holds its place. */
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress li { height: 4px; border: 0; background: color-mix(in srgb, var(--s-fg) 22%, transparent); overflow: hidden; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress i { width: 100% !important; transform: scaleX(0); transform-origin: left center; will-change: transform; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-done i,
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-now:not(.is-running) i { transform: scaleX(1); }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-now[style*='--ays-fill'] i { transform: scaleX(var(--ays-fill, 0)); }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-running i { animation: ays-grow var(--ays-ms, 8000ms) linear forwards; }
+.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-paused i { animation-play-state: paused; }
+@keyframes ays-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-progress .is-running i { animation: none; transform: scaleX(1); } }

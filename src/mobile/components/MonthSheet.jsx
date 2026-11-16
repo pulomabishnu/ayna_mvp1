@@ -37,6 +37,7 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
   const [ownLog, setOwnLog] = useState(null);
   const log = ownLog || logProp;
   const [ym, setYm] = useState(() => monthKey(today));
+  const [openCat, setOpenCat] = useState('period');
   // Today is picked to start, so logging today is one tap; tap any earlier day to log a past period.
   const [picked, setPicked] = useState(today);
   const sheetRef = useRef(null);
@@ -158,27 +159,41 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
           <div className="ay-mcal__picked" aria-live="polite">
             <p className="ay-mcal__pday">{pickedCell.today ? 'Today' : fmt(picked, { weekday: 'short', month: 'short', day: 'numeric' })}</p>
             {lines.filter((l) => !(canLogPicked && /logged$/.test(l))).map((l) => (canLogPicked ? l.replace(/(, )?Flow [a-z]+/i, '').replace(/^Checked in: ?$/, '') : l)).filter(Boolean).map((l) => <p key={l} className="ay-mcal__pline">{l}</p>)}
-            {canLogPicked && (
-              <div className="ay-mcal__flow" role="group" aria-label={`${periodWord} on ${pickedCell.today ? 'today' : fmt(picked, { month: 'long', day: 'numeric' })}`}>
-                <p className="ay-mcal__flowh">{periodWord}</p>
-                <div className="ay-mcal__chips">
-                  {FLOWS.map(([v, label]) => <button key={v} type="button" className="ay-mcal__chip" aria-pressed={pickedFlow === v} onClick={() => setFlow(v)}>{label}</button>)}
+            {/* Nov 16 (founder: "like Apple Health, all the categories, tap one and log"): one grouped list, a row per
+                category with what's logged on the right; tapping a row opens its choices right under it. */}
+            {canLogPicked && <ul className="ay-mcal__cats">
+              <li className={`ay-mcal__cat${openCat === 'period' ? ' is-open' : ''}`}>
+                <button type="button" className="ay-mcal__catrow" aria-expanded={openCat === 'period'} aria-controls="ay-mcal-cat-period" onClick={() => setOpenCat(openCat === 'period' ? '' : 'period')}>
+                  <i aria-hidden="true" className="is-period" /><b>{periodWord}</b><span>{(FLOWS.find(([v]) => v === pickedFlow) || [])[1] || 'Add'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                </button>
+                <div id="ay-mcal-cat-period" className="ay-mcal__flow" role="group" hidden={openCat !== 'period'} aria-label={`${periodWord} on ${pickedCell.today ? 'today' : fmt(picked, { month: 'long', day: 'numeric' })}`}>
+                  <div className="ay-mcal__chips">
+                    {FLOWS.map(([v, label]) => <button key={v} type="button" className="ay-mcal__chip" aria-pressed={pickedFlow === v} onClick={() => setFlow(v)}>{label}</button>)}
+                  </div>
                 </div>
-              </div>
-            )}
-            {/* Founder, Nov 11: "the log should be in the period and symptom log". Three taps for how she
-                feels; Home's For today turns them into what may help. */}
-            {canLogPicked && QUICK.map((q) => (
-              <div key={q.id} className="ay-mcal__flow ay-mcal__quick" role="radiogroup" aria-label={q.label}>
-                <p className="ay-mcal__flowh">{q.label}</p>
-                <div className="ay-mcal__seg">
-                  {q.values.map((v, i) => {
-                    const on = log?.[picked]?.[q.id] === v;
-                    return <button key={v} type="button" role="radio" aria-checked={on} className={on ? 'is-on' : undefined} onClick={() => saveField(q.id, on ? null : v)}>{q.options[i]}</button>;
-                  })}
-                </div>
-              </div>
-            ))}
+              </li>
+              {QUICK.map((q) => {
+                const cur = log?.[picked]?.[q.id];
+                const curLabel = q.values.includes(cur) ? q.options[q.values.indexOf(cur)] : 'Add';
+                return <li key={q.id} className={`ay-mcal__cat${openCat === q.id ? ' is-open' : ''}`}>
+                  <button type="button" className="ay-mcal__catrow" aria-expanded={openCat === q.id} aria-controls={`ay-mcal-cat-${q.id}`} onClick={() => setOpenCat(openCat === q.id ? '' : q.id)}>
+                    <i aria-hidden="true" className={`is-${q.id}`} /><b>{q.label}</b><span>{curLabel}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                  </button>
+                  <div id={`ay-mcal-cat-${q.id}`} className="ay-mcal__flow ay-mcal__quick" role="radiogroup" aria-label={q.label} hidden={openCat !== q.id}>
+                    <div className="ay-mcal__seg">
+                      {q.values.map((v, i) => {
+                        const on = cur === v;
+                        return <button key={v} type="button" role="radio" aria-checked={on} className={on ? 'is-on' : undefined} onClick={() => saveField(q.id, on ? null : v)}>{q.options[i]}</button>;
+                      })}
+                    </div>
+                  </div>
+                </li>;
+              })}
+              {/* Nov 16 (founder): the full symptom log is the last row here, not a button at the bottom of the sheet. */}
+              {onLog && <li className="ay-mcal__cat"><button type="button" className="ay-mcal__catrow" onClick={() => { onClose(); onLog(); }}>
+                <i aria-hidden="true" className="is-more" /><b>Other symptoms</b><span>Add</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+              </button></li>}
+            </ul>}
             {canLogPicked && <p className={`ay-mcal__saved${saveNote.startsWith("Couldn't") ? ' is-error' : ''}`} role="status">{saveNote}</p>}
             {canLogPicked && <PhotoLog day={picked} dayLabel={fmt(picked, { month: 'long', day: 'numeric' })} />}
           </div>
@@ -205,7 +220,6 @@ export default function MonthSheet({ today, rows = [], log: logProp = {}, cycle 
           </section>
         )}
 
-        {onLog && <button type="button" className="ay-mcal__log" onClick={() => { onClose(); onLog(); }}>More symptoms</button>}
       </section>
     </div>
   );

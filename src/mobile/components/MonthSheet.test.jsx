@@ -28,7 +28,7 @@ describe('MonthSheet', () => {
     const onClose = vi.fn();
     const sheet = mount({ onLog, onClose });
     expect(sheet.textContent).toContain('Tap the first day of your last period');
-    const log = [...sheet.querySelectorAll('button')].filter((b) => b.textContent === 'More symptoms');
+    const log = [...sheet.querySelectorAll('button')].filter((b) => b.querySelector('b')?.textContent === 'Other symptoms');
     expect(log).toHaveLength(1);
     act(() => log[0].click());
     expect(onClose).toHaveBeenCalled();

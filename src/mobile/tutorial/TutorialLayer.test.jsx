@@ -102,7 +102,8 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('a tip that was off screen on the first visit shows once it scrolls into view', () => {
+  // Nov 16: tip bubbles are off in the app (founder). Kept for the website.
+  it.skip('a tip that was off screen on the first visit shows once it scrolls into view', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="explore"><div class="ayna-shop-heading"><input aria-label="Search" /></div><nav data-tour="explore-sections" data-offscreen="1">x</nav></div>' });
     wait(1000);
@@ -119,7 +120,8 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('a part waits until its root is on the page, then shows once', () => {
+  // Nov 16: tip bubbles are off in the app (founder). Kept for the website.
+  it.skip('a part waits until its root is on the page, then shows once', () => {
     setTipsEnabled(true);
     markScreenSeen('home');
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section></div>' });
@@ -178,7 +180,8 @@ describe('tips overlay', () => {
     expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
 
-  it('skips a tip whose anchor is off screen or missing', () => {
+  // Nov 16: tip bubbles are off in the app (founder). Kept for the website.
+  it.skip('skips a tip whose anchor is off screen or missing', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings" data-offscreen="1">Rings</section><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
@@ -188,7 +191,8 @@ describe('tips overlay', () => {
     expect(document.querySelector('.ay-tour__count')).toBeNull();
   });
 
-  it('Escape closes and counts the screen as seen; Turn off tips turns them off', () => {
+  // Nov 16: tip bubbles are off in the app (founder). Kept for the website.
+  it.skip('Escape closes and counts the screen as seen; Turn off tips turns them off', () => {
     setTipsEnabled(true);
     mountApp({ html: '<div data-tour="explore"><div class="ayna-shop-heading"><input aria-label="Search" /></div><nav data-tour="explore-sections">x</nav></div>' });
     wait(1000);

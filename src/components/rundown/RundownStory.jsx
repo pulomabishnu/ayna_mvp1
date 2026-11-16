@@ -397,7 +397,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
             <div className="ays-words">
               {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. The daily fact keeps
                   its "Daily ayna fact" label (focus group, Nov 11: it read like a fact about her). */}
-              {card.kicker && (card.category !== 'frame' || String(card.key || '').startsWith('fact:')) && (String(card.key || '').startsWith('fact:') ? <p className="ays-fact-head">{card.kicker}</p> : <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>)}
+              {card.kicker && (card.category !== 'frame' || String(card.key || '').startsWith('fact:')) && (String(card.key || '').startsWith('fact:') ? <><span className="ays-fact-sticker" aria-hidden="true">Did you know?</span><p className="ays-fact-head">{card.kicker}</p></> : <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>)}
               <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
               {card.because && <p className="ay-rd-because">{card.because}</p>}
               {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}

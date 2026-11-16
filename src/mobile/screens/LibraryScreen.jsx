@@ -90,7 +90,6 @@ export default function LibraryScreen({ articles = [], quizAnswers = null, lastQ
     <header className={`al-top ay-lib-head${embedded && bandTitle ? ' ax-band' : ''}`}>
       {/* Inside Explore the page title sits in the pink header band with the search (founder, Oct 27). */}
       {embedded ? (bandTitle ? <h1 id="ay-lib-title" className="al-top__title ax-band__title">{bandTitle}</h1> : <h2 id="ay-lib-title" className="al-top__title">Reads</h2>) : <h1 id="ay-lib-title" className="al-top__title">Reads</h1>}
-      <p className="al-top__lede">Plain-language reads written by the ayna team. Each read lists the sources it uses.</p>
       <SearchBar placeholder="Search reads" ariaLabel="Search reads" value={query} onChange={(e) => setQuery(e.target.value)} />
     </header>
     {q.length >= 2 && <SearchAssist variant="app" query={query} resultCount={searchArticles(query, articles).length} onUse={setQuery} />}

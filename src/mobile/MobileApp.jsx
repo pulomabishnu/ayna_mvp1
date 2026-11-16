@@ -41,6 +41,7 @@ import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
 import { syncRundownReminder, onRundownReminderTap } from './utils/localRundown.js';
 import { onPlanReminderTap, syncPlanReminders } from '../health/planReminders.js';
+import { SHOW_ROUTINE_EVENT } from './components/TodayViews.jsx';
 import { syncDayPlan, forgetPlanOnSignOut } from '../health/planCloud.js';
 import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
 import { noteRoutineAdd, noteRoutineRemove } from '../health/routineFollowUps.js';
@@ -748,7 +749,7 @@ export default function MobileApp() {
   // Keep it booked at launch (no permission prompt here), and a tap opens Today.
   useEffect(() => {
     syncRundownReminder({ ask: false }).catch(() => {});
-    const offPlan = onPlanReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
+    const offPlan = onPlanReminderTap(() => showRoutine());
     const offRundown = onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
     return () => { offPlan(); offRundown(); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1253,6 +1254,12 @@ export default function MobileApp() {
   // to nothing (ProductDetailScreen called onAddToEcosystem, but MobileApp
   // never passed it), so the button did nothing at all.
   const ecoNudgeShownRef = useRef(false);
+  // Home › Routine: close what's open, go Home, switch to the Routine view.
+  function showRoutine() {
+    setAskAynaOpen(false); setOverlay(null); setScreen('today'); setHomeView(homeRoot);
+    window.setTimeout(() => window.dispatchEvent(new Event(SHOW_ROUTINE_EVENT)), 250);
+  }
+
   const handleAddToEcosystem = (product) => {
     if (!product?.id) return;
 
@@ -1300,7 +1307,8 @@ export default function MobileApp() {
       ecoNudgeShownRef.current = true;
       setSaveNudge('eco');
     } else {
-      toast(addedToRoutineText());
+      // Nov 16 (founder): "Added to your routine" with a way to see it.
+      toast(addedToRoutineText(), { label: 'See it', onClick: () => showRoutine() });
     }
 
     const supabase = getSupabaseClient();

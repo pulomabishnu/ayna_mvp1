@@ -49,7 +49,8 @@ function RundownBubble({ count, done }) {
         {done ? <i className="ay-hh-bubble__check is-big"><svg viewBox="0 0 24 24"><path d={CHECK} /></svg></i>
           : <svg className="ay-hh-bubble__play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></svg>}
       </span>
-      <span className="ay-hh-bubble__label" aria-hidden="true">Today's rundown<small>{done ? 'Seen today' : `${count} ${count === 1 ? 'thing' : 'things'} · 60 sec`}</small></span>
+      {/* Nov 16 (founder): just "Today's rundown"; the check on the button says when it's been seen. */}
+      <span className="ay-hh-bubble__label" aria-hidden="true">Today's rundown</span>
     </button>
   );
 }
@@ -62,8 +63,8 @@ function Streak({ streak, onLog, onMonth = null }) {
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
   // Prep call, Nov 9: "1-day streak" read as a login streak. It is her period and symptom log.
   // Nov 16 (founder: "period and symptom log looks awkward"): one short title and one short line.
-  const title = loggedToday ? 'Logged today' : 'Log today';
-  const sub = count > 1 ? `Period & symptoms · ${count} days in a row` : 'Period & symptoms';
+  const title = loggedToday ? 'Symptoms logged' : 'Log symptoms';
+  const sub = count > 1 ? `${count} days in a row` : 'Period & symptoms';
   return (
     // Founder, Nov 11: tapping it opens the calendar, where she logs today or her past periods.
     <div className="ay-hh-streak-wrap">

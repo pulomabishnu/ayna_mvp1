@@ -272,9 +272,28 @@
   .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-frame::after, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-stage::before { animation: none !important; }
 }
 
-/* Daily health fact (founder, Nov 15): a big title at the top, no small print under it. */
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact { justify-content: flex-start; padding-top: 24px; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-words { margin-top: 0; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-fact-head { margin: 0 0 16px; font-size: 34px; line-height: 1.08; font-weight: 800; letter-spacing: -0.02em; color: inherit; text-transform: none; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-visual { display: none; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-title { font-size: 26px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; }
+/* Daily health fact, Wrapped-style (founder, Nov 16: "fun and animated, it slides in, a thing pops up"):
+   the page turns pink, "Daily health fact" slides in, a "Did you know?" sticker pops, and the fact itself lands
+   on a tilted butter card in the middle, with two soft shapes drifting behind. Calm under reduced motion. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):has(.ays-card.is-fact) { background: #f7badd !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):has(.ays-card.is-fact) .ays-frame { background: #f7badd !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact { justify-content: center !important; padding-top: 0 !important; position: relative; overflow: visible; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ays-visual { display: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ays-words { position: relative; z-index: 1; display: grid; justify-items: start; gap: 0; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::before, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::after { content: ''; position: absolute; z-index: 0; border-radius: 50%; pointer-events: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::before { width: 220px; height: 220px; right: -70px; top: 6%; background: #ffedac; opacity: .7; animation: ays-fact-drift 9s ease-in-out infinite alternate; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::after { width: 140px; height: 140px; left: -50px; bottom: 8%; background: #3e2723; opacity: .12; animation: ays-fact-drift 11s ease-in-out infinite alternate-reverse; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-fact-sticker { display: inline-block; margin: 0 0 14px; padding: 8px 14px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 800 14px/1 var(--ay-font-ui, Figtree, sans-serif); transform: rotate(-4deg); animation: ays-fact-pop 520ms cubic-bezier(.34, 1.56, .64, 1) 120ms both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-fact-head { margin: 0 0 22px; font: 800 44px/1.02 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -0.03em; color: #3e2723; animation: ays-fact-slide 620ms cubic-bezier(.2, .9, .2, 1.08) both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ays-title { margin: 0; padding: 22px 22px 24px; border-radius: 24px; background: #ffedac; color: #3e2723; font-size: 24px; line-height: 1.3; font-weight: 700; letter-spacing: -0.01em; box-shadow: 6px 6px 0 #3e2723; transform: rotate(-1.5deg); animation: ays-fact-land 700ms cubic-bezier(.34, 1.56, .64, 1) 380ms both; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ay-rd-link, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ays-act { position: relative; z-index: 1; animation: ay-rd-rise 420ms ease-out 900ms both; }
+@keyframes ays-fact-slide { from { transform: translateX(-110%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes ays-fact-pop { 0% { transform: rotate(-4deg) scale(0); } 100% { transform: rotate(-4deg) scale(1); } }
+@keyframes ays-fact-land { 0% { transform: translateY(40px) rotate(6deg) scale(.85); opacity: 0; } 100% { transform: rotate(-1.5deg); opacity: 1; } }
+@keyframes ays-fact-drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(-18px, 22px) scale(1.08); } }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-still :is(.ays-fact-sticker, .ays-fact-head, .ays-card.is-fact .ays-title, .ays-card.is-fact .ays-act), .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-still .ays-card.is-fact::before, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-still .ays-card.is-fact::after { animation: none !important; }
+@media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) :is(.ays-fact-sticker, .ays-fact-head, .ays-card.is-fact .ays-title, .ays-card.is-fact .ays-act), .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::before, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::after { animation: none !important; } }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-stage:has(.ays-card.is-fact), .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact { overflow: visible !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::before { right: -20px; top: 2%; width: 180px; height: 180px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact::after { left: auto; right: 30%; bottom: 4%; width: 110px; height: 110px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-card.is-fact .ays-title { box-shadow: 6px 6px 0 #3e2723 !important; }

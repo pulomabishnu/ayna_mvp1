@@ -225,6 +225,8 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         setRun({ kind: 'welcome' });
         return;
       }
+      // Nov 16 (founder: "take out the old tutorial, it still pops up in some places"): no tip bubbles in the app.
+      if (surface === 'app' && !AUTO_TOUR) return;
       const tips = tipsToShow(decision.screen, usable, { offNoteShown: p.offNoteShown, seen: p.seen });
       if (!tips.length) return; // try again on a later visit
       openerRef.current = document.activeElement;

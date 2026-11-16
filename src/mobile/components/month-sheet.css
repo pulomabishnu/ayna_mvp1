@@ -95,3 +95,24 @@
 .ay-mcal__saved { min-height: 18px; margin: 4px 0 0; font: 600 13px/1.4 var(--ay-font-ui, inherit); opacity: .85; transition: opacity 150ms ease-out; }
 .ay-mcal__saved:empty { opacity: 0; }
 .ay-mcal__saved.is-error { opacity: 1; display: inline-block; padding: 2px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; }
+
+/* Nov 16, Apple Health style: the day's log is one grouped list of categories; a row opens its choices. */
+.ay-mcal__cats { list-style: none; margin: 12px 0 0; padding: 0; border-radius: 16px; overflow: hidden; background: rgba(62, 39, 35, .06); }
+[data-theme*='dark'] .ay-mcal__cats { background: rgba(255, 237, 172, .08); }
+.ay-mcal__cat + .ay-mcal__cat { box-shadow: inset 0 1px 0 rgba(62, 39, 35, .1); }
+[data-theme*='dark'] .ay-mcal__cat + .ay-mcal__cat { box-shadow: inset 0 1px 0 rgba(255, 237, 172, .12); }
+.ay-mcal__catrow { all: unset; box-sizing: border-box; width: 100%; min-height: 54px; display: flex; align-items: center; gap: 12px; padding: 8px 16px; cursor: pointer; color: inherit; }
+.ay-mcal__catrow:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; border-radius: 12px; }
+.ay-mcal__catrow > i { flex: none; width: 12px; height: 12px; border-radius: 50%; background: #f7badd; }
+.ay-mcal__catrow > i.is-period { background: #e57a9f; }
+.ay-mcal__catrow > i.is-mood, .ay-mcal__catrow > i.is-sleep { background: #f7badd; }
+.ay-mcal__catrow > i:is(.is-energy, .is-pain, .is-more) { background: #f7badd; }
+
+.ay-mcal__catrow > b { flex: 1; font: 600 16px/1.25 var(--ay-font-ui, 'Figtree'), sans-serif; }
+.ay-mcal__catrow > span { font: 500 15px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; opacity: .7; }
+.ay-mcal__catrow > svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; opacity: .45; transition: transform .2s; }
+.ay-mcal__cat.is-open .ay-mcal__catrow > svg { transform: rotate(90deg); }
+.ay-mcal__cats .ay-mcal__flow { padding: 0 16px 14px; margin: 0; }
+
+.ay-mcal__cats [hidden] { display: none !important; }
+.ay-mcal__catrow > i { display: none !important; }
