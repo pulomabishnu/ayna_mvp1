@@ -72,7 +72,8 @@ export default function ProLock({
   const [localSheet, setLocalSheet] = useState(false);
   const [showInstall, setShowInstall] = useState(false);
   const name = title || proFeatureName(feature);
-  const webSetup = !native && ['dashboard', 'wearables'].includes(feature);
+  // The iPhone install hint is for the website only, never inside the app (founder, Nov 16).
+  const webSetup = !native && ['dashboard', 'wearables'].includes(feature) && !(typeof window !== 'undefined' && window.location?.pathname?.startsWith('/mobile-preview'));
   const unlock = () => {
     if (!openProPaywall({ feature, featureName: name })) setLocalSheet(true);
   };
