@@ -602,12 +602,8 @@ export default function ProductDetailScreen({
           {/* One button, the rest under Share (founder, Oct 25: four big buttons was heavy). */}
           <div className="ayv-community">
             <button type="button" className="ayv-community__main" onClick={() => onCommunityAction('review')}>Write a review</button>
-            <details className="ayv-community__more">
-              <summary>Share</summary>
-              <ul>
-                {[['post', 'Mention in a post'], ['playlist', 'Add to playlist'], ['recommend', 'Recommend to a friend']].map(([kind, label]) => <li key={kind}><button type="button" onClick={() => onCommunityAction(kind)}>{label}</button></li>)}
-              </ul>
-            </details>
+            {/* Nov 16 (founder: not repetitive): Post and Share already sit at the top of the page. */}
+            <button type="button" className="ayv-community__alt" onClick={() => onCommunityAction('playlist')}>Add to playlist</button>
           </div>
         </section>}
 

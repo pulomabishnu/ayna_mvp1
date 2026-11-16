@@ -343,7 +343,7 @@
 
 /* app: community actions, one button + Share */
 #ay-pdp#ay-pdp#ay-pdp .ayv-community { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; }
-#ay-pdp#ay-pdp#ay-pdp .ayv-community__main, #ay-pdp#ay-pdp#ay-pdp .ayv-community__more > summary { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border: 1.5px solid var(--v-ink); border-radius: 99px; background: transparent; color: var(--v-ink); font: 600 15px/1 var(--v-ui); cursor: pointer; list-style: none; }
+#ay-pdp#ay-pdp#ay-pdp .ayv-community__main, #ay-pdp#ay-pdp#ay-pdp .ayv-community__alt, #ay-pdp#ay-pdp#ay-pdp .ayv-community__more > summary { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border: 1.5px solid var(--v-ink); border-radius: 99px; background: transparent; color: var(--v-ink); font: 600 15px/1 var(--v-ui); cursor: pointer; list-style: none; }
 #ay-pdp#ay-pdp#ay-pdp .ayv-community__main { background: #3e2723; border-color: #3e2723; color: #ffedac; }
 :is([data-theme='dark']) #ay-pdp#ay-pdp#ay-pdp .ayv-community__main { background: #ffedac; color: #3e2723; }
 #ay-pdp#ay-pdp#ay-pdp .ayv-community__more > summary::-webkit-details-marker { display: none; }
@@ -3091,3 +3091,19 @@ html body .ayv-lock__pillbtn:focus-visible { outline: 2px solid currentColor; ou
 .ay-ingcheck .ay-ingcheck__fine { font-size: 13px; }
 :is([data-theme*='dark']) .ay-ingcheck { border-color: #ffedac; color: #ffedac; }
 html body .ayna-mobile:is(#ic1, .ayna-mobile):is(#ic2, .ayna-mobile):is(#ic3, .ayna-mobile):is(#ic4, .ayna-mobile) .ay-pdp-passport > .ay-ingcheck { margin: 16px var(--d-gutter, 20px) !important; }
+
+/* Nov 16 (founder: cleaner; Apple Health inspo), app: the four guide tiles and the ingredient check are soft fills,
+   not heavy espresso blocks or outlined boxes. */
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__card {
+  background: rgba(62, 39, 35, .06) !important; color: #3e2723 !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important;
+}
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__card :is(.ay-stack__head, .ay-stack__txt, .ay-stack__txt *, .ay-stack__tag) { color: #3e2723 !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__ic { background: #f7badd !important; color: #3e2723 !important; border: 0 !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__ic svg { stroke: #3e2723 !important; color: #3e2723 !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile)[data-theme*='dark'] .ay-stack.is-index .ay-stack__card,
+html body [data-theme*='dark'] .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__card { background: rgba(255, 237, 172, .08) !important; color: #ffedac !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile)[data-theme*='dark'] .ay-stack.is-index .ay-stack__card :is(.ay-stack__head, .ay-stack__txt, .ay-stack__txt *, .ay-stack__tag),
+html body [data-theme*='dark'] .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-stack.is-index .ay-stack__card :is(.ay-stack__head, .ay-stack__txt, .ay-stack__txt *, .ay-stack__tag) { color: #ffedac !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-ingcheck { border: 0 !important; background: rgba(62, 39, 35, .06) !important; }
+html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile)[data-theme*='dark'] .ay-ingcheck,
+html body [data-theme*='dark'] .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-ingcheck { background: rgba(255, 237, 172, .08) !important; }

@@ -84,7 +84,7 @@ export default function ProductCard({ product, onClick, variant = 'grid', quizAn
             {showBrand && <span className="ay-pcard__brand">{secondaryLabel}</span>}
             {meta.sponsored && <span className="ay-pcard__mark">Sponsored</span>}
             {meta.partner && <span className="ay-pcard__mark">ayna partner</span>}
-            {meta.tax && <span className="ay-pcard__mark">{meta.tax}</span>}
+            {/* Nov 16 (founder: cleaner, nothing repeated): FSA/HSA lives on the product page and in Filters. */}
           </p>
           {/* The button is the card's one link; the whole card opens it. */}
           <strong className="ay-pcard__name">

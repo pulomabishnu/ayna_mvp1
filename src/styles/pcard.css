@@ -188,3 +188,21 @@
 .ay-trynext button:focus-visible { outline: 2px solid #3e2723; outline-offset: 2px; border-radius: 8px; }
 /* Big match above the product title (focus group, Oct 1). Pink pill, espresso text. */
 .ay-pdp-pct { display: inline-flex; align-items: center; width: fit-content; min-height: 32px; margin: 0 0 8px; padding: 4px 14px; border-radius: 999px; background: #f7badd; color: #3e2723; box-shadow: inset 0 0 0 1.5px #3e2723; font: 800 20px/1 var(--ay-font-display, 'ayna Display', sans-serif); letter-spacing: -.01em; }
+
+/* Nov 16 (founder: "make it cleaner and easier, not repetitive"; Apple Health inspo), app only:
+   a soft filled card, no outline or offset shadow; the heart sits on the photo's corner with one ring,
+   so the bottom of the card isn't an empty strip. */
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard {
+  border: 0 !important; box-shadow: none !important; border-radius: 18px !important; background: rgba(62, 39, 35, .06) !important; padding: 10px !important; margin: 0 !important;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body :is([data-theme='brand-dark'], [data-theme='dark']) .ayna-mobile .ay-pcard.ay-pcard,
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile:is([data-theme='brand-dark'], [data-theme='dark']) .ay-pcard.ay-pcard { background: rgba(255, 237, 172, .08) !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__photo { border: 0 !important; border-radius: 12px !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__link::after { border-radius: 18px; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__heart {
+  top: 14px; right: 14px; bottom: auto; width: 44px; height: 44px; border: 0 !important; background: rgba(255, 237, 172, .92) !important; color: #3e2723;
+}
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__heart::before { content: none; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__heart svg { stroke: #3e2723 !important; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard.has-heart :is(.ay-pcard__cat, .ay-pcard__price, .ay-pcard__seematch, .ay-pcard__ev) { max-width: 100%; }
+:is(#pc1, html):is(#pc2, html):is(#pc3, html):is(#pc4, html) body .ayna-mobile .ay-pcard.ay-pcard .ay-pcard__body { padding: 12px 4px 2px; }
