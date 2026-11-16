@@ -341,3 +341,7 @@
 @keyframes ays-card-in { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-still :is(.ays-card, .ays-visual *, .ay-rd-choices > .ay-rd-chip) { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) :is(.ays-card, .ays-visual *, .ay-rd-choices > .ay-rd-chip) { animation: none !important; } }
+
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-primary.is-small { min-height: 44px !important; padding: 0 16px !important; font-size: 15px !important; gap: 8px !important; display: inline-flex !important; align-items: center !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-primary.is-small svg { width: 16px; height: 16px; fill: currentColor; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-undo { all: unset; cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; padding: 0 4px; }

@@ -113,7 +113,7 @@ function Body({ card, h, done }) {
         </div>
       );
     case 'match': {
-      const m = card.match;
+      const m = h.matchFor(card);
       // The founder's product card (Explore's), big: the photo on its white
       // plate is the card's one visual. The app (product sheet available):
       // tap it for the sheet over this card; Buy, Save, Add are one tap each.
@@ -124,7 +124,7 @@ function Body({ card, h, done }) {
             <Evidence level={m.evidence} />
             <span className="ay-rd-actions">
               <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(m.product); h.next(); }}>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add to my ecosystem'}</button>
-              {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
+              {h.canSwap(card) ? <button type="button" className="ay-rd-link" onClick={() => h.swap(card)}>Show another</button> : h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
             </span>
           </div>
         );
@@ -135,7 +135,7 @@ function Body({ card, h, done }) {
           <Evidence level={m.evidence} />
           <span className="ay-rd-actions">
             {h.whyMatch && <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(m.product)}>See it and add</button>}
-            {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
+            {h.canSwap(card) ? <button type="button" className="ay-rd-link" onClick={() => h.swap(card)}>Show another</button> : h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
           </span>
         </div>
       );
@@ -282,6 +282,9 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const [done, setDone] = useState({});
   const [hidden, setHidden] = useState({});
   const [msg, setMsg] = useState('');
+  // Nov 16: "Show another" on today's pick swaps in the next best match, with Undo. Nothing is marked not for me.
+  const [swaps, setSwaps] = useState({});
+  const [undo, setUndo] = useState(null);
   const [rm] = useState(reducedMotion);
   const [theme] = useState(storyTheme);
   const rootRef = useRef(null);
@@ -364,6 +367,15 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     askFollowUp: onAskFollowUp ? (f) => { onAction?.(closingCard || card, 'ask'); onAskFollowUp(f); } : null,
     findCare: onFindCare,
     notForMe: onNotUseful ? (c) => hide(c, 'not_relevant') : null,
+    matchFor: (c) => { const k = swaps[c.key] || 0; return k ? c.alternates?.[k - 1] || c.match : c.match; },
+    canSwap: (c) => (c.alternates?.length || 0) > (swaps[c.key] || 0),
+    swap: (c) => {
+      const k = swaps[c.key] || 0;
+      setSwaps((x) => ({ ...x, [c.key]: k + 1 }));
+      setUndo({ key: c.key, k });
+      setMsg('Here’s another pick.');
+      onAction?.(c, 'swap');
+    },
     remindTomorrow: onRemindTomorrow ? async () => { setMsg(await onRemindTomorrow()); onAction?.(card, 'remind'); } : null,
   };
   const isData = DATA_KINDS.has(card.kind);
@@ -383,7 +395,8 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     : !isData && card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button>
       // Nov 14: a pattern from her data ("Putting it together") gets the same "Ask why" pill as the
       // data cards before it, not a small link at the bottom (the cards looked inconsistent).
-      : askWhyPill ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(card.ask)}>Ask why</button> : null;
+      // Nov 16 (founder: "Ask why is too big and doesn't always make sense"): a small pill that says what it does.
+      : askWhyPill ? <button type="button" className="ay-rd-primary is-small" onClick={() => h.ask(card.ask)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>Ask ayna about this</button> : null;
   const art = isData ? <DataViz card={card} /> : <CardArt card={card} count={content} />;
   const safety = card.category === 'safety' || card.kind === 'care';
 
@@ -419,7 +432,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
                 <div className="ay-rd-foot">
                   {savable && onSave && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
                   {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
-                  {onAsk && card.ask && !askWhyPill && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>{['change', 'pattern', 'data'].includes(card.category) ? 'Ask why' : 'Ask ayna about this'}</button>}
+                  {onAsk && card.ask && !askWhyPill && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>Ask ayna about this</button>}
                   {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
                   {!card.protected && onNotUseful && (
                     <ItemMenu label="More for this card" className="ay-rd-menu">
@@ -428,7 +441,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
                   )}
                 </div>
               )}
-              {msg && <p className="ay-rd-note" role="status">{msg}</p>}
+              {msg && <p className="ay-rd-note" role="status">{msg}{undo && undo.key === card.key && <> <button type="button" className="ay-rd-undo" onClick={() => { setSwaps((x) => ({ ...x, [undo.key]: undo.k })); setUndo(null); setMsg('Back to the first pick.'); }}>Undo</button></>}</p>}
             </div>
           </article>
         </div>

@@ -214,3 +214,15 @@ describe('today\'s pick from a signal fits her (Nov 11 audit)', () => {
     expect(JSON.stringify(r)).not.toContain('Embr Wave 2');
   });
 });
+
+describe('today\'s pick has alternates for "Show another" (founder, Nov 16)', () => {
+  it('lists other matches, never the pick itself', async () => {
+    const { buildRundown } = await import('./buildRundown.js');
+    const mk = (id, needId, percent) => ({ product: { id, name: id }, needId, percent, needSignal: 'strong' });
+    const r = buildRundown({ today: '2026-11-16', matches: [mk('a', 'pain.menstrual_cramp', 90), mk('b', 'pain.menstrual_cramp', 85), mk('c', 'sleep.trouble', 80)], needs: [], log: {}, healthRows: [] });
+    const m = r.cards.find((c) => c.kind === 'match');
+    expect(m).toBeTruthy();
+    expect(m.alternates.map((x) => x.product.id)).not.toContain(m.match.product.id);
+    expect(m.alternates.length).toBeGreaterThan(0);
+  });
+});

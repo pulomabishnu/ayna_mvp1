@@ -430,7 +430,10 @@ export function buildRundown(input = {}) {
     if (!pick) pick = order(usable.filter((m) => wanted.has(m.needId)))[0] || order(usable.filter((m) => goals[m.needId] && m.needSignal !== 'weak'))[0] || order(usable.filter((m) => m.percent >= RUNDOWN_RULES.matchMinPercent && fitsHer(m)))[0] || null;
     if (pick) {
       const title = because ? `For ${because.words}` : matchTitle(pick, decision?.debug?.needs || {}, goals);
-      add({ key: `match:${pick.product.id}`, category: 'match', kind: 'match', kicker: seenDays(pick) > 0 ? 'Today\u2019s pick' : 'New for you today', title, because: because?.reason || null, match: pick, followUps: [`Why is ${pick.product.name} my match?`] });
+      // Nov 16 (founder): "Show another" swaps in the next best for the same need (then any strong match), never a removed card.
+      const others = order(usable.filter((m) => m.product.id !== pick.product.id && fitsHer(m) && m.needSignal !== 'weak'));
+      const alternates = [...others.filter((m) => m.needId === pick.needId), ...others.filter((m) => m.needId !== pick.needId && m.percent >= RUNDOWN_RULES.matchMinPercent)].slice(0, 4);
+      add({ key: `match:${pick.product.id}`, category: 'match', kind: 'match', kicker: seenDays(pick) > 0 ? 'Today\u2019s pick' : 'New for you today', title, because: because?.reason || null, match: pick, alternates, followUps: [`Why is ${pick.product.name} my match?`] });
     }
   }
 
