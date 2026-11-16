@@ -518,3 +518,39 @@ html body [data-theme*='dark'] .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayn
 html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button.is-on { background: #f7badd !important; color: #3e2723 !important; }
 html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-pills > button > svg { width: 22px !important; height: 22px !important; padding: 0 !important; background: transparent !important; }
 html body .ayna-mobile:is(#pp1, .ayna-mobile):is(#pp2, .ayna-mobile):is(#pp3, .ayna-mobile) #ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-commission { text-align: center !important; justify-content: center !important; width: 100%; }
+
+/* Nov 16: in the iPhone app nothing can push the page wider than the screen, and text boxes are 16px so iOS
+   never zooms into them. */
+html.is-native-app, html.is-native-app body { overflow-x: hidden; max-width: 100%; }
+html.is-native-app :is(input, textarea, select) { font-size: max(16px, 1em) !important; }
+
+/* Nov 16 (founder: "cart page spacing is bad"): Saved. Filters wrap instead of running off; two cards a row,
+   each with its Add to routine button right under it, same width; nothing loose below. */
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ayna-saved-filters { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; overflow: visible !important; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ayna-saved-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; align-items: start; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ayna-saved-cell { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ayna-saved-cell > .ayna-saved-ecosystem-action {
+  all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 44px; padding: 0 12px;
+  border-radius: 999px; background: rgba(62, 39, 35, .06); color: #3e2723; font: 600 14px/1.2 var(--ay-font-ui, 'Figtree', sans-serif); text-align: center; cursor: pointer;
+}
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile)[data-theme*='dark'] .ayna-saved-cell > .ayna-saved-ecosystem-action,
+html body [data-theme*='dark'] .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ayna-saved-cell > .ayna-saved-ecosystem-action { background: rgba(255, 237, 172, .08); color: #ffedac; }
+
+/* The "Saved to Profile › Saved" strip: words on one line, actions on the next, the close button never on top of them. */
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ay-svf { padding-right: 44px !important; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ay-svf__row { display: flex !important; flex-wrap: wrap !important; align-items: center; gap: 4px 16px !important; margin: 0 !important; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ay-svf__lead { flex: 1 0 100%; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile) .ay-svf__dot { display: none !important; }
+/* Saved filters: one segmented row on a soft fill (no outlined pills), Compare a quiet link. */
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-filters {
+  flex-wrap: nowrap !important; gap: 4px !important; padding: 4px !important; border-radius: 999px; background: rgba(62, 39, 35, .06); width: fit-content; max-width: calc(100% - 40px); margin: 4px 20px 8px !important; box-sizing: border-box;
+}
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile)[data-theme*='dark'] .ayna-saved-filters,
+html body [data-theme*='dark'] .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-filters { background: rgba(255, 237, 172, .08); }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-filters > button {
+  border: 0 !important; box-shadow: none !important; background: transparent !important; min-height: 40px !important; padding: 0 14px !important; white-space: nowrap; border-radius: 999px !important; color: inherit !important;
+}
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-filters > button[aria-pressed='true'] { background: #f7badd !important; color: #3e2723 !important; }
+html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-compare :is(button, a) {
+  border: 0 !important; box-shadow: none !important; background: none !important; padding: 0 !important; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; font-weight: 600;
+}

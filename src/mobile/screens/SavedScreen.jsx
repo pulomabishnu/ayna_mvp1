@@ -12,7 +12,8 @@ import '../you-hub-app.css';
 
 const Check = () => <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>;
 
-const FILTERS = [['all', 'All'], ['eco', IN_ROUTINE], ['new', 'Not added yet'], ['flag', 'Safety notes']];
+// Nov 16 (founder: the chips stacked into rows): one short row; a filter only shows when it has something.
+const FILTERS = [['all', 'All'], ['eco', 'In routine'], ['new', 'To add'], ['flag', 'Safety notes']];
 
 export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOpenStartups, savedProducts = {}, myProducts = [], onBack, onBrowse, onOpenProduct, onToggleSaved, onGoEco, onAddToEcosystem, quizAnswers = null, onOpenWhyMatch, onOpenCompare }) {
   const [filter, setFilter] = useState('all');
@@ -41,11 +42,11 @@ export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOp
       <button type="button" onClick={onBrowse}>Shop</button>
     </header>
     {items.length > 0 && <>
-      <nav className="ayna-saved-filters" aria-label="Saved product filters">{FILTERS.map(([key, label]) => <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}<small>{items.filter((product) => matchesFilter(product, key)).length}</small></button>)}</nav>
+      <nav className="ayna-saved-filters" aria-label="Saved product filters">{FILTERS.filter(([key]) => key === 'all' || key === filter || items.some((product) => matchesFilter(product, key))).map(([key, label]) => <button type="button" key={key} aria-pressed={filter === key} onClick={() => setFilter(key)}>{label}<small>{items.filter((product) => matchesFilter(product, key)).length}</small></button>)}</nav>
       <div className="ayna-saved-content">
         <SavedReminders resolve={(id) => savedProducts[id] || null} onOpenProduct={onOpenProduct} />
         {onOpenCompare && items.length > 1 && <div className="ayna-saved-compare"><CompareToggle onOpenCompare={() => onOpenCompare()} /></div>}
-        {visible.length === 0 ? <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="None of your saved products fit this filter." actionLabel="Show all saved" onAction={() => setFilter('all')} /> : <div className="ayna-editorial-product-grid">{visible.map((product) => <div key={product.id}>
+        {visible.length === 0 ? <EmptyState compact art="search" tone="mint" title="Nothing here yet" body="None of your saved products fit this filter." actionLabel="Show all saved" onAction={() => setFilter('all')} /> : <div className="ayna-editorial-product-grid ayna-saved-grid">{visible.map((product) => <div key={product.id} className="ayna-saved-cell">
           <ProductCard product={product} onClick={() => onOpenProduct?.(product)} quizAnswers={quizAnswers} onOpenWhyMatch={onOpenWhyMatch} isSaved onToggleSaved={onToggleSaved} />
           <button className="ayna-saved-ecosystem-action ay-press" type="button" onClick={(e) => {
             if (ecosystemIds.has(product.id)) { onGoEco?.(); return; }
@@ -55,7 +56,7 @@ export default function SavedScreen({ authUser = null, onOpenCommunityPost, onOp
           }}>{ecosystemIds.has(product.id) ? (justAdded[product.id] ? <span className="ay-added-morph"><Check />Added</span> : IN_ROUTINE) : ADD_TO_ROUTINE}</button>
           {flaggedIds.has(product.id) && <button className="ayna-saved-safety" type="button" onClick={() => onOpenProduct?.(product)}>Safety note</button>}
         </div>)}</div>}
-        <button className="ayna-saved-ecosystem" type="button" onClick={onGoEco}>Open my ecosystem</button>
+        {/* Nov 16 (founder: cleaner): Your products is one tap away on Home; no second button here. */}
         {more}
         <LegalFooter />
       </div>

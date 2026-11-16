@@ -55,13 +55,26 @@ afterEach(() => {
 });
 
 describe('tips overlay', () => {
-  it('app: the tour opens on her first Home by itself, Rundown card or not (founder, Nov 10)', () => {
+  it('Nov 16 (founder): the tour never opens by itself, on the landing or on Home', () => {
+    localStorage.removeItem('ayna_tour_sheet_once_nov11');
+    mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
+    wait(3000);
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
+    act(() => root.unmount()); root = null; app.remove();
+    mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section></div>' });
+    wait(3000);
+    expect(document.querySelector('.ay-tour__all')).toBeNull();
+  });
+
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('app: the tour opens on her first Home by itself, Rundown card or not (founder, Nov 10)', () => {
     mountApp({ html: '<div data-tour="home"><section data-tour="score-rings">Rings</section><div class="ay-rd-hero__card" data-tour="rundown-card">Rundown</div><nav data-tour="home-links">Links</nav></div>' });
     wait(1000);
     expect(document.querySelector('.ay-tour__all')?.textContent).toContain('How ayna works');
   });
 
-  it('Nov 11: an existing account with tips off still gets the tour once on Home after the update', () => {
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('Nov 11: an existing account with tips off still gets the tour once on Home after the update', () => {
     localStorage.removeItem('ayna_tour_sheet_once_nov11');
     setTipsEnabled(false);
     mountApp({ html: HOME });
@@ -72,7 +85,8 @@ describe('tips overlay', () => {
     expect(document.querySelector('.ay-tour__all')).toBeNull();
   });
 
-  it('on Home the whole tour opens once on one sheet; closing it ends it, no pop-ups after (Nov 10)', () => {
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('on Home the whole tour opens once on one sheet; closing it ends it, no pop-ups after (Nov 10)', () => {
     mountApp({ html: HOME });
     wait(1000);
     expect(readTour().enabled).toBe(false);
@@ -119,7 +133,8 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('first open, signed out on the landing: the tour sheet, starting with the quiz (founder, Nov 12); once only', () => {
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('first open, signed out on the landing: the tour sheet, starting with the quiz (founder, Nov 12); once only', () => {
     localStorage.removeItem('ayna_tour_sheet_once_nov11');
     mountApp({ screen: 'landing', html: '<div class="ay-sts" data-tour="landing-start"><button class="ay-sts__track">Take your quiz</button></div>' });
     wait(2000);
@@ -135,7 +150,8 @@ describe('tips overlay', () => {
     expect(document.querySelector('.ay-tour__all')).toBeNull();
   });
 
-  it('closing the tour with the X turns tips off and nothing shows again', () => {
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('closing the tour with the X turns tips off and nothing shows again', () => {
     mountApp({ html: HOME });
     wait(1000);
     act(() => document.querySelector('.ay-tour__x').click());
@@ -151,7 +167,8 @@ describe('tips overlay', () => {
     expect(dialog()).toBeNull();
   });
 
-  it('never over the Daily Rundown; opens once the story is closed', () => {
+  // Founder, Nov 16: the tour no longer opens by itself (the quiz has its own intro).
+  it.skip('never over the Daily Rundown; opens once the story is closed', () => {
     vi.setSystemTime(new Date(2026, 9, 25, 9, 0));
     mountApp({ html: `${HOME}<div class="ay-rd" role="dialog" aria-modal="true"></div>` });
     wait(4000);

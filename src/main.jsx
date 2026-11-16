@@ -62,6 +62,17 @@ if (window.location.hostname === 'aynamvp1.vercel.app' || window.location.hostna
 // silently turned analytics off: the TestFlight app has never sent an event.
 // The native build falls back to the project's public key (the same phc_ key
 // every website visitor already downloads), so it can't be built without it.
+// Nov 16 (founder screenshot: product page cut off on the right, tab bar too): in the iPhone app the page could
+// end up zoomed in (a pinch, or iOS zooming into a text box) and stay that way. A native app doesn't zoom
+// its own screens; text size still follows the phone's settings. The website keeps pinch-zoom.
+if (Capacitor.isNativePlatform()) {
+  try {
+    const vp = document.querySelector('meta[name=viewport]');
+    if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    document.documentElement.classList.add('is-native-app');
+  } catch { /* no DOM */ }
+}
+
 const POSTHOG_KEY = resolvePosthogKey(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, Capacitor.isNativePlatform());
 // Default to the first-party /ingest proxy (see vercel.json rewrites) rather
 // than PostHog's own domain directly, ad blockers (uBlock, Brave, Safari's

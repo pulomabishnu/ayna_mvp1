@@ -67,6 +67,9 @@ const localToday = (d = new Date()) => localDayKey(d);
 const POLL_MS = 450;
 const ONE_PAGE_TOUR_KEY = 'ayna_tour_one_page_v1';
 export const TOUR_ONCE_KEY = 'ayna_tour_sheet_once_nov11';
+// Founder, Nov 16: the quiz already has its own intro, so the app never opens the tour by itself.
+// It stays in Settings > Tips for anyone who wants it.
+const AUTO_TOUR = false;
 const STABLE_POLLS = 2;
 
 const reduceMotion = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
@@ -168,7 +171,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
       // Home for everyone after this update (per device), then only from Settings.
       // Founder, Nov 12: the tour opens the first time the app is opened, signed out, on the landing,
       // and starts with the quiz. Once per device; Settings has it again.
-      if (surface === 'app' && !userId && host?.dataset?.screen === 'landing' && !base.foreignDialog && !document.querySelector('.aq, .ay-auth')) {
+      if (AUTO_TOUR && surface === 'app' && !userId && host?.dataset?.screen === 'landing' && !base.foreignDialog && !document.querySelector('.aq, .ay-auth')) {
         let shownL = true;
         try { shownL = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
         if (!shownL) {
@@ -180,7 +183,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
           return;
         }
       }
-      if (surface === 'app' && screen?.welcome && !base.onboarding && !base.rundownOpen && !base.foreignDialog && !document.querySelector('.ay-today__notify, .ay-upop')) {
+      if (AUTO_TOUR && surface === 'app' && screen?.welcome && !base.onboarding && !base.rundownOpen && !base.foreignDialog && !document.querySelector('.ay-today__notify, .ay-upop')) {
         let shown = true;
         try { shown = localStorage.getItem(TOUR_ONCE_KEY) === '1'; } catch { /* storage blocked: never nag */ }
         if (!shown) {
@@ -218,7 +221,7 @@ export default function TutorialLayer({ userId = null, surface = 'app', ready = 
         openerRef.current = document.activeElement;
         // Nov 10 (founder research: a short walkthrough right after sign-up, skippable): the app opens
         // the one-page tour itself, once; Skip or Got it closes it, and Settings has it again.
-        if (surface === 'app') { try { localStorage.setItem(TOUR_ONCE_KEY, '1'); } catch { /* blocked */ } setTipsEnabled(false); setSheet(true); return; }
+        if (surface === 'app') { try { localStorage.setItem(TOUR_ONCE_KEY, '1'); } catch { /* blocked */ } setTipsEnabled(false); if (AUTO_TOUR) setSheet(true); return; }
         setRun({ kind: 'welcome' });
         return;
       }
