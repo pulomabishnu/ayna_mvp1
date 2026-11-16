@@ -441,6 +441,8 @@ window.addEventListener('unhandledrejection', (e) => {
     const m = String(e?.reason?.message || e?.reason || '');
     // A request she cancelled (typing on, leaving a screen) is not an error.
     if (e?.reason?.name === 'AbortError') return;
+    // Email link scanners run our scripts in an embedded browser that rejects with this; no person sees it.
+    if (/Object Not Found Matching Id:\d+, MethodName:/.test(m)) return;
     if (seenUncaught.has(m) || seenUncaught.size > 20) return;
     seenUncaught.add(m);
     const props = { errorName: String(e?.reason?.name || 'UnhandledRejection').slice(0, 64), errorMessage: redactErrorMessage(m), kind: 'promise', view: String(window.__aynaView || '').slice(0, 64) };
