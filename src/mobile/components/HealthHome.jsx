@@ -94,7 +94,7 @@ export function HealthEmpty({ today, onConnect, onOpenCheckin, goalCount = 0, si
       {todayFeed}
       <section className="ay-db-card ay-db-empty" aria-labelledby="ay-db-empty-title">
         <h3 id="ay-db-empty-title" className="ay-db-h3">{goalCount ? "We're starting with your goals" : 'Your dashboard fills in once data is connected'}</h3>
-        <p>{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ` : ''}Connect Apple Health or Oura, upload a file, or keep using quick check-ins. Either works.</p>
+        <p>{goalCount ? `You chose ${goalCount} ${goalCount === 1 ? 'goal' : 'goals'}. Your matches are below. ` : ''}Connect Apple Health or Oura, or keep using quick check-ins. Either works.</p>
         <dl className="ay-db-facts is-preview">
           {PREVIEW.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
         </dl>

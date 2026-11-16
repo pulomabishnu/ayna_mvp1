@@ -18,11 +18,9 @@ import { selectEcosystemProducts } from '../utils/recommendationSelection.js';
 import { careNotes, shortNeedLabel, shownMatchPercent } from '../../utils/matchDisplay.js';
 import { summarizeCareNotes, firstCareLink } from '../../utils/careSummary.js';
 import CareNote from '../../components/CareNote.jsx';
-import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import { HealthDashboardContent as HealthDashboard } from '../components/HealthDashboard.jsx';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { usesHormonalBC } from '../../health/weekInsights.js';
-import { budgetMax } from '../../health/plan.js';
 import { optionalProgress, reconstructIntakeFromSnapshot } from '../data/intakeModel.js';
 import '../eco-needs.css';
 import FinishQuizCard from '../../components/FinishQuizCard.jsx';
@@ -35,9 +33,7 @@ import { searchProducts } from '../../utils/search/index.js';
 import '../eco-app-best.css';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
-import NeedRoutines from '../../components/routine/NeedRoutines.jsx';
 import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
-import { useRoutines } from '../../components/routine/useRoutines.js';
 import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
 import { openTodayLog } from '../../components/today/openLog.js';
 import { routineDay } from '../../components/you/setupSteps.js';
@@ -97,11 +93,11 @@ export default function EcosystemScreen({
   onRequestEcosystemReset, onOpenChanges, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
-  healthInsights = null, onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {}, onToggleHave,
-  routineExcluded = {}, onToggleRoutineProduct, routineOutcomes = {}, onLogRoutineOutcome,
-  onSavePlaylist, onOpenPlaylist, onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
+  onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {},
+  routineExcluded = {}, routineOutcomes = {},
+  onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
   quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz, onEditIntakeStep, onUpdateIntake, articles = [], onBack,
-  omittedProducts = {}, onToggleOmit, onGoToday,
+  omittedProducts = {}, onGoToday,
   // Inside the ayna tab's Products view: the switch row replaces the header.
   homeTop = null,
 }) {
@@ -112,10 +108,6 @@ export default function EcosystemScreen({
     userId: authUser?.id || null, quizAnswers, matchOpts,
     products: myProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
   };
-  const routines = useRoutines({
-    ...routineSource,
-    onAddToRoutine: onAddToEcosystem, onToggleSaved, onNotForMe: onToggleOmit, onToggleHave,
-  });
   const openCheckIn = onGoToday ? () => { onGoToday(); setTimeout(() => openTodayLog('app'), 400); } : null;
   const [sheet, setSheet] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -439,16 +431,8 @@ export default function EcosystemScreen({
         : <p className="eco-list__empty">{q && savedList.length ? 'No saved product matches.' : 'Tap the heart on any product to save it here.'}</p>}
     </section>}
     {view === 'routine' && <>
-      {/* Glance first: the day timeline with her products by when she uses them; the full plans fold away. */}
-      <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} onShop={() => { const d = rootRef.current?.querySelector('.eco-more'); if (d) { d.open = true; rootRef.current.querySelector('.ayna-plan-shop, #ay-eco-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }} /></div>
-      <details className="eco-more">
-        <summary>Full routines, when to use each product and your shopping list</summary>
-      {routines.routines.length > 0 && <div className="ay-eco-routines" style={{ padding: '0 var(--d-gutter, 20px)' }}><NeedRoutines state={routines} variant="app" onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>}
-      {myProducts.length > 0 && <div className="ay-eco-plan" id="ay-eco-plan">
-        <Routine folded products={myProducts} insights={healthInsights} needIds={goalIds} outcomes={routineOutcomes} onLogOutcome={onLogRoutineOutcome} onOpenProduct={onOpenProduct} budget={budgetMax(quizAnswers)} excluded={routineExcluded} onToggleExcluded={onToggleRoutineProduct} />
-        <ShoppingList products={myProducts} insights={healthInsights} excluded={routineExcluded} have={routineHave} onToggleHave={onToggleHave} onOpenProduct={onOpenProduct} onSavePlaylist={onSavePlaylist} onOpenPlaylist={onOpenPlaylist} budget={budgetMax(quizAnswers)} onRequireAuth={onRequireAuth} />
-      </div>}
-      </details>
+      {/* Nov 15 (founder): the timeline only; the long 'Full routines…' fold is gone. */}
+      <div className="eco-list"><RoutineTimeline compact {...routineSource} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>
     </>}
 
     {(view === 'mine' || !hasAnything) && <>
@@ -470,7 +454,6 @@ export default function EcosystemScreen({
           <div className="ay-shelf2-head">
             <h2 id={`ayna-area-title-${section.key}`}>{section.label}</h2>
             {/* Nov 11 (founder: "the numbers are off"): no count next to the shelf title; the rows show what's there. */}
-            <button type="button" className="ay-shelf2-add" onClick={() => onBrowse?.(shortNeedLabel(section.label))} aria-label={`Add to ${section.label}`}>Add</button>
           </div>
           {empty && <div className="ay-shelf2-empty">
             <p>Nothing for {section.phrase} yet. Shop has every option, with your match on each.</p>

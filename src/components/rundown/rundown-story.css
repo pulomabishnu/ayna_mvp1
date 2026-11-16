@@ -271,3 +271,10 @@
   .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) *, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-frame::before,
   .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-frame::after, .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-stage::before { animation: none !important; }
 }
+
+/* Daily health fact (founder, Nov 15): a big title at the top, no small print under it. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact { justify-content: flex-start; padding-top: 24px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-words { margin-top: 0; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-fact-head { margin: 0 0 16px; font-size: 34px; line-height: 1.08; font-weight: 800; letter-spacing: -0.02em; color: inherit; text-transform: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-visual { display: none; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-card.is-fact .ays-title { font-size: 26px; line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; }

@@ -12,7 +12,7 @@ import { readMeds, MEDS_KEY } from '../../health/medications.js';
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 let host;
 let root;
-const btn = (text) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === text || b.getAttribute('aria-label') === text);
+const btn = (text) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === text || b.querySelector('b')?.textContent.trim() === text || b.getAttribute('aria-label') === text);
 const type = (input, value) => {
   const set = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(input), 'value').set;
   set.call(input, value);
@@ -30,7 +30,7 @@ beforeEach(() => {
 describe('DayPlan', () => {
   it('empty state says what it does', async () => {
     await act(async () => root.render(<DayPlan />));
-    expect(host.textContent).toContain('Your medications and the things you do each day');
+    expect(host.textContent).toContain('Add what you take and do each day');
   });
 
   it('add a medication, mark it taken, undo', async () => {

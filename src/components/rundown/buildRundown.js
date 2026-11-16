@@ -491,7 +491,7 @@ export function buildRundown(input = {}) {
   if (pick && room > 0 && !rest.includes(pick)) rest.splice(rest.length - 1, 1, pick);
   // Founder, Nov 11: a daily ayna fact, near the end; it never takes a content slot (and always shows).
   const fact = factFor(today);
-  const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily health fact (general info)', title: fact.text, body: 'A general health fact for everyone. It is not about you or your data.', sources: [fact.source], basisLine: `From ${fact.source.label}.` };
+  const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily health fact', title: fact.text, sources: [fact.source], basisLine: `From ${fact.source.label}.` };
   // Focus group, Nov 11 (10 pages was too long): the whole rundown is at most opening + 5 + the end.
   const main = [...protectedCards, ...rest];
   const extras = factSlot ? [factCard] : [];

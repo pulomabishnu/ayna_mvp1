@@ -22,7 +22,7 @@ import './home-widgets.css';
  * on:   { ask, openLog, openHealth, connect, openProduct, openSaved, openEcosystem, openRoutine,
  *         openPost, openPlaylist, openCommunity, openArticle, openDoctorPrep }
  */
-export default function HomeWidgets({ surface = 'app', userId = null, data = {}, on = {}, editLabel = 'Edit', children = null, hideDefault = [] }) {
+export default function HomeWidgets({ surface = 'app', userId = null, data = {}, on = {}, editLabel = 'Edit', children = null, hideDefault = [], title = '' }) {
   const [owner, setOwner] = useState(userId || 'device');
   const [layout, setLayout] = useState(() => { setHomeLayoutOwner(userId); return effectiveLayout(surface, REGISTRY); });
   if (owner !== (userId || 'device')) { setHomeLayoutOwner(userId); setOwner(userId || 'device'); setLayout(effectiveLayout(surface, REGISTRY)); }
@@ -45,6 +45,7 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
     on,
   };
 
+  const shown = layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id));
   const change = (widgets) => { writeHomeLayout(surface, widgets); setLayout({ widgets, custom: true }); };
   const reset = () => { resetHomeLayout(surface); setLayout(effectiveLayout(surface, REGISTRY)); };
   const openSheet = () => { before.current = JSON.stringify(layout.widgets); setOpen(true); };
@@ -61,21 +62,26 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
 
   return (
     <section className={`ay-homewidgets is-${surface}`} aria-label={surface === 'web' ? 'Your widgets' : 'Your widgets on Today'} data-count={layout.widgets.length}>
-      {layout.widgets.length > 0 && (
+      {/* title: a section head with Edit on the right (Apple Health's "Pinned  Edit"). */}
+      {title && <div className="ay-homewidgets__head">
+        <h2>{title}</h2>
+        <button type="button" className="ay-homewidgets__edit is-head" aria-haspopup="dialog" onClick={openSheet}>{shown.length ? editLabel : 'Add'}<span className="sr-only"> pinned items</span></button>
+      </div>}
+      {shown.length > 0 && (
         <div className="ay-homewidgets__grid">
           {/* A row-shaped widget alone (today's health row) keeps the full width. */}
-          {layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id)).map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
+          {shown.map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
         </div>
       )}
       {/* children: the screen's own links (Home's My dashboard / Your matches) share the row with Edit. */}
-      <div className={`ay-homewidgets__bar${children ? ' has-links' : ''}`}>
+      {!title && <div className={`ay-homewidgets__bar${children ? ' has-links' : ''}`}>
         {children}
         <button type="button" className="ay-homewidgets__edit" aria-haspopup="dialog" onClick={openSheet}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4zM14 6l4 4" /></svg>
           <span>{layout.widgets.length ? editLabel : surface === 'web' ? 'Add widgets to Home' : 'Add widgets'}</span>
           {layout.widgets.length > 0 && <span className="sr-only"> Today</span>}
         </button>
-      </div>
+      </div>}
       {open && <CustomizeHomeSheet surface={surface} widgets={layout.widgets} custom={layout.custom} onChange={change} onReset={reset} onClose={closeSheet} ctx={ctx} />}
     </section>
   );

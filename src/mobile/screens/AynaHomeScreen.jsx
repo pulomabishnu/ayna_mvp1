@@ -133,6 +133,28 @@ export default function AynaHomeScreen(props) {
   const renderViews = ({ count, hasCheckIn, flags = {} }) => (
     <>
       <HomeHighlights items={highlights} today={today} onOpen={openMetric} />
+      {/* Nov 15 (founder): what she adds in Edit sits up here with her charts, like Apple Health's Pinned, not at the bottom. */}
+      <HomeWidgets
+        title="Pinned"
+        // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).
+        // With no health data, the default row is just "Your log" again under the Check in row above (Oct 28 audit).
+        hideDefault={charts.length || (!hasCheckIn && !healthConnectedCount) ? ['health'] : []}
+        surface="app"
+        userId={authUser?.id || null}
+        data={{
+          healthRows: healthInsightRows || [], healthSummary, healthConnectedCount, hormonalBC: usesHormonalBC(quizAnswers), quizAnswers,
+          saved: Object.values(savedProducts || {}), myProducts,
+          routineSource: { userId: authUser?.id || null, quizAnswers, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
+          askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
+        }}
+        on={{
+          ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
+          connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
+          openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
+          openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,
+          openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
+        }}
+      />
       <div data-tour="home-links">
         <HomeShortcuts cycle={cycle} sleep={chartOf('sleep_minutes')} products={myProducts} onData={() => openDashboard()} onProducts={() => onHomeView?.('products')} />
       </div>
@@ -142,7 +164,7 @@ export default function AynaHomeScreen(props) {
         initial="today"
         // Founder, Nov 11 ("less repetitive"): the dials and highlights already show her week, so
         // Home has no third copy of it; the full week is one tap away in Your data.
-        routine={<><RoutineGoals today={today} log={dayLog} />{/* The one place for her day plan (Ameera, Nov 15: say each thing once). Goals show just above. */}<DayPlan includeGoals={false} heading="Today's plan" headingLevel={3} /><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} />{/* Nov 16: with no products yet, a second empty timeline under Today's plan repeated it; just the way to Shop. */}{myProducts.length > 0 ? <RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={onHomeView ? () => onHomeView('products') : undefined} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /> : onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Add products to your routine</button> : null}</>}
+        routine={<><RoutineGoals today={today} log={dayLog} />{/* The one place for her day plan (Ameera, Nov 15: say each thing once). Goals show just above. */}<DayPlan includeGoals={false} heading="Today's plan" headingLevel={3} onAddProducts={!myProducts.length && onBrowse ? () => onBrowse() : null} /><StarterRoutine quizAnswers={lastQuizAnswers || quizAnswers} myProductIds={myProducts.map((p) => p.id)} onAddToRoutine={props.onAddToEcosystem || null} onOpenProduct={onOpenProduct} />{/* Nov 16: with no products yet, a second empty timeline under Today's plan repeated it; just the way to Shop. */}{myProducts.length > 0 ? <RoutineTimeline suggested={suggestedEcosystemProducts} cycle={hbc ? null : cycle} userId={authUser?.id || null} quizAnswers={lastQuizAnswers || quizAnswers} matchOpts={matchOpts} products={myProducts} saved={savedProducts} omitted={omittedProducts} have={routineHave} onOpenRoutine={onHomeView ? () => onHomeView('products') : undefined} onOpenProduct={onOpenProduct} onCheckIn={() => openDashboard(true)} emptyAction={onBrowse ? <button type="button" className="ay-tv__more" onClick={() => onBrowse()}>Explore products</button> : null} /> : null}</>}
         today={<>
           {/* Founder, Nov 11: For today is insights and actions (goals, matched products, things to
               add to her routine) as a bento; the check-in itself lives in the period and symptom log. */}
@@ -157,28 +179,6 @@ export default function AynaHomeScreen(props) {
               the footer of every page now, so Home no longer shows a second one here. */}
           {/* Founder, Nov 12 ("way too overcrowded"): For today is the plan above; the extra deck of
               cards under it is gone. Safety and care still show above For today. */}
-          {/* Her widgets (Customize Home); with no customization, the health data / log row as before. */}
-          <HomeWidgets
-            // The dials and Your week already show sleep; the default health row would repeat it (unless she chose it in Edit).
-            // With no health data, the default row is just "Your log" again under the Check in row above (Oct 28 audit).
-            hideDefault={charts.length || (!hasCheckIn && !healthConnectedCount) ? ['health'] : []}
-            surface="app"
-            userId={authUser?.id || null}
-            data={{
-              healthRows: healthInsightRows || [], healthSummary, healthConnectedCount, hormonalBC: usesHormonalBC(quizAnswers), quizAnswers,
-              saved: Object.values(savedProducts || {}), myProducts,
-              routineSource: { userId: authUser?.id || null, quizAnswers, matchOpts, products: myProducts, saved: savedProducts, omitted: omittedProducts },
-              askHistory: recentAsks, readProgress, articles, newPosts: rundownCommunity,
-            }}
-            on={{
-              ask, openLog: () => openDashboard(true), openHealth: authUser && onOpenHealthData ? onOpenHealthData : () => openDashboard(),
-              connect: authUser ? onOpenHealthData || onConnectHealth : onConnectHealth, openProduct: onOpenProduct, openSaved: onOpenSaved,
-              openEcosystem: () => onHomeView?.('products'), openRoutine: () => openDashboard(), openPost: onOpenCommunityPost,
-              openPlaylist: onOpenCommunitySeed ? (playlistId) => onOpenCommunitySeed({ playlistId }) : null,
-              openCommunity: onOpenCommunitySeed ? () => onOpenCommunitySeed({}) : null, openArticle: onOpenArticle,
-            }}
-          >
-          </HomeWidgets>
         </>}
       />
     </>

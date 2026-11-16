@@ -702,12 +702,16 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
               eco: signedIn ? null : onOpenEcosystem ? { caption: 'My ecosystem', value: fmtCount(ecosystemCount), sub: ecosystemCount === 1 ? 'product, grouped by need' : 'products, grouped by need', onClick: onOpenEcosystem } : null,
               saved: signedIn ? null : onOpenSaved ? { caption: 'Saved', value: fmtCount(savedCount), sub: 'Products, posts, startups', onClick: onOpenSaved } : null,
               checkins: null,
-              health: { caption: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
-              activity: { caption: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
-              settings: { caption: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
+              // Nov 15 (founder, Apple Health as the model): these are one grouped list below, not three coloured tiles.
+              health: null, activity: null, settings: null,
             }}
           />
         </div>
+        {group('you', 'You', [
+          { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
+          { key: 'activity', icon: 'activity', title: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
+          { key: 'settings', icon: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
+        ])}
 
         {/* Founder, Nov 9: the ecosystem page's "Manage your ecosystem" list, on You too,
             so changing answers or starting over never needs a hunt (focus group). */}
@@ -1083,19 +1087,13 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
             const openLink = href ? () => window.open(href, '_blank', 'noopener,noreferrer') : undefined;
             return s.featured ? (
               <button type="button" className="ay-plain-btn is-block" key={s.id} onClick={openLink} style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, overflow: 'hidden', cursor: openLink ? 'pointer' : 'default' }}>
-                <div style={{ height: 168, background: s.image ? undefined : 'linear-gradient(160deg,transparent,transparent)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
-                  {s.foundedYear && (
-                    <div style={{ position: 'absolute', left: 12, top: 12, background: 'rgba(255,237,172,.93)', color: '#3e2723', fontFamily: "var(--ayna-font-ui)", fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: '5px 9px', borderRadius: 99 }}>FOUNDED {s.foundedYear}</div>
-                  )}
-                </div>
+                {/* Nov 15 (founder): no empty photo box, and the year never sits on top of the name. */}
+                {s.image && <div style={{ height: 168, backgroundImage: `url(${s.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />}
                 <div style={{ padding: '15px 16px 17px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                     <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
-                    {s.stage && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <div style={{ width: 6, height: 6, borderRadius: 99, background: 'var(--ayna-heading)' }} />
-                        <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)' }}>{s.stage}</div>
-                      </div>
+                    {(s.stage || s.foundedYear) && (
+                      <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)' }}>{[s.stage, s.foundedYear && `Founded ${s.foundedYear}`].filter(Boolean).join(' · ')}</div>
                     )}
                   </div>
                   <div style={{ fontFamily: "var(--ayna-font-display)", fontWeight: 400, fontSize: 'calc(22px * var(--ayna-text-scale, 1))', lineHeight: 1.15, margin: '7px 0 6px', color: 'var(--ayna-text)' }}>{s.name}</div>
@@ -1111,7 +1109,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
                     <div style={{ flex: 1, background: 'var(--ayna-cta-bg)', color: 'var(--ayna-cta-text)', fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', padding: 11, borderRadius: 99, textAlign: 'center', cursor: 'pointer' }}>
                       {s.productReleased ? 'View brand' : 'Join waitlist'}
                     </div>
-                    <div style={{ width: 44, border: '1px solid var(--ayna-border)', borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                    <div style={{ width: 44, background: 'var(--ayna-chip-bg)', borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="1.75" strokeLinecap="round" style={{ stroke: 'var(--ayna-brown)' }}><path d="M12 20s-7-4.5-7-9.4A4.1 4.1 0 0 1 12 7.6a4.1 4.1 0 0 1 7 3c0 4.9-7 9.4-7 9.4Z" /></svg>
                     </div>
                   </div>
@@ -1119,7 +1117,7 @@ function EarlyStageScreen({ onBack, quizAnswers }) {
               </button>
             ) : (
               <button type="button" className="ay-plain-btn is-block" key={s.id} onClick={openLink} style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, overflow: 'hidden', display: 'flex', cursor: openLink ? 'pointer' : 'default' }}>
-                <div style={{ width: 120, flex: 'none', background: s.image ? undefined : 'linear-gradient(160deg,transparent,transparent)', backgroundImage: s.image ? `url(${s.image})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                {s.image && <div style={{ width: 120, flex: 'none', backgroundImage: `url(${s.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />}
                 <div style={{ flex: 1, minWidth: 0, padding: '14px 15px' }}>
                   <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>{formatCategoryLabel(s.category)}</div>
                   <div style={{ fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(17px * var(--ayna-text-scale, 1))', lineHeight: 1.2, margin: '6px 0 5px', color: 'var(--ayna-text)' }}>{s.name}</div>

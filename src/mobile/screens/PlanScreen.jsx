@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Routine, ShoppingList } from '../components/RoutinePlan.jsx';
 import { budgetMax } from '../../health/plan.js';
-import { SOURCE_NAMES } from '../data/healthConnections.js';
 import { productImageOverride } from '../../data/productImageOverrides.js';
 import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
 import './profile/health-connections.css';
@@ -19,10 +18,6 @@ import './plan-screen.css';
  * Nothing new is computed; the routine, list and data rows are the same as before.
  */
 const SUGGEST_LABEL = { 'sleep.trouble': 'sleep', 'cycle.irregular': 'irregular cycles', 'energy.fatigue': 'low energy' };
-const fromLine = (sources = []) => {
-  const names = sources.map((s) => SOURCE_NAMES[s] || s);
-  return names.length ? `From ${names.join(' and ')}` : null;
-};
 
 function Tile({ product, onOpen }) {
   const src = productImageOverride(product) || safeProductImageSrc(product.image || product.imageUrl || product.images?.[0], product.type === 'digital');
@@ -62,7 +57,6 @@ export default function PlanScreen({
   const fresh = planProducts.filter((p) => newIds.has(p.id));
   const kept = planProducts.filter((p) => !newIds.has(p.id));
   const toBuy = planProducts.filter((p) => p && p.type !== 'digital' && !routineExcluded[p.id]);
-  const sources = fromLine([...new Set(ready.flatMap((s) => s.sources || []))]);
   const lead = fresh.length
     ? `${fresh.length} ${fresh.length === 1 ? 'match' : 'matches'} for your needs${kept.length ? `, plus ${kept.length} already in your ecosystem` : ''}.`
     : kept.length ? `${kept.length} ${kept.length === 1 ? 'product' : 'products'} in your ecosystem.` : 'Your answers are in.';
@@ -95,7 +89,7 @@ export default function PlanScreen({
           {ready.length > 0
             ? <ul className="ay-pl-rows">{ready.slice(0, 3).map((s) => <li key={s.id}><b>{s.title}</b><span>{s.plain || s.explanation || s.headline}</span></li>)}</ul>
             : <p className="ay-pl-note">Trends show up after about two weeks of data.</p>}
-          {sources && ready.length > 0 && <p className="ay-pl-note">{sources}. Trends, not diagnoses.</p>}
+          
           {planSuggestions.map((s) => (
             <div key={s.needId} className="ay-pl-suggest">
               <p>{s.summary}. Match for {SUGGEST_LABEL[s.needId] || 'it'} too?</p>

@@ -123,7 +123,7 @@ describe('Daily Rundown', () => {
     // the daily fact and the check-in included, fits in the cap.
     // Nov 16 (founder): plus the daily fact, which always shows.
     expect(r.cards.length - 2).toBeLessThanOrEqual(RUNDOWN_RULES.maxContentCards + 1);
-    expect(r.cards.at(-2).kicker).toBe('Daily health fact (general info)');
+    expect(r.cards.at(-2).kicker).toBe('Daily health fact');
     const ci = r.cards.findIndex((c) => c.kind === 'checkin');
     // Nov 11 follow-up: the check-in is the first page after the opening (after any safety card).
     if (ci >= 0) expect(ci).toBe(1 + r.cards.filter((c) => c.category === 'safety').length);

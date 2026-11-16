@@ -16,6 +16,8 @@ import {
 import { healthStoreAvailability, openHealthPermissions, requestHealthAccess } from '../../../health/native.js';
 import { setHealthFlash, syncCloudSource, syncPhoneSource, takeHealthFlash, useHealthData } from '../../hooks/useHealthData.js';
 import HealthUploadScreen from './HealthUploadScreen.jsx';
+
+const UPLOAD_LATER = new Set(['upload', 'flo']);
 import HealthRecordsScreen from './HealthRecordsScreen.jsx';
 import './health-connections.css';
 import HealthMatchToggle from '../../../components/health/HealthMatchToggle.jsx';
@@ -63,9 +65,9 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
   const byId = Object.fromEntries(connections.map((c) => [c.source, c]));
   const q = query.trim().toLowerCase();
   const matches = (source) => !q || [source.name, source.kind, source.note, source.reads].some((t) => String(t || '').toLowerCase().includes(q));
-  const anyMatch = HEALTH_SOURCES.some((src) => src.id !== 'request' && matches(src));
   // Founder Oct 27: anonymous "Suggest an app or wearable" box right under the list.
   const onApp = typeof window !== 'undefined' && (window.location.pathname.startsWith('/mobile-preview') || Boolean(window.Capacitor?.isNativePlatform?.()));
+  const anyMatch = HEALTH_SOURCES.some((src) => src.id !== 'request' && !(onApp && UPLOAD_LATER.has(src.id)) && matches(src));
   return (
     <>
       {!compact && <p className="ay-hc-intro">Optional. Connect an app or wearable if you want ayna to personalize your insights and routine with it. Quick check-ins on {tabName} work without it. You choose what to share, and brands never see it.</p>}
@@ -90,7 +92,8 @@ function SourceList({ connections, records, onOpen, onOpenInsights, hasInsights,
         </div>
       )}
       {SOURCE_GROUPS.map((group) => {
-        const list = HEALTH_SOURCES.filter((s) => s.group === group.id && s.id !== 'request' && matches(s));
+        // Nov 15 (founder): file upload and Flo import wait for the first update after the App Store release; not in the app.
+        const list = HEALTH_SOURCES.filter((s) => s.group === group.id && s.id !== 'request' && !(onApp && UPLOAD_LATER.has(s.id)) && matches(s));
         if (!list.length || (q && !anyMatch)) return null;
         return (
         <section key={group.id} className={`ay-hc-group is-${group.tone}`} aria-label={group.title}>

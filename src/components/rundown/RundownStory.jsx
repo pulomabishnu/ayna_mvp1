@@ -392,12 +392,12 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
         />
         <p className="sr-only" aria-live="polite">{`Card ${i + 1} of ${n}: ${card.title}`}</p>
         <div className="ay-rd-stage ays-stage" {...gest.bind}>
-          <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
+          <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}${String(card.key || '').startsWith('fact:') ? ' is-fact' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
             {art && <div className="ays-visual">{art}</div>}
             <div className="ays-words">
               {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. The daily fact keeps
                   its "Daily ayna fact" label (focus group, Nov 11: it read like a fact about her). */}
-              {card.kicker && (card.category !== 'frame' || String(card.key || '').startsWith('fact:')) && <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>}
+              {card.kicker && (card.category !== 'frame' || String(card.key || '').startsWith('fact:')) && (String(card.key || '').startsWith('fact:') ? <p className="ays-fact-head">{card.kicker}</p> : <p className="ay-rd-kicker ays-kicker">{card.kicker}</p>)}
               <h2 id={`ay-rd-t-${i}`} className={`ay-rd-title ays-title${String(card.title || '').length > 56 ? ' is-long' : ''}`}>{card.title}</h2>
               {card.because && <p className="ay-rd-because">{card.because}</p>}
               {card.body && card.kind !== 'community' && <p className="ay-rd-body ays-body">{card.body}</p>}

@@ -206,7 +206,9 @@ function PlanItem({ it, day, isToday, onChanged }) {
   </li>;
 }
 
-export default function DayPlan({ compact = false, heading = "Today's plan", headingLevel = 2, includeGoals = true }) {
+function Chevron() { return <svg className="ay-dp-start__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>; }
+
+export default function DayPlan({ compact = false, heading = "Today's plan", headingLevel = 2, includeGoals = true, onAddProducts = null }) {
   const { meds, acts, goals, now } = useStores();
   const [offset, setOffset] = useState(0);
   const day = useMemo(() => { const d = new Date(now); d.setDate(d.getDate() + offset); return localDay(d); }, [now, offset]);
@@ -234,20 +236,25 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
       <span>{done} of {items.length} done</span>
       <i aria-hidden="true"><b style={{ width: `${Math.round((done / items.length) * 100)}%` }} /></i>
     </div>}
-    {!compact && <div className="ay-dp-days-nav" role="group" aria-label="Day">
+    {/* Nov 15 (founder): with nothing planned at all, no day switcher; it only matters once there is a plan. */}
+    {!compact && (activeMeds.length > 0 || myActs.length > 0 || offset !== 0) && <div className="ay-dp-days-nav" role="group" aria-label="Day">
       <button type="button" className="ay-dp__ghost ay-dp-arrow" onClick={() => setOffset((o) => o - 1)} aria-label="Previous day">‹</button>
       <span>{dayWord}</span>
       <button type="button" className="ay-dp__ghost ay-dp-arrow" onClick={() => setOffset((o) => o + 1)} aria-label="Next day" disabled={offset >= 7}>›</button>
       {offset !== 0 && <button type="button" className="ay-dp__ghost" onClick={() => setOffset(0)}>Back to today</button>}
     </div>}
+    {/* Nov 15 (founder: "this looks horrible"): one grouped list, like Apple Health, instead of three different button styles. */}
     {items.length === 0
-      ? <div className="ay-dp-empty">
-        <p>{offset === 0 ? 'Your medications and the things you do each day, by time. Tick them off as you go.' : 'Nothing planned this day.'}</p>
-        {offset === 0 && <div className="ay-dp-empty__acts">
-          <button type="button" className="ay-dp__primary" onClick={() => setSheet({ type: 'add', tab: 'med' })}>Add a medication</button>
-          <button type="button" className="ay-dp__ghost" onClick={() => setSheet({ type: 'add', tab: 'act' })}>Add an activity</button>
-        </div>}
-      </div>
+      ? (offset === 0
+        ? <div className="ay-dp-empty">
+          <p>Add what you take and do each day. ayna lays it out by time so you can tick it off.</p>
+          <ul className="ay-dp-start">
+            <li><button type="button" onClick={() => setSheet({ type: 'add', tab: 'med' })}><i aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="6" rx="3" transform="rotate(-45 12 12)" /><path d="M9.2 9.2l5.6 5.6" /></svg></i><span><b>Add a medication</b><small>With reminders if you want them</small></span><Chevron /></button></li>
+            <li><button type="button" onClick={() => setSheet({ type: 'add', tab: 'act' })}><i aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8" /><path d="M9 21l2.5-6 3 2.5V21M7 11l3-3.5 4 1 2.5 3.5M11.5 15l1-6" /></svg></i><span><b>Add an activity</b><small>A walk, stretching, a bath</small></span><Chevron /></button></li>
+            {onAddProducts && <li><button type="button" onClick={onAddProducts}><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z" /><path d="M9 8a3 3 0 0 1 6 0" /></svg></i><span><b>Add products</b><small>Choose when you use each one</small></span><Chevron /></button></li>}
+          </ul>
+        </div>
+        : <p className="ay-dp__muted">Nothing planned this day.</p>)
       : <ol className="ay-dp__rail">{items.map((it) => <PlanItem key={it.key} it={it} day={day} isToday={offset === 0} />)}</ol>}
     {offset === 0 && asNeeded.length > 0 && <div className="ay-dp-asneeded"><span>As needed</span>{asNeeded.map((m) => <button key={m.id} type="button" className="ay-dp__ghost" onClick={() => {
       const t = new Date(); const r = recordDose({ medId: m.id, day, time: `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`, status: 'taken' });

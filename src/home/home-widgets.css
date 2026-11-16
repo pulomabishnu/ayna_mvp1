@@ -175,3 +175,9 @@
 html body .app-container .ay-homewidgets .ay-w .ay-w__title { margin: 0 !important; font: 600 15px/1.3 var(--x-sans) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }
 html body .app-container .ay-homewidgets .ay-w .ay-w__big { font: 400 24px/1.15 var(--x-serif) !important; color: var(--x-ink) !important; }
 html body .app-container .ay-chs .ay-chs-add__head h4, html body .app-container .ay-chs .ay-chs__sec h3 { margin: 0 !important; font: 600 15px/1.3 var(--x-sans) !important; letter-spacing: 0 !important; color: var(--x-ink) !important; }
+
+/* Nov 15 (founder): Pinned sits with her charts at the top of Home, Apple Health style: a section head, Edit on the right. */
+.ay-homewidgets__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+.ay-homewidgets__head h2 { margin: 0; font: 700 22px/1.2 var(--ay-font-ui, 'Figtree'), sans-serif; letter-spacing: -0.01em; color: inherit; }
+.ay-homewidgets__edit.is-head { all: unset; cursor: pointer; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: flex-end; font: 600 16px/1 var(--ay-font-ui, 'Figtree'), sans-serif; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.ay-homewidgets__edit.is-head:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 8px; }
