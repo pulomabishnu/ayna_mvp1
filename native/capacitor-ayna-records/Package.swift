@@ -18,6 +18,6 @@ let package = Package(
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
             path: "ios/Sources/AynaRecordsPlugin",
-            linkerSettings: [.linkedFramework("HealthKit")])
+            linkerSettings: [.linkedFramework("HealthKit"), .linkedFramework("StoreKit")])
     ]
 )

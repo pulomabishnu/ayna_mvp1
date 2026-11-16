@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
+import { useProPurchaseMode } from '../pro/appStorefront.js';
 import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
@@ -82,6 +83,8 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   // The iPhone app does not sell Pro (founder, Oct 27 16:43): same benefits and prices,
   // and the button opens /pro on the website (main.jsx opens external links in the in-app browser).
   const native = Capacitor.isNativePlatform();
+  // US App Store: prices and a link to checkout on the web; elsewhere in the app: neither (Apple 3.1.1).
+  const purchaseMode = useProPurchaseMode(native);
   const webUrl = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 
   const choosePlan = (nextPlan) => {
@@ -124,9 +127,9 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
 
   if (!host) return <span ref={anchorRef} hidden />;
 
-  // App Store rule 3.1.1 (App Store readiness, Nov 15): the iPhone app never shows Pro prices or a
-  // link to pay outside the App Store. Until Pro is sold through in-app purchase, the app says so plainly.
-  if (native) {
+  // App Store rule 3.1.1: outside the US App Store the iPhone app never shows Pro prices or a link to
+  // pay outside the App Store, so it says so plainly. US App Store users get the full sheet below.
+  if (native && purchaseMode !== 'us_link') {
     return createPortal(
       <div className={`pro-sheet${closing ? ' is-closing' : ''}`} onClick={close}>
         <section ref={trapRef} tabIndex={-1} className="pro-sheet__panel" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
@@ -136,7 +139,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
             </button>
             <h2 id={titleId} className="pro-sheet__title">ayna <em>Pro</em></h2>
-            <p className="pro-sheet__lede">{unlocking ? <>{unlocking} is part of ayna Pro, which isn't available in the iPhone app yet.</> : <>ayna Pro isn't available in the iPhone app yet.</>} Your matches, routine, log and Daily Rundown stay free.</p>
+            <p className="pro-sheet__lede">{unlocking ? <>{unlocking} is part of ayna Pro, which you can't buy in the app in your country yet.</> : <>ayna Pro can't be bought in the app in your country yet.</>} Your matches, routine, log and Daily Rundown stay free.</p>
           </header>
           <div className="pro-sheet__body"><button type="button" className="pro-sheet__cta" onClick={close}>Got it</button></div>
         </section>
@@ -208,8 +211,8 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
           {error && <p className="pro-sheet__error" role="alert">{error}</p>}
 
           {native ? <>
-            <p className="pro-sheet__webnote">ayna Pro is available on the web for now.</p>
-            <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro on the web</a>
+            <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro · {chosen.price}</a>
+            <p className="pro-sheet__webnote">Opens aynahealth.co to pay securely with Stripe. Sign in there with the same ayna account and Pro unlocks here too.</p>
           </> : <>
           {signedOut
             ? <button type="button" className="pro-sheet__cta" onClick={signIn}>Sign in to get ayna Pro</button>

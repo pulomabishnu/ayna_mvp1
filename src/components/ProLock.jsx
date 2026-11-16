@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { marqueeLength, openProPaywall, proFeatureName, proLockLine, roundedPerimeter } from '../pro/paywall.js';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
+import { useProPurchaseMode } from '../pro/appStorefront.js';
 import '../styles/pro-v4.css';
 
 const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
@@ -75,14 +76,16 @@ export default function ProLock({
   const unlock = () => {
     if (!openProPaywall({ feature, featureName: name })) setLocalSheet(true);
   };
-  const sheet = !native && localSheet && <SubscriptionPaywallModal feature={feature} featureName={name} onClose={() => setLocalSheet(false)} />;
+  // The iPhone app: US App Store users buy on the web from the Pro sheet; elsewhere nothing to buy (Apple 3.1.1).
+  const usLink = useProPurchaseMode(native) === 'us_link';
+  const sheet = (!native || usLink) && localSheet && <SubscriptionPaywallModal feature={feature} featureName={name} onClose={() => setLocalSheet(false)} />;
 
   if (folded) {
     return <div className={`pro-lock-fold pro-lock-fold--${variant}`}>
       <span className="pro-lock-fold__icon"><LockIcon size={18} /></span>
       <span className="pro-lock-fold__text">{name} is part of ayna Pro</span>
-      {native
-        // App Store rule 3.1.1: no link to pay outside the App Store from the iPhone app.
+      {native && !usLink
+        // App Store rule 3.1.1: outside the US App Store, no link to pay outside the App Store.
         ? <span className="pro-lock-fold__go">Not in the app yet</span>
         : <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>}
       {sheet}
@@ -105,8 +108,8 @@ export default function ProLock({
           {error && <p className="pro-lock__error" role="status">{error}{onRetry && <> <button type="button" className="pro-lock__retry" onClick={onRetry}>Check again</button></>}</p>}
         </div>
         <div className="pro-lock__actions">
-          {native
-            ? <p className="pro-lock__note">ayna Pro isn't available in the iPhone app yet.</p>
+          {native && !usLink
+            ? <p className="pro-lock__note">ayna Pro can't be bought in the app in your country yet.</p>
             : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>}
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
           {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}

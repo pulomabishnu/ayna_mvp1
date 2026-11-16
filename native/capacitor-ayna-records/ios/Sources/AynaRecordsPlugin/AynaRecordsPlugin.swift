@@ -1,6 +1,7 @@
 import Foundation
 import Capacitor
 import HealthKit
+import StoreKit
 
 /// Reads Apple Health Records (HKClinicalRecord) for three types only:
 /// allergies, conditions and medications. Returns each record's FHIR JSON so
@@ -19,7 +20,8 @@ public class AynaRecordsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "isAvailable", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "requestAuthorization", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "readRecords", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "readRecords", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "storefront", returnType: CAPPluginReturnPromise)
     ]
 
     private let store = HKHealthStore()
@@ -92,5 +94,17 @@ public class AynaRecordsPlugin: CAPPlugin, CAPBridgedPlugin {
             store.execute(query)
         }
         group.notify(queue: .main) { call.resolve(["records": out]) }
+    }
+
+    /// Which App Store country this Apple ID buys from (alpha-3, e.g. "USA"). Apple lets apps on the
+    /// US storefront link to buying on the web (Guideline 3.1.1(a), May 2025); elsewhere they can't,
+    /// so the app shows Pro's web checkout only when this says USA. Nothing is sent anywhere.
+    @objc func storefront(_ call: CAPPluginCall) {
+        Task {
+            let code: String? = await Storefront.current?.countryCode
+            DispatchQueue.main.async {
+                if let code = code { call.resolve(["countryCode": code]) } else { call.resolve(["countryCode": NSNull()]) }
+            }
+        }
     }
 }

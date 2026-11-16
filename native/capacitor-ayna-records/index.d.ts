@@ -14,5 +14,7 @@ export interface AynaRecordsPlugin {
   isAvailable(): Promise<{ available: boolean; reason?: string }>;
   requestAuthorization(options: { types: RecordType[] }): Promise<{ asked: boolean; granted: null }>;
   readRecords(options: { types: RecordType[] }): Promise<{ records: ClinicalRecord[] }>;
+  /** App Store country of this Apple ID (alpha-3, e.g. "USA"), or null. */
+  storefront(): Promise<{ countryCode: string | null }>;
 }
 export declare const AynaRecords: AynaRecordsPlugin;
