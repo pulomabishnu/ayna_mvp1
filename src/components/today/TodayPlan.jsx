@@ -276,7 +276,7 @@ export default function TodayPlan({
           ))}</ul>
         </section>
       )}
-      {open1 ? (tiles.length > 0 && <p className="ay-tp-label">For you today</p>) : when('For you today')}
+      {/* Nov 16 (founder): these are tips, so the label says so. */}{open1 ? (tiles.length > 0 && <p className="ay-tp-label">Tips for you today</p>) : when('Tips for you today')}
       <ul className={`ay-tp-grid is-${tiles.length}`}>
         {tiles.map((t, k) => (
           <li key={t.key} className={`ay-tp-tile ${toneFor(t, topics[0]?.id)}`} style={{ '--k': k }}>

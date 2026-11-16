@@ -199,7 +199,7 @@ export default function RoutineTimeline({ compact = true, cycle = null, onOpenRo
         </ol>
         {(onShop && productCount > 0) || onOpenRoutine ? <div className="ay-rt2__foot">
           {onShop && productCount > 0 && <button type="button" className="ay-rt2__shop" onClick={onShop}>Shop {productCount} product{productCount === 1 ? '' : 's'}</button>}
-          {onOpenRoutine && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>See your full routine</button>}
+          {onOpenRoutine && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>Edit routine</button>}
         </div> : null}
       </div>
     );
@@ -223,7 +223,7 @@ export default function RoutineTimeline({ compact = true, cycle = null, onOpenRo
           </li>
         )}
       </ol>
-      {onOpenRoutine && <button type="button" className="ay-rtl__all" onClick={onOpenRoutine}>See your full routine</button>}
+      {onOpenRoutine && <button type="button" className="ay-rtl__all" onClick={onOpenRoutine}>Edit routine</button>}
     </div>
   );
 }

@@ -281,8 +281,8 @@ export default function HealthHome({
     { id: 'cycle', label: hormonalBC ? 'Bleeding' : 'Cycle' },
     { id: 'sleep', label: 'Sleep' },
     ...(bodyCharts.length ? [{ id: 'body', label: 'Body' }] : []),
-    // Always offered (same tab set everywhere); without a routine it shows a calm empty state, never sample data.
-    { id: 'routine', label: 'Routine' },
+    // Nov 16 (founder: "routine shouldn't be in My data, only the Routine tab on Home"): web only.
+    ...(surface === 'app' ? [] : [{ id: 'routine', label: 'Routine' }]),
   ] : [];
   const current = tabs.some((t) => t.id === tab) ? tab : 'summary';
   const open = (id) => {

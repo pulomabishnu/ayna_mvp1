@@ -43,7 +43,7 @@ describe('health dashboard action flow', () => {
     root = createRoot(host);
     act(() => root.render(<HealthHome today={today} routineProducts={[product]} routineOutcomes={{ 'heat-wrap': [
       { day: '2026-10-19', rating: 'helping' }, { day: '2026-10-20', rating: 'same' }, { day: today, rating: 'helping' },
-    ] }} onOpenRoutine={() => {}} onOpenCheckin={onOpenCheckin} />));
+    ] }} onOpenRoutine={() => {}} onOpenCheckin={onOpenCheckin} surface="web" />));
 
     expect(host.textContent).toContain('Marked helping on 2 of 3 check-ins');
     expect(host.textContent).toContain('do not show that a product caused a health change');
@@ -58,7 +58,7 @@ describe('health dashboard action flow', () => {
     host = document.createElement('div');
     document.body.append(host);
     root = createRoot(host);
-    act(() => root.render(<HealthHome today={today} rows={rows} sections={sections} onOpenRoutine={onOpenRoutine} />));
+    act(() => root.render(<HealthHome today={today} rows={rows} sections={sections} onOpenRoutine={onOpenRoutine} surface="web" />));
 
     // Your week at a glance comes first, with words and her usual.
     expect(host.querySelector('.ay-db-glance')).toBeTruthy();
