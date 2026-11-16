@@ -205,7 +205,8 @@ export default function RoutineTimeline({ compact = true, cycle = null, onOpenRo
         {onRemove && productCount > 0 && <div className="ay-rt2__bar"><button type="button" className="ay-rt2__edit" aria-pressed={editing} onClick={() => setEditing((v) => !v)}>{editing ? 'Done' : 'Edit routine'}</button></div>}
         {(onShop && productCount > 0) || onOpenRoutine ? <div className="ay-rt2__foot">
           {onShop && productCount > 0 && <button type="button" className="ay-rt2__shop" onClick={onShop}>Shop {productCount} product{productCount === 1 ? '' : 's'}</button>}
-          {onOpenRoutine && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>Edit routine</button>}
+          {/* Nov 16 (founder: "Edit routine is on there twice"): only when the inline Edit isn't shown. */}
+          {onOpenRoutine && !(onRemove && productCount > 0) && <button type="button" className="ay-rt2__all" onClick={onOpenRoutine}>Edit routine</button>}
         </div> : null}
       </div>
     );

@@ -40,9 +40,9 @@ function ReminderNote({ status, onTest }) {
   if (status === 'test_sent') return <p className="ay-dp__note" role="status">A test reminder arrives in 5 seconds. Lock your phone to see it.</p>;
   if (!status || status === 'scheduled' || status === 'none') return null;
   const text = status === 'denied' ? 'Notifications are off for ayna. Turn them on in your phone Settings to get reminders.'
-    : status === 'unavailable' ? 'Reminders work in the ayna app on your phone.'
+    : status === 'unavailable' ? ''
       : "Couldn't set the reminder. Try again.";
-  return <p className="ay-dp__note" role="status">{text}</p>;
+  return text ? <p className="ay-dp__note" role="status">{text}</p> : null;
 }
 
 function Sheet({ title, onClose, children }) {
@@ -235,10 +235,8 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
       <H id="ay-dp-h" className="ay-dp__h">{heading}</H>
       <button type="button" className="ay-dp-add" onClick={() => setSheet({ type: 'add', tab: 'med' })} aria-label="Add to your plan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg></button>
     </div>
-    {items.length > 0 && <div className="ay-dp-progress" aria-live="polite">
-      <span>{done} of {items.length} done</span>
-      <i aria-hidden="true"><b style={{ width: `${Math.round((done / items.length) * 100)}%` }} /></i>
-    </div>}
+    {/* Nov 16 (founder: "still messy and confusing"): the count is one quiet line; no separate progress bar. */}
+    {items.length > 0 && <p className="ay-dp-count" aria-live="polite">{done} of {items.length} done</p>}
     {/* Nov 15 (founder): with nothing planned at all, no day switcher; it only matters once there is a plan. */}
     {!compact && (activeMeds.length > 0 || myActs.length > 0 || offset !== 0) && <div className="ay-dp-days-nav" role="group" aria-label="Day">
       <button type="button" className="ay-dp__ghost ay-dp-arrow" onClick={() => setOffset((o) => o - 1)} aria-label="Previous day">‹</button>
@@ -250,7 +248,6 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
     {items.length === 0
       ? (offset === 0
         ? <div className="ay-dp-empty">
-          <p>Add what you take and do each day. ayna lays it out by time so you can tick it off.</p>
           <ul className="ay-dp-start">
             <li><button type="button" onClick={() => setSheet({ type: 'add', tab: 'med' })}><i aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="6" rx="3" transform="rotate(-45 12 12)" /><path d="M9.2 9.2l5.6 5.6" /></svg></i><span><b>Add a medication</b><small>With reminders if you want them</small></span><Chevron /></button></li>
             <li><button type="button" onClick={() => setSheet({ type: 'add', tab: 'act' })}><i aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8" /><path d="M9 21l2.5-6 3 2.5V21M7 11l3-3.5 4 1 2.5 3.5M11.5 15l1-6" /></svg></i><span><b>Add an activity</b><small>A walk, stretching, a bath</small></span><Chevron /></button></li>
@@ -266,7 +263,7 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
     <ReminderNote status={remStatus} onTest={planRemindersAvailable() ? async () => setRemStatus(await sendTestReminder()) : null} />
 
     {!compact && (activeMeds.length > 0 || stoppedMeds.length > 0 || myActs.length > 0) && <details className="ay-dp-manage">
-      <summary>Manage medications and activities</summary>
+      <summary>Edit your plan</summary>
       {activeMeds.length > 0 && <ul className="ay-dp-mlist">{activeMeds.map((m) => <li key={m.id}>
         <div><b>{m.name}</b><span>{[doseLabel(m), scheduleLabel(m)].filter(Boolean).join(' · ')}</span></div>
         <div className="ay-dp-mlist__acts">

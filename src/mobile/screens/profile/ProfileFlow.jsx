@@ -650,10 +650,14 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
           )}
           <span className="ay-you-names">
             {/* The page's one shout (uniqueness pass): her name, oversized, on the espresso band. */}
-            <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout></> : <Shout as="span" size="l" className="ay-you-shout">{greetingForNow()}</Shout>}</h1>
+            {/* Nov 16 (founder: "make the profile even better"): her name, no greeting (Home already says hello). */}
+            <h1>{realName ? <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout> : <Shout as="span" size="l" className="ay-you-shout">Your profile</Shout>}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
             {photoMsg && <span className="ay-you2-photomsg" role="status">{photoMsg}</span>}
             {/* Nov 16: which plan this account is on, so a team account (always Pro) is never mistaken for a free one. */}
+            {/* Nov 16 (founder): "Edit profile" under the photo: her Community profile, where she edits her name,
+                bio and photo and sees her posts. */}
+            {signedIn && (openMyProfile || onOpenCommunity) && <button type="button" className="ay-you-editprofile" onClick={openMyProfile || (() => onOpenCommunity({}))}>Edit profile</button>}
             {pro.plan && <span className="ay-you-plan">{{ team: 'ayna Pro · team account', pro: 'ayna Pro', free: 'Free plan', open: 'Free plan · Pro features open for everyone right now' }[pro.plan]}</span>}
           </span>
         </div>

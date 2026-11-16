@@ -236,3 +236,21 @@ body .ay-w2-studies li { display: grid; gap: 4px; padding: 14px 16px; border-rad
 body .ay-w2-studies small { font: 700 13px/1.2 var(--ay-sans-stack, sans-serif); opacity: .8; }
 body .ay-w2-studies span { font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); }
 body .ay-w2-studies a { justify-self: start; min-height: 32px; display: inline-flex; align-items: center; color: #3e2723; font: 700 14px/1.2 var(--ay-sans-stack, sans-serif); text-decoration: underline; text-underline-offset: 3px; }
+body .ay-w2-rank { display: grid; gap: 6px; padding: 16px; border-radius: 18px; background: #f7badd; color: #3e2723; }
+body .ay-w2-rank h3 { margin: 0; color: #3e2723; }
+body .ay-w2-rank p { margin: 0; font: 500 15px/1.4 var(--ay-sans-stack, sans-serif); }
+
+/* Nov 16 (founder: "the text is hard to read"): everything on a pink tile is espresso, full strength, light and dark. */
+html body :is(.ay-w2-rank, .ay-w2-tile:not(.is-ink), .ay-w2-clin, .ay-w2-studies li) :is(h3, small, span, b, p, strong, a, em) { color: #3e2723 !important; opacity: 1 !important; }
+html body :is(.ay-w2-rank, .ay-w2-tile:not(.is-ink), .ay-w2-clin, .ay-w2-studies li) { color: #3e2723 !important; }
+html body .ay-w2-rank h3 { font-size: 17px; }
+/* "Was this match useful?" centred. */
+html body .ay-w2-body .ay-mfb, html body .ay-w2-body [class*="match-feedback"], html body .ay-w2-body [class*="matchfb"] { text-align: center; justify-items: center; justify-content: center; }
+html body .ay-w2-body .ay-matchfb { display: grid !important; justify-items: center !important; text-align: center !important; gap: 6px; }
+html body .ay-w2-body .ay-matchfb__acts { display: flex !important; justify-content: center !important; gap: 16px; }
+html body .ay-w2-studies .ay-w2-studies__note { font: 500 13px/1.35 var(--ay-sans-stack, sans-serif) !important; opacity: .8 !important; }
+
+/* Nov 16 dark-mode check of "Why this fits you": the bars and the brown tiles were brown on the brown page. */
+html body .ayna-mobile[data-theme*='dark'] .ay-w2-needs i, html body [data-theme*='dark'] .ay-w2-needs i { background: rgba(255, 237, 172, .2) !important; }
+html body .ayna-mobile[data-theme*='dark'] .ay-w2-needs b, html body [data-theme*='dark'] .ay-w2-needs b { background: #ffedac !important; }
+html body .ayna-mobile[data-theme*='dark'] :is(.ay-w2-tile.is-ink, .ay-w2-pro), html body [data-theme*='dark'] :is(.ay-w2-tile.is-ink, .ay-w2-pro) { background: #4e3632 !important; }

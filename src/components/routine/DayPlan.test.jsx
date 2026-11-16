@@ -28,9 +28,11 @@ beforeEach(() => {
 });
 
 describe('DayPlan', () => {
-  it('empty state says what it does', async () => {
+  it('empty state offers the two ways to start (Nov 16: no intro sentence)', async () => {
     await act(async () => root.render(<DayPlan />));
-    expect(host.textContent).toContain('Add what you take and do each day');
+    expect(host.textContent).toContain('Add a medication');
+    expect(host.textContent).toContain('Add an activity');
+    expect(host.textContent).not.toContain('Add what you take and do each day');
   });
 
   it('add a medication, mark it taken, undo', async () => {

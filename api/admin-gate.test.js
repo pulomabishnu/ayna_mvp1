@@ -138,3 +138,15 @@ describe('send-test-email (team only)', () => {
     expect(res.statusCode).toBe(403);
   });
 });
+
+describe('admins are @aynahealth.co only (founder, Nov 16)', () => {
+  it('a personal address on ADMIN_EMAILS is not an admin', async () => {
+    const { isAdminUser } = await import('./_admin.js');
+    vi.stubEnv('ADMIN_EMAILS', 'founder@gmail.com,team@aynahealth.co');
+    const ok = { email_confirmed_at: '2026-10-01T00:00:00Z' };
+    expect(isAdminUser({ ...ok, email: 'founder@gmail.com' })).toBe(false);
+    expect(isAdminUser({ ...ok, email: 'Team@AynaHealth.co' })).toBe(true);
+    expect(isAdminUser({ ...ok, email: 'x@aynahealth.co.evil.com' })).toBe(false);
+    vi.unstubAllEnvs();
+  });
+});

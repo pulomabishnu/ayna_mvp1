@@ -14,8 +14,8 @@ function reviewer(id, date, feedback = '') {
 }
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.stubEnv('ADMIN_EMAILS', 'ADMIN@example.test');
-  verifyUser.mockResolvedValue({ user: { email: 'admin@example.test', email_confirmed_at: '2026-10-01T00:00:00Z' }, admin: { auth: { admin: { listUsers } } } });
+  vi.stubEnv('ADMIN_EMAILS', 'ADMIN@aynahealth.co');
+  verifyUser.mockResolvedValue({ user: { email: 'admin@aynahealth.co', email_confirmed_at: '2026-10-01T00:00:00Z' }, admin: { auth: { admin: { listUsers } } } });
 });
 afterEach(() => vi.unstubAllEnvs());
 describe('popup review administration', () => {
@@ -63,7 +63,7 @@ describe('popup review administration', () => {
     expect(res.body.results.map(r => r.feedback)).toEqual(['Real user']);
   });
   it('rejects non-admins before loading private feedback', async () => {
-    vi.stubEnv('ADMIN_EMAILS', 'someoneelse@example.test');
+    vi.stubEnv('ADMIN_EMAILS', 'someoneelse@aynahealth.co');
     const res = response();
     await handler({ method: 'GET' }, res);
     expect(res.code).toBe(403);

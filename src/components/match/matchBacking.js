@@ -19,6 +19,9 @@ export function matchBacking(product) {
     .sort((a, z) => KIND_ORDER[a.kind] - KIND_ORDER[z.kind])
     .filter((r) => (seen.has(r.url) ? false : seen.add(r.url)))
     .slice(0, 3);
-  return { clinician: clinician && (clinician.who || clinician.credential) ? clinician : null, studies };
+  // Nov 16 (founder: "say stuff like clinicians recommend these ingredients for this symptom"): each source as a
+  // plain sentence about who says it. The words of the claim are the recorded ones, never new.
+  const WHO = { product: 'A study of this product', paper: 'A published study', gov: 'Health guidance', expert: 'Medical society guidance', ingredient: 'Research on what’s in it' };
+  return { clinician: clinician && (clinician.who || clinician.credential) ? clinician : null, studies: studies.map((x) => ({ ...x, who: WHO[x.kind] || x.label })) };
 }
 

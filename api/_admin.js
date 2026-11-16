@@ -24,9 +24,14 @@ function list(...names) {
     .filter(Boolean);
 }
 
+// Founder, Nov 16: only @aynahealth.co accounts are admins (admin pages and free Pro), never a personal address,
+// even if one is still listed in ADMIN_EMAILS.
+export const ADMIN_DOMAIN = '@aynahealth.co';
+
 /** Pure allowlist match (no confirmation check). Prefer isAdminUser. */
 export function isAdminEmail(email, { includeCampaignTeam = false } = {}) {
   if (!email) return false;
+  if (!String(email).trim().toLowerCase().endsWith(ADMIN_DOMAIN)) return false;
   const allow = includeCampaignTeam ? list('ADMIN_EMAILS', 'CAMPAIGN_TEAM_EMAIL') : list('ADMIN_EMAILS');
   return allow.includes(String(email).trim().toLowerCase());
 }

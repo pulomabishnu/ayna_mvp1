@@ -1,5 +1,5 @@
 import HealthWhyLine from '../health/HealthWhyLine.jsx';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import MatchFeedback from '../today/MatchFeedback.jsx';
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
 import { needBreakdown, tierWord, exclusionLines, whyMatch, isBleedingEvaluation } from '../../utils/matchDisplay.js';
@@ -78,6 +78,28 @@ export function priceSpot(product) {
 }
 const money = (n) => `$${n % 1 ? n.toFixed(2) : n}`;
 
+// Nov 16 (founder: "make the match explanation more insightful"): where this product stands among HER matches for
+// the same need, from the same engine and her same answers. Only products recommended on shelves count (50%+).
+function rankAmongHers(product, details, quizResults, healthProfile, matchOpts) {
+  const needId = details?.needId;
+  if (!needId || !quizResults) return null;
+  const fns = new Set([...(product.healthFunctions || []), product.category].filter(Boolean));
+  const pool = ALL_PRODUCTS.filter((p) => p.id === product.id || p.category === product.category || (p.healthFunctions || []).some((f) => fns.has(f)));
+  const list = [];
+  for (const p of pool) {
+    let d;
+    try { d = p.id === product.id ? details : getProductMatchDetailsForProduct(p, quizResults, healthProfile, matchOpts); } catch { continue; }
+    // A product that helps this need counts even when another need is its main one (founder, Nov 16).
+    const helps = d?.needId === needId || (d?.needMatches || []).some((m) => m.needId === needId && m.relevant);
+    if (d?.eligible === false || d?.matchStatus !== 'scored' || !helps || !(d.percent >= 50)) continue;
+    list.push({ p, pct: Math.round(d.percent) });
+  }
+  list.sort((a, z) => z.pct - a.pct);
+  const at = list.findIndex((x) => x.p.id === product.id);
+  if (at < 0 || list.length < 2) return null;
+  return { place: at + 1, of: list.length, top: at > 0 ? list[0] : null, next: at === 0 ? list[1] : null };
+}
+
 function Ring({ percent }) {
   return <div className="ay-w2-ring" style={{ '--a': `${Math.max(0, Math.min(100, percent)) * 3.6}deg` }}><span>{percent}<small>%</small></span></div>;
 }
@@ -113,6 +135,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const spot = shown != null ? priceSpot(product) : null;
   const ev = ev0.level > 0 ? ev0 : tr ? { level: ({ A: 3, B: 2, C: 1 })[tr.grade] || 0, word: tr.label } : ev0;
   const tierText = shown != null ? tierWord(tier, shown, details?.v2?.band) : '';
+  const rank = useMemo(() => (scored ? rankAmongHers(product, details, quizResults, healthProfile, matchOpts) : null), [scored, product, details, quizResults, healthProfile, matchOpts]);
   const exLines = excluded ? (exclusionLines(details).length ? exclusionLines(details) : (details.considerations || []).map((c) => c.text).filter(Boolean)) : [];
 
   return <div className="ay-w2-body">
@@ -125,8 +148,11 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
       </section>}
 
       {/* Nov 16 (founder: "with Pro I can't see how my health data is influencing the match"): say it, either way. */}
-      {shown != null && details.healthData && <HealthWhyLine healthData={details.healthData} />}
-      {shown != null && !details.healthData && matchOpts?.healthContext && <section className="ay-hwhy is-none"><h3 className="ay-hwhy__title">Your health data</h3><p>Connected, but nothing in your recent trends is about {forWhat || 'what this product is for'}, so it didn’t change this match.</p></section>}
+      {/* Nov 16 (founder): how her health data moved the match is a Pro feature. Pro (and the team) see it;
+          others see a locked line. */}
+      {shown != null && details.healthData && pro && <HealthWhyLine healthData={details.healthData} />}
+      {shown != null && details.healthData && pro === false && <section className="ay-hwhy is-locked"><h3 className="ay-hwhy__title">Your health data</h3><p>See how your cycle, sleep and activity move this match with ayna Pro.</p><button type="button" className="ay-w2-link" onClick={() => openProPaywall({ feature: 'insights', featureName: 'Health data in your matches' })}>Unlock</button></section>}
+      {shown != null && !details.healthData && pro && matchOpts?.healthContext && <section className="ay-hwhy is-none"><h3 className="ay-hwhy__title">Your health data</h3><p>Connected, but nothing in your recent trends is about {forWhat || 'what this product is for'}, so it didn’t change this match.</p></section>}
 
       {excluded && <ul className="ay-w2-list is-no">{(exLines.length ? exLines : ['Doesn’t fit your health profile right now']).slice(0, 3).map((l) => <li key={l}>{cap(l)}</li>)}</ul>}
       {!excluded && shown == null && held && <SafetyHoldNote surface="why" hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />}
@@ -139,6 +165,13 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
         {/* Notion (Nov 13): "Add trouble sleeping to your answers" added it right here instead of sending her
             back through the quiz; the match updates in place. Without a way to save, the quiz as before. */}
         {added ? <p className="ay-w2-done" role="status">Added to your answers. Your match updated.</p> : browse && (onAddNeed || onUpdateHealth) && (<button type="button" className="ay-w2-link" onClick={async () => { if (onAddNeed && bf.needId) { const ok = await onAddNeed(bf.needId); if (ok !== false) { setAdded(true); return; } } onUpdateHealth?.(); }}>Add {bf.phrase || 'this'} to your answers</button>)}
+      </section>}
+
+      {rank && <section className="ay-w2-rank">
+        <h3>Among your matches</h3>
+        <p><b>{rank.place === 1 ? 'Your top pick' : `Your #${rank.place} pick`}</b> for {forWhat || 'this'}, out of {rank.of} products that fit you.</p>
+        {rank.top && <p>Your top pick there is {rank.top.p.name} at {rank.top.pct}%.</p>}
+        {rank.next && <p>Next is {rank.next.p.name} at {rank.next.pct}%.</p>}
       </section>}
 
       {rows.length > 1 && <section>
@@ -187,12 +220,13 @@ function Backing({ product }) {
   const { clinician, studies } = matchBacking(product);
   if (!clinician && !studies.length) return null;
   return <section className="ay-w2-backing">
-    <h3>What backs this</h3>
+    <h3>What the research says</h3>
     {clinician && <p className="ay-w2-clin">Clinical opinion from <b>{[clinician.who, clinician.credential].filter(Boolean).join(', ')}</b>. Read it under Clinical opinion on this page.</p>}
     {studies.length > 0 && <ul className="ay-w2-studies">{studies.map((st) => <li key={st.url}>
-      <small>{st.label}</small>
-      <span>{st.claim}</span>
-      <a href={st.url} target="_blank" rel="noopener noreferrer">{st.publisher || 'Source'}<span className="sr-only"> (opens in a new tab)</span></a>
+      <small>{st.who}{st.publisher ? ` · ${st.publisher}` : ''}</small>
+      <span>“{st.claim}”</span>
+      {st.kind === 'ingredient' && <span className="ay-w2-studies__note">About the ingredient, not this exact product.</span>}
+      <a href={st.url} target="_blank" rel="noopener noreferrer">Read the source<span className="sr-only"> from {st.publisher || 'the source'} (opens in a new tab)</span></a>
     </li>)}</ul>}
   </section>;
 }

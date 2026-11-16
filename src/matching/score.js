@@ -844,9 +844,10 @@ function flowFit(pp, m) {
   return fit;
 }
 
-function focusFactor(pp, needId) {
-  const others = Object.entries(pp.health_need_relevance).filter(([id, e]) => id !== needId && e.score >= 0.8).length;
-  return Math.max(0.6, 1 - 0.08 * others);
+// Nov 16 (founder): a product that also helps another need is not worse for this one ("that doesn't take away from
+// how well it works for a need"). No focus penalty: specificity is only how directly it is made for this need.
+function focusFactor() {
+  return 1;
 }
 function specificityComponent(pp, needId, base) {
   return clamp01((SPECIFICITY_BASE[relationshipOf(base)] || 0) * focusFactor(pp, needId));
