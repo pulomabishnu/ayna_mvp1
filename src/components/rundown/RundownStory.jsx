@@ -59,7 +59,8 @@ function CardArt({ card, count }) {
       <figure className="ay-rdd-viz ay-rdd-ringwrap ay-rd-art is-done" aria-hidden="true">
         <span className="ay-rdd-ringbox">
           <svg viewBox="0 0 120 120" className="ay-rdd-ring"><circle className="ay-rdd-track" cx="60" cy="60" r="52" /><circle className="ay-rdd-arc" cx="60" cy="60" r="52" pathLength="100" style={{ strokeDashoffset: 0 }} transform="rotate(-90 60 60)" /></svg>
-          <span className="ay-rdd-center"><b>{count}</b><small>{count === 1 ? 'thing' : 'things'}</small></span>
+          {/* Nov 16 (founder: "what do you mean 4 things, there were more pages"): no count; a check and the list below says what she saw. */}
+          <span className="ay-rdd-center"><svg viewBox="0 0 24 24" className="ay-rdd-check"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg><small>All caught up</small></span>
         </span>
       </figure>
     ) : null;
