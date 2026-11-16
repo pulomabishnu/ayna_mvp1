@@ -389,3 +389,12 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ays-visual { display: none !important; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ays-card { gap: 16px !important; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-pcard :is(img, picture, [class*="media"], [class*="photo"], [class*="img"]) { max-height: 200px !important; }
+
+/* Nov 16 (founder: "this looks messy"): today's pick reads top to bottom, all centred: the product, the evidence
+   line, one full-width Add button, "Show another" under it, and the "Here's another pick · Undo" note centred
+   and quiet underneath. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-rd-product { display: grid !important; justify-items: center !important; gap: 12px !important; width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-rd-product > .ay-rd-actions { display: grid !important; grid-template-columns: 1fr !important; justify-items: center !important; gap: 4px !important; width: 100%; margin: 0 !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-rd-product > .ay-rd-actions > .ay-rd-primary { width: 100% !important; justify-content: center !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-rd-product > .ay-rd-actions > .ay-rd-link { min-height: 44px; font-size: 15px !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-rd-note { text-align: center !important; justify-self: center; margin: 0 !important; font-size: 14px !important; opacity: .85; }
