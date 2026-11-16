@@ -95,7 +95,12 @@ function Body({ card, h, done }) {
       return (
         <div className="ay-rd-choices" role="group" aria-label={card.title}>
           {card.options.values.map((v, i) => (
-            <button key={String(v)} type="button" className="ay-rd-chip" aria-pressed={done?.value === v} onClick={() => h.checkIn(card, v)}>{card.options.labels[i]}</button>
+            // Nov 16 (founder: "center it, spice it up"): each answer shows how much, as a row of dots.
+            <button key={String(v)} type="button" className="ay-rd-chip ays-ci" aria-pressed={done?.value === v} onClick={() => h.checkIn(card, v)} style={{ '--i': i }}>
+              <span className="ays-ci__lvl" aria-hidden="true">{card.options.values.slice(card.options.values[0] === 0 ? 1 : 0).map((_, k) => <i key={k} className={k < (card.options.values[0] === 0 ? i : i + 1) ? 'is-on' : ''} />)}</span>
+              <span className="ays-ci__txt">{card.options.labels[i]}</span>
+              {done?.value === v && <svg className="ays-ci__ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>}
+            </button>
           ))}
           {done && <p className="ay-rd-note" role="status">Saved to your log.</p>}
         </div>
