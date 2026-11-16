@@ -45,6 +45,7 @@ export function friendlyError(error) {
   }
   // src/utils/network.js: offline / timed out / unreachable already reads well.
   if (error?.name === 'NetworkError' || /^NetworkError: /.test(msg)) return msg.replace(/^NetworkError: /, '');
+  if (error?.code === 'not_deleted') return msg;
   if (error?.code === '23505') return 'That already exists.';
   if (error?.code === '23503') return "That product isn't in the ayna catalog.";
   if (/row-level security|permission denied/i.test(msg)) return "You don't have access to do that.";
@@ -307,7 +308,9 @@ export async function createComment(supabase, userId, { postId, parentId = null,
 }
 
 export async function deleteComment(supabase, commentId) {
-  check(await supabase.from('community_comments').delete().eq('id', commentId));
+  // Row-level security can drop a delete silently; ask for the row back so "deleted" is never claimed falsely.
+  const rows = check(await supabase.from('community_comments').delete().eq('id', commentId).select('id'));
+  if (Array.isArray(rows) && rows.length === 0) throw Object.assign(new Error('We couldn’t delete that reply. Please try again.'), { code: 'not_deleted' });
 }
 
 // ── Helpful / save / hide ──────────────────────────────────────────────────

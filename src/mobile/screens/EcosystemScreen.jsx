@@ -33,7 +33,6 @@ import { searchProducts } from '../../utils/search/index.js';
 import '../eco-app-best.css';
 import { PlusIcon } from '../../components/icons/UiIcons.jsx';
 import { ecosystemCounts, needsCoveredLine } from '../../utils/ecosystemCounts.js';
-import RoutineTimeline from '../../components/routine/RoutineTimeline.jsx';
 import { ADD_TO_ROUTINE } from '../../utils/routineCopy.js';
 import { openTodayLog } from '../../components/today/openLog.js';
 import { routineDay } from '../../components/you/setupSteps.js';
@@ -93,21 +92,16 @@ export default function EcosystemScreen({
   onRequestEcosystemReset, onOpenChanges, ecosystemNotice, onOpenMonthlyCheckin, onOpenProfile,
   quizAnswers = null, matchOpts, onOpenWhyMatch, onAddToEcosystem, onToggleSaved, onReplayStory,
   onOpenHealthData, healthSummary = null, healthConnectedCount = 0,
-  onAddGoal, ecoTab = 'products', onEcoTab, routineHave = {},
+  onAddGoal, ecoTab = 'products', onEcoTab,
   routineExcluded = {}, routineOutcomes = {},
   onConnectHealth, onRequireAuth, onPersonalize, lastQuizAnswers = null,
   quizDraft = null, onResumeQuiz, onStartOverQuiz, onFixLifeStages, onStartQuiz, onEditIntakeStep, onUpdateIntake, articles = [], onBack,
-  omittedProducts = {}, onGoToday,
+  onGoToday,
   // Inside the ayna tab's Products view: the switch row replaces the header.
   homeTop = null,
 }) {
   const rootRef = useRef(null);
   const titleRef = useRef(null);
-  // Her routines, one per active need (period pain, PMS, sleep): Start here, Track it, Other options.
-  const routineSource = {
-    userId: authUser?.id || null, quizAnswers, matchOpts,
-    products: myProducts, saved: savedProducts, omitted: omittedProducts, have: routineHave,
-  };
   const openCheckIn = onGoToday ? () => { onGoToday(); setTimeout(() => openTodayLog('app'), 400); } : null;
   const [sheet, setSheet] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -416,7 +410,8 @@ export default function EcosystemScreen({
       </ProFeatureGate>
     </div> : <>
     {hasAnything && <div className="eco-views" role="tablist" aria-label="Your products lists">
-      {[['mine', 'All', currentProducts.length], ['picks', 'ayna picks', picksForYou.length], ['saved', 'Saved', savedList.length], ['routine', 'Routine', null]].map(([id, label, n]) => (
+      {/* Nov 16 (founder): All (her routine products) · Saved · ayna picks. The routine timeline lives on Home › Routine only. */}
+      {[['mine', 'All', currentProducts.length], ['saved', 'Saved', savedList.length], ['picks', 'ayna picks', picksForYou.length]].map(([id, label, n]) => (
         <button key={id} type="button" role="tab" aria-selected={view === id} className={view === id ? 'is-on' : ''} onClick={() => { setView(id); setChip('all'); }}>{label}{n != null && n > 0 && <small>{n}</small>}</button>
       ))}
     </div>}
@@ -430,10 +425,6 @@ export default function EcosystemScreen({
       {shownSaved.length ? <ul>{shownSaved.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul>
         : <p className="eco-list__empty">{q && savedList.length ? 'No saved product matches.' : 'Tap the heart on any product to save it here.'}</p>}
     </section>}
-    {view === 'routine' && <>
-      {/* Nov 15 (founder): the timeline only; the long 'Full routines…' fold is gone. */}
-      <div className="eco-list"><RoutineTimeline compact {...routineSource} onRemove={onAddToEcosystem || null} max={3} ecoMax={6} onOpenProduct={onOpenProduct} onCheckIn={openCheckIn} /></div>
-    </>}
 
     {(view === 'mine' || !hasAnything) && <>
     {chipSections.length > 1 && !q && <div className="eco-app-chips" role="group" aria-label="Show a shelf">

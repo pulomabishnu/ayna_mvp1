@@ -361,3 +361,11 @@
 .am-posted { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .am-posted-view { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border: 1.5px solid currentColor; border-radius: 99px; background: none; color: inherit; font: 600 13px/1 var(--ayna-font-ui); }
 
+/* Nov 16: delete her own reply; the blocked list on her profile. */
+.ayna-mobile .am-comment-acts { display: flex; gap: 16px; align-items: center; }
+.ayna-mobile .am-comment-acts button { min-height: 44px; }
+.ayna-mobile .am-comment-del { color: inherit; opacity: .75; }
+.ayna-mobile .am-blocked { list-style: none; margin: 12px 0 0; padding: 0; border-radius: 16px; overflow: hidden; background: rgba(62, 39, 35, .06); }
+.ayna-mobile[data-theme*='dark'] .am-blocked { background: rgba(255, 237, 172, .08); }
+.ayna-mobile .am-blocked li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 8px 16px; }
+.ayna-mobile .am-blocked li + li { box-shadow: inset 0 1px 0 rgba(62, 39, 35, .1); }
