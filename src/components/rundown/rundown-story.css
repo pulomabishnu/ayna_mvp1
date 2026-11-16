@@ -235,13 +235,7 @@
 /* Big numbers (the date, a stat, the ring) bounce in */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-art.is-date b, .ay-rd-art.is-stat .ays-big b, .ay-rdd-ringbox, .ay-rd-art.is-ask) { display: inline-block; animation: ay-rd-pop 640ms cubic-bezier(.2, 1.7, .35, 1) both; transform-origin: 30% 70%; }
 @keyframes ay-rd-pop { 0% { transform: scale(.3) rotate(-8deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
-/* The opening date gets a "60 sec" sticker */
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-opening .ay-rd-art.is-date { position: relative; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays).is-opening .ay-rd-art.is-date::after {
-  content: '60 sec'; position: absolute; top: 4px; left: min(58vw, 230px); padding: 8px 12px; border-radius: 50%; aspect-ratio: 1; display: grid; place-items: center;
-  background: #3e2723; color: #ffedac; font: 800 14px/1 var(--s-ui); transform: rotate(12deg); box-shadow: 3px 3px 0 #ffedac;
-  animation: ay-rd-sticker 520ms cubic-bezier(.2, 1.6, .4, 1) 420ms both;
-}
+/* Nov 16 (founder): no "60 sec" sticker on the opening card. */
 
 /* Answer chips and buttons squish when tapped */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-rd-chip, .ay-rd-primary) { transition: transform 160ms cubic-bezier(.2, 1.6, .4, 1), background-color 160ms ease; }
