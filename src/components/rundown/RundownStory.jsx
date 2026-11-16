@@ -458,7 +458,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
           </article>
         </div>
         {/* Nov 16 (founder): no "…" menu. "How ayna got this" (with Not useful inside) sits at the bottom, above the page count. */}
-        {!safety && !['checkin', 'outcome'].includes(card.kind) && <div className="ays-how"><More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} /></div>}
+        {!safety && !['checkin', 'outcome'].includes(card.kind) && !card.check && <div className="ays-how"><More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} /></div>}
         <div className="ay-rd-nav ays-nav">
           <button type="button" className="ays-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
           <span aria-hidden="true">{i + 1} of {n}</span>

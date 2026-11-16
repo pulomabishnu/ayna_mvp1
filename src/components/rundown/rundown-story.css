@@ -372,3 +372,12 @@
   --s-panel: #ffedac; --s-track: #ffedac; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
   color: #3e2723;
 }
+
+/* Nov 16 (founder screenshot): the period "Quick check" answers were narrow outlined boxes and "No, ended yesterday"
+   spilled out of its box. Now full-width soft-filled rows like the check-in, no outlines; the "?" day is a soft fill. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; width: 100%; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check > .ay-rd-chip { width: 100% !important; min-height: 56px !important; height: auto !important; padding: 14px 20px !important; justify-content: flex-start !important; text-align: left !important; white-space: normal !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important; background: var(--s-btn) !important; color: var(--s-on-btn) !important; font: 700 17px/1.25 var(--s-ui) !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check > .ay-rd-basis { margin: 0 0 2px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-tile:is(.is-ahead, .is-gap, .is-maybe) { border: 0 !important; background: color-mix(in srgb, var(--s-fg) 14%, transparent) !important; }
+/* The end card's list of what she saw: soft rows, no outlines (Nov 16 pass). */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-recap button { border: 0 !important; box-shadow: none !important; background: color-mix(in srgb, var(--s-fg) 10%, transparent) !important; }
