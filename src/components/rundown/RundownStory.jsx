@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
 import ProductCard from '../ProductCard.jsx';
 import AppProductCard from '../../mobile/components/ProductCard.jsx';
+import ProductImage from '../../mobile/components/ProductImage.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
 import { READ_PHOTOS } from '../../data/readCovers.js';
 import { ProductSheetContext } from '../../mobile/productSheetContext.js';
@@ -119,13 +120,27 @@ function Body({ card, h, done }) {
       // tap it for the sheet over this card; Buy, Save, Add are one tap each.
       if (h.sheet) {
         return (
-          <div className="ay-rd-product has-open">
-            <AppProductCard product={m.product} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
-            <Evidence level={m.evidence} />
-            <span className="ay-rd-actions">
-              <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(m.product); h.next(); }}>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add to my products'}</button>
-              {h.canSwap(card) ? <button type="button" className="ay-rd-link" onClick={() => h.swap(card)}>Show another</button> : h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
-            </span>
+          // Nov 16 (founder: "I don't want to keep scrolling, stop stacking boxes"; Instagram's product sticker and
+          // Apple Health's rows as the model): one compact row, photo on the left, the facts on the right; tap it for
+          // the product sheet. One line of two actions under it. Fits on the screen with the words above.
+          <div className="ay-rd-product has-open is-row">
+            <div className="ay-rd-prow">
+              <button type="button" className="ay-rd-prow__open" onClick={() => h.openSheet(m.product)} aria-label={`${m.product.name}, ${m.percent}% match. Open the product.`}>
+                <span className="ay-rd-prow__img"><ProductImage product={m.product} src={m.product.image || m.product.imageUrl} alt="" style={{ objectFit: 'contain' }} /></span>
+                <span className="ay-rd-prow__txt">
+                  {m.product.brand && <small>{m.product.brand}</small>}
+                  <b>{m.product.brand && String(m.product.name || '').toLowerCase().startsWith(String(m.product.brand).toLowerCase() + ' ') ? String(m.product.name).slice(String(m.product.brand).length + 1) : m.product.name}</b>
+                  <span className="ay-rd-prow__meta">{String(m.product.price || '').match(/\$\d[\d,]*(?:\.\d+)?\+?/) && <span>{String(m.product.price).match(/\$\d[\d,]*(?:\.\d+)?\+?/)[0]}</span>}<em>{m.percent}% match</em></span>
+                  <Evidence level={m.evidence} />
+                </span>
+              </button>
+              {/* Nov 16 (founder: "Add looks awkward"): a small Add pill inside the row, like Instagram's product sticker. */}
+              <button type="button" className={`ay-rd-prow__add${h.sheet.inRoutine(m.product.id) ? ' is-on' : ''}`} aria-label={h.sheet.inRoutine(m.product.id) ? `${m.product.name} added to your products` : `Add ${m.product.name} to my products`} onClick={() => { h.sheetAdd(m.product); h.next(); }}>
+                {h.sheet.inRoutine(m.product.id) ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>}
+                <span>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add'}</span>
+              </button>
+            </div>
+            {h.canSwap(card) ? <button type="button" className="ay-rd-link ay-rd-prow__swap" onClick={() => h.swap(card)}>Show another</button> : h.notForMe && <button type="button" className="ay-rd-link ay-rd-prow__swap" onClick={() => h.notForMe(card)}>Not for me</button>}
           </div>
         );
       }
