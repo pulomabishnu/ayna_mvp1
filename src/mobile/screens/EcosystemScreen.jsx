@@ -345,7 +345,17 @@ export default function EcosystemScreen({
     .map((sct) => (q ? { ...sct, products: sct.products.filter(hit), picks: (sct.picks || []).filter(hit) } : sct))
     .filter((sct) => !q || sct.products.length || sct.picks.length);
   const matchCount = q ? visibleSections.reduce((n, sct) => n + sct.products.length, 0) : 0;
-  const anyMatch = !q || visibleSections.length > 0;
+  // The search covers every list: her products, ayna's picks and Saved (Nov 16: saved hearts didn't show).
+  const shownSaved = savedList.filter(hit);
+  const shownPicks = picksForYou.filter(hit);
+  const anyMatch = !q || visibleSections.length > 0 || shownSaved.length > 0 || shownPicks.length > 0;
+  const foundLine = () => {
+    const bits = [];
+    if (matchCount) bits.push(`${matchCount} in your products`);
+    if (shownSaved.length) bits.push(`${shownSaved.length} saved`);
+    if (shownPicks.length) bits.push(`${shownPicks.length} in ayna picks`);
+    return bits.length ? bits.join(' · ') : 'Nothing in your products or Saved matches.';
+  };
 
   // The page's one primary action: this month's check-in when it is due. It
   // lives in the summary card with "For you", not in a bar floating over the
@@ -368,7 +378,7 @@ export default function EcosystemScreen({
       <div className="eco-app-titlerow">
         <h1 id="ayna-cabinet-title" ref={titleRef}>Your products</h1>
       </div>
-      {ecoTab !== 'dashboard' && currentProducts.length > 0 && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
+      {ecoTab !== 'dashboard' && (currentProducts.length > 0 || savedList.length > 0) && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
         <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your products" aria-label="Search your products" />
       </form>}
@@ -427,12 +437,12 @@ export default function EcosystemScreen({
 
     {view === 'picks' && <section className="eco-list" aria-label="ayna picks for you">
       {/* Olga, focus group 11/9: "list matches by category". Grouped by product type, best match first inside each. */}
-      {picksForYou.length ? byType(picksForYou).map(([label, items]) => <div key={label} className="eco-list__group"><h3 className="eco-list__type">{label}</h3><ul className="eco-list__rows">{items.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul></div>)
+      {shownPicks.length ? byType(shownPicks).map(([label, items]) => <div key={label} className="eco-list__group"><h3 className="eco-list__type">{label}</h3><ul className="eco-list__rows">{items.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul></div>)
         : <p className="eco-list__empty">No new picks right now. <button type="button" onClick={() => onBrowse?.()}>Explore products</button></p>}
     </section>}
     {view === 'saved' && <section className="eco-list" aria-label="Saved products">
-      {savedList.length ? <ul>{savedList.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul>
-        : <p className="eco-list__empty">Tap the heart on any product to save it here.</p>}
+      {shownSaved.length ? <ul>{shownSaved.map((p) => <NameRow key={p.id} product={p} pct={pctFor(p)} onOpen={onOpenProduct} actionLabel="Add" onAction={onAddToEcosystem} done={myIds.has(p.id)} />)}</ul>
+        : <p className="eco-list__empty">{q && savedList.length ? 'No saved product matches.' : 'Tap the heart on any product to save it here.'}</p>}
     </section>}
     {view === 'routine' && <>
       {/* Glance first: the day timeline with her products by when she uses them; the full plans fold away. */}
@@ -452,7 +462,7 @@ export default function EcosystemScreen({
       <button type="button" aria-pressed={activeChip === 'all'} onClick={() => setChip('all')}>All</button>
       {chipSections.map((sct) => <button key={sct.key} type="button" aria-pressed={activeChip === sct.key} onClick={() => setChip(activeChip === sct.key ? 'all' : sct.key)}><i style={{ background: toneFor(sct) }} aria-hidden="true" />{shortNeedLabel(sct.label)}{sct.products.length > 0 && <small>{sct.products.length}</small>}</button>)}
     </div>}
-    {q && <p className="eco-app-found" role="status">{anyMatch ? `${matchCount} in your ecosystem` : 'Nothing in your ecosystem matches.'}{' '}<button type="button" onClick={() => onBrowse?.(query.trim())}>Search the Shop for “{query.trim()}”</button></p>}
+    {q && <p className="eco-app-found" role="status">{foundLine()}{' '}{shownSaved.length > 0 && !matchCount && <><button type="button" onClick={() => setView('saved')}>Show saved</button>{' '}</>}<button type="button" onClick={() => onBrowse?.(query.trim())}>Search the Shop for “{query.trim()}”</button></p>}
     {careFirst && hasAnything && <p className="ay-care-first__after">Products, when you are ready</p>}
 
     <div className={careFirst ? 'ay-eco-secondary' : undefined}>

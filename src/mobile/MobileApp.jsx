@@ -1130,10 +1130,11 @@ export default function MobileApp() {
       if (d.level === 3) { setRecap({ diff: d, undo }); return; }
       if (d.level === 2 && products.length) {
         const lines = diffLines(d);
-        setUpdatePop({ mode: 'suggest', kicker: 'Your matches changed', title: lines[0], sub: lines.slice(1).join('. ') || 'From what you just told ayna. Tap one to see why it fits.', products: products.slice(0, 3) });
+        setUpdatePop({ mode: 'suggest', kicker: 'Your matches changed', title: lines[0], sub: lines.slice(1).join('. ') || 'From what you just told ayna. Tap one to see why it fits.', products: products.slice(0, 3), undo });
         return;
       }
-      toast(toastFor(d), d.level >= 1 ? { label: "See what changed", onClick: () => setChangesOpen(true) } : null);
+      // A small change: the toast offers Undo (her answers, back to before); What's changed lives in Manage.
+      toast(toastFor(d), d.level >= 1 ? { label: 'Undo', onClick: undo } : null);
     }, 700);
     return () => window.clearTimeout(t);
   }, [lastQuizAnswers, authUser?.id]); // eslint-disable-line react-hooks/exhaustive-deps

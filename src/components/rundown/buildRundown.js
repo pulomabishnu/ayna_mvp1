@@ -481,19 +481,20 @@ export function buildRundown(input = {}) {
   const protectedCards = body.filter((c) => c.protected);
   // Focus group, Nov 11 (Zoleka, and the founders' follow-up): the one-tap check-in is the first page
   // after the opening, so she never has to look for it. It counts toward the five.
+  // Nov 16 (founder: "No daily fact"): the daily fact always shows, after the five, before the end.
+  const factSlot = protectedCards.length || body.length || checkins.length ? 1 : 0;
   const room = Math.max(0, RUNDOWN_RULES.maxContentCards - protectedCards.length - checkins.length);
   const pool = body.filter((c) => !c.protected);
   const rest = pool.slice(0, room);
   // The daily pick always makes the cut (a shorter rundown still ends on something to try).
   const pick = pool.find((c) => c.category === 'match');
   if (pick && room > 0 && !rest.includes(pick)) rest.splice(rest.length - 1, 1, pick);
-  // Founder, Nov 11: a daily ayna fact, near the end; it never takes a content slot.
+  // Founder, Nov 11: a daily ayna fact, near the end; it never takes a content slot (and always shows).
   const fact = factFor(today);
   const factCard = { key: `fact:${fact.id}:${today}`, category: 'frame', kind: 'text', kicker: 'Daily health fact (general info)', title: fact.text, body: 'A general health fact for everyone. It is not about you or your data.', sources: [fact.source], basisLine: `From ${fact.source.label}.` };
-  // Focus group, Nov 11 (10 pages was too long): the fact and the check-in only fill spare room,
-  // so the whole rundown is at most opening + 5 + the end.
+  // Focus group, Nov 11 (10 pages was too long): the whole rundown is at most opening + 5 + the end.
   const main = [...protectedCards, ...rest];
-  const extras = (main.length ? [factCard] : []).slice(0, Math.max(0, RUNDOWN_RULES.maxContentCards - checkins.length - main.length));
+  const extras = factSlot ? [factCard] : [];
   const content = [...protectedCards.filter((c) => c.category === 'safety'), ...checkins, ...main.filter((c) => c.category !== 'safety'), ...extras];
   if (!content.length) return { cards: [], skipped };
   const opening = { key: `opening:${today}`, category: 'frame', kind: 'opening', kicker: 'Your daily rundown', title: `Your ${weekday(today)} rundown`, body: 'Here is your health in 60 seconds.' };

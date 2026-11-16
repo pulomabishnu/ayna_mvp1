@@ -60,6 +60,8 @@ export default function UpdatePop({ update, onClose, onOpenProduct, onRemove, on
         {suggest && update.shop && onShop
           ? <button type="button" className="ay-upop__primary" onClick={() => onShop(update.shop)}>See products for this</button>
           : <button type="button" className="ay-upop__primary" onClick={suggest ? onClose : (onSeeAll || onClose)}>{suggest ? 'Done' : onSeeAll ? 'See my products' : 'Done'}</button>}
+        {/* Nov 16 (founder: "not seeing Undo this change"): every change she made can be undone from where it shows. */}
+        {update.undo && <button type="button" className="ay-upop__undo" onClick={async () => { const ok = await update.undo(); if (ok !== false) onClose?.(); }}>Undo this change</button>}
       </section>
     </div>,
     host,
