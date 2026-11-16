@@ -245,7 +245,7 @@ describe('Rundown product card and the sheet over the story', () => {
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 2 of 4');
     const story = document.querySelector('.ay-rd');
     // Nov 5 (founder): the Rundown shows NEW picks and she chooses to add one or not.
-    expect(btn('Add to my ecosystem', story)).toBeTruthy();
+    expect(btn('Add to my products', story)).toBeTruthy();
     act(() => story.querySelector('.ay-rd-product .ay-pc-main').click());
     expect(ctx.open).toHaveBeenCalledWith(product);
     // The sheet is up: no auto-advance, Escape and arrows are the sheet's.
@@ -259,7 +259,7 @@ describe('Rundown product card and the sheet over the story', () => {
     act(() => root.render(ui({ ...ctx, isOpen: false })));
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 2 of 4');
     // Adding it moves on to the next card.
-    act(() => btn('Add to my ecosystem', document.querySelector('.ay-rd')).click());
+    act(() => btn('Add to my products', document.querySelector('.ay-rd')).click());
     expect(ctx.addToRoutine).toHaveBeenCalledWith(product);
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 3 of 4');
   });

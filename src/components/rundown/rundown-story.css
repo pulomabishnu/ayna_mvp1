@@ -381,3 +381,11 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-tile:is(.is-ahead, .is-gap, .is-maybe) { border: 0 !important; background: color-mix(in srgb, var(--s-fg) 14%, transparent) !important; }
 /* The end card's list of what she saw: soft rows, no outlines (Nov 16 pass). */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-recap button { border: 0 !important; box-shadow: none !important; background: color-mix(in srgb, var(--s-fg) 10%, transparent) !important; }
+
+/* Nov 16 (founder: "this starts scrolled down, there's white space"): today's pick had an empty 160px picture slot
+   above the words and a tall photo, so the card overflowed and opened mid-scroll with the name cut off. No empty
+   slot, a shorter photo, and the whole pick (photo, name, price, buttons) fits on one screen. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ays-visual:empty,
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ays-visual { display: none !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ays-card { gap: 16px !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-match .ay-pcard :is(img, picture, [class*="media"], [class*="photo"], [class*="img"]) { max-height: 200px !important; }

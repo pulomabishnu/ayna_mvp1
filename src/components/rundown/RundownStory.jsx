@@ -123,7 +123,7 @@ function Body({ card, h, done }) {
             <AppProductCard product={m.product} quizAnswers={h.sheet.quizAnswers || null} matchOpts={h.sheet.matchOpts} onClick={() => h.openSheet(m.product)} onOpenWhyMatch={() => h.openSheet(m.product)} />
             <Evidence level={m.evidence} />
             <span className="ay-rd-actions">
-              <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(m.product); h.next(); }}>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add to my ecosystem'}</button>
+              <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(m.product); h.next(); }}>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add to my products'}</button>
               {h.canSwap(card) ? <button type="button" className="ay-rd-link" onClick={() => h.swap(card)}>Show another</button> : h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
             </span>
           </div>
@@ -154,7 +154,7 @@ function Body({ card, h, done }) {
           {card.sources?.length > 0 && <p className="ay-rd-comp__src">Sources: {card.sources.map((x, i) => <span key={x.url}>{i ? ', ' : ''}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>}
           <span className="ay-rd-actions">
             {h.sheet
-              ? <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(p); h.next(); }}>{h.sheet.inRoutine(p.id) ? 'Added' : 'Add to my ecosystem'}</button>
+              ? <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(p); h.next(); }}>{h.sheet.inRoutine(p.id) ? 'Added' : 'Add to my products'}</button>
               : h.whyMatch && <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(p)}>See it and add</button>}
             {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
           </span>

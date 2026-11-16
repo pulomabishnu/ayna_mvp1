@@ -416,7 +416,8 @@ export function buildRundown(input = {}) {
     const wanted = new Set(needs.flatMap((n) => WEDGE_TO_INTAKE_NEED[n] || []));
     const goals = input.needLabels || {};
     const seenDays = (m) => shownOn(memory, `match:${m.product?.id}`, today, 30);
-    const usable = matches.filter((m) => m?.product?.id && m.percent > 0);
+    // Nov 16: the rundown only puts forward real recommendations (50%+, the same bar as the shelves).
+    const usable = matches.filter((m) => m?.product?.id && m.percent >= RUNDOWN_RULES.matchMinPercent);
     const order = (list) => [...list].sort((a, b) => (seenDays(a) > 0) - (seenDays(b) > 0) || (b.percent >= RUNDOWN_RULES.matchMinPercent) - (a.percent >= RUNDOWN_RULES.matchMinPercent) || (a.needSignal === 'weak') - (b.needSignal === 'weak') || b.percent - a.percent || seenDays(a) - seenDays(b));
     // Nov 11 audit (a hot-flash wristband came up "For your sleep" for someone with no hot flashes):
     // menopause-symptom products (vasomotor.*) come up only when she has that need or goal.

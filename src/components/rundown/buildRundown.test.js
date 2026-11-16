@@ -56,8 +56,10 @@ describe('Daily Rundown', () => {
   it('a pick every day when she has a scored match; her data picks the need', () => {
     const base = fromFixture();
     const a = { product: { id: 'p-a', name: 'A' }, percent: 90, needId: 'uti.recurrent' };
-    const b = { product: { id: 'p-b', name: 'B' }, percent: 45, needId: 'pain.menstrual_cramp' };
+    const b = { product: { id: 'p-b', name: 'B' }, percent: 55, needId: 'pain.menstrual_cramp' };
     expect(cats(buildRundown({ ...base, matches: [b] }))).toContain('match');
+    // Nov 16: under 50% is never put forward as today's pick (same bar as the shelves).
+    expect(cats(buildRundown({ ...base, matches: [{ ...b, percent: 45 }] }))).not.toContain('match');
     expect(buildRundown({ ...base, matches: [a] }).cards.find((x) => x.category === 'match')).toBeTruthy();
     expect(cats(buildRundown({ ...base, matches: [] }))).not.toContain('match');
     // Pain logged today: the pain product wins over a stronger match for something else.
