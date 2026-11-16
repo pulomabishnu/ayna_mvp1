@@ -30,9 +30,25 @@ export const GOAL_PRESETS = [
   { topic: 'energy', text: 'Walk 30 minutes', needId: 'energy.fatigue', tip: 1 },
   { topic: 'sleep', text: 'Screens off 30 minutes before bed', needId: 'sleep.trouble', tip: 2 },
   { topic: 'mood', text: 'Call or text a friend', needId: 'mood.low', tip: 1 },
-  { topic: 'pain', text: 'Stretch for 10 minutes', needId: 'pain.menstrual_cramp', tip: 2 },
+  // Nov 16 (founder): stretching is for anyone, so it never turns her picks into cramp relief. It is
+  // still offered after she adds cramps (suggestFor), where the tip says why it may help.
+  { topic: 'pain', text: 'Stretch for 10 minutes', needId: null, suggestFor: 'pain.menstrual_cramp', tip: 2 },
   { topic: 'pms', text: 'Log how I feel today', needId: 'cycle.pms', tip: null },
 ];
+
+/**
+ * Which need (if any) a goal tells the matcher about. A preset says it itself (stretching: none);
+ * her own words only when they name it ("ease my cramps" -> cramps; "stretch more" -> none).
+ */
+const NEED_OF_TOPIC = { sleep: 'sleep.trouble', energy: 'energy.fatigue', mood: 'mood.low', pms: 'cycle.pms' };
+export function goalNeedFor(goal) {
+  if (!goal?.text) return null;
+  const preset = GOAL_PRESETS.find((p) => p.text.toLowerCase() === String(goal.text).trim().toLowerCase());
+  if (preset) return preset.needId || null;
+  const topic = goal.topic === undefined ? topicFor(goal.text) : goal.topic;
+  if (topic === 'pain') return /cramp|period pain|menstrual/i.test(goal.text) ? 'pain.menstrual_cramp' : null;
+  return NEED_OF_TOPIC[topic] || null;
+}
 
 /** The one sourced line for a goal: its preset's own tip, or the topic's first tip for a goal in her words. */
 export function goalTip(goal, help) {

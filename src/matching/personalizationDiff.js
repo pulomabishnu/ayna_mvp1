@@ -47,7 +47,7 @@ export function profileChanges(before = {}, after = {}) {
 export function goalSuggestion(needsAdded = [], presets = [], existingGoals = []) {
   const have = new Set(existingGoals.map((g) => String(g.text || '').toLowerCase()));
   for (const n of needsAdded) {
-    const p = presets.find((x) => x.needId === n.id && !have.has(x.text.toLowerCase()));
+    const p = presets.find((x) => (x.needId || x.suggestFor) === n.id && !have.has(x.text.toLowerCase()));
     if (p) return { ...p, forNeed: n.label };
   }
   return null;

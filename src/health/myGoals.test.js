@@ -72,3 +72,13 @@ describe('moveGoal (Zoleka 11/11)', () => {
     expect(readGoals(storage).map((g) => g.text)).toEqual(['C', 'A', 'B']);
   });
 });
+
+import { goalNeedFor } from './myGoals.js';
+describe('a goal only brings products when it is about a need (Nov 16)', () => {
+  it('stretching brings no cramp relief; her words naming cramps do', () => {
+    expect(goalNeedFor({ text: 'Stretch for 10 minutes', topic: 'pain' })).toBeNull();
+    expect(goalNeedFor({ text: 'stretch more' })).toBeNull();
+    expect(goalNeedFor({ text: 'Ease my cramps' })).toBe('pain.menstrual_cramp');
+    expect(goalNeedFor({ text: 'Screens off 30 minutes before bed', topic: 'sleep' })).toBe('sleep.trouble');
+  });
+});

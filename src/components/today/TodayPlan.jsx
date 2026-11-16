@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { todayHelp, TODAY_HELP, productsForTopic, announceLogChange } from '../../health/todayHelp.js';
-import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, topicFor, goalTip } from '../../health/myGoals.js';
+import { readGoals, addGoal, removeGoal, toggleDone, weekFor, GOAL_PRESETS, GOALS_CHANGED_EVENT, MAX_GOALS, goalTip, goalNeedFor } from '../../health/myGoals.js';
 import { saveLogEntry, readLog } from '../../health/dailyLog.js';
 import ProductTileImage from '../ProductTileImage.jsx';
 import { haptic } from '../../utils/haptics.js';
@@ -124,8 +124,9 @@ export default function TodayPlan({
     haptic('success');
     setGoals(next);
     // A preset (or her words naming one) also tells the matcher, quietly, so her picks follow it.
-    const preset = GOAL_PRESETS.find((x) => x.topic === (g.topic === undefined ? topicFor(g.text) : g.topic));
-    if (preset && onAddGoal && !goalsAdded.includes(preset.needId)) onAddGoal(preset.needId, { quiet: true });
+    // Only when the goal is about a need (Nov 16: "Stretch for 10 minutes" brought cramp relief).
+    const need = goalNeedFor(g);
+    if (need && onAddGoal && !goalsAdded.includes(need)) onAddGoal(need, { quiet: true });
     setDraft({ text: '', perWeek: 7 });
     // Founder, Nov 12 ("it should suggest products for your goal"): the new goal opens straight
     // to its tip and the products for it.
@@ -171,7 +172,7 @@ export default function TodayPlan({
   // Her goals come first (founder, Nov 12): a pick for each goal she set, labelled with the goal.
   const forGoal = new Map();
   for (const g of goals) {
-    if (!g.topic) continue;
+    if (!g.topic || !goalNeedFor(g)) continue;
     const p = productsForTopic(g.topic, fresh, 3).find((x) => !forGoal.has(x.id));
     if (p) forGoal.set(p.id, g.text);
   }
@@ -329,7 +330,7 @@ export default function TodayPlan({
         <ul className="ay-tp-goallist">{goals.filter((g) => open === 'goals' || g.id === goalOpen).map((g) => {
           const w = today ? weekFor(g, log, today) : { count: 0, of: g.perWeek, doneToday: false };
           const help = g.topic ? TODAY_HELP[g.topic] : null;
-          const prods = g.topic ? productsForTopic(g.topic, picks, 2) : [];
+          const prods = g.topic && goalNeedFor(g) ? productsForTopic(g.topic, picks, 2) : [];
           return (
             <li key={g.id}>
               <div className="ay-tp-goallist__row">
