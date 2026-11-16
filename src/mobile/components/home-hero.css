@@ -154,3 +154,8 @@ html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubb
 html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubble__label small { font: 500 13px/1.2 var(--ay-font-ui, inherit); opacity: .8; white-space: nowrap; }
 @keyframes ay-hh-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { html body .ayna-mobile .ay-hh-bubble__play { animation: none; } }
+
+/* Nov 16 (founder screenshot): after the rundown is seen, the check sat in the small corner badge (22px) and was
+   cut off, with the big circle left empty. The seen check is now centered in the circle, like the play icon. */
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile):is(#hb3, .ayna-mobile) .ay-hh-bubble__check.is-big { position: static; width: auto; height: auto; border: 0; border-radius: 0; background: none; }
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile):is(#hb3, .ayna-mobile) .ay-hh-bubble__check.is-big svg { width: 28px; height: 28px; stroke: #3e2723; stroke-width: 3; }
