@@ -297,7 +297,10 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   // Nov 10 (founder: rank products with more reviews and research higher): research is already in
   // the grade above; reviews add a small nudge, rating weighted by how many people rated it.
   const reviews = reviewNudge(pp);
-  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + hash01(`${userKey}|${pp.product_id}`) * 0.001;
+  // Nov 16 (founder): between products that fit about the same, the one with more research for THIS
+  // need ranks higher. Order only; the % shown doesn't change.
+  const research = researchNudge(pp, r.needId);
+  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + research + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1, { weak });
   // The breakdown (raised / lowered / unknown), from the same numbers: the
   // base parts telescope from "made for this need" to shownHealth, so
@@ -553,6 +556,14 @@ function typeKey(pp, needId) {
 }
 const round3 = (x) => Math.round(x * 1000) / 1000;
 /** Rating above or below 4 stars, scaled by log10 of the number of ratings (unknown count counts as 10). Max about +/-0.03. */
+/** Research on file for this need (product studies count most, then guidelines, then ingredient studies), capped small. */
+export function researchNudge(pp, needId) {
+  const c = pp?.passport?.claim_evidence?.[needId] || pp?.claim_evidence?.[needId] || null;
+  if (!c) return 0;
+  const n = (Number(c.product_specific) || 0) * 0.01 + (Number(c.guideline) || 0) * 0.006 + (Number(c.ingredient_level) || 0) * 0.003;
+  return Math.min(0.03, n);
+}
+
 export function reviewNudge(pp) {
   const r = Number(pp?.rating);
   if (!Number.isFinite(r) || r <= 0) return 0;

@@ -376,7 +376,7 @@ describe('Rundown to chat hand-off', () => {
     mount(<Rundown t={t} onFinish={onFinish} onAsk={onAsk} />);
     act(() => [...document.querySelectorAll('button')].find((b) => b.textContent.startsWith('Play my rundown')).click());
     act(() => btn('Next card').click());
-    act(() => btn('Ask why').click());
+    act(() => btn('Ask ayna about this').click());
     expect(onFinish.mock.calls[0][0].toChat).toBe(false);
     expect(onAsk).toHaveBeenCalled();
   });

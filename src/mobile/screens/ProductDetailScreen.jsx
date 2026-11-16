@@ -495,7 +495,8 @@ export default function ProductDetailScreen({
         </div>
 
         <div className="ayq-sheet ay-pdp-title ay-pdp2">
-          {matchState?.kind !== 'quiz' && <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />}
+          {/* Nov 16 (founder): with no match yet, "See how it fits you · Get matched" sits here under the price, where the match goes. */}
+          <MatchLockup state={matchState} breakdown={breakdown} onAskWhy={() => setAskOpen(true)} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} idBase="ay-app-why" />
           {sizeChips.length > 0 && (
             <div className="ay-pdp2-sizes">
               <p className="sr-only">{variantLabels.length ? variantKind : 'Options'}</p>
@@ -547,7 +548,6 @@ export default function ProductDetailScreen({
           {/* Focus group (Vivian, Oct 1; Ashlie, Oct 16): when she started it, and a daily reminder for supplements. */}
           {(ecosystemProducts || []).some((p) => p?.id === product.id) && <ProductHabits key={product.id} product={product} ingested={/supplement|vitamin|gumm|capsule|tablet|softgel|tea\b|powder/i.test([product.category, product.subcategory, product.name].filter(Boolean).join(' '))} />}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
-          {matchState?.kind === 'quiz' && <div className="ayv-quizline"><MatchLockup state={matchState} onFull={openWhyMatch} onFix={onFixSafety} onQuiz={onStartQuiz} /></div>}
         </div>
         <div className="ay-pdp-passport">
           <ProductEvidence

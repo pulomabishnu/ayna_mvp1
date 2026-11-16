@@ -27,7 +27,7 @@ import { loadProductCatalog } from '../utils/productCatalog.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { loadEcosystemForUser, upsertProductState, upsertProductsBatch, clearEcosystemForUser } from '../utils/ecosystemStore.js';
 import { forYouPicks } from './utils/forYouPicks.js';
-import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser } from '../utils/healthIntakeStore.js';
+import { loadHealthIntakeForCurrentUser, saveHealthIntakeForCurrentUser, clearHealthIntakeForCurrentUser, intakeLoadConfirmed } from '../utils/healthIntakeStore.js';
 import { mapIntakeToLegacyQuizProfile } from '../utils/healthIntake.js';
 import { behaviorFrom } from '../utils/matchDisplay.js';
 import { ARTICLES } from '../components/Articles.jsx';
@@ -951,7 +951,9 @@ export default function MobileApp() {
         // Don't clobber a completion that just happened locally this same
         // session (e.g. mobile onboarding right before sign-in) with
         // possibly-older server data.
-        lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) || waiting ? prev.lastQuizAnswers : null),
+        // Nov 16: a failed or offline load (no answer from the server) keeps the answers she has on this
+        // phone; only the server saying "no intake" (or a reset) clears them.
+        lastQuizAnswers: restoredQuizAnswers || (Array.isArray(pending) || waiting || !intakeLoadConfirmed() ? prev.lastQuizAnswers : null),
         };
       });
 

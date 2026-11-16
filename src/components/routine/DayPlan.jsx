@@ -6,7 +6,7 @@ import {
 import {
   readActivities, saveActivity, stopActivity, recordActivity, undoActivity, setFeel, planFor, FEELS, ACTIVITY_IDEAS,
 } from '../../health/dayPlan.js';
-import { syncPlanReminders, planRemindersAvailable } from '../../health/planReminders.js';
+import { syncPlanReminders, planRemindersAvailable, sendTestReminder } from '../../health/planReminders.js';
 import { readGoals, toggleDone, GOALS_CHANGED_EVENT } from '../../health/myGoals.js';
 import { toast } from '../../utils/toast.js';
 import { haptic } from '../../utils/haptics.js';
@@ -34,7 +34,10 @@ function useStores() {
   return useMemo(() => ({ meds: readMeds(), acts: readActivities(), goals: (() => { try { return readGoals(); } catch { return []; } })(), now: new Date() }), [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function ReminderNote({ status }) {
+function ReminderNote({ status, onTest }) {
+  // Nov 16: once a reminder is set, one tap shows a test reminder in 5 seconds (lock the phone to see it).
+  if (status === 'scheduled' && onTest) return <p className="ay-dp__note" role="status">Reminder set. <button type="button" className="ay-dp__ghost" onClick={onTest}>Send a test reminder</button></p>;
+  if (status === 'test_sent') return <p className="ay-dp__note" role="status">A test reminder arrives in 5 seconds. Lock your phone to see it.</p>;
   if (!status || status === 'scheduled' || status === 'none') return null;
   const text = status === 'denied' ? 'Notifications are off for ayna. Turn them on in your phone Settings to get reminders.'
     : status === 'unavailable' ? 'Reminders work in the ayna app on your phone.'
@@ -260,7 +263,7 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
       const t = new Date(); const r = recordDose({ medId: m.id, day, time: `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`, status: 'taken' });
       if (r.ok) toast(`${m.name}: logged`, { label: 'Undo', onClick: () => undoDose(r.dose.id) });
     }}>Log {m.name}</button>)}</div>}
-    <ReminderNote status={remStatus} />
+    <ReminderNote status={remStatus} onTest={planRemindersAvailable() ? async () => setRemStatus(await sendTestReminder()) : null} />
 
     {!compact && (activeMeds.length > 0 || stoppedMeds.length > 0 || myActs.length > 0) && <details className="ay-dp-manage">
       <summary>Manage medications and activities</summary>

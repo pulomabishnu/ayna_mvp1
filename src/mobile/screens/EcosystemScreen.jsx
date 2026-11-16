@@ -189,7 +189,10 @@ export default function EcosystemScreen({
     // The engine's own shelf first, else the best need it scores 50+ for.
     const engineShelf = forcedShelf.has(product.id) ? shelves.find((s) => s.needId === forcedShelf.get(product.id)) : shelves.find((s) => s.productIds.includes(product.id));
     const details = !engineShelf && quizAnswers ? scoreFor(product, quizAnswers) : null;
-    const needId = engineShelf?.needId || details?.needMatches?.find((m) => shelfIds.has(m.needId) && m.relevant && m.score >= MIN_SHELF_SCORE)?.needId;
+    // Nov 16 (Puloma: a product matched for PCOS support opened its own "Fertility" shelf): a product that
+    // fits one of her needs at all sits on that need's shelf (her best one), before any catalog-area shelf.
+    const fits = (details?.needMatches || []).filter((m) => shelfIds.has(m.needId) && m.relevant);
+    const needId = engineShelf?.needId || fits.find((m) => m.score >= MIN_SHELF_SCORE)?.needId || [...fits].sort((a, b) => (b.score || 0) - (a.score || 0))[0]?.needId;
     if (needId) {
       if (!byNeed.has(needId)) byNeed.set(needId, []);
       byNeed.get(needId).push(product);

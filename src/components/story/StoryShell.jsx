@@ -17,14 +17,14 @@ const CLOSE = <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18
  * `progress` (0 to 1) drives the current segment when the caller times it;
  * otherwise `running` + `ms` fill it with CSS.
  */
-export function StoryTop({ count, index, running = false, ms = 0, progress = null, title, paused, onPause = null, pauseLabels = ['Pause', 'Play'], onClose, closeLabel = 'Close', lead = null }) {
+export function StoryTop({ count, index, running = false, ms = 0, progress = null, title, paused, frozen = paused, onPause = null, pauseLabels = ['Pause', 'Play'], onClose, closeLabel = 'Close', lead = null }) {
   return (
     <div className="ays-top">
       <ol className="ays-progress" aria-hidden="true">
         {Array.from({ length: count }, (_, k) => {
           // Nov 16 (founder: "make sure these aren't glitching"): pausing freezes the fill where it is
           // (it used to jump to full), and the fill grows with a transform, not a width change.
-          const state = k < index ? 'is-done' : k === index ? `is-now${(running || paused) && progress == null ? ' is-running' : ''}${paused ? ' is-paused' : ''}` : '';
+          const state = k < index ? 'is-done' : k === index ? `is-now${running && progress == null ? ' is-running' : ''}${frozen ? ' is-paused' : ''}` : '';
           const style = k === index ? (progress != null ? { '--ays-fill': progress } : { '--ays-ms': `${ms}ms` }) : undefined;
           return <li key={k} className={state} style={style}><i /></li>;
         })}

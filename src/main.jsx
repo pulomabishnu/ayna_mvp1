@@ -71,6 +71,24 @@ if (Capacitor.isNativePlatform()) {
     if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
     document.documentElement.classList.add('is-native-app');
   } catch { /* no DOM */ }
+  // Nov 16 (checklist #33: "making iPhone Text Size bigger doesn't change anything"): follow the phone's
+  // Text Size. iOS sizes the -apple-system-body font from it (17px at the default); the app scales by the
+  // same ratio, capped so layouts hold. Checked again whenever she comes back to the app (from Settings).
+  const applyTextSize = () => {
+    try {
+      const probe = document.createElement('span');
+      probe.style.cssText = 'position:absolute;visibility:hidden;font:-apple-system-body;';
+      probe.textContent = 'a';
+      document.body.appendChild(probe);
+      const px = parseFloat(getComputedStyle(probe).fontSize) || 17;
+      probe.remove();
+      const scale = Math.min(1.3, Math.max(1, px / 17));
+      document.documentElement.style.zoom = scale === 1 ? '' : String(Math.round(scale * 100) / 100);
+      document.documentElement.style.setProperty('--ay-system-text-scale', String(scale));
+    } catch { /* no DOM */ }
+  };
+  if (document.body) applyTextSize(); else window.addEventListener('DOMContentLoaded', applyTextSize, { once: true });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') applyTextSize(); });
 }
 
 const POSTHOG_KEY = resolvePosthogKey(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, Capacitor.isNativePlatform());

@@ -346,3 +346,29 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-primary.is-small svg { width: 16px; height: 16px; fill: currentColor; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-undo { all: unset; cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; padding: 0 4px; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; animation: ays-pop-in 520ms cubic-bezier(.34, 1.56, .64, 1) 300ms both; }
+
+/* Nov 16 (founder): "How ayna got this" at the bottom, centered, just above "1 of 8". Opens upward into a scrolling sheet. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-how { position: relative; display: flex; justify-content: center; padding: 0 20px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-how .ay-rdd-more { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-how .ay-rdd-more > summary { font-size: 14px; opacity: .85; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-how .ay-rdd-more[open] { position: absolute; left: 16px; right: 16px; bottom: 0; z-index: 6; max-height: 60vh; overflow-y: auto; align-items: stretch; padding: 8px 18px 14px; border-radius: 22px; background: var(--s-bg); box-shadow: 0 -12px 40px rgba(62, 39, 35, .18); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ays-how .ay-rdd-more[open] > summary { order: 99; align-self: center; }
+
+/* Nov 16 (founder: "move the question and answers up, it's not centered"): the check-in has no picture, so its
+   empty picture slot (160px) no longer pushes the question and answers down. The block sits in the middle. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays).is-checkin .ays-visual { display: none !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays).is-checkin .ays-card { justify-content: center !important; padding-bottom: 24px; }
+
+/* Nov 16 dark-mode check: the check-in keeps its pink page in dark mode too, so its words use the light-mode
+   colours (espresso on pink). Butter text on pink was unreadable. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays).is-checkin {
+  --s-bg: #f7badd; --s-fg: #3e2723; --s-muted: #3e2723; --s-line: #3e2723;
+  --s-panel: #ffedac; --s-track: #ffedac; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
+  color: #3e2723;
+}
+/* Same for the daily fact's pink page in dark mode: top bar, "How ayna got this" and the arrows stay espresso. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):has(.ays-card.is-fact) {
+  --s-bg: #f7badd; --s-fg: #3e2723; --s-muted: #3e2723; --s-line: #3e2723;
+  --s-panel: #ffedac; --s-track: #ffedac; --s-btn: #3e2723; --s-on-btn: #ffedac; --s-pink: #3e2723;
+  color: #3e2723;
+}

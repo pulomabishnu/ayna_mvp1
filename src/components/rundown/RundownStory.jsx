@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NotUsefulMenu from './NotUsefulMenu.jsx';
-import ItemMenu from '../today/ItemMenu.jsx';
 import ProductCard from '../ProductCard.jsx';
 import AppProductCard from '../../mobile/components/ProductCard.jsx';
 import { matchText } from '../../utils/matchDisplay.js';
@@ -246,7 +245,7 @@ function Body({ card, h, done }) {
 
 /** The working behind a card: what it is based on, sources, Not useful. One tap away, never on the glance. */
 function More({ card, h, onSeeData, onNotUseful, hide, dataAsk }) {
-  const has = card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.reason || (card.footnote && card.kind !== 'community') || card.sources?.length || (DATA_KINDS.has(card.kind) && !card.protected && onNotUseful);
+  const has = card.facts || card.changed || card.mayAffect || card.canDo || card.more || card.basisLine || card.reason || (card.footnote && card.kind !== 'community') || card.sources?.length || (!['opening', 'closing', 'ask'].includes(card.kind) && !card.protected && onNotUseful);
   if (!has || card.protected) return null;
   return (
     <details className="ay-rdd-more">
@@ -265,7 +264,7 @@ function More({ card, h, onSeeData, onNotUseful, hide, dataAsk }) {
       {card.footnote && card.kind !== 'community' && <p className="ay-rd-basis">{card.footnote}</p>}
       {(card.sources || []).length > 0 && <p className="ay-rd-basis">Source: {card.sources.map((s, k) => <span key={s.url}>{k ? ', ' : ''}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></span>)}</p>}
       {dataAsk && card.seeData && onSeeData && <button type="button" className="ay-rd-link" onClick={() => h.seeData(card.seeData)}>See data</button>}
-      {DATA_KINDS.has(card.kind) && onNotUseful && <NotUsefulMenu onPick={(reason) => hide(card, reason)} />}
+      {!['opening', 'closing', 'ask'].includes(card.kind) && onNotUseful && <NotUsefulMenu onPick={(reason) => hide(card, reason)} />}
     </details>
   );
 }
@@ -290,7 +289,16 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const [theme] = useState(storyTheme);
   const rootRef = useRef(null);
   const [backTo] = useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
-  const shown = cards.filter((c) => !hidden[c.key]);
+  // Nov 16 (founder): answering a check-in rebuilds the cards (her answer is now logged), which used to drop
+  // that card. An answered card stays where it was and shows her answer.
+  const [answered, setAnswered] = useState({});
+  const merged = (() => {
+    const out = [...cards];
+    const keys = new Set(out.map((c) => c.key));
+    Object.values(answered).forEach(({ card: c, at }) => { if (!keys.has(c.key)) out.splice(Math.min(at, out.length), 0, c); });
+    return out;
+  })();
+  const shown = merged.filter((c) => !hidden[c.key]);
   // The end-of-rundown questions become their own last card (founder, Oct 27 13:51):
   // finishing no longer opens Ask; a tap on a question does.
   const closingCard = shown.find((c) => c.kind === 'closing');
@@ -313,17 +321,27 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   }, [sig, i, n]);
 
   const close = useCallback(() => { onClose?.({ seen: i + 1, count: n }); try { backTo?.focus?.(); } catch { /* gone */ } }, [onClose, i, n, backTo]);
-  const go = useCallback((d) => setI((x) => Math.max(0, Math.min(n - 1, x + d))), [n]);
+  // Which way she moved, so the next card slides in from the right side (forward) or the left (back).
+  const [dir, setDir] = useState(1);
+  const go = useCallback((d) => { setDir(d < 0 ? -1 : 1); setI((x) => Math.max(0, Math.min(n - 1, x + d))); }, [n, setDir]);
   const gest = useStoryGestures({ onPrev: () => go(-1), onNext: () => go(1), onClose: close });
   // In the app the product card has one-tap Buy, Save and Add: it waits for her.
-  const auto = !rm && !paused && !gest.held && !suspended && card && !STILL.has(card.kind) && !card.check && !card.flowAsk && card.kind !== 'closing' && !(sheet && card.kind === 'match');
+  const timed = !rm && card && !STILL.has(card.kind) && !card.check && !card.flowAsk && card.kind !== 'closing' && !(sheet && card.kind === 'match');
+  const halted = paused || gest.held || suspended;
+  const auto = timed && !halted;
+  // Nov 16 (founder: "the bars on top must be accurate, not glitchy"): holding or pausing freezes the bar and the
+  // timer together, and letting go finishes the time that was left (it used to restart the timer and fill the bar).
+  const spent = useRef({ i: -1, ms: 0, from: 0 });
 
   useEffect(() => { if (card && card.kind !== 'ask') onSeen?.(card); }, [card, onSeen]);
   useEffect(() => { rootRef.current?.focus(); }, []);
   useEffect(() => {
+    const sp = spent.current;
+    if (sp.i !== i) { sp.i = i; sp.ms = 0; }
     if (!auto) return undefined;
-    const t = setTimeout(() => go(1), AUTO_MS);
-    return () => clearTimeout(t);
+    sp.from = Date.now();
+    const t = setTimeout(() => go(1), Math.max(0, AUTO_MS - sp.ms));
+    return () => { clearTimeout(t); sp.ms += Date.now() - sp.from; };
   }, [auto, i, go]);
   useEffect(() => {
     const key = (e) => {
@@ -346,13 +364,13 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     list,
     hasAsk: Boolean(askCard),
     recap,
-    goTo: (k) => setI(k),
+    goTo: (k) => { setDir(k < i ? -1 : 1); setI(k); },
     next: () => go(1),
     close,
-    checkIn: (c, v) => { onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
+    checkIn: (c, v) => { setAnswered((x) => ({ ...x, [c.key]: { card: c, at: list.indexOf(c) } })); onCheckIn?.(c.field, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
     periodAnswer: (c, v) => { onPeriodAnswer?.(v); onAction?.(c, 'answer'); },
     logFlow: (c, v) => { onCheckIn?.('flow', v); onAction?.(c, 'answer'); },
-    outcome: (c, v) => { onOutcome?.(c.item, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
+    outcome: (c, v) => { setAnswered((x) => ({ ...x, [c.key]: { card: c, at: list.indexOf(c) } })); onOutcome?.(c.item, v); setDone((s) => ({ ...s, [c.key]: { value: v } })); onAction?.(c, 'answer'); },
     whyMatch: onWhyMatch ? (p) => { onAction?.(card, 'open'); onWhyMatch(p); } : null,
     compare: onCompare ? (p) => { onAction?.(card, 'open'); onCompare(p); } : null,
     unsave: onUnsave ? (p) => { onUnsave(p); setMsg('Removed from your saved items.'); onAction?.(card, 'not_relevant'); go(1); } : null,
@@ -391,7 +409,7 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
   const askWhyPill = !isData && onAsk && card.ask && !card.check && !card.flowAsk && ['change', 'pattern', 'data'].includes(card.category);
   // One action on the glance: the card's own (Body), else Ask why / See data.
   const oneAction = isData && !card.check && !card.flowAsk
-    ? (dataAsk ? <button type="button" className="ay-rd-primary" onClick={() => h.ask(dataAsk)}>Ask why</button>
+    ? (dataAsk ? <button type="button" className="ay-rd-primary is-small" onClick={() => h.ask(dataAsk)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z" /></svg>Ask ayna about this</button>
       : card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button> : null)
     : !isData && card.seeData && onSeeData ? <button type="button" className="ay-rd-primary" onClick={() => h.seeData(card.seeData)}>See data</button>
       // Nov 14: a pattern from her data ("Putting it together") gets the same "Ask why" pill as the
@@ -405,13 +423,13 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     <div ref={rootRef} className={`ay-rd ays ${surface} is-${card.kind}${rm ? ' is-still' : ''}`} data-theme={theme} role="dialog" aria-modal="true" aria-roledescription="story" aria-label={title} tabIndex={-1}>
       <div className="ay-rd-frame ays-frame">
         <StoryTop
-          count={n} index={i} running={auto} ms={AUTO_MS} title={title}
-          paused={paused} onPause={rm ? null : () => setPaused((v) => !v)} pauseLabels={['Pause', 'Play']}
+          count={n} index={i} running={timed} ms={AUTO_MS} title={title}
+          paused={paused} frozen={timed && halted} onPause={rm ? null : () => setPaused((v) => !v)} pauseLabels={['Pause', 'Play']}
           onClose={close} closeLabel="Close rundown"
         />
         <p className="sr-only" aria-live="polite">{`Card ${i + 1} of ${n}: ${card.title}`}</p>
         <div className="ay-rd-stage ays-stage" {...gest.bind}>
-          <article className={`ay-rd-card ays-card${isData ? ' is-data' : ''}${art ? ' has-art' : ''}${String(card.key || '').startsWith('fact:') ? ' is-fact' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
+          <article className={`ay-rd-card ays-card${dir < 0 ? ' is-back' : ''}${isData ? ' is-data' : ''}${art ? ' has-art' : ''}${String(card.key || '').startsWith('fact:') ? ' is-fact' : ''}`} key={`${card.key}:${card.title}`} aria-labelledby={`ay-rd-t-${i}`}>
             {art && <div className="ays-visual">{art}</div>}
             <div className="ays-words">
               {/* The frame cards' labels ("Your daily rundown", "Done") repeat the bar: not shown. The daily fact keeps
@@ -428,24 +446,19 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
             <div className="ays-act">
               <Body card={card} h={h} done={done[card.key]} />
               {oneAction && <span className="ay-rd-actions">{oneAction}</span>}
-              {!safety && <More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} />}
-              {!isData && !['opening', 'closing', 'ask'].includes(card.kind) && ((savable && onSave) || (onAsk && card.ask && !askWhyPill) || (!card.protected && onNotUseful)) && (
+              {!isData && !['opening', 'closing', 'ask'].includes(card.kind) && ((savable && onSave) || (onAsk && card.ask && !askWhyPill)) && (
                 <div className="ay-rd-foot">
                   {savable && onSave && <button type="button" className="ay-rd-link" onClick={() => { onSave(savable); setMsg('Saved.'); onAction?.(card, 'save'); }}>Save</button>}
                   {/* A fact from her data: "Ask why" under it (team sync, Oct 25). */}
                   {onAsk && card.ask && !askWhyPill && <button type="button" className="ay-rd-link" onClick={() => h.ask(card.ask)}>Ask ayna about this</button>}
-                  {/* One action + a quiet "…" (Today audit, issue 2): Not useful and its reasons live in the menu. */}
-                  {!card.protected && onNotUseful && (
-                    <ItemMenu label="More for this card" className="ay-rd-menu">
-                      <NotUsefulMenu onPick={(reason) => hide(card, reason)} />
-                    </ItemMenu>
-                  )}
                 </div>
               )}
               {msg && <p className="ay-rd-note" role="status">{msg}{undo && undo.key === card.key && <> <button type="button" className="ay-rd-undo" onClick={() => { setSwaps((x) => ({ ...x, [undo.key]: undo.k })); setUndo(null); setMsg('Back to the first pick.'); }}>Undo</button></>}</p>}
             </div>
           </article>
         </div>
+        {/* Nov 16 (founder): no "…" menu. "How ayna got this" (with Not useful inside) sits at the bottom, above the page count. */}
+        {!safety && !['checkin', 'outcome'].includes(card.kind) && <div className="ays-how"><More card={card} h={h} onSeeData={onSeeData} onNotUseful={onNotUseful} hide={hide} dataAsk={dataAsk} /></div>}
         <div className="ay-rd-nav ays-nav">
           <button type="button" className="ays-icon" onClick={() => go(-1)} disabled={i === 0} aria-label="Previous card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
           <span aria-hidden="true">{i + 1} of {n}</span>

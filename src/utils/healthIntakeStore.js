@@ -75,6 +75,11 @@ function writeLocal(userId, profile) {
 // Several parts of a page ask for the intake at once; share one request (and
 // its answer for a few seconds) instead of sending the same query 4 times.
 let shared = null;
+// Nov 16: whether the last load heard back from the server (or a reset on this device). A failed or offline
+// load returns no intake too, and that must not wipe the answers this device already has.
+let confirmed = false;
+/** True when the last intake load's answer came from the server (or a confirmed reset), not a failure. */
+export function intakeLoadConfirmed() { return confirmed; }
 /** Drop the shared answer: called when the signed-in account changes, so one account never gets another's intake. */
 export function forgetSharedIntake() { shared = null; }
 export function loadHealthIntakeForCurrentUser() {
@@ -86,6 +91,7 @@ export function loadHealthIntakeForCurrentUser() {
 }
 
 async function loadHealthIntakeUncached() {
+  confirmed = false;
   const supabase = getSupabaseClient();
   const userId = await resolveUserId(supabase);
   const local = readLocal(userId);
@@ -98,6 +104,7 @@ async function loadHealthIntakeUncached() {
         if (error) console.warn('[healthIntakeStore] reset sync pending:', error.message || error);
       }).catch(() => {});
     }
+    confirmed = true;
     return null;
   }
 
@@ -116,6 +123,7 @@ async function loadHealthIntakeUncached() {
     return local;
   }
 
+  confirmed = true;
   const server = data?.profile || null;
   if (server) {
     writeLocal(userId, server);

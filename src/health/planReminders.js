@@ -106,6 +106,12 @@ export async function syncPlanReminders({ ask = false, today = null } = {}) {
     if (!ok) return 'denied';
     await LocalNotifications.schedule({ notifications: list });
     writeIds(list.map((n) => n.id));
+    // Nov 16: make sure iOS really holds them; if not, say so instead of failing silently.
+    try {
+      const pending = await LocalNotifications.getPending();
+      const ids = new Set((pending?.notifications || []).map((n) => Number(n.id)));
+      if (!list.some((n) => ids.has(n.id))) return 'error';
+    } catch { /* older plugin: trust the schedule call */ }
     return 'scheduled';
   } catch {
     return 'error';
@@ -120,4 +126,19 @@ export function onPlanReminderTap(go) {
     if (typeof id === 'number' && id >= BASE && id < BASE + SPAN) go?.();
   });
   return () => { handle.then((h) => h.remove()).catch(() => {}); };
+}
+
+/** A reminder 5 seconds from now, so she can see what one looks like (and that they work). Generic text only. */
+export async function sendTestReminder() {
+  if (!native()) return 'unavailable';
+  try {
+    const p = await LocalNotifications.checkPermissions();
+    let ok = p.display === 'granted';
+    if (!ok && p.display !== 'denied') ok = (await LocalNotifications.requestPermissions()).display === 'granted';
+    if (!ok) return 'denied';
+    await LocalNotifications.schedule({ notifications: [{ id: BASE + SPAN - 1, title: 'ayna plan', body: 'This is how your reminders will look. Tap to open your plan.', schedule: { at: new Date(Date.now() + 5000), allowWhileIdle: true }, extra: { route: 'routine' } }] });
+    return 'test_sent';
+  } catch {
+    return 'error';
+  }
 }

@@ -156,18 +156,24 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   const [reduced] = useState(() => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } });
   const active = slides[index] || slides[0];
   const last = index === slides.length - 1;
-  const next = () => { progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); };
-  const prev = () => { progressRef.current = 0; setProgress(0); setIndex((i) => Math.max(0, i - 1)); };
+  // Which way she moved: back slides in from the left, forward from the right (Nov 16).
+  const [dir, setDir] = useState(1);
+  const next = () => { setDir(1); progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); };
+  const prev = () => { setDir(-1); progressRef.current = 0; setProgress(0); setIndex((i) => Math.max(0, i - 1)); };
 
   const gest = useStoryGestures({ onPrev: prev, onNext: next, onClose });
   useEffect(() => {
     if (paused || peek || gest.held || last || reduced || active === 'categories') return undefined;
-    const t = window.setInterval(() => {
-      progressRef.current += 80 / DURATION;
-      if (progressRef.current >= 1) { progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); }
-      else setProgress(progressRef.current);
-    }, 80);
-    return () => window.clearInterval(t);
+    // Nov 16 (founder: "bars accurate, not glitchy"): every frame, from real elapsed time (was 80 ms steps).
+    let raf = 0; let at = performance.now();
+    const step = (now) => {
+      progressRef.current += (now - at) / DURATION; at = now;
+      if (progressRef.current >= 1) { setDir(1); progressRef.current = 0; setProgress(0); setIndex((i) => Math.min(slides.length - 1, i + 1)); return; }
+      setProgress(progressRef.current);
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
   }, [index, paused, peek, gest.held, last, reduced, slides.length, active]);
   useEffect(() => {
     const onKey = (e) => { if (peek) { if (e.key === 'Escape') setPeek(null); return; } if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') prev(); if (e.key === 'Escape') onClose?.(); };
@@ -222,7 +228,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
       <p className="sr-only" aria-live="polite">{`Story ${index + 1} of ${slides.length}`}</p>
 
       <div className="ays-stage" {...gest.bind}>
-        <section className="ays-card" key={active}>
+        <section className={`ays-card${dir < 0 ? ' is-back' : ''}`} key={active}>
           {active === 'intro' && <>
             {careNote}
             <TypeWall value={counts ? counts.products : picks.length} />
