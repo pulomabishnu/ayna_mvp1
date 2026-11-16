@@ -45,3 +45,4 @@
 .app-container[data-theme='dark'] .ay-badges2__progress b { background: #69ffc1; }
 .ayna-mobile[data-theme='dark'] .ay-badges2__invite button,
 .app-container[data-theme='dark'] .ay-badges2__invite button { background: transparent; border-color: #ff78cf; box-shadow: 0 0 12px rgba(255, 120, 207, .3); }
+.ay-badges2__season { margin: -4px 0 8px; font: 500 14px/1.35 var(--ay-font-ui, inherit); opacity: .8; }

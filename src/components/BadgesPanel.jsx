@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import {
-  computeBadges, ecosystemCompletion, hasAppSignIn, inviteLinkFor, loadHasPosted, loadReferralStats,
+  SEASON, computeBadges, ecosystemCompletion, hasAppSignIn, inviteLinkFor, loadHasPosted, loadReferralStats,
   installReferralCapture,
 } from '../utils/badges';
 import './badges-panel.css';
@@ -54,9 +54,10 @@ export default function BadgesPanel({ userId, myProducts, quizAnswers, matchOpts
   return (
     <section className={`ay-badges2 is-${variant}`} aria-labelledby={`ay-badges2-title-${variant}`}>
       <div className="ay-badges2__head">
-        <h2 id={`ay-badges2-title-${variant}`}>Badges</h2>
+        <h2 id={`ay-badges2-title-${variant}`}>{SEASON.name} badges</h2>
         <span>{earned} of {badges.length}</span>
       </div>
+      <p className="ay-badges2__season">Earn them by {SEASON.endsLabel}.</p>
       <ul className="ay-badges2__list">
         {badges.map((b) => (
           <li key={b.key} className={`ay-badges2__item tone-${b.key}${b.earned ? ' is-earned' : ''}`}>

@@ -132,6 +132,7 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
+  badges: <><circle cx="12" cy="9" r="5" /><path d="M9 13.5L7.5 20l4.5-2.5 4.5 2.5-1.5-6.5" /></>,
   log: <><path d="M5 19h4l10-10-4-4L5 15v4z" /><path d="M13 7l4 4" /></>,
   beliefs: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /><path d="M17.5 4.5l1.5 1.5 2.5-2.5" /></>,
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
@@ -714,6 +715,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         {group('you', 'You', [
           { key: 'health', icon: 'healthData', title: 'My health', sub: 'Dashboard, tracking, apps', onClick: () => onOpen('myHealth') },
           { key: 'activity', icon: 'activity', title: 'Activity', sub: 'Questions, posts, reviews', onClick: () => onOpen('activity') },
+          // Nov 16 (founder): Season 1 badges on the Profile itself, not only inside Activity.
+          signedIn && { key: 'badges', icon: 'badges', title: 'Season 1 badges', sub: 'Earn them by March 31, 2027', onClick: () => onOpen('badges') },
           { key: 'settings', icon: 'settings', title: 'Settings & privacy', sub: 'Account and your data', onClick: onOpenSettings },
         ])}
 
@@ -3823,7 +3826,7 @@ export default function ProfileFlow({
   } else if (screen === 'badges') {
     body = (
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <BackHeader title="Badges" onBack={goBack} />
+        <BackHeader title="Season 1 badges" onBack={goBack} />
         <div className="ay-you-badges">
           <BadgesPanel userId={authUser?.id} myProducts={myProducts} quizAnswers={quizAnswers} variant="app" />
         </div>

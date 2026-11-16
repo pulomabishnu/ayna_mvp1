@@ -23,7 +23,9 @@ import { getEcosystemSeedFromQuiz, getProductMatchDetailsForProduct } from '../d
 const PENDING_REF_KEY = 'ayna_pending_ref_v1';
 const APP_KEY = 'ayna_app_signed_in_v1';
 const CODE_RE = /^[a-z0-9]{6,20}$/;
-const FRIENDS_GOAL = 3;
+const FRIENDS_GOAL = 1;
+// Nov 16 (founder): badges run in seasons. Season 1 ends March 31, 2027. Badges only, no prize promised.
+export const SEASON = { name: 'Season 1', endsOn: '2027-03-31', endsLabel: 'March 31, 2027' };
 const MIN_SHELF_SCORE = 50;
 
 const safeGet = (k) => { try { return JSON.parse(window.localStorage.getItem(k) || 'null'); } catch { return null; } };
@@ -205,6 +207,6 @@ export function computeBadges({ usedApp = false, eco = { filled: 0, total: 0 }, 
     { key: 'app', label: 'Got the app', earned: Boolean(usedApp), progress: null, hint: 'Download the ayna app and sign in' },
     { key: 'ecosystem', label: 'Full ecosystem', earned: ecoDone, progress: eco.total ? { value: Math.min(eco.filled, eco.total), goal: eco.total } : null, hint: eco.total ? 'One pick for every need' : 'Take the quiz' },
     { key: 'post', label: 'First post', earned: hasPosted === true, progress: null, hint: 'Post in Community' },
-    { key: 'friends', label: 'Brought 3 friends', earned: friends >= FRIENDS_GOAL, progress: { value: friends, goal: FRIENDS_GOAL }, hint: 'Friends who join with your link' },
+    { key: 'friends', label: 'Invite a friend', earned: friends >= FRIENDS_GOAL, progress: null, hint: 'A friend joins with your link' },
   ];
 }

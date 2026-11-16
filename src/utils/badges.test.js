@@ -4,9 +4,9 @@ import { computeBadges, referralCodeFor, inviteLinkFor, recordAppSignIn, hasAppS
 describe('badges', () => {
   it('has exactly the four badges, locked by default', () => {
     const b = computeBadges();
-    expect(b.map((x) => x.label)).toEqual(['Got the app', 'Full ecosystem', 'First post', 'Brought 3 friends']);
+    expect(b.map((x) => x.label)).toEqual(['Got the app', 'Full ecosystem', 'First post', 'Invite a friend']);
     expect(b.every((x) => !x.earned)).toBe(true);
-    expect(b.find((x) => x.key === 'friends').progress).toEqual({ value: 0, goal: 3 });
+    expect(b.find((x) => x.key === 'friends').progress).toBe(null);
   });
   it('earns from real signals', () => {
     const b = computeBadges({ usedApp: true, eco: { filled: 3, total: 3 }, hasPosted: true, referrals: { joined: 5, qualified: 4 } });
@@ -16,9 +16,9 @@ describe('badges', () => {
   });
   it('friends badge counts friends who joined, not whether they posted', () => {
     const f = (r) => computeBadges({ referrals: r }).find((x) => x.key === 'friends');
-    expect(f({ joined: 3, qualified: 0 }).earned).toBe(true);
-    expect(f({ joined: 2, qualified: 2 }).earned).toBe(false);
-    expect(f({ joined: 1, qualified: 0 }).progress).toEqual({ value: 1, goal: 3 });
+    // Season 1 (Nov 16): one friend who joins earns it.
+    expect(f({ joined: 1, qualified: 0 }).earned).toBe(true);
+    expect(f({ joined: 0, qualified: 2 }).earned).toBe(false);
   });
   it('locked app badge tells her how to earn it, no purchase badge', () => {
     const app = computeBadges().find((x) => x.key === 'app');
