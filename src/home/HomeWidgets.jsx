@@ -71,6 +71,8 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
         <div className="ay-homewidgets__grid">
           {/* A row-shaped widget alone (today's health row) keeps the full width. */}
           {shown.map((w) => <div key={w.id} className={`ay-homewidgets__cell is-${w.size}${layout.widgets.length === 1 && w.id === 'health' ? ' is-wide' : ''}`}><Widget widget={w} ctx={ctx} /></div>)}
+          {/* Nov 16 (founder): a "+ Add" tile next to the pinned charts. */}
+          {title && <div className="ay-homewidgets__cell is-small is-add"><button type="button" className="ay-homewidgets__addtile" aria-haspopup="dialog" onClick={openSheet}><span aria-hidden="true">+</span>Add a chart</button></div>}
         </div>
       )}
       {/* children: the screen's own links (Home's My dashboard / Your matches) share the row with Edit. */}

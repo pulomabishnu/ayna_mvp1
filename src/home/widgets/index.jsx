@@ -150,7 +150,9 @@ function Health({ size, ctx }) {
       <div className="ay-homehealth__text">
         <h2 id={`ay-homehealth-h-${ctx.surface}`}>{g ? g.label : summary ? summary.title : 'Your log'}</h2>
         {g
-          ? <p className="has-data"><b className="ay-homehealth__words">{g.words}</b><span className="ay-homehealth__val">{g.value}</span></p>
+          ? <><p className="has-data"><b className="ay-homehealth__words">{g.words}</b><span className="ay-homehealth__val">{g.value}</span></p>
+            {/* Nov 16 (founder: "it's not showing any charts"): the week as a small chart under the words. */}
+            <MiniChart points={g.points.slice(-14)} kind="line" label={`${g.label}, last ${Math.min(14, g.points.length)} days.`} /></>
           : <p className={summary?.headline ? 'has-data' : undefined}>{summary?.headline || (connected ? 'Your health data is still coming in.' : 'Log how you feel today; it shapes tomorrow.')}</p>}
       </div>
       <div className="ay-homehealth__actions">
