@@ -144,6 +144,7 @@ import { savedHaptic, addedHaptic } from '../utils/feedback.js';
 import { useSheetDrag } from './hooks/useSheetDrag.js';
 import PushLayer from './components/PushLayer.jsx';
 import GlobalToast from '../components/v3/GlobalToast.jsx';
+import TrialOffer from '../pro/TrialOffer.jsx';
 import HeardAboutPrompt from '../components/HeardAboutPrompt.jsx';
 import AppSplash, { shouldShowSplash } from './components/AppSplash.jsx';
 import { shouldAskHeardAbout } from '../utils/signupConsent.js';
@@ -2297,6 +2298,8 @@ export default function MobileApp() {
       <GlobalToast variant="app" />
       {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
       {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}
+      {/* Nov 16 (founder): right after sign-up (once the "where did you hear" step is done), offer the free Pro week. */}
+      {authUser && screen !== 'signin' && !(!heardDismissed && shouldAskHeardAbout(authUser)) && Date.now() - Date.parse(authUser.created_at || 0) < 2 * 864e5 && <TrialOffer />}
       {/* First-visit tips (src/mobile/tutorial): one overlay, reads data-tour anchors. */}
       <TutorialLayer userId={authUser?.id || null} accountCreatedAt={authUser?.created_at || null} ready={Boolean(lastQuizAnswers || hasEcosystem)} />
     </div>

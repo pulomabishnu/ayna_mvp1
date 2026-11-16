@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { useProPurchaseMode } from '../pro/appStorefront.js';
+import TrialStart from '../pro/TrialStart.jsx';
 import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
@@ -141,7 +142,7 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <h2 id={titleId} className="pro-sheet__title">ayna <em>Pro</em></h2>
             <p className="pro-sheet__lede">{unlocking ? <>{unlocking} is part of ayna Pro, which you can't buy in the app in your country yet.</> : <>ayna Pro can't be bought in the app in your country yet.</>} Your matches, routine, log and Daily Rundown stay free.</p>
           </header>
-          <div className="pro-sheet__body"><button type="button" className="pro-sheet__cta" onClick={close}>Got it</button></div>
+          <div className="pro-sheet__body">{!signedOut && <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(close, 1400)} />}<button type="button" className="pro-sheet__cta" onClick={close}>Got it</button></div>
         </section>
       </div>,
       host,
@@ -186,6 +187,8 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
           </div>
 
           <div className="pro-sheet__col is-buy">
+          {/* Nov 16 (founder): the free week first, then the paid plans. */}
+          {!signedOut && <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(close, 1400)} />}
           <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
             {PLANS.map((p) => (
               <button

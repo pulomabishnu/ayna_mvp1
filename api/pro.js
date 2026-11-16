@@ -15,6 +15,8 @@ function isAdminUser(user) {
   return allowed.includes(email);
 }
 
+const TRIAL_DAYS = 7;
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -80,10 +82,17 @@ export default async function handler(req, res) {
           }
         } catch { quizRetakeOpen = true; }
       }
+      // Has she used her free week? (Read only.) A missing table means "not offered yet".
+      let trialAvailable = false;
+      if (!active) {
+        try { const { data, error: tErr } = await admin.from('pro_trials').select('user_id').eq('user_id', user.id).maybeSingle(); trialAvailable = !tErr && !data; } catch { trialAvailable = false; }
+      }
       return res.status(200).json({
         ...status,
         active,
         gates,
+        trialAvailable,
+        trialDays: TRIAL_DAYS,
         weeklyRead,
         quizRetakeOpen,
         // Staff grants do not expire with a separate paid purchase.
@@ -144,6 +153,20 @@ export default async function handler(req, res) {
       const rules = await proFeatureRules(admin);
       console.info('[pro] feature gates updated', { enabled: rules.enabled, admin: user.email });
       return res.status(200).json(rules);
+    }
+
+    // Nov 16 (founder): a free week of Pro, no card, that she opts into. One per account, ever.
+    if (body.action === 'start_trial') {
+      if (active) return res.status(200).json({ started: false, reason: 'already_pro' });
+      const { data: used, error: usedError } = await admin.from('pro_trials').select('user_id').eq('user_id', user.id).maybeSingle();
+      if (usedError) throw new Error('Trial lookup failed');
+      if (used) return res.status(200).json({ started: false, reason: 'used' });
+      const { error: markError } = await admin.from('pro_trials').insert({ user_id: user.id });
+      if (markError) return res.status(200).json({ started: false, reason: 'used' });
+      const expiresAt = new Date(Date.now() + TRIAL_DAYS * 864e5).toISOString();
+      const { error: grantError } = await admin.from('pro_focus_grants').upsert({ user_id: user.id, expires_at: expiresAt }, { onConflict: 'user_id' });
+      if (grantError) throw new Error('Trial grant failed');
+      return res.status(200).json({ started: true, expiresAt });
     }
 
     if (body.action === 'focus_grant' || body.action === 'focus_revoke') {

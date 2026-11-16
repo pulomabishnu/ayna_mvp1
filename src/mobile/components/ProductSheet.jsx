@@ -140,7 +140,7 @@ export default function ProductSheet({ product: baseProduct, onClose, matchState
             <div className="ayv-actions" data-tour="quick-actions">{buyLink()}</div>
             {buy?.url && (
               <p className="ay-pquick__leave ayv-fine ayv-disclose">
-                <span>You pay and ship on the seller’s site; ayna never sees your card. ayna may earn a commission.</span>
+                <span>ayna may earn a commission.</span>
               </p>
             )}
             <ActionsRow saved={saved} onSave={onToggleSaved ? () => onToggleSaved(product) : null} inRoutine={inRoutine} onRoutine={onAddToRoutine ? () => onAddToRoutine(product) : null} routineWords={['Routine', IN_ROUTINE]} onAsk={onAsk ? () => onAsk(`About ${name}: Anything I should know before using it?`) : null} />

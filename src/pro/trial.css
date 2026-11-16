@@ -1,0 +1,19 @@
+/* Free week of ayna Pro (Nov 16). Brand colours, no outlines. */
+.ay-trial { display: grid; gap: 6px; justify-items: stretch; margin: 0 0 14px; }
+.ay-trial__btn { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 20px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 16px/1.2 var(--ay-font-ui, inherit); text-align: center; }
+.ay-trial__btn:disabled { opacity: .7; cursor: default; }
+.ay-trial__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.ay-trial__fine, .ay-trial__msg { margin: 0; text-align: center; font: 500 13px/1.35 var(--ay-font-ui, inherit); }
+.ay-trial__msg { font-weight: 600; font-size: 14px; }
+.ay-trialofr { position: fixed; inset: 0; z-index: 2147482000; display: grid; align-items: end; background: rgba(62, 39, 35, .45); }
+.ay-trialofr__panel { display: grid; gap: 10px; padding: 26px 22px calc(22px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: #ffedac; color: #3e2723; animation: ay-trialofr-up 260ms cubic-bezier(.2, .9, .3, 1) both; }
+.ay-trialofr__tag { justify-self: start; padding: 5px 10px; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 13px/1 var(--ay-font-ui, inherit); }
+.ay-trialofr h2 { margin: 2px 0 0; font: 800 28px/1.1 var(--ay-font-display, inherit); letter-spacing: -.02em; }
+.ay-trialofr p { margin: 0 0 6px; font: 500 15px/1.45 var(--ay-font-ui, inherit); }
+.ay-trialofr .ay-trial__btn { background: #3e2723; color: #ffedac; }
+.ay-trialofr__later { all: unset; box-sizing: border-box; cursor: pointer; justify-self: center; min-height: 44px; display: inline-flex; align-items: center; font: 600 15px/1 var(--ay-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; }
+:is([data-theme*='dark']) .ay-trialofr__panel { background: #3e2723; color: #ffedac; }
+:is([data-theme*='dark']) .ay-trialofr__tag { background: #f7badd; color: #3e2723; }
+:is([data-theme*='dark']) .ay-trialofr .ay-trial__btn { background: #ffedac; color: #3e2723; }
+@keyframes ay-trialofr-up { from { transform: translateY(40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ay-trialofr__panel { animation: none; } }

@@ -90,6 +90,7 @@ const EmailConfirmed = lazyView(() => import('./components/EmailConfirmed'));
 // them until the user actually navigates there keeps that out of the main
 // bundle. products.js itself now loads after first paint too (data/catalog.js).
 const BrandPartners = React.lazy(() => import('./components/BrandPartners'));
+const TrialOffer = React.lazy(() => import('./pro/TrialOffer.jsx'));
 const MyEcosystem = routeLazy(() => import('./components/MyEcosystem'), /^\/(my-)?ecosystem$/.test(START_PATH));
 const Discovery = routeLazy(() => import('./components/Discovery'), /^\/(shop|discovery)$/.test(START_PATH));
 const Articles = routeLazy(() => import('./components/Articles'), /^\/library(\/|$)/.test(START_PATH));
@@ -3707,6 +3708,10 @@ function App() {
         )}
         {user && !heardDismissed && !consentGateOpen && !showAuthModal && !newAccountStart && !['auth-callback', 'campus-resources'].includes(currentView) && shouldAskHeardAbout(user) && (
           <HeardAboutPrompt variant="web" onDone={() => setHeardDismissed(true)} onSaved={(u) => { if (u) setUser(u); }} />
+        )}
+        {/* Nov 16 (founder): right after sign-up, the free week of ayna Pro (opt-in). */}
+        {user && !consentGateOpen && !showAuthModal && !newAccountStart && !(!heardDismissed && shouldAskHeardAbout(user)) && Date.now() - Date.parse(user.created_at || 0) < 2 * 864e5 && (
+          <React.Suspense fallback={null}><TrialOffer /></React.Suspense>
         )}
         {/* Photo + username for every new or older account without one, whatever way she signed in (founder, Oct 29). */}
         {user && <ProfileSetupGate user={user} firstName={quizResults?.firstName || ''} blocked={showAuthModal || consentGateOpen || showWrapped || currentView === 'quiz' || currentView === 'auth-callback' || (!heardDismissed && shouldAskHeardAbout(user))} />}
