@@ -419,6 +419,12 @@ if (Capacitor.isNativePlatform()) {
       .then(({ Browser }) => Browser.open({ url: url.toString(), presentationStyle: 'popover' }))
       .catch(() => { window.open(url.toString(), '_blank'); });
   }, true);
+  // Nov 16: after paying for ayna Pro on aynahealth.co in the in-app browser, closing it brings her back here
+  // with Pro unlocked right away (the page re-reads her Pro status; it used to wait up to a minute).
+  // Also on returning to the app from Safari.
+  const recheckPro = () => { try { window.dispatchEvent(new Event('ayna:pro-changed')); } catch { /* old browser */ } };
+  import('@capacitor/browser').then(({ Browser }) => { try { Browser.addListener('browserFinished', recheckPro); } catch { /* listener unavailable */ } }).catch(() => {});
+  import('@capacitor/app').then(({ App: CapApp }) => { try { CapApp.addListener('appStateChange', ({ isActive }) => { if (isActive) recheckPro(); }); } catch { /* listener unavailable */ } }).catch(() => {});
 }
 
 // Lock pinch-zoom in the native app only. The WKWebView has no browser chrome

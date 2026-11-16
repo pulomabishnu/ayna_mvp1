@@ -19,8 +19,11 @@ export function usePro() {
   const [pro, setPro] = useState(null);
   useEffect(() => {
     let live = true;
-    proNow().then((s) => { if (live) setPro(!s || !s.gates || s.active); }).catch(() => { if (live) setPro(false); });
-    return () => { live = false; };
+    const read = () => proNow().then((s) => { if (live) setPro(!s || !s.gates || s.active); }).catch(() => { if (live) setPro(false); });
+    read();
+    // Nov 16: unlock in place the moment she gets Pro (or starts her free week).
+    window.addEventListener('ayna:pro-changed', read);
+    return () => { live = false; window.removeEventListener('ayna:pro-changed', read); };
   }, []);
   return pro;
 }
