@@ -43,11 +43,13 @@ function RundownBubble({ count, done }) {
   const start = () => { try { window.dispatchEvent(new CustomEvent('ayna:rundown-start')); } catch { /* old browser */ } };
   return (
     <button type="button" className={`ay-hh-bubble${done ? ' is-done' : ''}`} data-tour="rundown-bubble" onClick={start} aria-label={`Your Daily Rundown: ${count} ${count === 1 ? 'thing' : 'things'}${done ? ', seen today' : ''}. Start.`}>
+      {/* Nov 16 (founder: "what is that number on the circle?"): a play button, like a story; the count
+          is a small line under it, in words. */}
       <span className="ay-hh-bubble__ring" aria-hidden="true">
-        <b>{count}</b>
-        {done && <i className="ay-hh-bubble__check"><svg viewBox="0 0 24 24"><path d={CHECK} /></svg></i>}
+        {done ? <i className="ay-hh-bubble__check is-big"><svg viewBox="0 0 24 24"><path d={CHECK} /></svg></i>
+          : <svg className="ay-hh-bubble__play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></svg>}
       </span>
-      <span className="ay-hh-bubble__label" aria-hidden="true">Rundown</span>
+      <span className="ay-hh-bubble__label" aria-hidden="true">Today's rundown<small>{done ? 'Seen today' : `${count} ${count === 1 ? 'thing' : 'things'} · 60 sec`}</small></span>
     </button>
   );
 }
@@ -59,13 +61,14 @@ function Streak({ streak, onLog, onMonth = null }) {
   const { count, loggedToday, week } = streak;
   const said = week.filter((d) => d.on).map((d) => weekdayLong(d.day)).join(', ');
   // Prep call, Nov 9: "1-day streak" read as a login streak. It is her period and symptom log.
-  const title = 'Period and symptom log';
-  const sub = loggedToday ? (count > 1 ? `Logged today · ${count} days in a row` : 'Logged today') : count > 0 ? `${count} ${count === 1 ? 'day' : 'days'} in a row · log today` : 'Tap to log today or a past period';
+  // Nov 16 (founder: "period and symptom log looks awkward"): one short title and one short line.
+  const title = loggedToday ? 'Logged today' : 'Log today';
+  const sub = count > 1 ? `Period & symptoms · ${count} days in a row` : 'Period & symptoms';
   return (
     // Founder, Nov 11: tapping it opens the calendar, where she logs today or her past periods.
     <div className="ay-hh-streak-wrap">
     <button type="button" className="ay-hh-streak" data-tour="streak" onClick={onMonth || onLog}
-      aria-label={`${title}. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'} ${sub}.`}>
+      aria-label={`${title}: period and symptom log. ${said ? `Logged ${said}.` : 'Nothing logged this week yet.'}${count > 1 ? ` ${count} days in a row.` : ''} Opens your month.`}>
       <span className="ay-hh-streak__top" aria-hidden="true"><b>{title}</b><small>{sub}</small></span>
       <span className="ay-hh-streak__days" aria-hidden="true">
         {week.map((d) => (

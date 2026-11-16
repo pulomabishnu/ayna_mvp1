@@ -147,3 +147,10 @@
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__take:disabled { cursor: default; opacity: 1 !important; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__take > small { font-family: inherit !important; font-size: 13px !important; line-height: 1.3 !important; font-weight: 600 !important; color: #f7badd !important; letter-spacing: .01em; }
 .ayna-mobile:is(#hh, .ayna-mobile):is(#hh, .ayna-mobile):is(#hh, .ayna-mobile) .ay-hh .ay-hh__take > span { font-family: inherit !important; font-size: 17px !important; line-height: 1.35 !important; font-weight: 600 !important; color: #ffedac !important; text-decoration: underline 2px #f7badd; text-underline-offset: 4px; }
+/* Nov 16: the bubble plays the rundown (no bare number); its label says what's inside. */
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubble__play { width: 26px; height: 26px; margin-left: 4px; fill: #3e2723; animation: ay-hh-pulse 2.4s ease-in-out infinite; }
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubble__check.is-big svg { width: 26px; height: 26px; fill: none; stroke: #3e2723; stroke-width: 2.5; }
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubble__label { display: grid; justify-items: center; gap: 2px; text-align: center; font: 700 13px/1.2 var(--ay-font-ui, inherit); }
+html body .ayna-mobile:is(#hb1, .ayna-mobile):is(#hb2, .ayna-mobile) .ay-hh-bubble__label small { font: 500 13px/1.2 var(--ay-font-ui, inherit); opacity: .8; white-space: nowrap; }
+@keyframes ay-hh-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { html body .ayna-mobile .ay-hh-bubble__play { animation: none; } }
