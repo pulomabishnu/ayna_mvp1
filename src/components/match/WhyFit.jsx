@@ -1,3 +1,4 @@
+import HealthWhyLine from '../health/HealthWhyLine.jsx';
 import { useState } from 'react';
 import MatchFeedback from '../today/MatchFeedback.jsx';
 import { getProductMatchDetailsForProduct } from '../../data/products.js';
@@ -121,6 +122,10 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
           {forWhat && <strong>{cap(forWhat)}</strong>}
         </div>
       </section>}
+
+      {/* Nov 16 (founder: "with Pro I can't see how my health data is influencing the match"): say it, either way. */}
+      {shown != null && details.healthData && <HealthWhyLine healthData={details.healthData} />}
+      {shown != null && !details.healthData && matchOpts?.healthContext && <section className="ay-hwhy is-none"><h3 className="ay-hwhy__title">Your health data</h3><p>Connected, but nothing in your recent trends is about {forWhat || 'what this product is for'}, so it didn’t change this match.</p></section>}
 
       {excluded && <ul className="ay-w2-list is-no">{(exLines.length ? exLines : ['Doesn’t fit your health profile right now']).slice(0, 3).map((l) => <li key={l}>{cap(l)}</li>)}</ul>}
       {!excluded && shown == null && held && <SafetyHoldNote surface="why" hold={details.safetyHold} onFix={onFixSafety || (onUpdateHealth ? () => onUpdateHealth() : null)} />}
