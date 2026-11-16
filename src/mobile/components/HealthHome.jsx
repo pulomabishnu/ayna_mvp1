@@ -484,7 +484,8 @@ export default function HealthHome({
         <div className="ay-db-main">
           {/* Right after the findings they come from (dashboard audit 7.12, 7.13). */}
           {suggestBlock}
-          {askBlock}
+          {/* Nov 16 (founder: crowded): Ask stays in the header in the app; the questions block is web only. */}
+          {surface !== 'app' && askBlock}
           {!hasData && routineBits}
           {onOpenCheckin && <TextButton onClick={onOpenCheckin}>Log how you felt this month</TextButton>}
         </div>

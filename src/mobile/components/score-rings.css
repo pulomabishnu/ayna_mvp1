@@ -37,3 +37,6 @@
 .ay-dials .ay-dial__center b.is-mid { font-size: 20px; }
 .ay-dials .ay-dial__center b.is-long { font-size: 15px; }
 .ay-dials .ay-dial__center { padding: 0 14%; box-sizing: border-box; }
+/* Nov 16 (founder: "very unclean"): "7-day avg" spilled over the ring at 15px. 13px, one line, inside. */
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-dial__center small { font-size: 13px !important; line-height: 1.1 !important; white-space: nowrap; letter-spacing: -.01em; }
+html body .ayna-mobile:is(#ay, .ayna-mobile):is(#ay, .ayna-mobile):is(#ay, .ayna-mobile) .ay-dial__center b.is-long { font-size: 15px !important; }

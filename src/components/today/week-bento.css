@@ -36,7 +36,7 @@
 .wb-bars svg { display: block; width: 100%; height: 72px; overflow: visible; }
 .wb-bars rect { fill: currentColor; opacity: .82; }
 .wb-bars rect.is-last { fill: #F7BADD; opacity: 1; stroke: var(--ay-calm-line); stroke-width: 1.5; }
-.wb-bars .wb-bars__usual { stroke: #769EBE; stroke-width: 2.5; stroke-dasharray: 5 4; }
+.wb-bars .wb-bars__usual { stroke: #a1887f; stroke-width: 2.5; stroke-dasharray: 5 4; }
 .wb-bars .wb-bars__d { fill: currentColor; font: 600 13px var(--ay-font-ui); }
 /* Day letters under the bars: each one centred on its bar (bar = 18 of 196 units). */
 .wb-bars .wb-bars__days { display: flex; justify-content: space-between; margin-top: 6px; font: 600 13px/1 var(--ay-font-ui); color: currentColor; }
@@ -46,7 +46,7 @@
 /* Sparkline inside a tile: bigger; on pink the line is espresso (blue would not read) */
 :is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb):is(#ayk, .wb) .wb-spark { display: block; width: 100%; }
 .wb-spark .ay-db-spark { display: block; width: 100%; height: 56px; overflow: visible; }
-.wb-spark .ay-db-line { fill: none; stroke: #769EBE; stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.wb-spark .ay-db-line { fill: none; stroke: #a1887f; stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
 .wb-spark .ay-db-band { fill: currentColor; opacity: .12; }
 .wb-spark .ay-db-today { fill: currentColor; }
 .ayb-tile.is-pink .wb-spark .ay-db-line { stroke: #3E2723; }

@@ -14,7 +14,7 @@
 
 :is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db {
   --db-ink: var(--ay-ink, #3e2723); --db-muted: var(--ay-ink-muted, rgba(62, 39, 35, .78)); --db-deep: rgba(62, 39, 35, .14);
-  --db-surface: #ffedac; --db-blue: var(--ay-data-blue, #769ebe); --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
+  --db-surface: #ffedac; --db-blue: #a1887f; /* Nov 16 (founder: no blue) */ --db-rule: rgba(62, 39, 35, .15); --db-on-ink: #ffedac;
   --db-ui: var(--ay-font-ui, 'Figtree', system-ui, sans-serif); --db-display: var(--ay-font-display, 'ayna Display', 'Bricolage Grotesque', sans-serif);
   --db-scale: var(--ayna-text-scale, 1);
   --legacy-outline: 1.5px solid var(--legacy-ink, #3e2723); /* older rules inside the dashboard */
@@ -349,3 +349,8 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small.is-ovulation::before { background: #3e2723 !important; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2) .ay-db-phaseline-labels small.is-luteal::before { background: repeating-linear-gradient(135deg, #3e2723 0 2px, #ffedac 2px 4px) !important; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container, #hh1):is(.ayna-mobile, .app-container, #hh2):not([data-theme*='dark']) .ay-db-date { background: #f7badd !important; color: #3e2723 !important; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is([data-theme='dark'], [data-theme='brand-dark']) .ay-db,
+:is([data-theme='dark'], [data-theme='brand-dark']) :is(.ayna-mobile:is(#ay, .ayna-mobile)) .ay-db { --db-blue: rgba(255, 237, 172, .5); }
+/* Nov 16 (founder: "very unclean"): the highlight kicker is one plain line, no pill that wraps; no "New" chip. */
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight .ay-db-highlight__kicker { background: none !important; border: 0 !important; padding: 0 !important; white-space: nowrap; color: inherit !important; font: 700 13px/1.3 var(--ay-font-ui) !important; letter-spacing: .02em; text-transform: uppercase; }
+:is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh):is(.ayna-mobile:is(#ay, .ayna-mobile), html body .app-container .ay-wh.ay-wh) .ay-db-highlight .ayk-status { display: none !important; }
