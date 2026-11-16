@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { CATEGORIES, METRICS } from '../../../health/metrics.js';
 import { categoriesFor, fileKind, foundSummary, originFor, parseHealthFile } from '../../../health/manualImport.js';
-import { confirmImport, extractFromImage, extractionStatus } from '../../../health/healthApi.js';
+import { confirmImport } from '../../../health/healthApi.js';
 import { formatValue, parseEdited } from '../../../health/format.js';
 import { localToday } from '../../../utils/localDate.js';
 
@@ -74,31 +74,23 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [typing, setTyping] = useState(false);
-  const [pendingImage, setPendingImage] = useState(null);
   const origin = originFor(app);
 
   const cats = useMemo(() => categoriesFor(rows), [rows]);
   const saveable = rows.filter((r) => consent.includes(METRICS[r.metric].category));
 
-  const [shotsOn, setShotsOn] = useState(false);
-  useEffect(() => { let on = true; extractionStatus().then((v) => { if (on) setShotsOn(Boolean(v)); }); return () => { on = false; }; }, []);
+  // Founder, Nov 16: screenshot reading is out of this release (kept on branch future/screenshot-import).
   const onFile = async (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
     setError(null);
     const kind = fileKind(file.name, file.type);
-    if (!kind) { setError(shotsOn ? 'ayna can read CSV, JSON and TXT files, and screenshots.' : 'ayna can read CSV, JSON and TXT files.'); return; }
+    if (!kind || kind === 'image') { setError('ayna can read CSV, JSON and TXT files. Or type the numbers in below.'); if (kind === 'image') setTyping(true); return; }
     if (file.size > 20 * 1024 * 1024) { setError('That file is over 20 MB. Export a shorter date range and try again.'); return; }
     setBusy(true);
     try {
       if (kind === 'pdf') { setError("ayna can't read PDFs yet. Export a CSV or JSON, or type the numbers in below."); setTyping(true); return; }
-      if (kind === 'image') {
-        const enabled = await extractionStatus();
-        if (!enabled) { setError("ayna can't read screenshots yet. Type in what you see below; it only takes a minute."); setTyping(true); return; }
-        setPendingImage(file);
-        return;
-      }
       const text = await file.text();
       const out = parseHealthFile({ name: file.name, type: file.type, text, declaredApp: app });
       if (out.error) {
@@ -112,31 +104,7 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
     } finally { setBusy(false); }
   };
 
-  const readImage = async () => {
-    const file = pendingImage;
-    setPendingImage(null);
-    setBusy(true); setError(null);
-    try {
-      const out = await extractFromImage(file, app);
-      if (!out.candidates?.length) { setError("We couldn't find any health numbers in that image. Type them in below instead."); setTyping(true); return; }
-      setRows(out.candidates.map((c) => ({ ...c, origin })));
-      setMeta({ kind: 'image', unrecognized: 0, ignored: [], fromImage: true });
-      setStep('review');
-    } catch (e) {
-      // Say what went wrong (it used to be the same line for every failure).
-      const code = String(e?.code || '');
-      setError({
-        image_too_large: 'That image is too large. Try a cropped screenshot.',
-        not_signed_in: 'Sign in to read a screenshot.',
-        auth_required: 'Sign in to read a screenshot.',
-        pro_required: 'Reading screenshots is part of ayna Pro. You can type the numbers in below.',
-        rate_limited: "You've read a lot of screenshots today. Try again tomorrow, or type the numbers below.",
-        extraction_disabled: "Screenshot reading is off right now. Type in what you see below instead.",
-        network: "You're offline or the connection dropped. Try again, or type the numbers below.",
-      }[code] || "We couldn't read that image. Type in what you see below instead.");
-      setTyping(true);
-    } finally { setBusy(false); }
-  };
+
 
   const save = async () => {
     setBusy(true); setError(null);
@@ -160,7 +128,6 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
     return (
       <div className="ay-hc-detail">
         <div className="ay-hc-detail-head"><span className="ay-hc-icon is-lg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg></span><div><h2>We found</h2><p>Check each value. Tap one to fix it, × to drop it.</p></div></div>
-        {meta.fromImage && <p className="ay-hc-note">Read from your image, so mistakes are possible. Check every number before saving.</p>}
         {rows.length > 0 && (
           <div className="ay-hc-facts" role="status">
             <p><b>What ayna found in your file</b></p>
@@ -219,23 +186,10 @@ export default function HealthUploadScreen({ signedIn, onSignIn, onDone, presetA
       <label htmlFor="ay-hc-app">Which app or device is it from? (optional)</label>
       <input id="ay-hc-app" value={app} onChange={(e) => setApp(e.target.value)} maxLength={60} placeholder="e.g. Flo, WHOOP, Fitbit" />
       <label className="ay-hc-file">
-        {/* Founder, Nov 11 ("the upload data doesn't work"): on iPhone the picker hid screenshots, so
-            picking one looked broken. Screenshots can always be picked now; while reading them is off
-            (HEALTH_IMAGE_EXTRACTION, until the founders approve the AI processor) she gets the type-it-in
-            form straight away with a plain line saying why. */}
-        <input type="file" accept=".csv,.json,.txt,text/csv,application/json,text/plain,image/*" onChange={onFile} disabled={busy} />
-        <span>{busy ? 'Reading…' : 'Choose a file or screenshot'}</span>
+        <input type="file" accept=".csv,.json,.txt,text/csv,application/json,text/plain" onChange={onFile} disabled={busy} />
+        <span>{busy ? 'Reading…' : 'Choose a file'}</span>
       </label>
       <p className="ay-hc-small">CSV, JSON or TXT exports are read on your device. ayna shows you what it found and saves only what you confirm. Files aren't kept.</p>
-      {pendingImage && (
-        <div className="ay-hc-confirm" role="alertdialog" aria-label="Read screenshot">
-          <p>To read a screenshot, ayna sends it to its AI provider (Anthropic), which pulls out the numbers. The image isn't stored by ayna and you check every value before anything is saved.</p>
-          <div>
-            <button type="button" className="ay-hc-ghost" onClick={() => { setPendingImage(null); setTyping(true); }}>Type it in instead</button>
-            <button type="button" className="ay-hc-primary" onClick={readImage}>Read it</button>
-          </div>
-        </div>
-      )}
       <button type="button" className="ay-hc-link" onClick={() => setTyping((t) => !t)}>{typing ? 'Hide' : 'Or type it in'}</button>
       {typing && <ManualEntry declaredOrigin={origin} onAdd={(r) => { setRows((rs) => [...rs.filter((x) => !(x.metric === r.metric && x.day === r.day)), r]); setMeta({ kind: 'manual', unrecognized: 0, ignored: [] }); setStep('review'); }} />}
       {error && <p className="ay-hc-error" role="alert">{error}</p>}

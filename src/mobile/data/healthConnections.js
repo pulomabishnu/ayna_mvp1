@@ -89,7 +89,7 @@ export const HEALTH_SOURCES = [
     id: 'upload',
     group: 'bring',
     name: 'Upload health data',
-    kind: 'A file or a screenshot',
+    kind: 'A file you export',
     availability: 'upload',
     icon: 'upload',
     categories: ['sleep', 'cycle', 'temperature', 'heart', 'activity', 'recovery'],
