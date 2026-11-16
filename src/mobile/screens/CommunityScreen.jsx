@@ -357,6 +357,9 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     return () => window.removeEventListener('online', onOnline);
   }, []);
   const [reportPost, setReportPost] = useState(null);
+  // App Store rule 1.2 (Nov 15): block a member from the app too (the website had it). Their posts disappear for her.
+  const [blockedIds, setBlockedIds] = useState([]);
+  const [armedBlock, setArmedBlock] = useState(null);
   const [editPost, setEditPost] = useState(null);
   const [editBody, setEditBody] = useState('');
   const [editRating, setEditRating] = useState(0);
@@ -422,6 +425,21 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
     return () => { document.removeEventListener('pointerdown', onDown); document.removeEventListener('keydown', onKey); };
   }, [postMenuId]);
 
+  useEffect(() => {
+    if (!supabase || !authUser?.id) { setBlockedIds([]); return undefined; }
+    let active = true;
+    community.listBlockedIds(supabase, authUser.id).then((ids) => { if (active) setBlockedIds(ids || []); }).catch(() => {});
+    return () => { active = false; };
+  }, [supabase, authUser?.id]);
+  const blockAuthor = async (post) => {
+    if (!authUser?.id) { requireAccount('blocking'); return; }
+    try {
+      await community.setBlocked(supabase, authUser.id, post.author_id, true);
+      setBlockedIds((ids) => [...new Set([...ids, post.author_id])]);
+      setPostMenuId(null); setArmedBlock(null);
+      setNotice("Blocked. You won't see their posts. Unblock anytime on the website's Community settings.");
+    } catch (e) { setError(community.friendlyError(e)); }
+  };
   useEffect(() => {
     if (!supabase) return undefined;
     let active = true;
@@ -1013,6 +1031,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
 
   const popIcon = (e) => { const b = e.currentTarget; b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); };
   const renderPost = (post, i = 0) => {
+    if (post.author_id && !post.is_mine && blockedIds.includes(post.author_id)) return null;
     const anon = post.is_anonymous || !post.author_id;
     const authorName = anon ? 'Anonymous' : post.author_display_name || post.author_username || 'Community member';
     const kind = POST_KINDS[post.kind] ? post.kind : 'post';
@@ -1041,7 +1060,8 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
             <button type="button" onClick={() => { setPostMenuId(null); share(post); }}>Copy link</button>
             {isTeam && <button type="button" onClick={() => { setPostMenuId(null); toggleTeamPick(post); }}>{teamPicks.some((t) => t.post_id === post.id) ? 'Remove team pick' : 'Pick for Community'}</button>}
             {post.is_mine ? <button type="button" className={armed ? 'is-armed' : undefined} disabled={busy} onClick={() => (armed ? confirmDelete(post) : setArmedDelete(post.id))}>{armed ? 'Tap again to delete' : 'Delete post'}</button>
-              : <button type="button" onClick={() => { setPostMenuId(null); setReportPost(post); }}>Report post</button>}
+              : <><button type="button" onClick={() => { setPostMenuId(null); setReportPost(post); }}>Report post</button>
+                {post.author_id && <button type="button" className={armedBlock === post.id ? 'is-armed' : undefined} onClick={() => (armedBlock === post.id ? blockAuthor(post) : setArmedBlock(post.id))}>{armedBlock === post.id ? 'Tap again to block' : anon ? 'Block this member' : `Block ${authorName}`}</button>}</>}
           </div>}
         </div>
       </div>

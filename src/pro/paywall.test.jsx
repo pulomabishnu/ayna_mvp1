@@ -21,11 +21,11 @@ describe('the one locked state', () => {
     expect(html.match(/class="pro-lock__cta"/g)).toHaveLength(1);
     expect(html).toContain('Not now');
   });
-  it('sends the native app Pro CTA straight to the website and never shows TestFlight install copy', () => {
+  it('in the iPhone app: no price, no link to pay outside the App Store (rule 3.1.1), no TestFlight copy', () => {
     const html = renderToStaticMarkup(<ProLock feature="wearables" native />);
-    expect(html).toContain('pro-lock__cta');
-    expect(html).toContain('href="https://www.aynahealth.co/pro?feature=wearables"');
-    expect(html).toContain('>Get ayna Pro</a>');
+    expect(html).not.toContain('pro-lock__cta');
+    expect(html).not.toContain('aynahealth.co/pro');
+    expect(html).toContain('isn&#x27;t available in the iPhone app yet');
     expect(html).toContain('Already a Pro member?');
     expect(html).not.toContain('TestFlight');
     expect(html).not.toContain('install ayna on iPhone');

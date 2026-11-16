@@ -124,6 +124,27 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
 
   if (!host) return <span ref={anchorRef} hidden />;
 
+  // App Store rule 3.1.1 (App Store readiness, Nov 15): the iPhone app never shows Pro prices or a
+  // link to pay outside the App Store. Until Pro is sold through in-app purchase, the app says so plainly.
+  if (native) {
+    return createPortal(
+      <div className={`pro-sheet${closing ? ' is-closing' : ''}`} onClick={close}>
+        <section ref={trapRef} tabIndex={-1} className="pro-sheet__panel" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
+          <header className="pro-sheet__head">
+            <span className="pro-sheet__grab" aria-hidden="true" />
+            <button type="button" className="pro-sheet__close" onClick={close} aria-label="Close">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            </button>
+            <h2 id={titleId} className="pro-sheet__title">ayna <em>Pro</em></h2>
+            <p className="pro-sheet__lede">{unlocking ? <>{unlocking} is part of ayna Pro, which isn't available in the iPhone app yet.</> : <>ayna Pro isn't available in the iPhone app yet.</>} Your matches, routine, log and Daily Rundown stay free.</p>
+          </header>
+          <div className="pro-sheet__body"><button type="button" className="pro-sheet__cta" onClick={close}>Got it</button></div>
+        </section>
+      </div>,
+      host,
+    );
+  }
+
   return createPortal(
     <div className={`pro-sheet${closing ? ' is-closing' : ''}`} onClick={close}>
       <section

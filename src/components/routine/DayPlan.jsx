@@ -235,9 +235,9 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
       <i aria-hidden="true"><b style={{ width: `${Math.round((done / items.length) * 100)}%` }} /></i>
     </div>}
     {!compact && <div className="ay-dp-days-nav" role="group" aria-label="Day">
-      <button type="button" className="ay-dp__ghost" onClick={() => setOffset((o) => o - 1)} aria-label="Previous day">‹</button>
+      <button type="button" className="ay-dp__ghost ay-dp-arrow" onClick={() => setOffset((o) => o - 1)} aria-label="Previous day">‹</button>
       <span>{dayWord}</span>
-      <button type="button" className="ay-dp__ghost" onClick={() => setOffset((o) => o + 1)} aria-label="Next day" disabled={offset >= 7}>›</button>
+      <button type="button" className="ay-dp__ghost ay-dp-arrow" onClick={() => setOffset((o) => o + 1)} aria-label="Next day" disabled={offset >= 7}>›</button>
       {offset !== 0 && <button type="button" className="ay-dp__ghost" onClick={() => setOffset(0)}>Back to today</button>}
     </div>}
     {items.length === 0

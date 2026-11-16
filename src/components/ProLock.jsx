@@ -4,11 +4,7 @@ import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 import '../styles/pro-v4.css';
 
 const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
-const PRO_WEB_URL = 'https://www.aynahealth.co/pro';
 
-function proWebUrl(feature = '') {
-  return `${PRO_WEB_URL}${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
-}
 
 // What Pro adds, three short lines with icons (Oct 29: the lock was one long paragraph). Same facts as src/pro/plans.js.
 const PERKS = [
@@ -76,7 +72,6 @@ export default function ProLock({
   const [showInstall, setShowInstall] = useState(false);
   const name = title || proFeatureName(feature);
   const webSetup = !native && ['dashboard', 'wearables'].includes(feature);
-  const webUrl = proWebUrl(feature);
   const unlock = () => {
     if (!openProPaywall({ feature, featureName: name })) setLocalSheet(true);
   };
@@ -87,7 +82,8 @@ export default function ProLock({
       <span className="pro-lock-fold__icon"><LockIcon size={18} /></span>
       <span className="pro-lock-fold__text">{name} is part of ayna Pro</span>
       {native
-        ? <a className="pro-lock-fold__go" href={webUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>Get ayna Pro</a>
+        // App Store rule 3.1.1: no link to pay outside the App Store from the iPhone app.
+        ? <span className="pro-lock-fold__go">Not in the app yet</span>
         : <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>}
       {sheet}
     </div>;
@@ -110,7 +106,7 @@ export default function ProLock({
         </div>
         <div className="pro-lock__actions">
           {native
-            ? <a className="pro-lock__cta" href={webUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}><LockIcon size={18} />Get ayna Pro</a>
+            ? <p className="pro-lock__note">ayna Pro isn't available in the iPhone app yet.</p>
             : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>}
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
           {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}

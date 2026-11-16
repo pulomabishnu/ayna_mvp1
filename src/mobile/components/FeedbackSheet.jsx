@@ -76,7 +76,7 @@ export default function FeedbackSheet({ authUser = null }) {
           <h2 id="ay-fb-h">Got it. The team reads every one.</h2>
           <button type="button" className="ay-tp-goal ay-tp-goal--wide" onClick={() => setOpen(false)}>Done</button>
         </> : <>
-          <p className="ay-tp-sheet__kicker">ayna beta</p>
+          <p className="ay-tp-sheet__kicker">Help us improve ayna</p>
           <h2 id="ay-fb-h">Send feedback</h2>
           <div className="ay-tp-goals__presets is-sheet" role="radiogroup" aria-label="What kind">{KINDS.map((k) => (
             <button key={k} type="button" role="radio" aria-checked={kind === k} className={kind === k ? 'is-on' : ''} onClick={() => setKind(k)}>{k}</button>
