@@ -5,7 +5,7 @@ vi.mock('@capacitor/local-notifications', () => ({ LocalNotifications: {} }));
 
 import { saveMed, readMeds, recordDose, setMedActive } from './medications.js';
 import { saveActivity, readActivities, recordActivity, setFeel, stopActivity, planFor, planSummary, validateActivity } from './dayPlan.js';
-import { planNotifications, PLAN_REMINDER_BODY } from './planReminders.js';
+import { planNotifications, planReminderText } from './planReminders.js';
 import { buildRundown } from '../components/rundown/buildRundown.js';
 
 function mem() {
@@ -80,7 +80,9 @@ describe('reminders', () => {
     saveActivity({ title: 'Walk', time: '18:00', remind: true }, { storage: s });
     let list = planNotifications({ meds: readMeds(s).meds, activities: readActivities(s).items });
     expect(list).toHaveLength(5);
-    expect(list.every((n) => n.body === PLAN_REMINDER_BODY && n.title === '')).toBe(true);
+    // Specific about the kind and the time (founder, Nov 16), never the name.
+    expect(list.find((n) => n.schedule.on.hour === 8)).toMatchObject({ title: 'ayna plan · 8:00 AM', body: 'Time for your medication. Tap to check it off.' });
+    expect(list.find((n) => n.schedule.on.hour === 18).body).toBe('Time for your activity. Tap to check it off.');
     expect(JSON.stringify(list)).not.toMatch(/Secret|Weekly|Walk/);
     expect(list.filter((n) => n.schedule.on.weekday).map((n) => n.schedule.on.weekday).sort()).toEqual([2, 5]);
     expect(new Set(list.map((n) => n.id)).size).toBe(list.length);
@@ -88,6 +90,15 @@ describe('reminders', () => {
     list = planNotifications({ meds: readMeds(s).meds, activities: [] });
     expect(list).toHaveLength(2);
     expect(b.id).toBeTruthy();
+  });
+  it('one notification per time, counting what is due', () => {
+    saveMed({ name: 'Med one', times: ['08:00'] }, { storage: s });
+    saveMed({ name: 'Med two', times: ['08:00'] }, { storage: s });
+    saveActivity({ title: 'Stretch', time: '08:00', remind: true }, { storage: s });
+    const list = planNotifications({ meds: readMeds(s).meds, activities: readActivities(s).items });
+    expect(list).toHaveLength(1);
+    expect(list[0].body).toBe('Time for 2 medications and an activity. Tap to check them off.');
+    expect(planReminderText({ time: '20:30', meds: 1 }).title).toBe('ayna plan · 8:30 PM');
   });
   it('skips meds whose end date passed', () => {
     saveMed({ name: 'Course', times: ['08:00'], start: '2026-11-01', end: '2026-11-10' }, { storage: s });
