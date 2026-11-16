@@ -534,7 +534,6 @@ export default function ProductDetailScreen({
           {!shopAction && <p className="ay-pdp-nolink">{storesOnFile.length ? `${product.type === 'digital' ? 'On' : 'Sold at'} ${andList(storesOnFile.slice(0, 4))}. We don’t have a direct link yet.` : 'We don’t have a store link for this yet.'}</p>}
           {/* Founder, Nov 11: Ask ayna right here, three quick questions. */}
           <ProductVideos product={product} />
-          <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
           {/* Founder, Nov 11: no "Before you spend $X" box on the product page. */}
           {isOmitted && <p className="ayv-fine">Hidden from your matches. <button type="button" className="ayv-textbtn" onClick={onToggleOmit}>Undo</button></p>}
           {/* Focus group (Vivian, Oct 1): when one didn't work, what to try next. Same need, best match first. */}
@@ -573,6 +572,9 @@ export default function ProductDetailScreen({
               literature and Reviews, not above them. Always visible: her IUD first, TSS for cups. */}
           <div className="ay-pdp-safetyafter"><SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} /></div>
           <IngredientCheck product={product} />
+          {/* Nov 16 (founder): ayna summary, Clinical opinion, Scientific literature and Reviews show as soon as
+              the page opens, so the Ask questions come after them, not before. */}
+          <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
 
           {/* Team direction 9: the first screen is Buy, Save and the match row.
               Routine, variants, "Not for me", connections and other stores sit here. */}

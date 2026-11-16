@@ -24,11 +24,14 @@ export function useProAccess(userId = null) {
         const rules = await loadProFeatureRules(controller.signal);
         if (typeof rules.enabled !== 'boolean') throw new Error('pro_rules_unavailable');
         let allowed = !rules.enabled;
+        let plan = null;
         if (!allowed) {
           const status = await requestPro({ signal: controller.signal });
           allowed = Boolean(status?.active);
-        }
-        if (!controller.signal.aborted) setState({ checking: false, allowed });
+          // Which kind of access (Nov 16: the founder couldn't tell why an account wasn't paywalled).
+          plan = status?.isAdmin ? 'team' : status?.active ? 'pro' : 'free';
+        } else plan = 'open';
+        if (!controller.signal.aborted) setState({ checking: false, allowed, plan });
       } catch {
         // Fail open, like the quiz retake (proApi.js): a slow or failed check must not lock her out of
         // her own health data. The server still enforces Pro on every health route (hasHealthAccess).

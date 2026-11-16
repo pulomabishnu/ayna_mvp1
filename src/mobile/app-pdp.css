@@ -499,9 +499,13 @@ html body .ayna-mobile:is(#ay,.ayna-mobile) .ay-pdp .ay-legal, html body .ayna-m
 
 /* Eliz, founder call Nov 14: "product images in the app are too small" (the photo was a 104px
    thumbnail). The photo leads the page, full width on its white plate; name and price sit under it. */
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { flex-direction: column !important; align-items: stretch !important; gap: 14px; padding: 12px 12px 16px; }
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero { width: min(100%, 280px) !important; max-width: none !important; margin: 0 auto !important; border-radius: 18px; }
-#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { padding: 0 4px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head { flex-direction: column !important; align-items: stretch !important; gap: 12px; padding: 8px 20px 12px !important; }
+/* Nov 16: still big (Eliz), now the full width of the page and a little shorter, so ayna summary and the
+   other guides show without scrolling (founder). */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero { width: 100% !important; height: 240px !important; max-width: none !important; margin: 0 !important; border-radius: 22px; overflow: hidden; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero :is(.ayq-apphero__tile, .ay-gal, .ay-gal__track, .ay-gal__slide) { height: 100% !important; aspect-ratio: auto !important; max-width: none !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-head .ay-pdp2-hero img { object-fit: contain !important; height: 100% !important; width: 100% !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp3-id { padding: 0 !important; }
 
 /* Nov 16 (founder: "weird space ... at least center them"): the three actions fill the row in equal columns,
    icon over label, on a soft fill (no outlines); the commission note is centered under Buy. */
@@ -554,3 +558,59 @@ html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .a
 html body .ayna-mobile:is(#sv1, .ayna-mobile):is(#sv2, .ayna-mobile):is(#sv3, .ayna-mobile):is(#sv4, .ayna-mobile) .ayna-saved-compare :is(button, a) {
   border: 0 !important; box-shadow: none !important; background: none !important; padding: 0 !important; min-height: 44px; text-decoration: underline; text-underline-offset: 3px; font-weight: 600;
 }
+
+/* ===== Nov 16 (founder: "the inside of the product pages is really not good"; Apple Health inspo) =====
+   One 20px gutter for everything; the photo is a full-width rounded card; the four guides and the Ask
+   questions are grouped lists (one soft card, rows with a divider and a chevron), not tiles and loose links. */
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp3-head { padding: 0 20px !important; margin: 0 !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp2-hero { width: 100% !important; max-width: none !important; height: 300px !important; margin: 4px 0 0 !important; border-radius: 22px !important; overflow: hidden; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp2-hero .ayq-apphero__tile { width: 100% !important; height: 100% !important; border-radius: 22px !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp3-id { padding: 16px 0 0 !important; margin: 0 !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp3-id :is(h1, p) { margin-left: 0 !important; padding-left: 0 !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-pdp3-pills > button { min-width: 0 !important; }
+
+/* The four guides: one grouped list */
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__grid {
+  display: block !important; border-radius: 18px; overflow: hidden; background: rgba(62, 39, 35, .06);
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-stack.is-index .ay-stack__grid,
+html body [data-theme*='dark'] .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__grid { background: rgba(255, 237, 172, .08); }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card {
+  background: transparent !important; border-radius: 0 !important; margin: 0 !important; box-shadow: none !important;
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card + .ay-stack__card { border-top: 1px solid rgba(62, 39, 35, .12) !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-stack.is-index .ay-stack__card + .ay-stack__card,
+html body [data-theme*='dark'] .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__card + .ay-stack__card { border-top-color: rgba(255, 237, 172, .14) !important; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__head {
+  min-height: 64px !important; padding: 10px 16px !important; gap: 14px !important; flex-direction: row !important; align-items: center !important; text-align: left !important;
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__head::after {
+  content: ''; flex: none; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); opacity: .6;
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__txt { display: flex !important; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__txt b { font: 700 16px/1.25 var(--ay-font-ui, 'Figtree', sans-serif) !important; white-space: normal; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__tag { font: 500 14px/1.3 var(--ay-font-ui, 'Figtree', sans-serif) !important; opacity: .8; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-stack.is-index .ay-stack__ic { flex: none; width: 36px !important; height: 36px !important; }
+
+/* Ask ayna: the three questions as rows in one soft card */
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row {
+  display: flex !important; flex-direction: column !important; gap: 0 !important; width: 100% !important; border-radius: 18px; overflow: hidden; background: rgba(62, 39, 35, .06); margin-top: 8px;
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-askquick__row,
+html body [data-theme*='dark'] .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row { background: rgba(255, 237, 172, .08); }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row > button {
+  all: unset; box-sizing: border-box; display: flex !important; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px;
+  font: 500 15px/1.3 var(--ay-font-ui, 'Figtree', sans-serif); color: inherit; text-decoration: none !important; cursor: pointer; white-space: normal !important;
+}
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row > button + button { border-top: 1px solid rgba(62, 39, 35, .12); }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile)[data-theme*='dark'] #ay-pdp .ay-askquick__row > button + button,
+html body [data-theme*='dark'] .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row > button + button { border-top-color: rgba(255, 237, 172, .14); }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick__row > button::after { content: '›'; flex: none; font-size: 20px; opacity: .6; }
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp .ay-askquick { margin-top: 20px !important; }
+/* Section rhythm: 24px between blocks */
+html body .ayna-mobile:is(#pg1, .ayna-mobile):is(#pg2, .ayna-mobile):is(#pg3, .ayna-mobile):is(#pg4, .ayna-mobile) #ay-pdp :is(.ay-pdp-passport, .ay-pdp-related, .ay-pdp-community-actions, .ay-pdp-reads) { margin-top: 24px !important; }
+/* Inside the guides block: 24px between sections, Ask with the same gutter and roomy rows. */
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport { gap: 24px !important; margin: 16px 0 0 !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-askquick { margin: 0 20px !important; padding: 0 !important; width: auto !important; max-width: 100% !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-askquick .ay-askquick__row > button { padding: 14px 16px !important; min-height: 52px !important; }
+#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp#ay-pdp .ay-pdp-passport > .ay-pdp-safetyafter { margin: 0 !important; }

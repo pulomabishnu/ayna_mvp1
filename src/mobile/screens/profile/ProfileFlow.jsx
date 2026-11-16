@@ -653,6 +653,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
             <h1>{realName ? <><span className="ay-you-hello">{greetingForNow()},</span> <Shout as="span" size="l" className="ay-you-shout">{realName}</Shout></> : <Shout as="span" size="l" className="ay-you-shout">{greetingForNow()}</Shout>}</h1>
             {profile?.username ? <span>@{profile.username}</span> : memberSince ? <span>{memberSince}</span> : null}
             {photoMsg && <span className="ay-you2-photomsg" role="status">{photoMsg}</span>}
+            {/* Nov 16: which plan this account is on, so a team account (always Pro) is never mistaken for a free one. */}
+            {pro.plan && <span className="ay-you-plan">{{ team: 'ayna Pro · team account', pro: 'ayna Pro', free: 'Free plan', open: 'Free plan · Pro features open for everyone right now' }[pro.plan]}</span>}
           </span>
         </div>
         {stats && openMyProfile && (
