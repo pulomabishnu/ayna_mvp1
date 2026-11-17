@@ -255,6 +255,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               <li key={a.label} role="group" aria-label={a.label} style={{ '--d': `${i * 120}ms` }}>
                 <p className="ay-wr-needs__head"><b>{a.label}</b><span><CountUp value={a.items.length} on={active === 'categories'} reduced={reduced} /> {a.items.length === 1 ? 'match' : 'matches'}</span></p>
                 <div className="ay-wr-needs__row">{a.items.slice(0, 3).map((p) => <span key={p.id}>{tapPlate(p, 'ay-wr-needs__plate')}<small className="ay-wr-needs__name">{p.brand || p.name}</small></span>)}</div>
+                {/* Nov 17 focus group (Elizabeth: "10 matches but only three photos"): say how many more. */}
+                {a.items.length > 3 && <small className="ay-wr-needs__more">+{a.items.length - 3} more in Your products</small>}
               </li>
             ))}</ul>
             {/* Nov 11 run-through (Puloma: Wrapped showed 4 needs, the ecosystem showed all): say how many more. */}

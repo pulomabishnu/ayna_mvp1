@@ -1,0 +1,47 @@
+/* Nov 17: how ayna treats her data, in plain English. Brand colours only, no outlines, 13px minimum,
+   44px tap targets, light and dark. The boost keeps app-wide h2/p/button rules from reaching in. */
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card {
+  --pp-fg: #3e2723; --pp-tint: rgba(62, 39, 35, .07); --pp-ic: #f7badd; --pp-ic-fg: #3e2723;
+  display: grid; gap: 10px; margin: 4px 0 14px; padding: 16px 16px 6px; border-radius: 20px; background: var(--pp-tint); color: var(--pp-fg); border: 0; box-shadow: none;
+}
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card__h { margin: 0; color: var(--pp-fg); font: 700 16px/1.25 var(--ay-font-display, var(--ayna-font-ui, inherit)); letter-spacing: -.01em; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card__list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card__list li { display: flex; align-items: flex-start; gap: 10px; color: var(--pp-fg); font: 500 14px/1.4 var(--ayna-font-ui, inherit); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card__list b { font-weight: 700; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card__more {
+  justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin: 0; padding: 0; border: 0; background: transparent;
+  color: var(--pp-fg); font: 700 14px/1.2 var(--ayna-font-ui, inherit); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--pp-ic); color: var(--pp-ic-fg); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__ic svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* The five blocks (Privacy & data, and the sheet). */
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp { --pp-fg: #3e2723; --pp-tint: rgba(62, 39, 35, .07); --pp-ic: #f7badd; --pp-ic-fg: #3e2723; color: var(--pp-fg); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__blocks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__block { display: flex; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 20px; background: var(--pp-tint); border: 0; box-shadow: none; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__block .ay-pp__ic { width: 36px; height: 36px; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__block .ay-pp__ic svg { width: 19px; height: 19px; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__t { margin: 0 0 4px; color: var(--pp-fg); font: 700 16px/1.25 var(--ayna-font-ui, inherit); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__block p { margin: 0; color: var(--pp-fg); font: 400 14px/1.5 var(--ayna-font-ui, inherit); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__links { margin: 14px 2px 0; color: var(--pp-fg); font: 500 14px/1.5 var(--ayna-font-ui, inherit); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp__links a { color: var(--pp-fg); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* The sheet. */
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet { position: fixed; inset: 0; z-index: 10060; display: flex; align-items: flex-end; justify-content: center; background: rgba(62, 39, 35, .55); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__panel {
+  box-sizing: border-box; width: min(520px, 100%); max-height: 92dvh; overflow: hidden auto; padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  border-radius: 24px 24px 0 0; background: #ffedac; color: #3e2723; outline: none; overscroll-behavior: contain;
+  animation: ay-pp-up 260ms cubic-bezier(.2, .9, .3, 1) both;
+}
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__head h2 { margin: 0; color: inherit; font: 700 24px/1.15 var(--ay-font-display, var(--ayna-font-ui, inherit)); letter-spacing: -.015em; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__x { flex: none; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__x svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__done { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; margin: 16px 0 0; border: 0; border-radius: 999px; background: #3e2723; color: #ffedac; font: 700 16px/1 var(--ayna-font-ui, inherit); cursor: pointer; }
+@keyframes ay-pp-up { from { transform: translateY(40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { :is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-sheet__panel { animation: none; } }
+
+/* Dark. */
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] :is(.ay-pp-card, .ay-pp) { --pp-fg: #ffedac; --pp-tint: rgba(255, 237, 172, .08); --pp-ic: #f7badd; --pp-ic-fg: #3e2723; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] .ay-pp-sheet__panel { background: #3e2723; color: #ffedac; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] .ay-pp-sheet__done { background: #ffedac; color: #3e2723; }

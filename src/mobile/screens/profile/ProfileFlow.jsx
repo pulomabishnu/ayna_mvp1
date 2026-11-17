@@ -1,4 +1,5 @@
 import { usePinnedHidden, setPinnedHidden } from '../../../home/pinnedPref.js';
+import { PrivacyPlainBlocks } from '../../../components/privacy/PrivacyPlain.jsx';
 import { useProCta } from '../../../pro/useTrialAvailable.js';
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
 import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
@@ -2012,6 +2013,8 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount, onOpenHealthData }) {
         <div style={{ fontWeight: 400, fontSize: 'calc(15px * var(--ayna-text-scale, 1))', color: 'var(--ayna-text-muted)', lineHeight: 1.45, marginBottom: 20 }}>
           Your health answers are the most sensitive thing you give us. Here is everything we hold, and every way to take it back.
         </div>
+        {/* Nov 17: the same plain-English blocks as sign-in's "How ayna protects your data". */}
+        <div style={{ margin: '0 0 24px' }}><PrivacyPlainBlocks headingLevel={2} /></div>
 
         <div style={{ margin: '0 0 11px', fontFamily: "var(--ayna-font-ui)", fontWeight: 600, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-accent-dark)' }}>Your data</div>
         <div style={{ background: 'var(--d-group)', border: 0, borderRadius: 20, padding: '0 18px' }}>

@@ -15,6 +15,7 @@ import { CODE_COPY, EMAIL_CODE_LENGTH, cleanCode, isEmailNotConfirmed, verifyEma
 import { savePendingVerification, readPendingVerification, clearPendingVerification } from '../../utils/pendingVerification.js';
 import { clearError, errorSummary, firstErrorKey, revealField, warnHaptic } from '../../utils/formErrors.js';
 import InlineError from '../../components/InlineError.jsx';
+import { PrivacyPromise, PrivacyPlainSheet } from '../../components/privacy/PrivacyPlain.jsx';
 import '../auth.css';
 import '../../styles/flow.css';
 
@@ -193,6 +194,7 @@ export default function SigninScreen({
   const [email, setEmail] = useState(pending?.email || '');
   const [password, setPassword] = useState('');
   const [aiConsent, setAiConsent] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
   // Defaults on. Never deletes any account data.
@@ -458,7 +460,7 @@ export default function SigninScreen({
           <header className="ay-auth-head">
             {/* Offered as "save these" (onboarding audit section 6, #36 PITCH). */}
             <h1>{mode === 'signup' ? 'Save your matches' : 'Sign in'}</h1>
-            {mode === 'signup' && <p>Free. We never sell your health information.</p>}
+            {mode === 'signup' && <p>Free. Your matches are saved to your account.</p>}
             {/* Nov 16 (founder: "make sure it shows when you're signing up"): the trial is named here; she starts it
                 (opt-in) on the next screen. No card needed. */}
             {mode === 'signup' && <p className="ay-auth-trial"><b>Get ayna Pro free for 14 days.</b> No card needed.</p>}
@@ -483,6 +485,11 @@ export default function SigninScreen({
             </section>
           )}
 
+          {/* Nov 17 (focus group: Isabel left rather than give her email; Puloma and Ameera: plain English, like
+              Verily): what ayna does with her data, before she types anything. */}
+          {mode === 'signup' && <PrivacyPromise onMore={() => setPrivacyOpen(true)} />}
+          {privacyOpen && <PrivacyPlainSheet onClose={() => setPrivacyOpen(false)} />}
+
           {/* The one consent box sits ABOVE Apple and Google (focus group, Nov 9: it was below
               the email form, so "Continue with Google" seemed not to work until you scrolled). */}
           {mode === 'signup' && (
@@ -492,8 +499,6 @@ export default function SigninScreen({
                   <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
                   <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
                 </label>
-                {/* #12 Pai: trust badges beside the consent line. */}
-                <p className="ay-auth-badges" aria-label="How we treat your data"><span>Never sold</span><span>Encrypted in transit</span></p>
                 <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
               </div>
             </div>

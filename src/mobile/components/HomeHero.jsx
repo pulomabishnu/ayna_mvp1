@@ -174,6 +174,8 @@ export function HomeHighlights({ items = [], today, onOpen }) {
 export function HomeShortcuts({ cycle = null, sleep = null, products = [], onData, onProducts }) {
   // Two photos: three ran under the corner arrow once the plates kept their 44px size (Oct 27).
   const shown = products.filter((p) => p?.id).slice(0, 2);
+  // Nov 17 focus group ("where are my matches?"): the tile says how many of them are her quiz matches.
+  const matchCount = products.filter((p) => p?.id && (p.intakeGenerated || p.needId)).length;
   const ring = cycle?.cycleDay
     ? { n: String(cycle.cycleDay), k: 'Cycle day', f: cycle.avgLength ? Math.min(1, cycle.cycleDay / cycle.avgLength) : 0 }
     : sleep && (sleep.week ?? sleep.avg) != null
@@ -201,7 +203,7 @@ export function HomeShortcuts({ cycle = null, sleep = null, products = [], onDat
             ? shown.map((p) => <Plate key={p.id} src={resolveCatalogProductImage(p) || ''} alt="" className="ay-hsc__plate"><svg className="ay-hsc__plateicon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z" /><path d="M9 8V7a3 3 0 0 1 6 0v1" /></svg></Plate>)
             : <span className="ay-hsc__none is-plus"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></span>}
         </span>
-        <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{products.length ? `${products.length} in your routine` : 'Find what fits you'}</small></span>
+        <span className="ay-hsc__text" aria-hidden="true"><b>Your products</b><small>{matchCount ? `${matchCount} ${matchCount === 1 ? 'match' : 'matches'} for you` : products.length ? `${products.length} in your routine` : 'Find what fits you'}</small></span>
         <svg className="ay-hsc__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
       </button>
     </div>

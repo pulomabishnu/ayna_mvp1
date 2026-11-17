@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { ProductSheetContext } from '../../mobile/productSheetContext.js';
 import { apiUrl } from '../../utils/apiUrl.js';
 import { groupShelves } from '../../matching/shelfGroups.js';
 import { useCatalogReady } from '../../data/catalog.js';
@@ -112,7 +113,7 @@ function perNeed(answers, matchOpts = undefined) {
    name sits on the plate instead (never an empty white square). */
 function MatchPlate({ src, product }) {
   const [failed, setFailed] = useState(false);
-  const word = String(product.brand || product.name || '').split(/\s+/)[0];
+  const word = String(product.brand || product.name || '').replace(/^the\s+/i, '').split(/\s+/)[0];
   // The shared white scalloped plate (signature 1), same as every product elsewhere.
   return <span className="ay-ob-match__plate is-plate" aria-hidden="true"><Plate src={src && !failed ? src : ''} alt="" fallback={word} imgProps={{ loading: 'lazy', onError: () => setFailed(true) }} /></span>;
 }
@@ -121,6 +122,8 @@ function Arrow() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M
 
 export default function ReadyReveal({ prefsDone = false, answers = null, variant = 'app', signedIn = false, onSeeToday, onWatchWrapped, onCreateAccount, onBack, onMorePersonal, onSafety = null, onConnect = null, connected = false, matchOpts = undefined, onLearn = null, onExplore = null }) {
   const ready = useCatalogReady();
+  // Nov 17: in the app, tapping one of her top matches opens it in the product sheet over this page.
+  const sheet = useContext(ProductSheetContext);
   const [liveReady, setLiveReady] = useState(() => typeof window === 'undefined');
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
   const matches = useMemo(() => (ready && liveReady ? firstMatches(answers, 5) : []), [answers, ready, liveReady]);
@@ -173,11 +176,19 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   const pctFor = (p) => { const d = getProductMatchDetailsForProduct(p, answers); return isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score); };
 
   if (stage === 'personal' && ready && total > 0) {
+    // Signed in: her ayna Wrapped (results), then Home. Signed out: Wrapped, ending with "Save to a free account".
+    const seeGo = onWatchWrapped || (signedIn ? onSeeToday : onCreateAccount) || (() => setStage('matches'));
+    const seeBtn = (
+      <div className="ay-pz__go">
+        <button type="button" className="ay-pz__see" onClick={seeGo}>{total === 1 ? 'View my match' : `View my ${total} matches`} <Arrow /></button>
+        <small className="ay-pz__gonote">{onWatchWrapped ? (signedIn ? 'A quick summary, then all of them in Your products.' : 'A quick summary, then save them with a free account.') : signedIn ? 'They’re saved in Your products on Home.' : 'Free account, no card.'}</small>
+      </div>
+    );
     return (
-      <Tag className={`ay-ob-ready ay-pz uq-reveal is-${variant}`} aria-labelledby="ay-pz-h">
+      <Tag className={`ay-ob-ready ay-pz uq-reveal is-${variant}`} aria-labelledby="ay-pz-found">
         {onBack && <button type="button" className="ay-ob-back" onClick={onBack} aria-label="Back to quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg></button>}
         {/* Inspo: the big stat number (heart-rate and wellness dashboards), not a highlighter. */}
-        <p className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></p>
+        <h1 id="ay-pz-found" className="ay-pz__found"><span className="ay-pz__num">{total}</span><span className="ay-pz__lbl">{total === 1 ? 'match' : 'matches'}<br />ready</span></h1>
         {/* Nov 12 (research: show the personal result before the account ask; Funnelfox web2app
             patterns, "result before the gate"): her top three, real photos and match, right here. */}
         {(() => {
@@ -186,7 +197,10 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
           // Focus group, Nov 16 (Alyssa: "why do they suggest this? what is this page?"): say what these are and
           // why each one, in a line, before anything else is asked of her.
           return (<>
-            <p className="ay-pz__what">A preview of your top matches, picked from your answers. The % is how well each fits what you told ayna.</p>
+            {/* Nov 17 focus group (Elizabeth: "it said 10 matches but only three photos popped up"): say these are
+                a preview of the total, and that the % is right here on each one. */}
+            <h2 className="ay-pz__toph">{top.length < total ? `Your top ${top.length} of ${total}` : total === 1 ? 'Your match' : `Your ${total} matches`}</h2>
+            <p className="ay-pz__what">The % is how well each fits what you told ayna.{top.length < total ? ` You’ll see all ${total} next.` : ''}</p>
             <ul className="ay-pz__top" aria-label="Your top matches">
               {top.map((m, k) => {
                 const { pc } = m;
@@ -194,17 +208,27 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                 try { why = whyLine(m.product, getProductMatchDetailsForProduct(m.product, answers)) || ''; } catch { why = ''; }
                 return (
                   <li key={m.product.id} style={{ '--i': k }}>
-                    <MatchPlate src={productImageOverride(m.product) || safeProductImageSrc(m.product.image)} product={m.product} />
-                    <span className="ay-pz__topname">{m.product.name}</span>
-                    {pc != null && <span className="ay-pz__toppct">{pc}% match</span>}
-                    {why && <span className="ay-pz__topwhy">{why}</span>}
+                    {(() => {
+                      const inner = <>
+                        <MatchPlate src={productImageOverride(m.product) || safeProductImageSrc(m.product.image)} product={m.product} />
+                        <span className="ay-pz__topname">{m.product.name}</span>
+                        {pc != null && <span className="ay-pz__toppct">{pc}% match</span>}
+                        {why && <span className="ay-pz__topwhy">{why}</span>}
+                      </>;
+                      return sheet?.open
+                        ? <button type="button" className="ay-pz__topbtn" onClick={() => sheet.open(m.product)} aria-label={`${m.product.name}${pc != null ? `, ${pc}% match` : ''}. See details`}>{inner}</button>
+                        : inner;
+                    })()}
                   </li>
                 );
               })}
             </ul>
           </>);
         })()}
-        <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
+        {/* Nov 17 focus group (Jackie, Elizabeth: unsure which to pick, "see your results" or more quizzes): one
+            clear main step right under her matches. The extra steps below are optional. */}
+        {seeBtn}
+        <h2 id="ay-pz-h" className="ay-pz__h">Optional: get closer matches</h2>
         <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect && !connected ? 1 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">
           {/* Focus group, Nov 16 (Alyssa, Puloma agreed): linking her health data is the one step that matters most
@@ -228,16 +252,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             </li>
           )}
         </ul>
-        {/* Nov 8 (founder): after the quiz, three clear choices: more questions, see your results
-            (ayna Wrapped, then the account), or link your wearables. */}
-        {/* Founder, Nov 9: signed in (she made an account to link her data) it says See my Home;
-            signed out it says to create the account that saves them (Wrapped plays right after). */}
-        {signedIn
-          // Founder, Nov 10: ayna Wrapped is the first thing she sees after the quiz, signed in too, then Home.
-          ? <button type="button" className="ay-pz__see" onClick={onWatchWrapped || onSeeToday || (() => setStage('matches'))}>{onWatchWrapped ? 'See my results' : 'See my Home'} <Arrow /></button>
-          // Nov 16 (founder): signed out, she sees her summary first; it ends with "Save to a free account".
-          : <button type="button" className="ay-pz__see" onClick={onWatchWrapped || onCreateAccount || (() => setStage('matches'))}>{onWatchWrapped ? 'See my results' : 'Create your account to save'} <Arrow /></button>}
-
+        <p className="ay-pz__later">You can do these anytime from Profile.</p>
       </Tag>
     );
   }

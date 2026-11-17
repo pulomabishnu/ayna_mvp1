@@ -705,3 +705,17 @@ html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-pz:not(.is-web) .ay-pz_
 .ay-pz__what { margin: 4px 0 12px; font: 500 15px/1.45 var(--ay-font-ui, inherit); text-align: center; max-width: 34ch; margin-inline: auto; }
 .ay-pz__topwhy { display: block; margin-top: 2px; font: 500 13px/1.35 var(--ay-font-ui, inherit); opacity: .8; }
 .ay-pz__rec { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.4 var(--ay-font-ui, inherit); font-style: normal; vertical-align: middle; }
+
+/* Nov 17 focus group: "Your top 3 of N", one main step right under the matches, the optional steps after. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__toph { margin: 4px 0 4px !important; color: inherit !important; font: 700 22px/1.2 var(--ay-font-display, var(--o-sans, sans-serif)) !important; letter-spacing: -.015em; text-align: center; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__what { color: inherit; opacity: .9; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__go { display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin: 22px 0 36px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__go .ay-pz__see { align-self: stretch !important; justify-content: center; width: 100%; margin: 0 !important; min-height: 56px; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__gonote { display: block; color: inherit; opacity: .85; font: 500 13px/1.4 var(--o-sans, sans-serif); text-align: center; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz h2.ay-pz__h { margin: 0 0 4px !important; color: inherit !important; font: 700 22px/1.2 var(--ay-font-display, var(--o-sans, sans-serif)) !important; letter-spacing: -.015em !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__later { margin: 0 0 24px; color: inherit; opacity: .85; font: 500 14px/1.4 var(--o-sans, sans-serif); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz h1.ay-pz__found { font: inherit !important; color: inherit !important; }
+/* Each top match opens its product sheet (app). Looks the same as before, no outline. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn { all: unset; box-sizing: border-box; display: grid; gap: 6px; min-width: 0; cursor: pointer; color: inherit; text-align: left; -webkit-tap-highlight-color: transparent; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn:active { transform: scale(.97); }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn:focus-visible { outline: 2px solid #ffedac; outline-offset: 3px; border-radius: 12px; }
