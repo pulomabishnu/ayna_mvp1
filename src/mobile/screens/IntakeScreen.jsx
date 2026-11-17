@@ -959,13 +959,13 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       const notAFactor = 'Price is not a major factor for me';
       return (
         <>
-          <Chips label={step.title} items={[...PRICE_RANGES.filter((opt) => opt !== notAFactor), notAFactor]} muted={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
+          <Chips label={step.title} items={[...PRICE_RANGES.filter((opt) => opt !== notAFactor), notAFactor]} labels={PRICE_LABELS} muted={[notAFactor]} selected={selectedPrices} onToggle={(v) => toggleExclusive('priceRange', v, [notAFactor])} />
           {/* Only asked when she picked $75 or more (audit, Nov 12: it showed under "Under $25" too). */}
           {selectedPrices.some((v) => /\$75|\$150/.test(v)) && <div className="aq-subq--under"><SubQuestion title={FOLLOWUP_QUESTIONS.largePurchaseFrequency}><Rows label={FOLLOWUP_QUESTIONS.largePurchaseFrequency} options={LARGE_PURCHASE_FREQUENCY} value={intake.largePurchaseFrequency} onChange={(v) => set('largePurchaseFrequency', v)} /></SubQuestion></div>}
         </>
       );
     }
-    if (step.type === 'brand') return <Rows label={step.title} options={BRAND_OPENNESS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
+    if (step.type === 'brand') return <Rows label={step.title} options={BRAND_OPENNESS} labels={BRAND_LABELS} value={intake.brandOpenness} onChange={(v) => set('brandOpenness', v)} />;
     if (step.type === 'avoidIngredients' || step.type === 'avoidOnly' || step.type === 'wantOnly') {
       // "Leave out: Fragrance" also stores "Fragrance-free", the value the match engine already scores, so logic is unchanged.
       const selected = intake.avoidIngredients || [];
@@ -1102,3 +1102,21 @@ function SelectAll({ items, selected, onSet }) {
   const all = items.every((i) => selected.includes(i));
   return <button type="button" className="ip-selectall" onClick={() => onSet(all ? selected.filter((x) => !items.includes(x)) : [...new Set([...selected, ...items])])}>{all ? 'Clear all' : 'Select all'}</button>;
 }
+
+// Nov 16 (founder: "some quiz pages aren't cute"): short titles with a line under them. The saved answers stay the
+// full sentences, so matching and her profile are unchanged.
+const tile = (title, sub) => <span className="aq-tile"><b>{title}</b>{sub && <small>{sub}</small>}</span>;
+const PRICE_LABELS = {
+  'Under $25': tile('Under $25', 'Everyday basics'),
+  '$25–$75': tile('$25 to $75', 'Supplements, skincare'),
+  '$75–$150': tile('$75 to $150', 'Devices, bigger buys'),
+  '$150+': tile('$150+', 'Worth it if it works'),
+  'Price is not a major factor for me': tile('Price doesn’t matter', 'Show me the best fit'),
+};
+const BRAND_LABELS = {
+  'I mostly stick with brands I already trust': tile('Brands I trust', 'Mostly the ones I know'),
+  'I prefer trusted brands but am open to something new': tile('Trusted first', 'Open to something new'),
+  'I like a mix of familiar and new brands': tile('A mix', 'Familiar and new'),
+  'I enjoy discovering new brands': tile('New to me', 'I like discovering brands'),
+  'No preference': tile('No preference', null),
+};
