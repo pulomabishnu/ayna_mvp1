@@ -127,6 +127,9 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   const [liveReady, setLiveReady] = useState(() => typeof window === 'undefined');
   useEffect(() => { let active = true; loadProductCatalog().finally(() => { if (active) setLiveReady(true); }); return () => { active = false; }; }, []);
   const matches = useMemo(() => (ready && liveReady ? firstMatches(answers, 5) : []), [answers, ready, liveReady]);
+  // Nov 17: the top-3 preview ranks ALL her picks (it ranked only the first five, so her real #1 at 92% could be
+  // missing while Wrapped showed it).
+  const previewPool = useMemo(() => (ready && liveReady ? firstMatches(answers, 60) : []), [answers, ready, liveReady]);
   // Her connected health data counts too (founder, Nov 9: results from the quiz AND wearables).
   const { rows: needRows, total: needTotal, careNote, everydayBasics = false, emptyNeeds = [] } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
   // Founder, Nov 10 ("this should never be a thing"): no screen that says there is nothing for her.
@@ -192,7 +195,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {/* Nov 12 (research: show the personal result before the account ask; Funnelfox web2app
             patterns, "result before the gate"): her top three, real photos and match, right here. */}
         {(() => {
-          const top = matches.filter((m) => !m.hold).map((m) => ({ ...m, pc: pctFor(m.product) })).sort((a, b) => (b.pc ?? -1) - (a.pc ?? -1)).slice(0, 3);
+          const top = previewPool.filter((m) => !m.hold).map((m) => ({ ...m, pc: pctFor(m.product) })).sort((a, b) => (b.pc ?? -1) - (a.pc ?? -1)).slice(0, 3);
           if (!top.length) return null;
           // Focus group, Nov 16 (Alyssa: "why do they suggest this? what is this page?"): say what these are and
           // why each one, in a line, before anything else is asked of her.
