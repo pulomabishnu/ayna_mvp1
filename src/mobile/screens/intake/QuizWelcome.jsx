@@ -55,7 +55,7 @@ export default function QuizWelcome({ onDone }) {
           </li>
           <li style={{ '--i': 2 }}>
             <span className="qw-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V6.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a5 5 0 0 1-5 5h-1.2a5 5 0 0 1-4.1-2.1L5 14.5a1.6 1.6 0 0 1 2.5-2L9 14" /></svg></span>
-            <span><b>What these words mean</b> under a question explains them, or press and hold an answer.</span>
+            <span><b>Not sure what one means?</b> Press and hold an answer to see what it means.</span>
           </li>
         </ol>
         {/* The one thing you can't see on the screen, shown: a finger holds an answer, a definition appears. */}
