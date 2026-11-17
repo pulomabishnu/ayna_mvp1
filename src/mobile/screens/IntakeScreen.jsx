@@ -1103,20 +1103,20 @@ function SelectAll({ items, selected, onSet }) {
   return <button type="button" className="ip-selectall" onClick={() => onSet(all ? selected.filter((x) => !items.includes(x)) : [...new Set([...selected, ...items])])}>{all ? 'Clear all' : 'Select all'}</button>;
 }
 
-// Nov 16 (founder: "some quiz pages aren't cute"): short titles with a line under them. The saved answers stay the
+// Nov 16 (founder: "some quiz pages aren't cute", then "keep it minimal"): short titles only. The saved answers stay the
 // full sentences, so matching and her profile are unchanged.
-const tile = (title, sub) => <span className="aq-tile"><b>{title}</b>{sub && <small>{sub}</small>}</span>;
+const tile = (title) => <span className="aq-tile"><b>{title}</b></span>;
 const PRICE_LABELS = {
-  'Under $25': tile('Under $25', 'Everyday basics'),
-  '$25–$75': tile('$25 to $75', 'Supplements, skincare'),
-  '$75–$150': tile('$75 to $150', 'Devices, bigger buys'),
-  '$150+': tile('$150+', 'Worth it if it works'),
-  'Price is not a major factor for me': tile('Price doesn’t matter', 'Show me the best fit'),
+  'Under $25': tile('Under $25'),
+  '$25–$75': tile('$25 to $75'),
+  '$75–$150': tile('$75 to $150'),
+  '$150+': tile('$150+'),
+  'Price is not a major factor for me': tile('Price doesn’t matter'),
 };
 const BRAND_LABELS = {
-  'I mostly stick with brands I already trust': tile('Brands I trust', 'Mostly the ones I know'),
-  'I prefer trusted brands but am open to something new': tile('Trusted first', 'Open to something new'),
-  'I like a mix of familiar and new brands': tile('A mix', 'Familiar and new'),
-  'I enjoy discovering new brands': tile('New to me', 'I like discovering brands'),
-  'No preference': tile('No preference', null),
+  'I mostly stick with brands I already trust': tile('Brands I already trust'),
+  'I prefer trusted brands but am open to something new': tile('Trusted, but open to new'),
+  'I like a mix of familiar and new brands': tile('A mix of both'),
+  'I enjoy discovering new brands': tile('I love new brands'),
+  'No preference': tile('No preference'),
 };
