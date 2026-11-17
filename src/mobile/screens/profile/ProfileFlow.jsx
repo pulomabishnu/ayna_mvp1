@@ -1,4 +1,5 @@
 import { usePinnedHidden, setPinnedHidden } from '../../../home/pinnedPref.js';
+import { useProCta } from '../../../pro/useTrialAvailable.js';
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
 import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from '../../../components/you/BoxWaitlist.jsx';
@@ -477,6 +478,7 @@ const pickWord = (n) => `${fmtCount(n)} ${n === 1 ? 'product' : 'products'}`;
 
 function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz, onRequestEcosystemReset = null }) {
   const { profile, stats, playlists, setProfile } = useMyCommunity(authUserId);
+  const proCta = useProCta();
   const [avatarFailed, setAvatarFailed] = useState(false);
   // Backlog Nov 14 (M11): change the profile picture right here, not only from the Community profile
   // reached through the follower count.
@@ -551,7 +553,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
   // My health (pushed from the hub): the old My health, Tracking and Connected data groups in one place.
   if (view === 'health') {
     return shell('My health', <>
-      {pro.checking ? <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-week is-loading" role="status">Checking Pro access…</div></section> : pro.allowed ? <ThisWeek authUserId={authUserId} onOpenDashboard={openHealthDashboard} onConnect={openHealthData} /> : <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-locked"><svg className="ay-you-locked-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></svg><p>Your health dashboard and connected health data are included with ayna Pro.</p><button type="button" className="ay-you-btn" onClick={openHealthDashboard}>Get ayna Pro</button></div></section>}
+      {pro.checking ? <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-week is-loading" role="status">Checking Pro access…</div></section> : pro.allowed ? <ThisWeek authUserId={authUserId} onOpenDashboard={openHealthDashboard} onConnect={openHealthData} /> : <section className="ay-you-section" aria-labelledby="ay-you-week"><h2 className="ay-you-h2" id="ay-you-week">This week</h2><div className="ay-you-locked"><svg className="ay-you-locked-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2" /></svg><p>Your health dashboard and connected health data are included with ayna Pro.</p><button type="button" className="ay-you-btn" onClick={openHealthDashboard}>{proCta}</button></div></section>}
       {group('connected', 'Connected apps', [
         { key: 'healthData', title: 'Health data', sub: healthLocked ? 'Apple Health, Oura and uploads · Pro' : 'Apple Health, Oura and uploads', value: healthLocked ? '' : connectedCount ? `${connectedCount} connected` : '', locked: healthLocked, onClick: openHealthData },
       ])}

@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { marqueeLength, openProPaywall, proFeatureName, proLockLine, roundedPerimeter } from '../pro/paywall.js';
 import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 import { useProPurchaseMode } from '../pro/appStorefront.js';
+import { useProCta } from '../pro/useTrialAvailable.js';
 import '../styles/pro-v4.css';
 
 const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
@@ -67,6 +68,7 @@ export default function ProLock({
   error = '', onRetry, children, startFolded = false,
 }) {
   const uid = useId();
+  const cta = useProCta();
   // startFolded: just the one-line lock (Home, founder Nov 4: "it shud jus thave that lock").
   const [folded, setFolded] = useState(startFolded);
   const [localSheet, setLocalSheet] = useState(false);
@@ -88,7 +90,7 @@ export default function ProLock({
       {native && !usLink
         // App Store rule 3.1.1: outside the US App Store, no link to pay outside the App Store.
         ? <span className="pro-lock-fold__go">Not in the app yet</span>
-        : <button type="button" className="pro-lock-fold__go" onClick={unlock}>Get ayna Pro</button>}
+        : <button type="button" className="pro-lock-fold__go" onClick={unlock}>{cta}</button>}
       {sheet}
     </div>;
   }
@@ -111,7 +113,7 @@ export default function ProLock({
         <div className="pro-lock__actions">
           {native && !usLink
             ? <p className="pro-lock__note">ayna Pro can't be bought in the app in your country yet.</p>
-            : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />Get ayna Pro</button>}
+            : <button type="button" className="pro-lock__cta" onClick={unlock}><LockIcon size={18} />{cta}</button>}
           <button type="button" className="pro-lock__quiet" onClick={() => (onNotNow ? onNotNow() : setFolded(true))}>Not now</button>
           {native && <p className="pro-lock__fine">Already a Pro member? Sign in with the ayna account that has your membership.</p>}
           {webSetup && <>

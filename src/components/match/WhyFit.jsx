@@ -10,6 +10,7 @@ import { breakdownFromDetails } from '../../matching/breakdown.js';
 import { matchBreakdownFor } from '../pdp/decision.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { matchBacking } from './matchBacking.js';
+import { useProCta } from '../../pro/useTrialAvailable.js';
 import { proFactors } from './proFactors.js';
 import { openProPaywall } from '../../pro/paywall.js';
 import { ALL_PRODUCTS } from '../../data/catalog.js';
@@ -118,6 +119,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const [added, setAdded] = useState(false);
   const details = getProductMatchDetailsForProduct(product, quizResults, healthProfile, matchOpts);
   const pro = usePro();
+  const unlockCta = useProCta('Unlock');
   const { percent, eligible, matchStatus, tier } = details;
   const bf = details.browseFit;
   const scored = eligible !== false && matchStatus === 'scored' && Number.isFinite(percent) && percent > 0;
@@ -162,7 +164,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
       {/* Nov 16 (founder): how her health data moved the match is a Pro feature. Pro (and the team) see it;
           others see a locked line. */}
       {shown != null && details.healthData && pro && <HealthWhyLine healthData={details.healthData} />}
-      {shown != null && details.healthData && pro === false && <section className="ay-hwhy is-locked"><h3 className="ay-hwhy__title">Your health data</h3><p>See how your cycle, sleep and activity move this match with ayna Pro.</p><button type="button" className="ay-w2-link" onClick={() => openProPaywall({ feature: 'insights', featureName: 'Health data in your matches' })}>Unlock</button></section>}
+      {shown != null && details.healthData && pro === false && <section className="ay-hwhy is-locked"><h3 className="ay-hwhy__title">Your health data</h3><p>See how your cycle, sleep and activity move this match with ayna Pro.</p><button type="button" className="ay-w2-link" onClick={() => openProPaywall({ feature: 'insights', featureName: 'Health data in your matches' })}>{unlockCta}</button></section>}
       {shown != null && !details.healthData && pro && matchOpts?.healthContext && <section className="ay-hwhy is-none"><h3 className="ay-hwhy__title">Your health data</h3><p>Connected, but nothing in your recent trends is about {forWhat || 'what this product is for'}, so it didn’t change this match.</p></section>}
 
       {excluded && <ul className="ay-w2-list is-no">{(exLines.length ? exLines : ['Doesn’t fit your health profile right now']).slice(0, 3).map((l) => <li key={l}>{cap(l)}</li>)}</ul>}
@@ -223,7 +225,7 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
         <div className="ay-w2-pro__lock">
           <span className="ay-w2-pro__tag">ayna Pro</span>
           <strong>See every factor behind your {shown}%</strong>
-          <button type="button" onClick={() => openProPaywall({ feature: 'insights', featureName: 'Deeper match explanations' })}>Unlock</button>
+          <button type="button" onClick={() => openProPaywall({ feature: 'insights', featureName: 'Deeper match explanations' })}>{unlockCta}</button>
         </div>
       </section> : null)}
 

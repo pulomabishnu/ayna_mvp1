@@ -5,6 +5,7 @@ import HealthConnectionsScreen from './profile/HealthConnectionsScreen.jsx';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { LockIcon } from '../../components/ProLock.jsx';
 import { openProPaywall } from '../../pro/paywall.js';
+import { useProCta } from '../../pro/useTrialAvailable.js';
 import { useHealthData } from '../hooks/useHealthData.js';
 import './profile/health-connections.css';
 import '../../styles/onboarding.css';
@@ -27,6 +28,7 @@ const TILES = [
  * after checkout on the web the gate re-checks when she comes back, so she lands right here.
  */
 export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQuizConnectSignIn, onBack }) {
+  const cta = useProCta();
   const [selected, setSelected] = useState(null);
   const health = useHealthData(authUser?.id || null);
   const connected = health.connected.length > 0;
@@ -54,7 +56,7 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
           <span className="ay-qc-lock__seal" aria-hidden="true"><LockIcon size={22} /></span>
           <h2 id="ay-qc-lock-h">Part of ayna Pro</h2>
           <p>Connect Apple Health, Oura and more for closer matches.</p>
-          <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? 'Get ayna Pro' : 'Sign up to connect'}</button>
+          <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? cta : 'Sign up to connect'}</button>
           <small>Your answers are saved.</small>
         </section>
       )}

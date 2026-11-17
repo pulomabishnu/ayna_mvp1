@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import './app-only-sheet.css';
+import { useProCta } from '../pro/useTrialAvailable.js';
 
 // The ayna iPhone beta (TestFlight public link); same QR as ProLock.
 export const AYNA_APP_URL = 'https://testflight.apple.com/join/f3C9PypD';
@@ -13,6 +14,7 @@ export const AYNA_APP_URL = 'https://testflight.apple.com/join/f3C9PypD';
  * pro: she already has ayna Pro (no Pro button; an upload link instead).
  */
 export default function AppOnlySheet({ open, onClose, pro = false, onGetPro, onUpload }) {
+  const cta = useProCta();
   const closeRef = useRef(null);
   useEffect(() => {
     if (!open) return undefined;
@@ -37,7 +39,7 @@ export default function AppOnlySheet({ open, onClose, pro = false, onGetPro, onU
         </div>
         <div className="ay-apponly__actions">
           <a className="ay-apponly__cta" href={AYNA_APP_URL} target="_blank" rel="noopener noreferrer">Download the app</a>
-          {!pro && onGetPro && <button type="button" className="ay-apponly__ghost" onClick={onGetPro}>Get ayna Pro</button>}
+          {!pro && onGetPro && <button type="button" className="ay-apponly__ghost" onClick={onGetPro}>{cta}</button>}
           {pro && onUpload && <button type="button" className="ay-apponly__quiet" onClick={onUpload}>Upload a file instead</button>}
         </div>
       </section>
