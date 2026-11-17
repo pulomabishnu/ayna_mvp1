@@ -459,6 +459,9 @@ export default function SigninScreen({
             {/* Offered as "save these" (onboarding audit section 6, #36 PITCH). */}
             <h1>{mode === 'signup' ? 'Save your matches' : 'Sign in'}</h1>
             {mode === 'signup' && <p>Free. We never sell your health information.</p>}
+            {/* Nov 16 (founder: "make sure it shows when you're signing up"): the trial is named here; she starts it
+                (opt-in) on the next screen. No card needed. */}
+            {mode === 'signup' && <p className="ay-auth-trial"><b>Includes a free 14-day ayna Pro trial.</b> No card needed. You choose whether to start it.</p>}
           </header>
 
           {mode === 'signup' && showEcoSummary && (

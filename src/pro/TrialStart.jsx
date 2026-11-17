@@ -10,7 +10,7 @@ const captureProEvent = (event, props = {}) => { try { posthog.capture(event, pr
 /**
  * Nov 16 (founder): "a 1-week free trial, no card required, that you opt into". One per account, ever.
  * Shows only when the server says her free week is still unused (api/pro.js `trialAvailable`).
- * Nothing renews and nothing is charged: after 7 days she is back on the free plan.
+ * Nothing renews and nothing is charged: after 14 days she is back on the free plan.
  */
 export default function TrialStart({ source = 'paywall', onStarted, className = '', label = '' }) {
   const { available, days } = useTrialAvailable();
@@ -25,11 +25,11 @@ export default function TrialStart({ source = 'paywall', onStarted, className = 
       if (r?.started) {
         try { captureProEvent('pro_trial_started', { source }); } catch { /* analytics never blocks */ }
         try { window.dispatchEvent(new Event(PRO_CHANGED_EVENT)); } catch { /* old browser */ }
-        setMsg(`Your free week of ayna Pro has started. It ends on its own in ${days} days.`);
+        setMsg(`Your free ayna Pro trial has started. It ends on its own in ${days} days.`);
         onStarted?.(r);
-      } else setMsg(r?.reason === 'already_pro' ? 'You already have ayna Pro.' : 'You have already used your free week.');
+      } else setMsg(r?.reason === 'already_pro' ? 'You already have ayna Pro.' : 'You have already used your free trial.');
     } catch (e) {
-      setMsg(e?.code === 'sign_in_required' ? 'Sign in first to start your free week.' : 'Couldn’t start your free week. Try again.');
+      setMsg(e?.code === 'sign_in_required' ? 'Sign in first to start your free trial.' : 'Couldn’t start your free trial. Try again.');
     }
     setBusy(false);
   };

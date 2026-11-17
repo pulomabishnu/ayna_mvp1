@@ -20,12 +20,12 @@ const post = async (body) => { const r = res(); await handler({ method: 'POST', 
 
 describe('free week of ayna Pro (Nov 16)', () => {
   beforeEach(() => { db.trials.clear(); db.grants = {}; });
-  it('starts once: 7 days of access, no charge; a second try says used', async () => {
+  it('starts once: 14 days of access, no charge; a second try says used', async () => {
     const first = await post({ action: 'start_trial' });
     expect(first.body.started).toBe(true);
     const days = (Date.parse(db.grants.u1) - Date.now()) / 864e5;
-    expect(days).toBeGreaterThan(6.9);
-    expect(days).toBeLessThan(7.1);
+    expect(days).toBeGreaterThan(13.9);
+    expect(days).toBeLessThan(14.1);
     const again = await post({ action: 'start_trial' });
     expect(again.body).toEqual({ started: false, reason: 'used' });
   });

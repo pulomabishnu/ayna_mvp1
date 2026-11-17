@@ -19,7 +19,7 @@ export default function TrialOffer() {
         <span className="ay-trialofr__tag">Welcome gift</span>
         <h2 id="ay-trialofr-h">Try ayna Pro free for {days} days</h2>
         <p>Your health data in your matches, your full dashboard, every factor behind each match and unlimited reads.</p>
-        <TrialStart source="signup" label="Start my free week" onStarted={() => { markSeen(); window.setTimeout(() => setOpen(false), 1600); }} />
+        <TrialStart source="signup" label="Start my free trial" onStarted={() => { markSeen(); window.setTimeout(() => setOpen(false), 1600); }} />
         <button type="button" className="ay-trialofr__later" onClick={close}>Not now</button>
       </section>
     </div>

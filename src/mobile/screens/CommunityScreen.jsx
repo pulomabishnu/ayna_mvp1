@@ -73,7 +73,8 @@ function SheetLayer({ children, ...props }) {
 
 const TABS = [ ['for-you', 'For you'], ['following', 'Following'], ['question', 'Questions'], ['review', 'Reviews'], ['playlists', 'Playlists'], ['announcements', 'Announcements'] ];
 // Five feeds in the pill bar (never scrolls on phones); Announcements opens from the pinned card and the Topics sheet.
-const NAV_TABS = TABS.filter(([key]) => key !== 'announcements');
+// Nov 16 (founder: "the app doesn't have the announcements?"): Announcements is a tab again, last in the row.
+const NAV_TABS = TABS;
 // The one Post button opens "ways to post" (Community audit v2): one sheet, one colour family.
 const POST_TYPES = [
   ['post', 'Post', 'A tip, a win or a photo'],

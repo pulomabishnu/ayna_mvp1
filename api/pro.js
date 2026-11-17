@@ -15,7 +15,7 @@ function isAdminUser(user) {
   return allowed.includes(email);
 }
 
-const TRIAL_DAYS = 7;
+const TRIAL_DAYS = 14; // Nov 16 (founder): 14 days, not 7.
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store');
