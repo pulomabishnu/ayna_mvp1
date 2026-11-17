@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PRO_CHANGED_EVENT } from './paywall.js';
 import { loadProFeatureRules, requestPro } from '../utils/proApi.js';
+import { handleTrialStatus } from './trialNotices.js';
 
 /**
  * Small access check for entry-point UI (profile rows, upgrade prompts).
@@ -28,6 +29,7 @@ export function useProAccess(userId = null) {
         if (!allowed) {
           const status = await requestPro({ signal: controller.signal });
           allowed = Boolean(status?.active);
+          handleTrialStatus(status);
           // Which kind of access (Nov 16: the founder couldn't tell why an account wasn't paywalled).
           plan = status?.isAdmin ? 'team' : status?.active ? 'pro' : 'free';
         } else plan = 'open';

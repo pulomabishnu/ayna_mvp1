@@ -41,6 +41,7 @@ import { usePersonalizedFeed } from './hooks/usePersonalizedFeed.js';
 import { usePushNotifications, usePushRoutes } from './hooks/usePushNotifications.js';
 import { syncRundownReminder, onRundownReminderTap } from './utils/localRundown.js';
 import { onPlanReminderTap, syncPlanReminders } from '../health/planReminders.js';
+import { onTrialNoticeTap } from '../pro/trialNotices.js';
 import { SHOW_ROUTINE_EVENT } from './components/TodayViews.jsx';
 import { syncDayPlan, forgetPlanOnSignOut } from '../health/planCloud.js';
 import { PUSH_ASK_EVENT } from '../components/today/rundownPush.js';
@@ -751,12 +752,13 @@ export default function MobileApp() {
   useEffect(() => {
     syncRundownReminder({ ask: false }).catch(() => {});
     const offPlan = onPlanReminderTap(() => showRoutine());
+    const offTrial = onTrialNoticeTap();
     // Nov 16 (founder: "do we need to log again here, it's in the calendar"): My health's "Log today" opens the one
     // log, Your month on Home, instead of a second check-in card.
     const openMonth = () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); setHomeView(homeRoot); window.setTimeout(() => window.dispatchEvent(new Event('ayna:open-month')), 250); };
     window.addEventListener('ayna:open-month-log', openMonth);
     const offRundown = onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
-    return () => { offPlan(); offRundown(); window.removeEventListener('ayna:open-month-log', openMonth); };
+    return () => { offPlan(); offTrial(); offRundown(); window.removeEventListener('ayna:open-month-log', openMonth); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {

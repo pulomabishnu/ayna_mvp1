@@ -1,4 +1,5 @@
 import { requestPro } from '../utils/proApi.js';
+import { handleTrialStatus } from './trialNotices.js';
 import { openProPaywall, PRO_CHANGED_EVENT } from './paywall.js';
 
 /*
@@ -20,6 +21,7 @@ if (typeof window !== 'undefined') window.addEventListener(PRO_CHANGED_EVENT, ()
 export async function proNow() {
   if (cache.value && Date.now() - cache.at < 60000) return cache.value;
   const s = await requestPro();
+  try { handleTrialStatus(s); } catch { /* best effort */ }
   cache = { at: Date.now(), value: { active: Boolean(s?.active), gates: s?.gates !== false, quizRetakeOpen: s?.quizRetakeOpen !== false } };
   return cache.value;
 }
