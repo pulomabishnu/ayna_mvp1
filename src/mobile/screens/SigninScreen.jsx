@@ -204,6 +204,8 @@ export default function SigninScreen({
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
+  // Nov 16 (founder): signing up with an email that already has an account says so, with a Sign in button.
+  const [exists, setExists] = useState(false);
   // Per-field required errors, shown inline under each field or box.
   const [fieldErrors, setFieldErrors] = useState({});
   const [summaryAction, setSummaryAction] = useState('create your account');
@@ -300,7 +302,7 @@ export default function SigninScreen({
       if (needsConfirmation) { setCheckNote(CODE_COPY.emailSent(email.trim())); setEmailCode(''); setMode('check-email'); }
       else onAuthenticated(firstName || undefined);
     } catch (e) {
-      if (e.code === 'email_already_exists') setMode('signin');
+      if (e.code === 'email_already_exists') { setExists(true); return; }
       setError(authErrorText(e, 'We couldn’t sign you in. Check your connection and try again.'));
     } finally {
       setLoading(false);
@@ -527,6 +529,16 @@ export default function SigninScreen({
           )}
 
           {error && <div className="ay-auth-error" role="alert">{error}</div>}
+          {exists && (
+            <div className="ay-auth-exists" role="alertdialog" aria-modal="true" aria-labelledby="ay-auth-exists-h" onClick={() => setExists(false)}>
+              <div className="ay-auth-exists__card" onClick={(e) => e.stopPropagation()}>
+                <h2 id="ay-auth-exists-h">You already have an account</h2>
+                <p>There’s already an ayna account with <b>{email.trim()}</b>. Sign in to pick up where you left off. Your quiz answers come with you.</p>
+                <button type="button" className="ay-auth-exists__go" onClick={() => { setExists(false); setPassword(''); setError(''); setMode('signin'); }}>Sign in</button>
+                <button type="button" className="ay-auth-exists__other" onClick={() => setExists(false)}>Use a different email</button>
+              </div>
+            </div>
+          )}
           <InlineError className="ay-inline-err--summary">{summary}</InlineError>
 
 

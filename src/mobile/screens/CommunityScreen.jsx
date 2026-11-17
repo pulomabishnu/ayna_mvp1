@@ -750,6 +750,7 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
       setNotice(state.state === 'incoming' ? `You and @${handle} are now friends.` : `Friend request sent to @${handle}.`);
     } catch (e) { notifyError(e); } finally { setBusy(false); }
   };
+  const [unfriendAsk, setUnfriendAsk] = useState(null);
   const answerFriendRequest = async (row, accept) => {
     setBusy(true); setError('');
     try {
@@ -1204,7 +1205,10 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
             </form>
             {incoming.length > 0 && <><h3 className="am-friends-heading">Requests <span>{incoming.length}</span></h3>{incoming.map((r) => row(r, <span className="am-friend-actions"><button type="button" className="am-primary" disabled={busy} onClick={() => answerFriendRequest(r, true)}>Accept</button><button type="button" className="am-secondary" disabled={busy} onClick={() => answerFriendRequest(r, false)}>Decline</button></span>))}</>}
             <h3 className="am-friends-heading">Your friends <span>{friendsRows.length}</span></h3>
-            {friendsRows.length ? friendsRows.map((r) => row(r, null)) : <p className="am-collab-empty">No friends yet. Add someone by their @username, or from their profile.</p>}
+            {/* Nov 16 (founder): unfriend, with a one-tap "Sure?" so it's never by accident. Either friend can end it. */}
+            {friendsRows.length ? friendsRows.map((r) => row(r, unfriendAsk === r.id
+              ? <span className="am-friend-actions"><button type="button" className="am-primary" disabled={busy} onClick={async () => { setUnfriendAsk(null); await answerFriendRequest(r, false); setNotice('Removed from your friends.'); }}>Unfriend</button><button type="button" className="am-secondary" disabled={busy} onClick={() => setUnfriendAsk(null)}>Keep</button></span>
+              : <button type="button" className="am-secondary" disabled={busy} onClick={() => setUnfriendAsk(r.id)} aria-label={`Unfriend ${who(r)?.display_name || 'this member'}`}>Friends ✓</button>)) : <p className="am-collab-empty">No friends yet. Add someone by their @username, or from their profile.</p>}
             {sent.length > 0 && <><h3 className="am-friends-heading">Sent <span>{sent.length}</span></h3>{sent.map((r) => row(r, <button type="button" className="am-secondary" disabled={busy} onClick={() => answerFriendRequest(r, false)}>Cancel</button>))}</>}
           </section>;
         })()}

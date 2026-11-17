@@ -1,6 +1,7 @@
 import { HEART_PATH } from '../utils/heart.js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ProductImage from './ProductImage.jsx';
+import { ProductSheetContext } from '../productSheetContext.js';
 import EmptyState from './EmptyState.jsx';
 import { matchPercentFor, productMatch } from '../utils/matchScore.js';
 import { whyLine } from '../../utils/whyLine.js';
@@ -22,6 +23,10 @@ function imageFor(product) {
 // `canSave` false (signed out): Save asks her to sign in and the card stays
 // put, so the pick is never lost and nothing is shown as saved that isn't.
 export default function DiscoverDeck({ products = [], quizAnswers = null, matchOpts, savedProducts = {}, onToggleSaved, onOpenProduct, onClose, canSave = true }) {
+  // Nov 16 (founder): tapping the card (or Details) opens the product as a sheet over the deck; closing it
+  // leaves her on the same card.
+  const sheet = useContext(ProductSheetContext);
+  const openHere = (product) => (sheet?.open ? sheet.open(product) : onOpenProduct?.(product));
   // The order is set once when the deck opens (a save mid-deck must not
   // reshuffle the cards); the percent on the card is read live from the same
   // scorer as the Shop card and product page, so all three always agree.
@@ -77,6 +82,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, matchO
   const onPointerMove = (event) => { if (drag !== null) setDrag(event.clientX - startX.current); };
   const onPointerUp = () => {
     if (drag === null) return;
+    if (Math.abs(drag) < 8 && current) { setDrag(null); openHere(current.product); return; }
     if (drag > SWIPE_DISTANCE) act('save');
     else if (drag < -SWIPE_DISTANCE) act('skip');
     else setDrag(null);
@@ -127,7 +133,7 @@ export default function DiscoverDeck({ products = [], quizAnswers = null, matchO
           <button type="button" className="ay-deck-btn is-skip" onClick={() => act('skip')} aria-label="Skip">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
           </button>
-          <button type="button" className="ay-deck-btn is-view" onClick={() => onOpenProduct?.(current.product)}>Details</button>
+          <button type="button" className="ay-deck-btn is-view" onClick={() => openHere(current.product)}>Details</button>
           <button type="button" className="ay-deck-btn is-save" onClick={() => act('save')} aria-label={savedProducts[current.product.id] ? 'Already saved, next' : 'Save'}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d={HEART_PATH} /></svg>
           </button>

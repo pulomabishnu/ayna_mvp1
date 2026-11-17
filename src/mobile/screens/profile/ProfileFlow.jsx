@@ -132,7 +132,6 @@ const HUB_ICONS = {
   saved: <><path d="M12 19.5s-7-4.3-7-9.3A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.2c0 5-7 9.3-7 9.3Z" /></>,
   checkin: <><rect x="4" y="5" width="16" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M4 10h16M9 14.5l2 2 4-4" /></>,
   healthData: <><path d="M3 12h4l2-5 4 10 2-5h6" /></>,
-  badges: <><circle cx="12" cy="9" r="5" /><path d="M9 13.5L7.5 20l4.5-2.5 4.5 2.5-1.5-6.5" /></>,
   log: <><path d="M5 19h4l10-10-4-4L5 15v4z" /><path d="M13 7l4 4" /></>,
   beliefs: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" /><path d="M17.5 4.5l1.5 1.5 2.5-2.5" /></>,
   shopper: <><path d="M6 9h12l-1 11H7L6 9Z" /><path d="M9.5 9V7a2.5 2.5 0 0 1 5 0v2" /></>,
@@ -474,11 +473,6 @@ function PlaylistCover({ playlist }) {
 
 const pickWord = (n) => `${fmtCount(n)} ${n === 1 ? 'product' : 'products'}`;
 
-// Plain time-of-day greeting from the phone's clock.
-function greetingForNow(date = new Date()) {
-  const h = date.getHours();
-  return h < 5 ? 'Hi' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-}
 
 function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [], intake = null, authUserId, name, initial, memberSince, ecosystemCount, savedCount, profileFilledPct, shopperAlertsCount, myProducts, savedProducts, readProgress, onOpen, onOpenSettings, onEditProfile, onOpenEcosystem, onOpenSaved, onOpenMonthlyCheckin, onOpenProduct, onOpenArticle, onOpenCommunity, quizDraft = null, onResumeQuiz, onStartOverQuiz, onRequestEcosystemReset = null }) {
   const { profile, stats, playlists, setProfile } = useMyCommunity(authUserId);
@@ -569,7 +563,7 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         { key: 'beliefs', title: 'What ayna knows about you', sub: 'See, change or remove anything ayna uses', onClick: () => onOpen('beliefs') },
         // Team run-through, Nov 11: "two ways to change your health profile" was confusing. Your quiz
         // answers (on Profile) is the one way; this duplicate row is gone.
-        showBlend && { key: 'blend', icon: 'startups', title: 'Your blend', sub: 'How much each answer counts', onClick: () => onOpen('blend') },
+        showBlend && { key: 'blend', icon: 'startups', title: 'What you prefer', sub: 'Scent, price, brands. Change them anytime', onClick: () => onOpen('blend') },
         { key: 'shopper', title: 'At a glance', sub: 'Your routine, brands and safety alerts', value: alerts, onClick: () => onOpen('shopper') },
       ])}
     </>);
@@ -1800,10 +1794,10 @@ const SET_ICONS = {
   contact: <><rect x="4" y="6" width="16" height="12" rx="2" /><path d="m4.5 7 7.5 6 7.5-6" /></>,
 };
 
-function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
+function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const [query, setQuery] = useState('');
   const groups = [
-    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', keywords: 'theme text size notifications personalization health data ask ayna suggestions tips', onClick: onOpenPreferences }, ...(onOpenTexts ? [{ icon: 'texts', title: 'Text messages', keywords: 'sms phone alerts reminders', onClick: onOpenTexts }] : [])]],
+    ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', keywords: 'theme text size notifications personalization health data ask ayna suggestions tips', onClick: onOpenPreferences }, { icon: 'texts', title: 'Text messages', keywords: 'sms phone alerts reminders', soon: true }]],
     ['About', 'pink', [{ icon: 'how', title: 'How it works', keywords: 'matching evidence recommendations', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', keywords: 'team company', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', keywords: 'partners companies', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', keywords: 'college university', href: CAMPUS_RESOURCES_URL }]],
     ['Account', 'mint', [{ icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
   ];
@@ -1816,7 +1810,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
   const rowInner = (row) => <>
     <span className="ay-set-icon" aria-hidden="true"><svg viewBox="0 0 24 24">{SET_ICONS[row.icon]}</svg></span>
     <span className="ay-set-title">{row.title}</span>
-    {row.href ? <ExternalLinkIcon /> : <ChevronIcon />}
+    {row.soon ? <span className="ay-set-soon">Coming soon</span> : row.href ? <ExternalLinkIcon /> : <ChevronIcon />}
   </>;
   return <div className="ayna-settings-index" style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
     <BackHeader title="Settings" onBack={onBack} />
@@ -1827,6 +1821,7 @@ function SettingsScreen({ onBack, onOpenTexts, onOpenPreferences, onOpenHowItWor
         <div className="ay-set-card">
           {rows.map((row) => row.href
             ? <a key={row.title} className="ay-set-row" href={row.href} target="_blank" rel="noopener noreferrer">{rowInner(row)}</a>
+            : row.soon ? <div key={row.title} className="ay-set-row is-soon" aria-label={`${row.title}, coming soon`}>{rowInner(row)}</div>
             : <button type="button" key={row.title} className="ay-set-row" onClick={row.onClick}>{rowInner(row)}</button>)}
         </div>
       </section>)}
@@ -3804,7 +3799,7 @@ export default function ProfileFlow({
     // Your blend (was a tab on the hub): how much each answer counts.
     body = (
       <div className="ay-you" style={{ flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-        <BackHeader title="Your blend" onBack={goBack} />
+        <BackHeader title="What you prefer" onBack={goBack} />
         <div className="ay-you-body">
           <HouseBlend intake={own?.fullHealthIntake || null} onSave={onUpdateIntake} />
           <nav className="ay-you-section ay-you-list" aria-label="More about your answers">

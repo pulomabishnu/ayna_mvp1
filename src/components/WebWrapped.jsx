@@ -93,7 +93,7 @@ function TypeWall({ value }) {
 
 const PERSONA_LINE = { 'The Researcher': 'You follow the evidence. Studies first, then the shelf.', 'The Listener': 'You trust real experiences from women like you.', 'The Curator': 'You go with expert picks and brands you trust.', 'The Explorer': 'You love finding a new brand before everyone else.' };
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null, onMore = null }) {
   // Backlog Nov 14 (M11: "only four categories until I left and came back"): re-render when the live
   // catalog replaces the bundled one, so the first view is the same as the next one.
   useCatalogReady();
@@ -213,7 +213,9 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   useBeats(BEATS[active], `${index}:${active}`, reduced);
   const plate = (p, cls = '') => <span className={`ays-plate ${cls}`.trim()}><span><Photo product={p} /></span></span>;
   // A tappable photo: opens the product pop-up (never advances the story).
-  const tapPlate = (p, cls = '') => <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
+  // Nov 16 (founder: "tapping the summary doesn't change the page"): while the story plays, a tap on a product photo
+  // moves on like anywhere else; on the last card the photos open the product preview.
+  const tapPlate = (p, cls = '') => !last ? <span className={`ay-wr-tap ${cls}`.trim()}>{plate(p)}</span> : <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
   const peekPct = peek && quizResults ? (() => { const r = percentFor ? percentFor(peek) : getProfileMatchPercentForProduct(peek, quizResults, healthProfile, matchOpts); return Number.isFinite(r) && r > 0 ? shownMatchPercent(Math.round(r)) : null; })() : null;
   const peekWhy = peek && quizResults ? (whyFor ? whyFor(peek) : whyLine(peek, getProductMatchDetailsForProduct(peek, quizResults))) : '';
 
@@ -336,6 +338,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             </div></div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
+              {onMore && <button type="button" className="ays-link ay-wr-better" onClick={onMore}>Answer more questions first</button>}
               {onPersonalize && moreQuestions > 0 && <button type="button" className="ays-link ay-wr-better" onClick={onPersonalize}>Make my matches better · {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>}
               <div className="ay-wr-secondary">
                 <button type="button" className="ays-link" onClick={share} aria-describedby="wrapped-invite-note">

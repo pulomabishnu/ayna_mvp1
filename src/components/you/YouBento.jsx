@@ -131,7 +131,7 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
           <Row k="checkins" t={checkins} />
           <Row k="health" t={health} />
           <Row k="activity" t={activity} />
-          {said && <Row k="blend" t={{ caption: 'Your blend', sub: said, onClick: onOpenBlend }} />}
+          {said && <Row k="blend" t={{ caption: 'What you prefer', sub: said, onClick: onOpenBlend }} />}
         </ul>
         {(settings || logout) && <ul className="yb-list" aria-label="Settings"><Row k="settings" t={settings} /><Row k="logout" t={logout} /></ul>}
       </div>
@@ -172,8 +172,8 @@ export default function YouBento({ tiles = {}, products = [], intake = null, onO
       {section('health', health, 'calm')}
       {section('activity', activity, 'calm')}
       {said && (
-        <Tile tone="calm" span="wide" className="yb-tile is-blend" {...tileProps({ onClick: onOpenBlend }, `Your blend: ${said}.${onOpenBlend ? ' Open to change.' : ''}`)}>
-          <span className="yb-top"><span className="ayb-tile__label">Your blend</span>{onOpenBlend && ARROW}</span>
+        <Tile tone="calm" span="wide" className="yb-tile is-blend" {...tileProps({ onClick: onOpenBlend }, `What you prefer: ${said}.${onOpenBlend ? ' Open to change.' : ''}`)}>
+          <span className="yb-top"><span className="ayb-tile__label">What you prefer</span>{onOpenBlend && ARROW}</span>
           <BlendPreview intake={intake} />
         </Tile>
       )}

@@ -1750,6 +1750,8 @@ export default function MobileApp() {
     // account and this same ecosystem attached to it, routing them through
     // "sign in" again after finishing is a dead end, not a next step.
     onFinish: () => { setRevealFrom(null); setRevealAtEnd(false); setScreen('reveal'); },
+    // Nov 16: the end of a guest's summary offers the "make my matches more personal" page again.
+    onRevealMore: () => { setRevealFrom(null); setScreen('ready'); },
     onContinue: () => authUser ? setScreen('eco') : openAuth('signup'),
     initialMode: authMode,
     onAuthBack: () => {

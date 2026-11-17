@@ -218,14 +218,13 @@ export function useSupabaseAuth() {
         },
       },
     });
-    if (error) throw error;
+    // Nov 16: an email that already has an account says so (Supabase answers either way) and is never
+    // counted as a new sign-up.
+    const dupError = () => { const dup = new Error('An account with this email already exists. Sign in instead.'); dup.code = 'email_already_exists'; return dup; };
+    if (error) throw (/already (registered|exists)/i.test(error.message || '') || error.code === 'user_already_exists' ? dupError() : error);
+    if (data.user?.identities?.length === 0) throw dupError();
     // The account exists now, verified or not: count it (signed_up + account_created).
     recordNewAccount(posthog, data.user, { method: 'email' });
-    if (data.user?.identities?.length === 0) {
-      const dup = new Error('An account with this email already exists. Sign in instead.');
-      dup.code = 'email_already_exists';
-      throw dup;
-    }
     // A live session here means this project's "Confirm email" setting is
     // off, no confirmation email is coming, and onAuthStateChange above
     // has already picked up the new session.

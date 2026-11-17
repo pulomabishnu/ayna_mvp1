@@ -13,7 +13,7 @@ import '../../styles/flow.css';
 // matches" at the end); the app's own scorer ranks and labels the picks so the
 // "#1 match" percent is the one on her cards. The app asks the optional
 // questions on its Ready step, so the story has no "more questions" slide.
-export default function RevealScreen({ myProducts = [], onContinue, onBack, onExitStory = null, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
+export default function RevealScreen({ myProducts = [], onContinue, onRevealMore = null, onBack, onExitStory = null, onGoBrowse, authUser, quizAnswers, lastQuizAnswers, matchOpts, revealStartAtEnd = false }) {
   const answers = quizAnswers || lastQuizAnswers;
   const opts = matchOpts || undefined;
   // Bleeding after menopause: picks the engine sends to evaluation (or that do
@@ -44,6 +44,7 @@ export default function RevealScreen({ myProducts = [], onContinue, onBack, onEx
       onOpenProduct={sheet?.open ? (p) => sheet.open(p) : null}
       primaryLabel={signedIn ? (onExitStory ? 'Done' : 'See all your matches') : 'Save to a free account'}
       onPrimary={done}
+      onMore={!signedIn && onRevealMore ? onRevealMore : null}
     />
   );
 }

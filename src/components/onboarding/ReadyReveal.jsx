@@ -227,7 +227,8 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {signedIn
           // Founder, Nov 10: ayna Wrapped is the first thing she sees after the quiz, signed in too, then Home.
           ? <button type="button" className="ay-pz__see" onClick={onWatchWrapped || onSeeToday || (() => setStage('matches'))}>{onWatchWrapped ? 'See my results' : 'See my Home'} <Arrow /></button>
-          : <button type="button" className="ay-pz__see" onClick={onCreateAccount || onWatchWrapped || (() => setStage('matches'))}>Create your account to save <Arrow /></button>}
+          // Nov 16 (founder): signed out, she sees her summary first; it ends with "Save to a free account".
+          : <button type="button" className="ay-pz__see" onClick={onWatchWrapped || onCreateAccount || (() => setStage('matches'))}>{onWatchWrapped ? 'See my results' : 'Create your account to save'} <Arrow /></button>}
 
       </Tag>
     );

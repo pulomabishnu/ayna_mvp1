@@ -80,8 +80,9 @@ export function HouseBlend({ intake, onSave, className = '', headingLevel = 2 })
   };
   return (
     <section className={`ay-blend ${className}`} aria-labelledby="ay-blend-h">
-      <H className="ay-blend__h" id="ay-blend-h">Your house blend</H>
-      <p className="ay-blend__sub">From your quiz answers. Slide to change one.</p>
+      <H className="ay-blend__h" id="ay-blend-h">What you prefer</H>
+      {/* Nov 16 (founder: "make the wording better so people know what it is"). */}
+      <p className="ay-blend__sub">Scent, price, brands and research vs reviews, from your quiz. Slide one and your matches re-sort to fit.</p>
       <ul className="ay-blend__rows">
         {rows.map((row, i) => {
           const value = draft[row.id] ?? row.value;

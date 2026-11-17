@@ -260,13 +260,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             },
           },
         });
+        if (error && /already (registered|exists)/i.test(error.message || '')) { setError('An account with this email already exists. You’re now on Sign in.'); setMode('signin'); return; }
         if (error) throw error;
         // "Where did you hear about us?" comes after sign-up, optional.
         if (data.user?.identities?.length !== 0) markAskHeardAbout();
-        // The account exists now, verified or not: count it (signed_up + account_created).
-        recordNewAccount(posthog, data.user, { method: 'email' });
+        // Nov 16: an existing email is not a new account, so it is not counted as a sign-up.
+        if (data.user?.identities?.length !== 0) recordNewAccount(posthog, data.user, { method: 'email' });
         if (data.user?.identities?.length === 0) {
-          setError('An account with this email already exists. Sign in instead.');
+          setError('An account with this email already exists. You’re now on Sign in: enter your password.');
           setMode('signin');
           return;
         }
