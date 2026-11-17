@@ -209,3 +209,7 @@ button.ay-hc-row:active { background: var(--ay-cream); }
 html body .app-container .ay-hc-web .ay-hc-card { border-radius: 16px; box-shadow: none !important; }
 html body .app-container .ay-hc-web .ay-hc-icon.is-lg { background: var(--legacy-pink); box-shadow: none; }
 .ay-hc-suggest { margin: 24px 0 12px; }
+/* Nov 16 focus group: one tap to share every category. */
+.ay-hc-selectall { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; margin: 0 0 6px; padding: 0 2px; font: 700 15px/1.2 var(--ay-font-ui, inherit); color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.ay-hc-selectall:disabled { opacity: .5; cursor: default; }
+.ay-hc-selectall:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }

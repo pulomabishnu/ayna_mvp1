@@ -260,8 +260,13 @@ describe('Rundown product card and the sheet over the story', () => {
     act(() => root.render(ui({ ...ctx, isOpen: false })));
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 2 of 4');
     // Adding it moves on to the next card.
+    // Focus group, Nov 16: it says it was added, then moves on.
+    vi.useFakeTimers();
     act(() => add().click());
     expect(ctx.addToRoutine).toHaveBeenCalledWith(product);
+    expect(document.body.textContent).toContain('Added to your products.');
+    act(() => { vi.advanceTimersByTime(1200); });
+    vi.useRealTimers();
     expect(document.querySelector('[aria-live]').textContent).toContain('Card 3 of 4');
   });
 

@@ -451,7 +451,10 @@ export function productFactors(pp, r, up, { isEffect = false, grade = null } = {
   }
 
   // Price vs her budget (upfront price, US dollars).
-  const priceScored = shopping.budget && !shopping.priceNotImportant && !(up.contradictions || []).some((c) => (c.affects || []).includes('price'));
+  // Focus group, Nov 16 (Alyssa: "what I'd spend on tampons and pads is very different than on a supplement"):
+  // her budget is for bigger buys, so everyday period basics are never scored against it.
+  const EVERYDAY = new Set(['pad', 'tampon', 'liner', 'panty-liner']);
+  const priceScored = shopping.budget && !shopping.priceNotImportant && !EVERYDAY.has(cat) && !(up.contradictions || []).some((c) => (c.affects || []).includes('price'));
   if (priceScored) {
     const price = pp.price || {};
     if (price.is_free) add('price', W.price.within, 'Free, fits your budget', 'Free, fits your budget');

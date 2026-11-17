@@ -135,7 +135,7 @@ function Body({ card, h, done }) {
                 </span>
               </button>
               {/* Nov 16 (founder: "Add looks awkward"): a small Add pill inside the row, like Instagram's product sticker. */}
-              <button type="button" className={`ay-rd-prow__add${h.sheet.inRoutine(m.product.id) ? ' is-on' : ''}`} aria-label={h.sheet.inRoutine(m.product.id) ? `${m.product.name} added to your products` : `Add ${m.product.name} to my products`} onClick={() => { h.sheetAdd(m.product); h.next(); }}>
+              <button type="button" className={`ay-rd-prow__add${h.sheet.inRoutine(m.product.id) ? ' is-on' : ''}`} aria-label={h.sheet.inRoutine(m.product.id) ? `${m.product.name} added to your products` : `Add ${m.product.name} to my products`} onClick={() => h.addNext(m.product)}>
                 {h.sheet.inRoutine(m.product.id) ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg> : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>}
                 <span>{h.sheet.inRoutine(m.product.id) ? 'Added' : 'Add'}</span>
               </button>
@@ -169,7 +169,7 @@ function Body({ card, h, done }) {
           {card.sources?.length > 0 && <p className="ay-rd-comp__src">Sources: {card.sources.map((x, i) => <span key={x.url}>{i ? ', ' : ''}<a href={x.url} target="_blank" rel="noopener noreferrer">{x.title}<span className="sr-only"> (opens in a new tab)</span></a></span>)}</p>}
           <span className="ay-rd-actions">
             {h.sheet
-              ? <button type="button" className="ay-rd-primary" onClick={() => { h.sheetAdd(p); h.next(); }}>{h.sheet.inRoutine(p.id) ? 'Added' : 'Add to my products'}</button>
+              ? <button type="button" className="ay-rd-primary" onClick={() => h.addNext(p)}>{h.sheet.inRoutine(p.id) ? 'Added' : 'Add to my products'}</button>
               : h.whyMatch && <button type="button" className="ay-rd-primary" onClick={() => h.whyMatch(p)}>See it and add</button>}
             {h.notForMe && <button type="button" className="ay-rd-link" onClick={() => h.notForMe(card)}>Not for me</button>}
           </span>
@@ -396,6 +396,13 @@ export default function RundownStory({ cards, title = 'Your daily rundown', onCl
     openSheet: sheet ? (p) => { onAction?.(card, 'open'); sheet.open(p); } : null,
     sheetSave: sheet ? (p) => { const was = sheet.isSaved(p.id); sheet.toggleSaved(p); if (!was) onAction?.(card, 'save'); } : null,
     sheetAdd: sheet ? (p) => { sheet.addToRoutine(p); onAction?.(card, 'add'); } : null,
+    // Focus group, Nov 16 (Alyssa: "I think I added it, but then it just went to the next page"): show it was
+    // added, then move on.
+    addNext: sheet ? (p) => {
+      if (!sheet.inRoutine(p.id)) { sheet.addToRoutine(p); onAction?.(card, 'add'); }
+      setMsg('Added to your products.');
+      setTimeout(() => go(1), 1100);
+    } : null,
     ask: onAsk ? (q) => { onAction?.(card, 'ask'); onAsk(q); } : null,
     explore: onExplore ? () => { onAction?.(card, 'open'); onExplore(); } : null,
     askFollowUp: onAskFollowUp ? (f) => { onAction?.(closingCard || card, 'ask'); onAskFollowUp(f); } : null,

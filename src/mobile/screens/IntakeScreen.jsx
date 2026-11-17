@@ -287,8 +287,9 @@ function SuggestList({ draft, matches, onPick }) {
   if (!draft.trim()) return null;
   return (
     <div className="ip-suggest" role="listbox">
-      {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
+      {/* Focus group, Nov 16 (Alyssa typed "Olly gummies" and thought it wasn't allowed): add-your-own comes first. */}
       {!matches.some((m) => m.toLowerCase() === draft.trim().toLowerCase()) && <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>}
+      {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
     </div>
   );
 }
@@ -460,7 +461,7 @@ function ProductHistoryBuilder({ products, onChange }) {
         <div>
           <label className="ip-search is-active">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search products" aria-label="Search products" />
+            <input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && query.trim()) addProduct(query); }} placeholder="Search or type any product" aria-label="Search or type any product" />
             <button type="button" aria-label="Close search" onClick={() => { setAdding(false); setQuery(''); }}>×</button>
           </label>
           <SuggestList draft={query} matches={suggestions} onPick={addProduct} />
@@ -821,6 +822,8 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
 
     if (step.type === 'topics') return (
       <>
+        {/* Focus group, Nov 16: select all. */}
+        <SelectAll items={HELP_TOPICS.filter((t) => t !== SOMETHING_ELSE)} selected={intake.helpTopics || []} onSet={(next) => setIntake((prev) => pruneForTopics({ ...prev, helpTopics: next }))} />
         <Chips label={step.title} items={HELP_TOPICS} selected={[...(intake.helpTopics || []), ...(String(intake.supportOtherText || '').trim() || helpOtherOpen ? [SOMETHING_ELSE] : [])]} onToggle={toggleHelpTopic}
           expand={{ [SOMETHING_ELSE]: (
             <label className="ip-other-text">
@@ -851,6 +854,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
         {/* Focus group, Nov 9: nothing to fix is fine. What would she like to learn about? Saved to her profile, never a match. */}
         {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
           <div className="aq-subq--under ay-learn-q"><SubQuestion title="Anything you'd like to learn about? (optional)">
+            <SelectAll items={LEARN_INTERESTS} selected={intake.learnInterests || []} onSet={(next) => set('learnInterests', next)} />
             <Chips compact items={LEARN_INTERESTS} selected={intake.learnInterests || []} onToggle={(v) => set('learnInterests', (intake.learnInterests || []).includes(v) ? intake.learnInterests.filter((x) => x !== v) : [...(intake.learnInterests || []), v])} />
           </SubQuestion></div>
         )}
@@ -1091,4 +1095,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       {renderBody()}
     </QuizFrame>
   );
+}
+
+// Focus group, Nov 16 (Alyssa): "a select all button instead of having to select each category".
+function SelectAll({ items, selected, onSet }) {
+  const all = items.every((i) => selected.includes(i));
+  return <button type="button" className="ip-selectall" onClick={() => onSet(all ? selected.filter((x) => !items.includes(x)) : [...new Set([...selected, ...items])])}>{all ? 'Clear all' : 'Select all'}</button>;
 }

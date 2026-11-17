@@ -145,7 +145,10 @@ const TITLES = {
   age: { title: 'How old are you?' },
   lifeStage: { title: 'Which of these is you right now?', subtitle: 'Pick all that fit. Not sure is OK.' },
   formats: { title: 'Which kinds of products do you like using?' },
-  priceRange: { title: 'What would you usually spend on one product?' },
+  // Focus group, Nov 16 (Alyssa): pads and tampons cost a lot less than a supplement, so say what it covers.
+  priceRange: { title: 'What would you usually spend on one product?', subtitle: 'For bigger buys like supplements, skincare or devices. Pads and tampons aren’t counted.' },
+  // Focus group, Nov 16 (Alyssa: "what have I tried in terms of my diet? my supplements?"): products only.
+  products: { title: 'Which products have you tried?', subtitle: 'Like supplements, period products, skincare or devices. Not diet changes. Any brand counts, even if it isn’t listed.' },
   avoidIngredients: { title: 'Anything you want your products to avoid?', type: 'avoidOnly' },
   fsaHsa: { title: 'Do you have an FSA or HSA?', subtitle: 'US only. These are accounts, often through work, that let you pay for eligible health costs with money before tax. Some health products qualify.' },
   trust: { title: 'What matters most when you pick a product?', subtitle: 'Drag to rank. Evidence comes first unless you change it.' },

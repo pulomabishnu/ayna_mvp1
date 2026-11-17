@@ -451,7 +451,21 @@ export function buildRundown(input = {}) {
 
   // 9. Community: only real items handed in (the app passes real public posts
   //    for her topics and the people she follows; nothing when there are none).
-  const cm = community.find((c) => c?.id && c?.title && shownOn(memory, `community:${c.id}`, today, 30) === 0);
+  // Focus group, Nov 16 (Alyssa: sleep, movement, an eye mask, then "how did we get to periods?"): the community
+  // card follows what this rundown is about. When her data cards are about sleep, a sleep post; when nothing in
+  // Community matches what she's seeing today, no community card (it read as a jump).
+  const fresh = community.filter((c) => c?.id && c?.title && shownOn(memory, `community:${c.id}`, today, 30) === 0);
+  const focus = cards.filter((c) => ['data', 'change'].includes(c.category)).map((c) => String(c.topic || c.field || c.title || '')).join(' ').toLowerCase();
+  const TOPIC_WORDS = [
+    [/sleep|rest|tired|insomnia/, /sleep|insomnia|tired|rest|night|nap|melatonin|eye mask/],
+    [/step|activity|move|exercise|walk/, /walk|move|exercise|steps|workout|activity|gym|yoga/],
+    [/heart|hrv|stress|recovery/, /stress|anxiety|heart|calm|recovery|burnout/],
+    [/cycle|period|flow|cramp|luteal|pms/, /period|cycle|cramp|pms|flow|luteal/],
+    [/mood|anx/, /mood|anxiety|stress|calm/],
+    [/skin|acne/, /skin|acne|breakout/],
+  ];
+  const relevant = (c) => { const t = `${c.topic || ''} ${c.title || ''}`.toLowerCase(); return TOPIC_WORDS.some(([want, has]) => want.test(focus) && has.test(t)); };
+  const cm = focus.trim() ? fresh.find(relevant) || null : fresh[0] || null;
   if (cm) {
     const title = cm.isNew ? (cm.topic ? `New in ${cm.topic}` : 'New in Community') : cm.count ? `${cm.count} people are talking about this` : 'People are talking about this';
     add({ key: `community:${cm.id}`, category: 'community', kind: 'community', kicker: cm.isNew ? 'New in Community' : 'Community', title, body: cm.title, communityItem: cm, footnote: 'Experiences differ. The same symptom can have different causes.' });

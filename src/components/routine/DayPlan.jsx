@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  readMeds, saveMed, setMedActive, setMedReminder, recordDose, undoDose, historyFor, scheduleLabel, doseLabel,
+  readMeds, saveMed, setMedActive, setMedReminder, deleteMed, restoreMed, recordDose, undoDose, historyFor, scheduleLabel, doseLabel,
   fmtTime, localDay, UNITS, FREQS, WEEKDAYS,
 } from '../../health/medications.js';
 import {
@@ -227,6 +227,14 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
   const H = `h${headingLevel}`;
   const dayWord = offset === 0 ? 'Today' : offset === -1 ? 'Yesterday' : offset === 1 ? 'Tomorrow' : new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
+  // Nov 16 (founder): delete a medication and its reminder, with Undo.
+  const removeMed = async (m) => {
+    const r = deleteMed(m.id);
+    if (!r.ok) return;
+    await syncPlanReminders({ today: localDay() });
+    toast(`${m.name} and its reminder deleted`, { label: 'Undo', onClick: () => { restoreMed(r.removed); syncPlanReminders({ today: localDay() }); } });
+  };
+
   // Keep phone reminders in line with her plan when this opens (an end date may have passed).
   useEffect(() => { syncPlanReminders({ today: localDay() }).catch(() => {}); }, []);
 
@@ -270,6 +278,7 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
           {m.kind === 'scheduled' && <label className="ay-dp-switch"><input type="checkbox" checked={m.remind} onChange={async (e) => { setMedReminder(m.id, e.target.checked); setRemStatus(await syncPlanReminders({ ask: e.target.checked, today: localDay() })); }} />Reminder</label>}
           <button type="button" className="ay-dp__ghost" onClick={() => setSheet({ type: 'med', item: m })}>Edit</button>
           <button type="button" className="ay-dp__ghost" onClick={() => setSheet({ type: 'history', item: m })}>History</button>
+          <button type="button" className="ay-dp__ghost" onClick={() => removeMed(m)}>Delete</button>
           <button type="button" className="ay-dp__ghost" onClick={async () => { setMedActive(m.id, false); await syncPlanReminders({ today: localDay() }); toast(`${m.name} stopped. History kept.`, { label: 'Undo', onClick: () => { setMedActive(m.id, true); syncPlanReminders({ today: localDay() }); } }); }}>Stop</button>
         </div>
       </li>)}</ul>}
@@ -285,6 +294,7 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
         <div className="ay-dp-mlist__acts">
           <button type="button" className="ay-dp__ghost" onClick={() => setSheet({ type: 'history', item: m })}>History</button>
           <button type="button" className="ay-dp__ghost" onClick={async () => { setMedActive(m.id, true); await syncPlanReminders({ today: localDay() }); toast(`${m.name} restarted`); }}>Restart</button>
+          <button type="button" className="ay-dp__ghost" onClick={() => removeMed(m)}>Delete</button>
         </div>
       </li>)}</ul></>}
       {!planRemindersAvailable() && <p className="ay-dp__muted">Reminders work in the ayna app on your phone.</p>}

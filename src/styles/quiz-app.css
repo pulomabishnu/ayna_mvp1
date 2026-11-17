@@ -139,3 +139,8 @@ html body .ayna-mobile[data-theme='dark']:is(#ay,.ayna-mobile):is(#ay,.ayna-mobi
 /* Small iPhones (Arpita 10/29, SE check Nov 14): the chevron pushed the corner circle off "Perimenopause".
    The website already hides it; the circle and the follow-up that opens are enough. */
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .aq.aq--app .aq-answer .aq-chip.has-sub > svg.aq-chev { display: none !important; }
+
+/* Nov 16 focus group: Select all / Clear all above a list of chips. */
+.ip-selectall { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; min-height: 44px; margin: 0 0 4px; font: 700 15px/1.2 var(--ay-font-ui, inherit); color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.ip-selectall:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }
+

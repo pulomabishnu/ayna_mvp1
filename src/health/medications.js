@@ -112,6 +112,28 @@ export function setMedActive(id, active, storage = globalThis.localStorage) {
   return { ok: w.ok, med: next };
 }
 
+/** Nov 16 (founder: "make sure you can delete the reminders you make"): delete a medication, its reminder and its
+ * dose history. Returns what was removed so the screen can offer Undo. */
+export function deleteMed(id, storage = globalThis.localStorage) {
+  const store = readMeds(storage);
+  const med = store.meds.find((m) => m.id === id);
+  if (!med) return { ok: false };
+  const doses = store.doses.filter((d) => d.medId === id);
+  store.meds = store.meds.filter((m) => m.id !== id);
+  store.doses = store.doses.filter((d) => d.medId !== id);
+  const w = writeMeds(store, storage);
+  return { ok: w.ok, removed: { med, doses } };
+}
+
+/** Undo for deleteMed. */
+export function restoreMed(removed, storage = globalThis.localStorage) {
+  if (!removed?.med) return { ok: false };
+  const store = readMeds(storage);
+  if (!store.meds.some((m) => m.id === removed.med.id)) store.meds.push(removed.med);
+  store.doses = [...store.doses, ...(removed.doses || []).filter((d) => !store.doses.some((x) => x.id === d.id))];
+  return writeMeds(store, storage);
+}
+
 export function setMedReminder(id, remind, storage = globalThis.localStorage) {
   const store = readMeds(storage);
   const med = store.meds.find((m) => m.id === id);

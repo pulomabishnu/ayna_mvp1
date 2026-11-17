@@ -375,6 +375,14 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
       <section className="ay-hc-group is-peri" aria-label="What to share">
         <h2>{live ? 'You share' : 'Choose what ayna can use'}</h2>
         <p className="ay-hc-usedfor">Used to personalize your insights and routine. Turn on only what you want. You can change this any time.</p>
+        {/* Focus group, Nov 16 (Alyssa): "a select all button instead of having to select each category". */}
+        {(() => {
+          const all = providesFor(source).flatMap((g) => g.cats.filter((c) => source.categories.includes(c)));
+          const allOn = all.length > 0 && all.every((c) => selected.includes(c));
+          if (all.length < 2) return null;
+          const pick = () => { if (!live) { setSelected(allOn ? [] : all); return; } if (!allOn) saveCategories([...new Set([...selected, ...all])]); };
+          return (live && allOn) ? null : <button type="button" className="ay-hc-selectall" disabled={busy || !availability.ok} onClick={pick}>{allOn ? 'Turn all off' : 'Turn all on'}</button>;
+        })()}
         <CategoryToggles source={source} selected={selected} onToggle={toggle} disabled={busy || !availability.ok} />
       </section>
 

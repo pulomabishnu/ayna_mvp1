@@ -183,39 +183,47 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         {(() => {
           const top = matches.filter((m) => !m.hold).map((m) => ({ ...m, pc: pctFor(m.product) })).sort((a, b) => (b.pc ?? -1) - (a.pc ?? -1)).slice(0, 3);
           if (!top.length) return null;
-          return (
+          // Focus group, Nov 16 (Alyssa: "why do they suggest this? what is this page?"): say what these are and
+          // why each one, in a line, before anything else is asked of her.
+          return (<>
+            <p className="ay-pz__what">A preview of your top matches, picked from your answers. The % is how well each fits what you told ayna.</p>
             <ul className="ay-pz__top" aria-label="Your top matches">
               {top.map((m, k) => {
                 const { pc } = m;
+                let why = '';
+                try { why = whyLine(m.product, getProductMatchDetailsForProduct(m.product, answers)) || ''; } catch { why = ''; }
                 return (
                   <li key={m.product.id} style={{ '--i': k }}>
                     <MatchPlate src={productImageOverride(m.product) || safeProductImageSrc(m.product.image)} product={m.product} />
                     <span className="ay-pz__topname">{m.product.name}</span>
                     {pc != null && <span className="ay-pz__toppct">{pc}% match</span>}
+                    {why && <span className="ay-pz__topwhy">{why}</span>}
                   </li>
                 );
               })}
             </ul>
-          );
+          </>);
         })()}
         <h1 id="ay-pz-h" className="ay-pz__h">Make them more you.</h1>
         <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect && !connected ? 1 : 0)} minutes · all optional</p>
         <ul className="ay-pz__list">
-          {canMore && (
+          {/* Focus group, Nov 16 (Alyssa, Puloma agreed): linking her health data is the one step that matters most
+              here, so it comes first. */}
+          {onConnect && (
             <li style={{ '--i': 0 }}>
+              <button type="button" onClick={onConnect} className={connected ? 'is-done' : undefined}>
+                <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
+                <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b>{!connected && <em className="ay-pz__rec">Recommended</em>}<small>{connected ? 'Your matches use your health data too' : 'Apple Health, Oura · 1 min'}</small></span>
+                {connected ? <span className="ay-pz__tick" aria-label="Linked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg></span> : <Arrow />}
+              </button>
+            </li>
+          )}
+          {canMore && (
+            <li style={{ '--i': 1 }}>
               <button type="button" onClick={safetyLeft > 0 ? (onSafety || onMorePersonal) : onMorePersonal}>
                 <span className="ay-pz__blob is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 9.5a4 4 0 1 1 5.5 3.7c-.9.4-1.5 1.2-1.5 2.2V16" /><circle cx="12" cy="19.5" r=".6" /></svg></span>
                 <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : remaining > 0 ? `Answer ${remaining} more ${remaining === 1 ? 'question' : 'questions'}` : 'Review your answers'}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · about {moreMin} min</small></span>
                 <Arrow />
-              </button>
-            </li>
-          )}
-          {onConnect && (
-            <li style={{ '--i': 1 }}>
-              <button type="button" onClick={onConnect} className={connected ? 'is-done' : undefined}>
-                <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
-                <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b><small>{connected ? 'Your matches use your health data too' : 'Apple Health, Oura · 1 min'}</small></span>
-                {connected ? <span className="ay-pz__tick" aria-label="Linked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg></span> : <Arrow />}
               </button>
             </li>
           )}

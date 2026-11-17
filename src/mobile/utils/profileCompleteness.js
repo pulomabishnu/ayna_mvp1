@@ -79,7 +79,7 @@ export const PROGRESSIVE_ASKS = [
   { stepId: 'priceRange', title: 'What do you usually spend per item?', why: ONBOARDING_WHY.priceRange, has: (i) => answered(i.priceRange) },
   { stepId: 'avoidIngredients', title: 'Any ingredients to prefer or avoid?', why: ONBOARDING_WHY.avoidIngredients, has: (i) => answered(i.avoidIngredients) },
   { stepId: 'fsaHsa', title: 'Do you use an FSA or HSA?', why: ONBOARDING_WHY.fsaHsa, has: (i) => answered(i.fsaHsa) },
-  { stepId: 'products', title: 'What have you tried before?', why: 'What worked and what did not helps us avoid repeats and find better fits.', has: (i) => answered(i.productHistory) },
+  { stepId: 'products', title: 'Which products have you tried?', why: 'Supplements, period products, skincare or devices. What worked and what did not helps us avoid repeats.', has: (i) => answered(i.productHistory) },
   { stepId: 'zip', title: 'Want care options near you?', why: 'Your ZIP code is only used to find clinics, telehealth and stores that serve your area. It never changes a match.', has: (i) => answered(i.zipcode) },
 ];
 export const progressiveAskId = (stepId) => `profile_ask:${stepId}`;

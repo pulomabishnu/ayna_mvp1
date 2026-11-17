@@ -700,3 +700,8 @@ html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-pz:not(.is-web) .ay-pz_
 html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-pz:not(.is-web) .ay-pz__list > li > button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 12px !important; }
 html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-pz:not(.is-web) .ay-pz__list > li > button::before,
 html body .ayna-mobile.ayna-mobile.ayna-mobile .ay-pz.ay-pz:not(.is-web) .ay-pz__list > li > button::after { content: none !important; }
+
+/* Nov 16 focus group: what the preview is, and why each match. */
+.ay-pz__what { margin: 4px 0 12px; font: 500 15px/1.45 var(--ay-font-ui, inherit); text-align: center; max-width: 34ch; margin-inline: auto; }
+.ay-pz__topwhy { display: block; margin-top: 2px; font: 500 13px/1.35 var(--ay-font-ui, inherit); opacity: .8; }
+.ay-pz__rec { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; font: 700 13px/1.4 var(--ay-font-ui, inherit); font-style: normal; vertical-align: middle; }
