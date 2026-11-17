@@ -165,4 +165,7 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg button:not([aria-pressed='true']) { background: rgba(255, 237, 172, .12); }
 .ay-dp-sheet[data-theme*='dark'] .ay-dp__primary { background: #ffedac !important; color: #3e2723 !important; }
 .ay-dp-sheet[data-theme*='dark'] .ay-dp__ghost { color: #ffedac !important; }
-.ay-dp-sheet[data-theme*='dark'] .ay-dp-form input { color-scheme: dark; }
+.ay-dp-sheet[data-theme*='dark'] .ay-dp-form input { color-scheme: light; }
+/* Nov 16 (founder: "the clocks are bad color"): the browser's clock icon in the time fields matches the text. */
+.ay-dp-form input::-webkit-calendar-picker-indicator { opacity: .8; filter: invert(14%) sepia(18%) saturate(1400%) hue-rotate(330deg) brightness(.9); cursor: pointer; }
+.ay-dp-sheet[data-theme*='dark'] .ay-dp-form input::-webkit-calendar-picker-indicator { opacity: 1; filter: invert(1) sepia(.45) saturate(2.2) brightness(1.03); }
