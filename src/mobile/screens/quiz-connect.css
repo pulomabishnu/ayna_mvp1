@@ -23,3 +23,10 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-lock__go { all: unset; box-sizing: border-box; cursor: pointer; margin-top: 8px; width: 100%; min-height: 52px; display: grid; place-items: center; border-radius: 999px; background: #ffedac; color: #3e2723; font: 700 16px/1 var(--ay-font-ui, Figtree, sans-serif); }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-lock__go:focus-visible { outline: 3px solid #f7badd; outline-offset: 3px; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-lock small { font: 500 13px/1.3 var(--ay-font-ui, Figtree, sans-serif); color: rgba(255, 237, 172, .7); }
+
+/* Nov 16 (founder: "the yellow one needs an outline or something"): butter tiles on the butter page get an espresso
+   outline, and their icon sits on pink so it shows. */
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-butter { box-shadow: inset 0 0 0 2px #3e2723 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-butter .ay-qc-tiles__ic { background: #f7badd; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme*='dark'] .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-butter { box-shadow: none !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme*='dark'] .ay-qc.ay-qc--v2 .ay-qc-tiles li.is-ink { background: rgba(255, 237, 172, .14) !important; } /* the espresso tile disappeared on the espresso page */
