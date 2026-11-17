@@ -85,7 +85,7 @@ export function proFactors(product, details, mb, { spot = null, helps = [] } = {
 
   // Other needs it helps (founder, Nov 16).
   for (const h of helps.filter((r) => r.needId !== needId && r.score > 0).slice(0, 2)) {
-    out.weighed.push({ key: `also-${h.needId}`, title: `Also helps ${h.phrase || h.short || h.label}`, detail: `${Math.round(h.score * (h.score <= 1 ? 100 : 1))}% match for that too, so it counts toward both.` });
+    out.weighed.push({ key: `also-${h.needId}`, title: `Also helps ${h.phrase || h.short || h.label}`, detail: `${Math.round(h.score * (h.score <= 1 ? 100 : 1))}% match for that too. Helping with more than one thing never lowers the %.` });
   }
 
   // Ranking only: research volume and reviews order equal matches; the % stays the same.

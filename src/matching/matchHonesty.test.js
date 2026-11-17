@@ -213,13 +213,16 @@ describe('distribution across needs stays stable', () => {
     // Six manufacturer-verified comfort and wellbeing listings joined the
     // scored population with cautious draft evidence grades. Keep the broad
     // drift guard while allowing that deliberate population change.
-    expect(Math.abs(mean(other) - 54.4)).toBeLessThanOrEqual(2.5);
+    // Nov 16 (deliberate, founder chose "keep the %, sort only"): helping with other needs no longer
+    // lowers the % (it only breaks ties), so the mean rose about 8.6 points.
+    expect(Math.abs(mean(other) - 63.0)).toBeLessThanOrEqual(2.5);
     expect(other.filter((x) => x >= 99).length / other.length).toBeLessThanOrEqual(0.02);
   });
   it('period products: no longer saturated at 99', () => {
     // Baseline: n 420, mean 77.7, 27% of period-product matches were 99.
     expect(period.filter((x) => x >= 99).length / period.length).toBeLessThan(0.02);
-    expect(Math.abs(mean(period) - 77.7)).toBeLessThanOrEqual(3);
+    // Nov 16 (deliberate, same change): mean 85.6.
+    expect(Math.abs(mean(period) - 85.6)).toBeLessThanOrEqual(3);
   });
   it('the knee leaves anything under it untouched', () => {
     expect(kneeOf(V2.knee)).toBe(V2.knee);

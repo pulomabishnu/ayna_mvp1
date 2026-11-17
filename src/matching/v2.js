@@ -280,7 +280,10 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   const modifiers = Math.max(0.5, Math.min(1.1, (r.components?.health ?? base) / base));
   const signal = signals?.get(r.needId) || null;
   const weak = Boolean(signal?.weak);
-  const focusTerm = 1 - V2.focusWeight + V2.focusWeight * focus;
+  // Nov 16 (founder, chose "keep the %, sort only"): the % she sees never drops for helping more than one
+  // thing. Focus only orders otherwise-equal matches (rankKey), so one all-in-one product doesn't fill every shelf.
+  const rankFocus = 1 - V2.focusWeight + V2.focusWeight * focus;
+  const focusTerm = 1;
   const weakTerm = weak ? V2.weakFitFactor : 1;
   const health = Math.min(1, needFit * focusTerm * modifiers * weakTerm);
   const pref = Number.isFinite(r.outputs?.preferenceFit) ? r.outputs.preferenceFit : 1;
@@ -300,7 +303,9 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   // Nov 16 (founder): between products that fit about the same, the one with more research for THIS
   // need ranks higher. Order only; the % shown doesn't change.
   const research = researchNudge(pp, r.needId);
-  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + research + hash01(`${userKey}|${pp.product_id}`) * 0.001;
+  // Focus breaks ties only: under one point, so a higher % never sorts below a lower one.
+  const focusTie = 0.008 * (rankFocus - 1 + V2.focusWeight) / (V2.focusWeight || 1);
+  const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + research + focusTie + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1, { weak });
   // The breakdown (raised / lowered / unknown), from the same numbers: the
   // base parts telescope from "made for this need" to shownHealth, so
@@ -847,6 +852,8 @@ export function buildEcosystemV2(up, products, options = {}) {
 
   const shelves = scaffold.shelves.map((shelf) => {
     let homed = chosen.filter((x) => x.home.needId === shelf.needId);
+    // Nov 16: picks are chosen for variety, but shown strongest first, so a higher % never sits below a lower one.
+    homed = homed.map((x, i) => ({ x, i })).sort((a, b) => ((b.x.home.v2?.fit || 0) - (a.x.home.v2?.fit || 0)) || a.i - b.i).map(({ x }) => x);
     // A need already covered by a pick that lives on another shelf shows that
     // pick here too ("Also covers"), instead of looking empty.
     if (!homed.length) {

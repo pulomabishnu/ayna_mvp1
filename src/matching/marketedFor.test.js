@@ -47,7 +47,8 @@ describe('irritability, mood swings and sleep have non-pill options (womenshealt
     expect(shelf('Irritability').productIds.some((id) => NON_PILL_CALM.includes(id))).toBe(true);
     expect(shelf('Mood swings').productIds.some((id) => NON_PILL_CALM.includes(id))).toBe(true);
     expect(shelf('Cycle-related mood changes').productIds.length).toBeGreaterThanOrEqual(3);
-    expect(shelf('Trouble sleeping').productIds).toEqual(expect.arrayContaining(['d-headspace', 'd-calm']));
+    // Nov 16: one meditation app per shelf now that equal matches tie; either counts.
+    expect(shelf('Trouble sleeping').productIds.some((id) => ['d-headspace', 'd-calm'].includes(id))).toBe(true);
   });
   it('urgency: a pelvic floor trainer (MedlinePlus: Kegel exercises, biofeedback)', () => {
     expect(shelf('Urinary urgency').productIds.length).toBeGreaterThan(0);

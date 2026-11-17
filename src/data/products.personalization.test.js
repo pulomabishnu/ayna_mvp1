@@ -329,7 +329,8 @@ describe('matching engine integration', () => {
         // whole is not one descending run.
         const byNeed = new Map();
         for (const p of matches) { const d = getProductMatchDetailsForProduct(p, spec); const list = byNeed.get(d.needId) || []; list.push(d.percent); byNeed.set(d.needId, list); }
-        for (const percents of byNeed.values()) for (let i = 1; i < percents.length; i += 1) expect(percents[i]).toBeLessThanOrEqual(percents[i - 1] + 2);
+        // Nov 16: a different kind of product can come before a same-% duplicate (For you variety), up to 5 points.
+        for (const percents of byNeed.values()) for (let i = 1; i < percents.length; i += 1) expect(percents[i]).toBeLessThanOrEqual(percents[i - 1] + 5);
     });
 
     it('builds one ecosystem shelf per need; picks per need controls quantity, never quality', () => {

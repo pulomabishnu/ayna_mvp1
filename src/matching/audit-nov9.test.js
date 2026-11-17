@@ -34,7 +34,8 @@ describe('Nov 9 algorithm audit', () => {
     const names = shelfNames({ age: '23', lifeStageSelections: ['I get periods regularly'], supportSelections: ['Period product support'], avoidIngredients: ['Reusable', 'Organic'] }, 'period.product_support');
     expect(names.length).toBeGreaterThan(1);
     const disposable = (n) => /disposable/i.test(n) || (!/reusable|cup|disc|underwear|kit/i.test(n));
-    expect(disposable(names[0])).toBe(false);
-    expect(disposable(names[1])).toBe(false);
+    // Nov 16: she also asked for organic, and helping with more than one need no longer lowers the %, so an
+    // organic disposable can lead; reusable products still fill most of the top of the shelf.
+    expect(names.slice(0, 3).filter((n) => !disposable(n)).length).toBeGreaterThanOrEqual(2);
   });
 });
