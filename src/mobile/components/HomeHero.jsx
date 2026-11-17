@@ -47,7 +47,7 @@ function RundownBubble({ count, done }) {
           is a small line under it, in words. */}
       <span className="ay-hh-bubble__ring" aria-hidden="true">
         {done ? <i className="ay-hh-bubble__check is-big"><svg viewBox="0 0 24 24"><path d={CHECK} /></svg></i>
-          : <svg className="ay-hh-bubble__play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" /></svg>}
+          : <svg className="ay-hh-bubble__play" viewBox="0 0 24 24"><path d="M9 5.5v13L19.5 12z" /></svg>}
       </span>
       {/* Nov 16 (founder): just "Today's rundown"; the check on the button says when it's been seen. */}
       <span className="ay-hh-bubble__label" aria-hidden="true">Today's rundown</span>
