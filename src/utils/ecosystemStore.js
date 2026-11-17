@@ -104,6 +104,9 @@ function rowFromProduct(product, flags) {
     inEcosystem: !!flags.inEcosystem,
     isTracked: !!flags.isTracked,
     isOmitted: !!flags.isOmitted,
+    // Nov 17 (Puloma: "products I've removed reappear in my routine, the biggest bug"): she took it out
+    // herself. Kept as a marker so no quiz retake, new goal or AI rebuild puts it back.
+    removedAt: flags.removedByUser && !flags.inEcosystem ? Date.now() : null,
     updatedAt: Date.now(),
   };
 }
@@ -136,6 +139,7 @@ function clearLocalEcosystemShadow(userId, includeTracking = false) {
 
 function dbRowToShadowRow(row) {
   return {
+    removedAt: !row.in_ecosystem ? (Number(row.product_data?._removedAt) || null) : null,
     product: row.product_data || {
       id: row.product_id,
       name: row.product_name,
@@ -154,6 +158,7 @@ function hydrateFromRows(rowsById) {
   const myProducts = {};
   const trackedProducts = {};
   const omittedProducts = {};
+  const removedProducts = {};
   const ecosystemUpdatedAt = {};
 
   for (const [, row] of Object.entries(rowsById || {})) {
@@ -169,12 +174,16 @@ function hydrateFromRows(rowsById) {
     }
     if (row.isTracked) trackedProducts[productId] = product;
     if (row.isOmitted) omittedProducts[productId] = product;
+    if (!row.inEcosystem && !row.isOmitted && row.removedAt) removedProducts[productId] = row.removedAt;
   }
 
-  return { myProducts, trackedProducts, omittedProducts, ecosystemUpdatedAt };
+  return { myProducts, trackedProducts, omittedProducts, removedProducts, ecosystemUpdatedAt };
 }
 
-function toRow(userId, product, { inEcosystem, isTracked, isOmitted }) {
+function toRow(userId, product, { inEcosystem, isTracked, isOmitted, removedByUser = false }) {
+  // The removed marker lives in product_data; set when she takes it out herself, cleared when it is back in.
+  const { _removedAt, ...rest } = product || {};
+  product = removedByUser && !inEcosystem ? { ...rest, _removedAt: Date.now() } : (!inEcosystem && _removedAt ? { ...rest, _removedAt } : rest);
   return {
     user_id: userId,
     product_id: product.id,
@@ -194,8 +203,8 @@ async function syncActiveShadowRows(supabase, userId, shadow, onlyIds = null) {
   const rows = Object.entries(shadow?.rows || {})
     .filter(([id]) => !onlyIds || onlyIds.has(id))
     .map(([, row]) => row)
-    .filter((row) => row?.product?.id && (row.inEcosystem || row.isTracked || row.isOmitted))
-    .map((row) => toRow(userId, row.product, row));
+    .filter((row) => row?.product?.id && (row.inEcosystem || row.isTracked || row.isOmitted || row.removedAt))
+    .map((row) => toRow(userId, row.product, { ...row, removedByUser: Boolean(row.removedAt) }));
   if (!rows.length) return;
 
   const CHUNK = 100;
@@ -336,38 +345,38 @@ export async function clearEcosystemForUser(supabase, userId, { includeTracking 
 
 export async function upsertProductState(supabase, userId, product, flags) {
   updateLocalProductShadow(userId, product, flags);
-  const { inEcosystem, isTracked, isOmitted } = flags;
 
   try {
-    if (!inEcosystem && !isTracked && !isOmitted) {
-      const { error: updateError } = await supabase
-        .from('user_ecosystems')
-        .update({ in_ecosystem: false, is_tracked: false, is_omitted: false, updated_at: new Date().toISOString() })
-        .eq('user_id', userId)
-        .eq('product_id', product.id);
-      if (updateError) throw updateError;
-
-      const { error } = await supabase
-        .from('user_ecosystems')
-        .delete()
-        .eq('user_id', userId)
-        .eq('product_id', product.id)
-        .eq('in_ecosystem', false)
-        .eq('is_tracked', false)
-        .eq('is_omitted', false)
-        .eq('is_saved', false);
-      if (error && error.code !== '42703') throw error;
-    } else {
-      const { error } = await supabase
-        .from('user_ecosystems')
-        .upsert(toRow(userId, product, flags), { onConflict: 'user_id,product_id' });
-      if (error) throw error;
-    }
+    // Nov 17: taking a product out no longer deletes its row. It stays switched off, and when she took it out
+    // herself (flags.removedByUser) it is marked so no device or rebuild adds it back. is_saved is never touched.
+    const { error } = await supabase
+      .from('user_ecosystems')
+      .upsert(toRow(userId, product, flags), { onConflict: 'user_id,product_id' });
+    if (error) throw error;
     return { synced: true };
   } catch (error) {
     console.warn('[Ayna] user_ecosystems write unavailable; change remains in session fallback:', describeError(error, 'upsertProduct'));
     return { synced: false, fallback: true };
   }
+}
+
+/** Ids among `ids` that she took out of her products herself (this device's copy, then the table). */
+export async function removedProductIds(supabase, userId, ids) {
+  const out = new Set();
+  const want = [...new Set((ids || []).filter(Boolean))];
+  if (!want.length) return out;
+  const shadow = readLocalShadow(userId);
+  for (const id of want) { const r = shadow.rows?.[id]; if (r && !r.inEcosystem && r.removedAt) out.add(id); }
+  try {
+    const { data, error } = await supabase.from('user_ecosystems').select('product_id, in_ecosystem, product_data').eq('user_id', userId).in('product_id', want);
+    if (!error) {
+      for (const row of data || []) {
+        if (!row.in_ecosystem && row.product_data?._removedAt) out.add(row.product_id);
+        else if (row.in_ecosystem) out.delete(row.product_id);
+      }
+    }
+  } catch { /* the device copy is enough */ }
+  return out;
 }
 
 /** Replace superseded quiz/AI picks without changing tracking, omission or saved flags. */
@@ -394,8 +403,14 @@ export async function removeGeneratedProductsFromEcosystem(supabase, userId, pro
 
 /** Persist many products in chunks. Never write product blobs to Auth metadata. */
 export async function upsertProductsBatch(supabase, userId, products, flags) {
-  const valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
+  let valid = (Array.isArray(products) ? products : []).filter((p) => p?.id);
   if (valid.length === 0) return { saved: 0 };
+  // Nov 17: ayna's own picks (quiz seed, new goal, AI rebuild) never go back in once she took them out.
+  if (flags?.inEcosystem) {
+    const removed = await removedProductIds(supabase, userId, valid.filter(isGeneratedPick).map((p) => p.id));
+    if (removed.size) valid = valid.filter((p) => !(removed.has(p.id) && isGeneratedPick(p)));
+    if (valid.length === 0) return { saved: 0, synced: true };
+  }
 
   const shadow = readLocalShadow(userId);
   for (const product of valid) {

@@ -155,32 +155,38 @@ describe('upsertProductsBatch', () => {
   });
 });
 
+describe('products she took out stay out (Nov 17)', () => {
+  it('a quiz or AI rebuild does not add back a pick she removed, but saves the rest', async () => {
+    const sb = makeSupabase({ selectData: [{ product_id: 'gone', in_ecosystem: false, product_data: { id: 'gone', _removedAt: 1 } }] });
+    const r = await upsertProductsBatch(sb, 'u-removed', [{ id: 'gone', intakeGenerated: true }, { id: 'new', intakeGenerated: true }], { inEcosystem: true, isTracked: false, isOmitted: false });
+    const up = sb.calls.find((c) => c.op === 'upsert');
+    expect(up.payload.map((row) => row.product_id)).toEqual(['new']);
+    expect(r.saved).toBe(1);
+  });
+  it('a product she adds herself always goes in', async () => {
+    const sb = makeSupabase({ selectData: [{ product_id: 'gone', in_ecosystem: false, product_data: { id: 'gone', _removedAt: 1 } }] });
+    await upsertProductsBatch(sb, 'u-removed2', [{ id: 'gone', userAdded: true }], { inEcosystem: true, isTracked: false, isOmitted: false });
+    expect(sb.calls.find((c) => c.op === 'upsert').payload.map((row) => row.product_id)).toEqual(['gone']);
+  });
+});
+
 describe('upsertProductState', () => {
-  it('clears the flags, then deletes the row only if nothing else holds it', async () => {
+  it('switches the row off instead of deleting it, and never touches is_saved (Nov 17)', async () => {
     const sb = makeSupabase();
     await upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false });
-
-    // A plain DELETE would also wipe is_saved, emptying the user's Save for
-    // later list whenever she removed the same product from her ecosystem.
-    expect(sb.calls[0].op).toBe('update');
+    expect(sb.calls[0].op).toBe('upsert');
     expect(sb.calls[0].payload).toMatchObject({ in_ecosystem: false, is_tracked: false, is_omitted: false });
-    expect(sb.calls[0].filters).toMatchObject({ user_id: 'u', product_id: 'p1' });
-
-    expect(sb.calls[1].op).toBe('delete');
-    expect(sb.calls[1].filters).toMatchObject({
-      user_id: 'u', product_id: 'p1', in_ecosystem: false, is_tracked: false, is_omitted: false, is_saved: false,
-    });
+    expect(sb.calls[0].payload).not.toHaveProperty('is_saved');
+    expect(sb.calls[0].payload.product_data._removedAt).toBeUndefined();
+    expect(sb.calls.some((c) => c.op === 'delete')).toBe(false);
   });
 
-  it('tolerates a database without the is_saved column on the cleanup delete', async () => {
-    const sb = makeSupabase({ failOn: 'delete', failCode: '42703' });
-    // 42703 on this specific cleanup delete is explicitly tolerated as a
-    // genuine success (the flags are already cleared; see upsertProductState's
-    // own comment on this), so this resolves synced:true — unlike the RLS/
-    // constraint failures above, this isn't a fallback case.
-    await expect(
-      upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false }),
-    ).resolves.toEqual({ synced: true });
+  it('marks a product she took out herself, and clears the mark when she adds it back (Nov 17)', async () => {
+    const sb = makeSupabase();
+    await upsertProductState(sb, 'u', { id: 'p1' }, { inEcosystem: false, isTracked: false, isOmitted: false, removedByUser: true });
+    expect(sb.calls[0].payload.product_data._removedAt).toEqual(expect.any(Number));
+    await upsertProductState(sb, 'u', { id: 'p1', _removedAt: 5 }, { inEcosystem: true, isTracked: true, isOmitted: false });
+    expect(sb.calls[1].payload.product_data._removedAt).toBeUndefined();
   });
 
   it('upserts when any flag is set', async () => {

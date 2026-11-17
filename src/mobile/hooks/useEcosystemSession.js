@@ -19,6 +19,9 @@ const DEFAULT_SESSION = {
   // "Not for me": { [productId]: true }. Passed to the matching engine as
   // omitted so these never come back in recommendations, seeds or swaps.
   omittedProducts: {},
+  // Nov 17: { [productId]: removedAt } for products she took out herself. No quiz retake, new goal or
+  // rebuild adds them back (she can still add one again herself).
+  removedProducts: {},
   // Quiz answers waiting on the quiz-end health and plan steps; saved as
   // lastQuizAnswers when she taps "See my matches".
   pendingQuiz: null,
@@ -42,6 +45,7 @@ function loadSession() {
       pendingIntakeSync: parsed?.pendingIntakeSync === true,
       userName: typeof parsed?.userName === 'string' ? parsed.userName : '',
       omittedProducts: parsed?.omittedProducts && typeof parsed.omittedProducts === 'object' && !Array.isArray(parsed.omittedProducts) ? parsed.omittedProducts : {},
+      removedProducts: parsed?.removedProducts && typeof parsed.removedProducts === 'object' && !Array.isArray(parsed.removedProducts) ? parsed.removedProducts : {},
       pendingQuiz: parsed?.pendingQuiz && typeof parsed.pendingQuiz === 'object' && parsed.pendingQuiz.answers && typeof parsed.pendingQuiz.answers === 'object' ? { answers: parsed.pendingQuiz.answers, mode: parsed.pendingQuiz.mode === 'add' ? 'add' : 'new' } : null,
       routineHave: parsed?.routineHave && typeof parsed.routineHave === 'object' && !Array.isArray(parsed.routineHave) ? parsed.routineHave : {},
       routineExcluded: parsed?.routineExcluded && typeof parsed.routineExcluded === 'object' && !Array.isArray(parsed.routineExcluded) ? parsed.routineExcluded : {},

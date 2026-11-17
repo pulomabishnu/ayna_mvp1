@@ -352,7 +352,9 @@ function scrollAppToTop(root) {
 
 export default function MobileApp() {
   const { session, update: updateSession, reset: resetSession } = useEcosystemSession();
-  const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {} } = session;
+  const { hasEcosystem, myProducts: storedProducts, lastQuizAnswers, userName, omittedProducts = {}, removedProducts = {} } = session;
+  // Nov 17: ayna's picks she took out herself never come back on their own.
+  const notRemoved = useCallback((list) => (list || []).filter((p) => !(p?.id && removedProducts[p.id] && p.intakeGenerated !== false && !p.userAdded)), [removedProducts]);
   const [heardDismissed, setHeardDismissed] = useState(false);
   const myProducts = useMemo(() => storedProducts.map(hydrateCatalogProduct), [storedProducts]);
   // The welcome screen is the signed-out entry point. Returning accounts
@@ -955,6 +957,7 @@ export default function MobileApp() {
         userName: firstName || prev.userName,
         myProducts: merged,
         omittedProducts: { ...(prev.omittedProducts || {}), ...remoteOmitted },
+        removedProducts: { ...(prev.removedProducts || {}), ...(ecosystem?.removedProducts || {}) },
         hasEcosystem: merged.length > 0,
         pendingIntakeSync: false,
         // Don't clobber a completion that just happened locally this same
@@ -1193,8 +1196,8 @@ export default function MobileApp() {
   }), [planBaseOpts, planHealthContext, healthRecords, outcomeHistory]);
   const planSeeded = useMemo(() => {
     if (!pendingAnswers || !['connect', 'plan', 'ready'].includes(screen)) return [];
-    try { return seedEcosystemFromAnswers(pendingAnswers, planMatchOpts); } catch { return []; }
-  }, [pendingAnswers, planMatchOpts, screen]);
+    try { return notRemoved(seedEcosystemFromAnswers(pendingAnswers, planMatchOpts)); } catch { return []; }
+  }, [pendingAnswers, planMatchOpts, screen, notRemoved]);
   const planProducts = useMemo(() => {
     const existing = pendingQuiz?.mode === 'add' ? myProducts : [];
     const ids = new Set(existing.map((p) => p.id));
@@ -1279,10 +1282,11 @@ export default function MobileApp() {
       updateSession((prev) => ({
         myProducts: prev.myProducts.filter((entry) => entry.id !== product.id),
         hasEcosystem: prev.myProducts.some((entry) => entry.id !== product.id),
+        removedProducts: { ...(prev.removedProducts || {}), [product.id]: Date.now() },
       }));
       const supabase = getSupabaseClient();
       if (authUser && supabase) {
-        const removeFlags = { inEcosystem: false, isTracked: false, isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[product.id] };
+        const removeFlags = { inEcosystem: false, isTracked: false, isOmitted: !!ecosystemFlagsRef.current.omittedProducts?.[product.id], removedByUser: true };
         { const once = () => upsertProductState(supabase, authUser.id, product, removeFlags).then((r) => { if (batchFailed(r)) throw new Error('not_synced'); return r; }); trackSave(once(), 'your routine', once); }
         delete ecosystemFlagsRef.current.trackedProducts[product.id];
       }
@@ -1310,6 +1314,7 @@ export default function MobileApp() {
         ? prev.myProducts
         : [...prev.myProducts, ecosystemProduct],
       hasEcosystem: true,
+      removedProducts: (() => { const r = { ...(prev.removedProducts || {}) }; delete r[ecosystemProduct.id]; return r; })(),
       // Signed out: kept on this phone (same as guest saves) and flagged so
       // the account load on sign-in uploads it instead of replacing it.
       ...(authUser ? {} : { pendingIntakeSync: true }),
@@ -1444,7 +1449,7 @@ export default function MobileApp() {
     }
     try {
       const ids = new Set(myProducts.map((p) => p.id));
-      added = seedEcosystemFromAnswers(nextAnswers, behaviorFrom({ omitted: omittedProducts })).filter((p) => p.needId === needId && !ids.has(p.id));
+      added = notRemoved(seedEcosystemFromAnswers(nextAnswers, behaviorFrom({ omitted: omittedProducts }))).filter((p) => p.needId === needId && !ids.has(p.id));
     } catch { added = []; }
     const nextProducts = [...myProducts, ...added];
     updateSession({ lastQuizAnswers: nextAnswers, myProducts: nextProducts, hasEcosystem: nextProducts.length > 0 });
@@ -1704,7 +1709,7 @@ export default function MobileApp() {
         const { allowed } = await claimQuizRetake(buildIdFromFingerprint(fp || String(Date.now())));
         if (!allowed) { openProPaywall({ feature: 'quiz', featureName: 'Quiz retakes' }); return; }
       }
-      const seededProducts = planSeeded.length ? planSeeded : seedEcosystemFromAnswers(quizAnswers, planMatchOpts);
+      const seededProducts = notRemoved(planSeeded.length ? planSeeded : seedEcosystemFromAnswers(quizAnswers, planMatchOpts));
       const existingProducts = mode === 'add' ? myProducts : [];
       const existingIds = new Set(existingProducts.map((product) => product.id));
       const addedProducts = seededProducts.filter((product) => !existingIds.has(product.id));

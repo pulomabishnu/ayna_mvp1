@@ -843,6 +843,8 @@ function App() {
   // Supabase token-refresh reloads from overwriting in-memory LLM products.
   const llmBuiltThisSessionRef = useRef(false);
   const myProductsRef = useRef({});
+  // Nov 17: { [productId]: removedAt } for products she took out herself (ecosystemStore removedProducts).
+  const removedRef = useRef({});
   const seedSavePromiseRef = useRef(Promise.resolve());
   useEffect(() => { myProductsRef.current = myProducts; }, [myProducts]);
   // A browser with no stored session is a guest: no skeleton while getSession() confirms it, so the
@@ -1277,6 +1279,7 @@ function App() {
         }
         setTrackedProducts(ecosystem.trackedProducts);
         setOmittedProducts(ecosystem.omittedProducts);
+        removedRef.current = { ...(ecosystem.removedProducts || {}) };
       }
       if (reviews) {
         // Mirror the server copy into localStorage. addRating/addReview read
@@ -1335,7 +1338,7 @@ function App() {
       setEcosystemSeedMeta(seedMeta);
       // Tagged so a later AI rebuild can tell these generated picks apart from
       // products she added herself (handleBuildEcosystemFromLlm).
-      const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
+      const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).filter(([id]) => !removedRef.current[id]).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
       const keepIds = keptGeneratedIds(pendingQuizResults);
     setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([id, p]) => p && (!isGeneratedPick(p) || keepIds.has(id)))) }));
       setEcosystemOrder(prev => [...Object.keys(instantProducts), ...prev.filter(id => !instantProducts[id] && myProductsRef.current[id] && (!isGeneratedPick(myProductsRef.current[id]) || keepIds.has(id)))]);
@@ -1980,7 +1983,7 @@ function App() {
     setEcosystemSeedMeta(seedMeta);
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
-    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
+    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).filter(([id]) => !removedRef.current[id]).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     trackFirstMatchShown({ surface: eventSurface(), matches_count: Object.keys(instantProducts).length });
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
     const keepIds = keptGeneratedIds(completedResults);
@@ -2056,7 +2059,7 @@ function App() {
     setEcosystemSeedMeta(seedMeta);
     // Tagged so a later AI rebuild can tell these generated picks apart from
     // products she added herself (handleBuildEcosystemFromLlm).
-    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
+    const instantProducts = Object.fromEntries(Object.entries(mergedProducts || {}).filter(([id]) => !removedRef.current[id]).map(([id, product]) => [id, { ...product, intakeGenerated: true }]));
     // Her own products stay on her shelves; only ayna's earlier picks are replaced.
     const keepIds = keptGeneratedIds(updatedResults);
     setMyProducts(prev => ({ ...instantProducts, ...Object.fromEntries(Object.entries(prev || {}).filter(([id, p]) => p && (!isGeneratedPick(p) || keepIds.has(id)))) }));
@@ -2199,6 +2202,7 @@ function App() {
     toast(wasIn ? REMOVED_FROM_ROUTINE : addedToRoutineText(), wasIn ? { label: 'Undo', onClick: () => toggleMyProductRef.current?.(product) } : { label: 'See it', onClick: () => setCurrentView('ecosystem') });
     // Follow-ups at day 7 and cycle 3, and a review ask after 3 cycles (routineFollowUps.js).
     if (wasIn) noteRoutineRemove(product.id); else noteRoutineAdd(product);
+    if (wasIn) removedRef.current[product.id] = Date.now(); else delete removedRef.current[product.id];
     if (!wasIn) {
       const origin = lastOpenOrigin?.productId === product.id ? lastOpenOrigin : null;
       posthog.capture('product_added', {
@@ -2213,6 +2217,7 @@ function App() {
         inEcosystem: !wasIn,
         isTracked: nextTracked,
         isOmitted: !!omittedProducts[product.id],
+        removedByUser: wasIn,
       }).catch(e => reportSaveFailure('Could not save that change', e));
     }
   };
@@ -2298,7 +2303,8 @@ function App() {
     setSaveError(null);
     if (!Array.isArray(products) || products.length === 0) return;
     llmBuiltThisSessionRef.current = true;
-    const valid = products.filter(p => p?.id);
+    // Nov 17: products she took out herself stay out of AI rebuilds.
+    const valid = products.filter(p => p?.id && !removedRef.current[p.id]);
     const llmIdSet = new Set(valid.map(p => p.id));
     const keepOnRebuild = keptGeneratedIds();
     const staleGeneratedIds = Object.values(myProductsRef.current)
