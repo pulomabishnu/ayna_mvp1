@@ -8,6 +8,7 @@ import BrandStrip from './ui/ay/BrandStrip.jsx';
 import { getSupabaseClient } from '../utils/supabaseClient';
 import { installReferralCapture } from '../utils/badges';
 import { WEFUNDER_URL, trackInvestClick } from '../data/invest';
+import { PREFERRED_SOURCE_URL, trackPreferredSourceClick } from '../data/preferredSource';
 
 /**
  * Site footer: brand blurb + Explore / Company / Get in touch columns, a
@@ -145,7 +146,7 @@ export default function SiteFooter({
           <a className="ay-foot__link" href={WEFUNDER_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackInvestClick('footer')}>Invest in ayna <span aria-hidden="true">↗</span><span className="sr-only"> (opens Wefunder in a new tab)</span></a>
           <a className="ay-foot__link" href="/how-it-works" onClick={(e) => footerGo(e, onViewHowItWorks)}>How It Works</a>
           {/* Nov 16 (founder): Google's "preferred sources" deeplink (Notion AYNA-340), the same link as the landing page's closing button. */}
-          <a className="ay-foot__link" href="https://www.google.com/preferences/source?q=aynahealth.co" target="_blank" rel="noopener noreferrer">Make ayna a Preferred Source <span aria-hidden="true">↗</span><span className="sr-only"> (opens Google in a new tab)</span></a>
+          <a className="ay-foot__link" href={PREFERRED_SOURCE_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackPreferredSourceClick('footer')}>Make ayna a Preferred Source <span aria-hidden="true">↗</span><span className="sr-only"> (opens Google in a new tab)</span></a>
         </FooterColumn>
 
         <FooterColumn title="Get in Touch">

@@ -12,6 +12,7 @@ import Photo from '../ui/Photo.jsx';
 import SlideToStart from '../ui/SlideToStart.jsx';
 import { PLANS, PAID_TERM_STARTS } from '../../pro/plans.js';
 import { LEAD_READS, pickCommunityPost } from './landingData.js';
+import { PREFERRED_SOURCE_URL, trackPreferredSourceClick } from '../../data/preferredSource.js';
 import './landing-blocks.css';
 import './landing-motion.css';
 
@@ -373,7 +374,7 @@ export function ProAndEnd({ pro = false, offerOpen = null, cta }) {
           <SlideToStart className="lb-end__sts" size="lg" label={cta.slide} actionLabel={cta.label} onComplete={cta.go} tone="butter" />
           {/* Notion AYNA-340: Google's "preferred sources" deeplink (developers.google.com/search/docs/
               appearance/preferred-sources). A plain link, no Google script on the page. */}
-          <a className="lb-end__gsrc" href="https://www.google.com/preferences/source?q=aynahealth.co" target="_blank" rel="noopener noreferrer">
+          <a className="lb-end__gsrc" href={PREFERRED_SOURCE_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackPreferredSourceClick('landing_end')}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" /></svg>
             Add ayna as a preferred source on Google<span className="sr-only"> (opens Google in a new tab)</span>
           </a>
