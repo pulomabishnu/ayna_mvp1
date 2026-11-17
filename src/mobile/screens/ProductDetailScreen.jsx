@@ -545,8 +545,6 @@ export default function ProductDetailScreen({
               <ul>{related.more.slice(0, 3).map((p) => <li key={p.id}><button type="button" onClick={() => onOpenProduct?.(p)}><span>{p.name}</span>{Number.isFinite(p._match) && <small>{p._match}% match</small>}<span aria-hidden="true">›</span></button></li>)}</ul>
             </div>
           )}
-          {/* Focus group (Vivian, Oct 1; Ashlie, Oct 16): when she started it, and a daily reminder for supplements. */}
-          {(ecosystemProducts || []).some((p) => p?.id === product.id) && <ProductHabits key={product.id} product={product} ingested={/supplement|vitamin|gumm|capsule|tablet|softgel|tea\b|powder/i.test([product.category, product.subcategory, product.name].filter(Boolean).join(' '))} />}
           <SaveFollowUpInline product={product} onCompare={onCompare} />
         </div>
         <div className="ay-pdp-passport">
@@ -573,6 +571,9 @@ export default function ProductDetailScreen({
               literature and Reviews, not above them. Always visible: her IUD first, TSS for cups. */}
           <div className="ay-pdp-safetyafter"><SafetyLine lines={safetyLineFor(product, glance, recall, { answers: quizAnswers }).lines} /></div>
           <IngredientCheck product={product} />
+          {/* Nov 16 (founder: "I can't see the ayna summary right off the bat"): Using since sits below the sections now. */}
+          {/* Focus group (Vivian, Oct 1; Ashlie, Oct 16): when she started it, and a daily reminder for supplements. */}
+          {(ecosystemProducts || []).some((p) => p?.id === product.id) && <ProductHabits key={product.id} product={product} ingested={/supplement|vitamin|gumm|capsule|tablet|softgel|tea\b|powder/i.test([product.category, product.subcategory, product.name].filter(Boolean).join(' '))} />}
           {/* Nov 16 (founder): ayna summary, Clinical opinion, Scientific literature and Reviews show as soon as
               the page opens, so the Ask questions come after them, not before. */}
           <AskQuick name={shownName} hasProfile={Boolean(quizAnswers)} withName={false} onAsk={(q) => { setAskQ(q); setAskOpen(true); }} />
