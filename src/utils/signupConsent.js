@@ -9,7 +9,7 @@
 import { CONSENT_VERSION } from './pendingConsent.js';
 
 /** The one checkbox (wording from the 2026-09 legal hardening on main). */
-export const AI_CONSENT_TEXT = 'When I intentionally use an AI-powered feature, limited relevant wellness context may be processed by an external AI provider to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.';
+export const AI_CONSENT_TEXT = 'When I intentionally use an AI-powered feature, limited relevant wellness context may be sent to an outside AI provider (OpenAI, Anthropic or Google Gemini) to generate my requested response. ayna minimizes the context sent, protects it in transit, and does not sell it.';
 export const AI_CONSENT_ERROR = 'Tick this box to agree to how AI features may process your wellness context.';
 
 /**
