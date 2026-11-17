@@ -79,13 +79,32 @@ export function hasRecordedChoice(ph) {
   return explicitSdkDecision(ph) !== undefined;
 }
 
-function persist(decision) {
+function persist(decision, extra = {}) {
   try {
     localStorage.setItem(
       CONSENT_STORAGE_KEY,
-      JSON.stringify({ decision, timestamp: new Date().toISOString() })
+      JSON.stringify({ decision, timestamp: new Date().toISOString(), ...extra })
     );
   } catch { /* private mode, the SDK-level state still applies */ }
+}
+
+/**
+ * Session replay needs a "Turn on" given AFTER the notice and privacy policy
+ * described replay. Grants saved before then have no `replay` flag, so they
+ * keep the analytics they agreed to and are never recorded. See
+ * src/utils/replayPrivacy.js.
+ */
+export const REPLAY_CONSENT_VERSION = 1;
+export function hasReplayConsent() {
+  if (getStoredConsent() !== 'granted') return false;
+  const record = readRaw();
+  return record?.replay === REPLAY_CONSENT_VERSION;
+}
+
+/** main.jsx listens for this to start or stop session replay. */
+export const CONSENT_CHANGED_EVENT = 'ayna:analytics-consent-changed';
+function announceConsentChange() {
+  try { window.dispatchEvent(new Event(CONSENT_CHANGED_EVENT)); } catch { /* no window */ }
 }
 
 /**
@@ -105,14 +124,21 @@ export function applyStoredConsent(ph) {
 
 /** Explicit opt-in from the consent banner; record the first consented view. */
 export function acknowledgeAnalytics(ph) {
-  grantConsent(ph);
+  // The banner's text names session replay, so only this grant includes it.
+  grantConsent(ph, { replay: true });
 }
 
-/** Explicit opt-in used by settings controls when re-enabling analytics. */
-export function grantConsent(ph) {
-  persist('granted');
+/**
+ * Explicit opt-in used by settings controls when re-enabling analytics.
+ * opts.replay: true only where the visitor just read that "Turn on" includes
+ * session replay (the consent banner). Footer and account toggles don't say
+ * so, so they turn on analytics without replay.
+ */
+export function grantConsent(ph, { replay = false } = {}) {
+  persist('granted', replay ? { replay: REPLAY_CONSENT_VERSION } : {});
   ph.opt_in_capturing();
   ph.capture('$pageview');
+  announceConsentChange();
 }
 
 /**
@@ -129,6 +155,8 @@ export function openPrivacyChoices() {
 export function denyConsent(ph) {
   persist('denied');
   ph.opt_out_capturing();
+  try { ph.stopSessionRecording?.(); } catch { /* ignore */ }
+  announceConsentChange();
 }
 
 /**
