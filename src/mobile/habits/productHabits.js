@@ -1,3 +1,4 @@
+import { reminderNamesOn } from '../../health/planReminders.js';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
@@ -32,15 +33,15 @@ export function reminderId(productId) {
 }
 
 /** "HH:MM" -> plugin schedule (pure, tested). */
-export function reminderSchedule(productId, time = '09:00') {
+export function reminderSchedule(productId, time = '09:00', name = '') {
   const [h, m] = String(time).split(':').map((n) => Number.parseInt(n, 10));
-  return { notifications: [{ id: reminderId(productId), title: '', body: REMINDER_BODY, schedule: { on: { hour: Number.isFinite(h) ? h : 9, minute: Number.isFinite(m) ? m : 0 }, allowWhileIdle: true }, extra: { route: 'routine', productId } }] };
+  return { notifications: [{ id: reminderId(productId), title: '', body: name ? `Time for your ${name}.` : REMINDER_BODY, schedule: { on: { hour: Number.isFinite(h) ? h : 9, minute: Number.isFinite(m) ? m : 0 }, allowWhileIdle: true }, extra: { route: 'routine', productId } }] };
 }
 
 export const remindersAvailable = () => { try { return Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('LocalNotifications'); } catch { return false; } };
 
 /** Turn a product's daily reminder on (asks permission in context) or off. Returns 'scheduled' | 'off' | 'denied' | 'unavailable' | 'error'. */
-export async function syncProductReminder(productId, { on, time = '09:00' }) {
+export async function syncProductReminder(productId, { on, time = '09:00', name = '' }) {
   if (!remindersAvailable()) return 'unavailable';
   try {
     await LocalNotifications.cancel({ notifications: [{ id: reminderId(productId) }] }).catch(() => {});
@@ -49,7 +50,7 @@ export async function syncProductReminder(productId, { on, time = '09:00' }) {
     let ok = now.display === 'granted';
     if (!ok && now.display !== 'denied') ok = (await LocalNotifications.requestPermissions()).display === 'granted';
     if (!ok) return 'denied';
-    await LocalNotifications.schedule(reminderSchedule(productId, time));
+    await LocalNotifications.schedule(reminderSchedule(productId, time, reminderNamesOn() ? name : ''));
     return 'scheduled';
   } catch {
     return 'error';

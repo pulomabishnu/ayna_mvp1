@@ -18,12 +18,12 @@ export default function ProductHabits({ product, ingested = false }) {
     const on = !h.remind;
     const time = h.time || '09:00';
     save({ remind: on, time });
-    const r = await syncProductReminder(product.id, { on, time });
+    const r = await syncProductReminder(product.id, { on, time, name: product.name });
     haptic(on && r === 'scheduled' ? 'success' : 'light');
     setNote(r === 'denied' ? 'Notifications are off for ayna. Turn them on in iPhone Settings > ayna.' : r === 'scheduled' ? `Daily at ${label(time)}.` : '');
     if (r === 'denied') save({ remind: false });
   };
-  const changeTime = async (time) => { save({ time }); if (h.remind) { await syncProductReminder(product.id, { on: true, time }); setNote(`Daily at ${label(time)}.`); } };
+  const changeTime = async (time) => { save({ time }); if (h.remind) { await syncProductReminder(product.id, { on: true, time, name: product.name }); setNote(`Daily at ${label(time)}.`); } };
   return (
     <section className="ay-habit" aria-label="Your use of this product">
       <div className="ay-habit__row">

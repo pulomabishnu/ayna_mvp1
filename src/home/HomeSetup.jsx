@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { setupSteps } from '../components/you/setupSteps.js';
+import { syncSetupNudge } from './setupNudge.js';
 import './home-setup.css';
 
 /**
@@ -10,6 +12,8 @@ import './home-setup.css';
  */
 export default function HomeSetup({ hasAnswers, productCount = 0, connectedCount = 0, checkinCount = 0, go = {}, onEditProfile, note = null }) {
   const setup = setupSteps({ hasAnswers, productCount, connectedCount, checkinCount });
+  const left = setup.total - setup.done;
+  useEffect(() => { syncSetupNudge(left); }, [left]);
   const LABEL = { quiz: 'Take the quiz', ecosystem: 'Add a product to your routine', connect: 'Connect health data', checkin: 'Do your first check-in' };
   return (
     <section className="ay-hsetup" aria-labelledby="ay-hsetup-h">
