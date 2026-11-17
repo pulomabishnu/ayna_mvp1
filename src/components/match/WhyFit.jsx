@@ -10,6 +10,7 @@ import { breakdownFromDetails } from '../../matching/breakdown.js';
 import { matchBreakdownFor } from '../pdp/decision.js';
 import { evidenceLevel } from '../pdp/evidenceLevel.js';
 import { matchBacking } from './matchBacking.js';
+import { proFactors } from './proFactors.js';
 import { openProPaywall } from '../../pro/paywall.js';
 import { ALL_PRODUCTS } from '../../data/catalog.js';
 import { parsePrice, buildProductProfile } from '../../matching/productProfile.js';
@@ -70,6 +71,11 @@ export function priceSpot(product) {
   const peers = ALL_PRODUCTS.filter((p) => p !== product && p.id !== product.id && p.category === product.category && p.type === product.type && sameKind(p)).map(oneTime).filter((n) => n != null);
   peers.push(mine);
   if (peers.length < 6) return null;
+  // Nov 16 (founder screenshot: a $24.95 sleep aid's slider still ran to $6,936.75): leave out outliers
+  // (under a tenth or over ten times its price) before taking the range.
+  const near = peers.filter((n) => n >= mine / 10 && n <= mine * 10);
+  if (near.length < 6) return null;
+  peers.length = 0; peers.push(...near);
   const lo = Math.min(...peers); const hi = Math.max(...peers);
   if (hi <= lo) return null;
   const cheaper = peers.filter((n) => n > mine).length / peers.length;
@@ -130,9 +136,10 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   // so the list adds up to the % she sees.
   const mb = scored ? matchBreakdownFor(product, details) : null; // whole points that add up to the shown %
   const factors = [...(mb?.raised || []).map((x) => ({ ...x, up: true })), ...(mb?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text && x.points).sort((a, z) => Math.abs(z.points || 0) - Math.abs(a.points || 0));
+  const spot = shown != null ? priceSpot(product) : null;
+  const pf = scored && pro && mb ? proFactors(product, details, mb, { spot, helps: needBreakdown(details) }) : { scored: [], weighed: [], sharpen: [] };
   const ev0 = evidenceLevel(product);
   const tr = b?.evidence || null;
-  const spot = shown != null ? priceSpot(product) : null;
   const ev = ev0.level > 0 ? ev0 : tr ? { level: ({ A: 3, B: 2, C: 1 })[tr.grade] || 0, word: tr.label } : ev0;
   const tierText = shown != null ? tierWord(tier, shown, details?.v2?.band) : '';
   const rank = useMemo(() => (scored ? rankAmongHers(product, details, quizResults, healthProfile, matchOpts) : null), [scored, product, details, quizResults, healthProfile, matchOpts]);
@@ -197,7 +204,16 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
 
       {scored && factors.length > 0 && (pro ? <section>
         <h3>How your {shown}% adds up</h3>
-        <ul className="ay-w2-factors is-points">{factors.map((x) => <li key={`${x.up ? 'u' : 'd'}-${x.text}`} className={x.up ? 'is-up' : 'is-down'}><span className="ay-w2-pts">{x.up ? '+' : '−'}{Math.abs(x.points || 0)}</span>{cap(x.text)}<span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
+        <ul className="ay-w2-factors is-points">{pf.scored.map((x) => <li key={x.key} className={x.up ? 'is-up' : 'is-down'}><span className="ay-w2-pts">{x.up ? '+' : '−'}{Math.abs(x.points || 0)}</span><span className="ay-w2-fx"><b>{x.title}</b>{x.detail && <small>{x.detail}</small>}</span><span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
+        {pf.weighed.length > 0 && <>
+          <h4 className="ay-w2-sub">Also weighed, no points</h4>
+          <ul className="ay-w2-factors is-weighed">{pf.weighed.map((x) => <li key={x.key}><span className="ay-w2-fx"><b>{x.title}</b>{x.detail && <small>{x.detail}</small>}</span></li>)}</ul>
+        </>}
+        {pf.sharpen.length > 0 && <>
+          <h4 className="ay-w2-sub">What would make it more precise</h4>
+          <ul className="ay-w2-factors is-weighed">{pf.sharpen.map((t) => <li key={t}><span className="ay-w2-fx"><b>{cap(t)}</b></span></li>)}</ul>
+          {onUpdateHealth && <button type="button" className="ay-w2-link" onClick={onUpdateHealth}>Update your answers</button>}
+        </>}
       </section> : pro === false ? <section className="ay-w2-pro">
         <div className="ay-w2-pro__ghost" aria-hidden="true">{factors.slice(0, 3).map((x, i) => <span key={i} className={x.up ? 'is-up' : 'is-down'}><i>{x.up ? '+' : '−'}</i><b style={{ width: `${55 + ((i * 17) % 35)}%` }} /></span>)}</div>
         <div className="ay-w2-pro__lock">

@@ -80,3 +80,15 @@ html body :is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay-pdp, html):is(#pdp-v4, #ay
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-passport > * + * { margin-top: 0 !important; }
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-more { margin-top: 16px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
 :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html):is(#pd7, html) body #ay-pdp .ay-pdp-related { margin-top: 24px !important; }
+
+/* Nov 16 (founder: Pro breakdown "more specific, insightful"): each row has its reason under it. */
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors.is-points { gap: 14px; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors.is-points li { align-items: start; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors .ay-w2-fx { display: grid; gap: 3px; min-width: 0; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors .ay-w2-fx b { font: 600 15px/1.35 var(--ay-sans-stack, sans-serif); }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors .ay-w2-fx small { font: 500 13px/1.45 var(--ay-sans-stack, sans-serif); opacity: .78; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-sub { margin: 20px 0 10px; font: 700 13px/1.3 var(--ay-sans-stack, sans-serif); letter-spacing: .02em; opacity: .7; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors.is-weighed { gap: 12px; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors.is-weighed li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: start; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-factors.is-weighed li::before { content: '' !important; justify-self: end; width: 8px; height: 8px; margin-top: 7px; border-radius: 50%; background: #f7badd; }
+:is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body :is([data-theme*='dark']) .ay-w2-sub, :is(#pd1, html):is(#pd2, html):is(#pd3, html):is(#pd4, html):is(#pd5, html):is(#pd6, html) body .ay-w2-body .ay-w2-sub { color: inherit !important; }

@@ -147,7 +147,7 @@ export function matchBreakdownFor(product, details) {
   if (!details || isSafetyHold(details) || isBleedingEvaluation(details)) return none;
   const b = breakdownFromDetails(product, details);
   if (!b || b.percent == null) return { ...none, reason: whyLine(product, details) || '' };
-  const items = (xs) => (xs || []).filter((x) => x && x.text).map((x) => ({ text: String(x.text), ...(Number.isFinite(x.delta) ? { delta: x.delta } : {}) }));
+  const items = (xs) => (xs || []).filter((x) => x && x.text).map((x) => ({ text: String(x.text), ...(x.factor ? { factor: x.factor } : {}), ...(Number.isFinite(x.delta) ? { delta: x.delta } : {}) }));
   const raised = items(b.raised);
   const lowered = items(b.lowered);
   const shown = shownMatchPercent(b.percent);
