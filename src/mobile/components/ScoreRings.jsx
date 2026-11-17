@@ -96,7 +96,7 @@ export default function ScoreRings({ cycle = null, hormonalBC = false, sleep = n
       </div>
       {missing.length > 0 && (
         <div className="ay-dial__empty">
-          <p>{connectText || `Connect a watch or ring to see your ${missing.join(' and ')}.`}</p>
+          <p>{connectText || 'Connect your wearables and health apps.'}</p>
           {onConnect && <button type="button" onClick={onConnect}>Connect<ProTag /></button>}
         </div>
       )}
