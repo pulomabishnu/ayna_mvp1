@@ -6,7 +6,7 @@ import {
 import {
   readActivities, saveActivity, stopActivity, recordActivity, undoActivity, setFeel, planFor, FEELS, ACTIVITY_IDEAS,
 } from '../../health/dayPlan.js';
-import { syncPlanReminders, planRemindersAvailable, sendTestReminder } from '../../health/planReminders.js';
+import { syncPlanReminders, planRemindersAvailable, sendTestReminder, reminderNamesOn, setReminderNames } from '../../health/planReminders.js';
 import { readGoals, toggleDone, GOALS_CHANGED_EVENT } from '../../health/myGoals.js';
 import { toast } from '../../utils/toast.js';
 import { haptic } from '../../utils/haptics.js';
@@ -297,6 +297,8 @@ export default function DayPlan({ compact = false, heading = "Today's plan", hea
           <button type="button" className="ay-dp__ghost" onClick={() => removeMed(m)}>Delete</button>
         </div>
       </li>)}</ul></>}
+      {/* Nov 16 (founder): her choice whether reminders name the medication ("Time to take your Zoloft"). Off by default. */}
+      {planRemindersAvailable() && <label className="ay-dp-check ay-dp-names"><input type="checkbox" defaultChecked={reminderNamesOn()} onChange={async (e) => { setReminderNames(e.target.checked); setRemStatus(await syncPlanReminders({ today: localDay() })); }} />Show names in reminders<small>Like “Time to take your Zoloft.” Anyone who sees your lock screen can read it.</small></label>}
       {!planRemindersAvailable() && <p className="ay-dp__muted">Reminders work in the ayna app on your phone.</p>}
     </details>}
 

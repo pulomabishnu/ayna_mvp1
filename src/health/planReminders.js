@@ -5,8 +5,8 @@ import { readActivities } from './dayPlan.js';
 
 /**
  * Phone reminders for her medication times and timed activities. They fire with the app closed
- * (iOS local notifications). The lock screen never names the medication or activity: it could say
- * something about her health (founder rule). Tapping one opens her Routine.
+ * (iOS local notifications). By default the lock screen never names the medication or activity (it could
+ * say something about her health); since Nov 16 she can turn names on herself. Tapping one opens her Routine.
  * Ids live in 12000..15999 so they never collide with the rundown (9000s) or product habits (9100s).
  */
 export const PLAN_REMINDER_BODY = 'Time for something on your ayna plan.';
@@ -29,8 +29,18 @@ function clock(time) {
  * What the lock screen says (founder, Nov 16: "make the notif more specific"). Specific about the
  * kind, the time and how many, never the name: "8:00 AM: time for your medication."
  */
-export function planReminderText({ time, meds = 0, acts = 0 }) {
+const NAMES_KEY = 'ayna_reminder_names_v1';
+/** Nov 16 (founder chose "her choice, off by default"): she can let reminders name the medication or activity. */
+export function reminderNamesOn() { try { return localStorage.getItem(NAMES_KEY) === '1'; } catch { return false; } }
+export function setReminderNames(on) { try { localStorage.setItem(NAMES_KEY, on ? '1' : '0'); } catch { /* storage off */ } }
+const andList = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}` : xs[0] || '');
+
+export function planReminderText({ time, meds = 0, acts = 0, medNames = [], actNames = [], showNames = false }) {
   const at = clock(time);
+  if (showNames && (medNames.length || actNames.length)) {
+    const bits = [medNames.length ? `take your ${andList(medNames)}` : '', actNames.length ? andList(actNames.map((t) => t.charAt(0).toLowerCase() + t.slice(1))) : ''].filter(Boolean);
+    return { title: `ayna · ${at}`, body: `Time to ${bits.join(', and ')}. Tap to check ${meds + acts > 1 ? 'them' : 'it'} off.` };
+  }
   if (meds + acts > 1) {
     const parts = [meds && `${meds === 1 ? 'a medication' : `${meds} medications`}`, acts && `${acts === 1 ? 'an activity' : `${acts} activities`}`].filter(Boolean);
     return { title: `ayna plan · ${at}`, body: `Time for ${parts.join(' and ')}. Tap to check them off.` };
@@ -41,33 +51,35 @@ export function planReminderText({ time, meds = 0, acts = 0 }) {
 }
 
 /** Pure: the notifications to schedule (tested). Capacitor weekday is 1 = Sunday … 7 = Saturday. */
-export function planNotifications({ meds = readMeds().meds, activities = readActivities().items, today = null } = {}) {
+export function planNotifications({ meds = readMeds().meds, activities = readActivities().items, today = null, showNames = reminderNamesOn() } = {}) {
   // One notification per time slot, however many things are due then.
   const slots = new Map();
-  const add = (time, weekday, kind) => {
+  const add = (time, weekday, kind, name = '') => {
     const k = `${time}|${weekday ?? '*'}`;
-    const slot = slots.get(k) || { time, weekday, meds: 0, acts: 0 };
+    const slot = slots.get(k) || { time, weekday, meds: 0, acts: 0, medNames: [], actNames: [] };
     slot[kind] += 1;
+    const list = kind === 'meds' ? slot.medNames : slot.actNames;
+    if (name && !list.includes(name)) list.push(name);
     slots.set(k, slot);
   };
   for (const m of meds) {
     if (!m.active || !m.remind || m.kind !== 'scheduled') continue;
     if (today && m.end && m.end < today) continue;
     for (const t of m.times) {
-      if (m.freq === 'daily') add(t, null, 'meds');
-      else for (const d of m.days) add(t, d + 1, 'meds');
+      if (m.freq === 'daily') add(t, null, 'meds', m.name);
+      else for (const d of m.days) add(t, d + 1, 'meds', m.name);
     }
   }
   for (const a of activities) {
     if (!a.active || !a.remind || !a.time) continue;
-    if (!a.days?.length) add(a.time, null, 'acts');
-    else for (const d of a.days) add(a.time, d + 1, 'acts');
+    if (!a.days?.length) add(a.time, null, 'acts', a.title);
+    else for (const d of a.days) add(a.time, d + 1, 'acts', a.title);
   }
   // A daily slot already covers that time on every weekday.
   for (const [k, slot] of slots) {
     if (slot.weekday == null) continue;
     const daily = slots.get(`${slot.time}|*`);
-    if (daily) { daily.meds += slot.meds; daily.acts += slot.acts; slots.delete(k); }
+    if (daily) { daily.meds += slot.meds; daily.acts += slot.acts; daily.medNames.push(...slot.medNames.filter((n) => !daily.medNames.includes(n))); daily.actNames.push(...slot.actNames.filter((n) => !daily.actNames.includes(n))); slots.delete(k); }
   }
   const out = [];
   const used = new Set();
@@ -76,7 +88,7 @@ export function planNotifications({ meds = readMeds().meds, activities = readAct
     let id = BASE + (hash(`slot|${slot.time}|${slot.weekday ?? '*'}`) % SPAN);
     while (used.has(id)) id = BASE + ((id - BASE + 1) % SPAN);
     used.add(id);
-    const { title, body } = planReminderText(slot);
+    const { title, body } = planReminderText({ ...slot, showNames });
     out.push({ id, title, body, schedule: { on: slot.weekday ? { weekday: slot.weekday, hour, minute } : { hour, minute }, allowWhileIdle: true }, extra: { route: 'routine' } });
   }
   return out;

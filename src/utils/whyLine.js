@@ -30,7 +30,7 @@ const CLAUSES = [
   [/^Has clinical sources about .+, which you ranked first$/i, () => 'has the clinical sources you ranked first'],
   [/^Well reviewed by other women, which you ranked first$/i, () => 'well reviewed by other women'],
   [/^Reviewed by experts, which you ranked first$/i, () => 'reviewed by experts'],
-  [/^Also matches the (.+?) you \w+$/i, (m) => `also for your ${m[1]}`],
+  [/^Also matches the (.+?) you \w+(?:, so it helps \w+ of your needs)?$/i, (m) => `also for your ${m[1]}`],
 ];
 
 function lower(s) {

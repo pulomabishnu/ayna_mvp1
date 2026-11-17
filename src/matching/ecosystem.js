@@ -160,7 +160,10 @@ function tieBreakBonus(result, pp, up) {
   const coldStart = 1 - (up.completeness ?? 0.5);
   const other = TIE_BREAK.other * Math.min(1,
     0.3 * pref + 0.2 * evid + 0.2 * explorationFit(pp, up) + 0.15 * (result.confidence ?? 0.6) + 0.15 * qualityPrior(pp) * (0.5 + coldStart));
-  return fsa + other;
+  // Nov 16 (founder): a product that helps more than one of the needs she picked ranks above close matches
+  // (up to 2 points, order only).
+  const multi = Math.min(2, Number(result.v2?.alsoHelps) || 0);
+  return fsa + other + multi;
 }
 
 export function sortResults(results, up, profilesById) {

@@ -280,10 +280,8 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   const modifiers = Math.max(0.5, Math.min(1.1, (r.components?.health ?? base) / base));
   const signal = signals?.get(r.needId) || null;
   const weak = Boolean(signal?.weak);
-  // Nov 16 (founder, chose "keep the %, sort only"): the % she sees never drops for helping more than one
-  // thing. Focus only orders otherwise-equal matches (rankKey), so one all-in-one product doesn't fill every shelf.
-  const rankFocus = 1 - V2.focusWeight + V2.focusWeight * focus;
-  const focusTerm = 1;
+  // Nov 16 (founder, chose "keep the %"): the % she sees never drops for helping more than one thing.
+    const focusTerm = 1;
   const weakTerm = weak ? V2.weakFitFactor : 1;
   const health = Math.min(1, needFit * focusTerm * modifiers * weakTerm);
   const pref = Number.isFinite(r.outputs?.preferenceFit) ? r.outputs.preferenceFit : 1;
@@ -303,7 +301,13 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   // Nov 16 (founder): between products that fit about the same, the one with more research for THIS
   // need ranks higher. Order only; the % shown doesn't change.
   const research = researchNudge(pp, r.needId);
-  // Focus breaks ties only: under one point, so a higher % never sorts below a lower one.
+  // Nov 16 (founder: "if a product helps two of the things you picked, it should rank higher, and say so"):
+  // each other need of hers it also helps (relevance 0.55+) moves it up among close matches. Order only.
+  const alsoHelps = Object.entries(pp.health_need_relevance || {}).filter(([id, e]) => id !== r.needId && needIds.has(id) && ((typeof e === 'number' ? e : e?.score) || 0) >= 0.55).length;
+  // Her Shop and For you order rank it up (ecosystem.js tieBreakBonus). Her shelves keep their variety: among
+  // equal matches there, a product made mainly for that need goes first, so one all-in-one product doesn't fill
+  // most people's shelves (release gate: no product in more than 40% of ecosystems).
+  const rankFocus = 1 - V2.focusWeight + V2.focusWeight * focus;
   const focusTie = 0.008 * (rankFocus - 1 + V2.focusWeight) / (V2.focusWeight || 1);
   const rankKey = (shownHealth + pf.total) * (1 - V2.prefWeight + V2.prefWeight * pref) + experience + reviews + research + focusTie + hash01(`${userKey}|${pp.product_id}`) * 0.001;
   const band = bandFor(fit, r.confidence ?? 1, { weak });
@@ -316,7 +320,7 @@ export function scoreV2(pp, r, needIds, userKey = '', signals = null, up = signa
   const parts = [...baseParts, ...pf.parts, ...expPart];
   const top = pf.parts.filter((x) => x.kind === 'raised' && x.reason).sort((a, b) => REASON_ORDER.indexOf(a.factor) - REASON_ORDER.indexOf(b.factor) || b.delta - a.delta)[0] || null;
   const reason = top?.reason || null;
-  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null, needTier: signal?.tier || null, ...(weak ? { weakNeed: signal.reason } : {}), factorTotal: round3(pf.total), parts, unknown: pf.unknown, reason, reasonFactor: top?.factor || null };
+  return { health: round3(health), fit: round3(fit), experience: round3(experience), needFit: round3(needFit), focus: round3(focus), grade, pref: round3(pref), rankKey: round3(rankKey), band, bandLabel: BAND_LABEL[band] || null, alsoHelps, needTier: signal?.tier || null, ...(weak ? { weakNeed: signal.reason } : {}), factorTotal: round3(pf.total), parts, unknown: pf.unknown, reason, reasonFactor: top?.factor || null };
 }
 
 /** Health fit as shown: unchanged under the knee, half as steep above it. */

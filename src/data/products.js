@@ -1862,9 +1862,11 @@ function buildMatchDetails(savedProduct, quizAnswers, healthProfile, opts) {
             }
             positive.push(text);
         }
-        for (const other of needMatches) {
-            if (best && other.needId !== best.needId && other.relevant && other.score >= MIN_RECOMMEND_SCORE) positive.push(`Also matches the ${other.phrase} you selected`);
-        }
+        // Nov 16 (founder): say it when one product helps more than one of the needs she picked.
+        const alsoFor = best ? needMatches.filter((other) => other.needId !== best.needId && other.relevant && other.score >= MIN_RECOMMEND_SCORE) : [];
+        const helpsCount = alsoFor.length + 1;
+        const countWord = ({ 2: 'two', 3: 'three', 4: 'four' })[helpsCount] || String(helpsCount);
+        for (const other of alsoFor) positive.push(`Also matches the ${other.phrase} you selected, so it helps ${countWord} of your needs`);
         const reasonDetails = positive.map((text) => {
             const component = componentForExplanation(text);
             return { component, weight: COMPONENT_WEIGHT[component] || 5, score: 1, text };
