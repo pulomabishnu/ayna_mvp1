@@ -151,3 +151,18 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 .ayna-mobile[data-theme='dark'] .ay-dp-start { background: rgba(255, 237, 172, .08); }
 .ayna-mobile[data-theme='dark'] .ay-dp-start li + li button { background-image: linear-gradient(rgba(255, 237, 172, .14), rgba(255, 237, 172, .14)); }
 .ayna-mobile[data-theme='dark'] .ay-dp-progress i { background: rgba(255, 237, 172, .14); }
+
+/* Nov 16 (founder screenshot): on iPhone the time fields overflowed the sheet and overlapped each other,
+   because iOS gives time inputs an intrinsic width. Let them shrink to their column, and use soft
+   filled fields instead of outlined boxes. */
+.ay-dp-sheet .ay-dp-sheet__panel { padding-left: max(20px, env(safe-area-inset-left, 0px)) !important; padding-right: max(20px, env(safe-area-inset-right, 0px)) !important; }
+.ay-dp-form__row > label { min-width: 0; }
+.ay-dp-form input[type='time'], .ay-dp-form input[type='date'] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; max-width: 100%; width: 100%; text-align: center; line-height: 44px; }
+.ay-dp-form input[type='time']::-webkit-date-and-time-value, .ay-dp-form input[type='date']::-webkit-date-and-time-value { text-align: center; margin: 0; }
+.ay-dp-form input:not([type='checkbox']), .ay-dp-form select { border: 0 !important; background: rgba(62, 39, 35, .08) !important; font-size: 17px; font-weight: 600; }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-form input:not([type='checkbox']), :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-form select { background: rgba(255, 237, 172, .12) !important; color: #ffedac !important; }
+.ay-dp-seg button:not([aria-pressed='true']) { border-color: transparent !important; background: rgba(62, 39, 35, .08); }
+:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg button:not([aria-pressed='true']) { background: rgba(255, 237, 172, .12); }
+.ay-dp-sheet[data-theme*='dark'] .ay-dp__primary { background: #ffedac !important; color: #3e2723 !important; }
+.ay-dp-sheet[data-theme*='dark'] .ay-dp__ghost { color: #ffedac !important; }
+.ay-dp-sheet[data-theme*='dark'] .ay-dp-form input { color-scheme: dark; }

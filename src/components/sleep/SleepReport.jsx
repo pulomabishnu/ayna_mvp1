@@ -89,7 +89,9 @@ function EntrySheet({ today, onClose }) {
   }, [onClose]);
   if (typeof document === 'undefined') return null;
   const night = new Date(`${addDays(today, -1)}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long' });
-  return createPortal(<div className="ay-dp-sheet" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+  // Nov 16: the sheet is portalled to <body>, outside the app's themed root, so carry the theme over (dark mode).
+  const theme = typeof document !== 'undefined' ? document.querySelector('.ayna-mobile[data-theme]')?.getAttribute('data-theme') || undefined : undefined;
+  return createPortal(<div className="ay-dp-sheet" data-theme={theme} role="presentation" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
     <div className="ay-dp-sheet__panel" role="dialog" aria-modal="true" aria-label="Enter last night">
       <div className="ay-dp-sheet__head"><p className="ay-dp-sheet__title">{night} night</p><button type="button" className="ay-dp__ghost" onClick={onClose}>Close</button></div>
       <form className="ay-dp-form" onSubmit={save} noValidate>
