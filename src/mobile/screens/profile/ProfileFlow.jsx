@@ -679,6 +679,8 @@ function ProfileHub({ view = 'hub', onBack, healthConnected = [], recentAsks = [
         )}
         {signedIn && knows && <p className="ay-you-knows"><b>What ayna knows:</b> {knows}</p>}
       </header>
+      {/* Nov 16 (founder: "use the squiggly thing we have on the home page"): the pink band ends in Home's wave. */}
+      <ProfileWave />
 
       <div className="ay-you-body">
         {!signedIn && <SignedOutCard><b>Find your products</b><br />Keep your concerns, matches, saved products and health insights connected in one place.</SignedOutCard>}
@@ -4011,5 +4013,14 @@ function PinnedSetting() {
     <div style={{ borderBottom: '1px solid var(--ayna-border)', padding: '6px 0' }}>
       <ToggleRow first title="Show Pinned on Home" sub="Your pinned charts and lists, under This week's highlights." on={!hidden} onClick={() => setPinnedHidden(!hidden)} />
     </div>
+  );
+}
+
+function ProfileWave() {
+  const wave = Array.from({ length: 6 }, (_, i) => `Q${230 - i * 40} 12 ${220 - i * 40} 6Q${210 - i * 40} 0 ${200 - i * 40} 6`).join('');
+  return (
+    <svg className="ay-you-wave" viewBox="0 0 240 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d={`M0 0H240V6${wave}Z`} />
+    </svg>
   );
 }

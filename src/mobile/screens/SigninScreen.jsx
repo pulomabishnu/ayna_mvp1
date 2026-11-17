@@ -461,7 +461,7 @@ export default function SigninScreen({
             {mode === 'signup' && <p>Free. We never sell your health information.</p>}
             {/* Nov 16 (founder: "make sure it shows when you're signing up"): the trial is named here; she starts it
                 (opt-in) on the next screen. No card needed. */}
-            {mode === 'signup' && <p className="ay-auth-trial"><b>Includes a free 14-day ayna Pro trial.</b> No card needed. You choose whether to start it.</p>}
+            {mode === 'signup' && <p className="ay-auth-trial"><b>Get ayna Pro free for 14 days.</b> No card needed.</p>}
           </header>
 
           {mode === 'signup' && showEcoSummary && (
