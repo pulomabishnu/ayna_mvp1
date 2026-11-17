@@ -138,6 +138,10 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
   const factors = [...(mb?.raised || []).map((x) => ({ ...x, up: true })), ...(mb?.lowered || []).map((x) => ({ ...x, up: false }))].filter((x) => x.text && x.points).sort((a, z) => Math.abs(z.points || 0) - Math.abs(a.points || 0));
   const spot = shown != null ? priceSpot(product) : null;
   const pf = scored && pro && mb ? proFactors(product, details, mb, { spot, helps: needBreakdown(details) }) : { scored: [], weighed: [], sharpen: [] };
+  const backing = shown != null ? matchBacking(product) : null;
+  const hasResearch = Boolean(backing && (backing.clinician || backing.studies.length));
+  const toResearch = (e) => e.currentTarget.closest('.ay-w2-body')?.querySelector('.ay-w2-backing')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const fx = (x) => <span className="ay-w2-fx"><b>{x.title}</b>{x.detail && <small>{x.detail}</small>}{x.link === 'research' && hasResearch && <button type="button" className="ay-w2-link ay-w2-fx__link" onClick={toResearch}>Read the research</button>}</span>;
   const ev0 = evidenceLevel(product);
   const tr = b?.evidence || null;
   const ev = ev0.level > 0 ? ev0 : tr ? { level: ({ A: 3, B: 2, C: 1 })[tr.grade] || 0, word: tr.label } : ev0;
@@ -204,10 +208,10 @@ export default function WhyFit({ product, quizResults, healthProfile = null, mat
 
       {scored && factors.length > 0 && (pro ? <section>
         <h3>How your {shown}% adds up</h3>
-        <ul className="ay-w2-factors is-points">{pf.scored.map((x) => <li key={x.key} className={x.up ? 'is-up' : 'is-down'}><span className="ay-w2-pts">{x.up ? '+' : '−'}{Math.abs(x.points || 0)}</span><span className="ay-w2-fx"><b>{x.title}</b>{x.detail && <small>{x.detail}</small>}</span><span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
+        <ul className="ay-w2-factors is-points">{pf.scored.map((x) => <li key={x.key} className={x.up ? 'is-up' : 'is-down'}><span className="ay-w2-pts">{x.up ? '+' : '−'}{Math.abs(x.points || 0)}</span>{fx(x)}<span className="sr-only">{x.up ? ', raised it' : ', lowered it'}</span></li>)}</ul>
         {pf.weighed.length > 0 && <>
-          <h4 className="ay-w2-sub">Also weighed, no points</h4>
-          <ul className="ay-w2-factors is-weighed">{pf.weighed.map((x) => <li key={x.key}><span className="ay-w2-fx"><b>{x.title}</b>{x.detail && <small>{x.detail}</small>}</span></li>)}</ul>
+          <h4 className="ay-w2-sub">Also checked</h4>
+          <ul className="ay-w2-factors is-weighed">{pf.weighed.map((x) => <li key={x.key}>{fx(x)}</li>)}</ul>
         </>}
         {pf.sharpen.length > 0 && <>
           <h4 className="ay-w2-sub">What would make it more precise</h4>

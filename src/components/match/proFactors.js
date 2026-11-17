@@ -7,7 +7,7 @@
 // Every detail line comes from data on file (the research map's sourced "why", the evidence counts, the
 // price comparison); nothing is invented when a fact is missing.
 import { buildProductProfile } from '../../matching/productProfile.js';
-import { evidenceFactorFor, FIT_JUDGED_RULES, researchNudge, reviewNudge } from '../../matching/v2.js';
+import { reviewNudge } from '../../matching/v2.js';
 import { needPhrase } from '../../matching/ontology.js';
 
 const REL_WORD = { direct: 'a direct', strong: 'a strong', secondary: 'a secondary', adjacent: 'a partial', weak: 'a weak' };
@@ -61,7 +61,7 @@ export function proFactors(product, details, mb, { spot = null, helps = [] } = {
     } else if (x.factor === 'strength') {
       detail = `Its main use is something else${rel?.why ? `. The link to ${phrase}: ${rel.why}` : '.'}`;
     } else if (x.factor === 'evidence') {
-      detail = `${cap(GRADE_WORD[grade] || 'Limited research')} for ${phrase}${counts ? `: ${counts} on file` : ''}. Stronger research for this need would add these points back.`;
+      detail = `${cap(GRADE_WORD[grade] || 'Limited research')} for ${phrase}${counts ? `: ${counts} on file` : ''}. Stronger research would add these points back.`;
     } else if (x.factor === 'price') {
       detail = spot ? `${spot.word} (${spot.n} similar products, ${money(spot.lo)} to ${money(spot.hi)}).` : '';
     } else if (x.factor === 'history') {
@@ -69,32 +69,23 @@ export function proFactors(product, details, mb, { spot = null, helps = [] } = {
     } else if (x.factor === 'details') {
       detail = details.contextUsed?.phrase ? `You mentioned ${details.contextUsed.phrase}.` : '';
     }
-    out.scored.push({ key: `${x.up ? 'u' : 'd'}-${x.text}`, up: x.up, points: x.points, title: cap(x.text), detail });
+    out.scored.push({ key: `${x.up ? 'u' : 'd'}-${x.text}`, up: x.up, points: x.points, title: cap(x.text), detail, ...(x.factor === 'evidence' ? { link: 'research' } : {}) });
   }
 
-  // Evidence, when it cost no points: say why, with what's on file.
+  // Nov 17 (founder: "we don't ever need to say no points were taken off, stop wasting space"): what's on
+  // file, and a link down to the research itself. Nothing about points that didn't move.
   if (grade && !rows.some((x) => x.factor === 'evidence')) {
-    const fitJudged = FIT_JUDGED_RULES.has(rel?.rule);
-    const E = fitJudged ? 1 : evidenceFactorFor(pp?.category || product.category, grade, pp);
-    const why = fitJudged ? 'Products like this are judged on how well they fit, so the research grade doesn’t change the score.'
-      : grade === 'A' ? 'Strong research for this need, so no points were taken off.'
-        : E >= 1 ? 'For this kind of product ayna scores the fit, so the research grade doesn’t change the score.'
-          : '';
-    if (why) out.weighed.push({ key: 'evidence', title: `Evidence for ${phrase}: ${GRADE_WORD[grade] || 'limited research'}`, detail: [counts ? `On file: ${counts}.` : grade === 'C' ? 'No studies of this product on file yet.' : 'The grade comes from research on this kind of product, not this exact one.', why].join(' ') });
+    out.weighed.push({ key: 'evidence', title: `Evidence for ${phrase}: ${GRADE_WORD[grade] || 'limited research'}`, detail: counts ? `On file: ${counts}.` : '', link: 'research' });
   }
 
   // Other needs it helps (founder, Nov 16).
   for (const h of helps.filter((r) => r.needId !== needId && r.score > 0).slice(0, 2)) {
-    out.weighed.push({ key: `also-${h.needId}`, title: `Also helps ${h.phrase || h.short || h.label}`, detail: `${Math.round(h.score * (h.score <= 1 ? 100 : 1))}% match for that too. It helps more than one of your needs, so it ranks higher in your Shop. It never lowers the %.` });
+    out.weighed.push({ key: `also-${h.needId}`, title: `Also helps ${h.phrase || h.short || h.label}`, detail: `${Math.round(h.score * (h.score <= 1 ? 100 : 1))}% match for that too, so it ranks higher in your Shop.` });
   }
 
-  // Ranking only: research volume and reviews order equal matches; the % stays the same.
-  if (pp && researchNudge(pp, needId) > 0 && counts) {
-    out.weighed.push({ key: 'research-rank', title: `Research on file for ${phrase}`, detail: `${cap(counts)}. Among products with the same %, this puts it higher in your list. It doesn’t change the %.` });
-  }
   const rv = pp ? reviewNudge(pp) : 0;
   if (pp?.rating && rv) {
-    out.weighed.push({ key: 'reviews', title: `Rated ${pp.rating} out of 5${pp.ratingCount ? ` by ${pp.ratingCount.toLocaleString('en-US')} people` : ''}`, detail: `Moves it ${rv > 0 ? 'up' : 'down'} a little among products with the same %. It doesn’t change the %.` });
+    out.weighed.push({ key: 'reviews', title: `Rated ${pp.rating} out of 5${pp.ratingCount ? ` by ${pp.ratingCount.toLocaleString('en-US')} people` : ''}`, detail: '' });
   }
 
   out.sharpen = (details.v2?.unknown || mb.unknown || []).map((u) => u.text).filter(Boolean).slice(0, 3);
