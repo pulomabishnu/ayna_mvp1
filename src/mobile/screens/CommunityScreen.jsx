@@ -717,7 +717,14 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
   const openNotifications = async () => {
     if (!authUser) { requireAccount('notifications'); return; }
     setPage({ type: 'notifications' }); setError('');
-    try { const rows = await community.listNotifications(supabase); setDetails(rows); await community.markNotificationsRead(supabase); } catch (e) { notifyError(e); }
+    try {
+      const rows = await community.listNotifications(supabase);
+      // Nov 16 (founder: "make sure the whole community workflow works"): say who did it.
+      let people = new Map();
+      try { people = await community.getProfilesByIds(supabase, rows.map((r) => r.actor_id)); } catch { /* names optional */ }
+      setDetails(rows.map((r) => ({ ...r, actor: people.get(r.actor_id) || null })));
+      await community.markNotificationsRead(supabase);
+    } catch (e) { notifyError(e); }
   };
   // The header bell's Community items open this page (founder, Nov 11: one bell, not two).
   const openNotesRef = useRef(openNotifications);
@@ -1214,7 +1221,34 @@ export default function CommunityScreen({ authUser, products = [], articles = nu
           </section>;
         })()}
         {page.type === 'notifications' && authUser && <FriendRecs supabase={supabase} userId={authUser.id} productsById={productsById} onOpenProduct={onOpenProduct} />}
-        {page.type === 'notifications' && (details || []).map((n) => <div className="am-card" key={n.id}><p>{n.message || n.body || n.type?.replace(/_/g, ' ')}</p><small>{timeLabel(n.created_at)}</small></div>)}
+        {/* Nov 16 (founder): each update says who, and has the next step right there: accept a friend request,
+            follow back, or open the post. */}
+        {page.type === 'notifications' && Array.isArray(details) && details.map((n) => {
+          const who = n.actor?.display_name || (n.actor?.username ? `@${n.actor.username}` : 'Someone');
+          const text = ({
+            follow: `${who} followed you.`, friend_request: `${who} sent you a friend request.`, friend_accepted: `${who} accepted your friend request.`,
+            comment: `${who} replied to your post.`, reply: `${who} replied to you.`, helpful: `${who} found your post helpful.`,
+            playlist_saved: `${who} saved your playlist.`, recommendation: `${who} recommended a product to you.`,
+          })[n.type] || n.message || n.body || `${who}: ${String(n.type || 'new activity').replace(/_/g, ' ')}`;
+          const fs = n.actor_id ? community.friendshipState(friendships, authUser.id, n.actor_id) : null;
+          const openWho = n.actor?.username ? () => openProfile(n.actor.username) : null;
+          const openIt = n.post_id ? async () => { try { const post = await community.getFeedPost(supabase, n.post_id); if (post) openPost(post); else setNotice('That post was removed.'); } catch (e) { notifyError(e); } } : null;
+          return (
+            <div className="am-card am-note" key={n.id}>
+              <p>{openWho ? <button type="button" className="am-note__who" onClick={openWho}>{text}</button> : text}</p>
+              <small>{timeLabel(n.created_at)}</small>
+              <span className="am-note__acts">
+                {n.type === 'friend_request' && fs?.state === 'incoming' && <>
+                  <button type="button" className="am-primary" disabled={busy} onClick={() => answerFriendRequest(fs.row, true)}>Accept</button>
+                  <button type="button" className="am-secondary" disabled={busy} onClick={() => answerFriendRequest(fs.row, false)}>Decline</button>
+                </>}
+                {n.type === 'friend_request' && fs?.state === 'friends' && <span className="am-note__done">You're friends</span>}
+                {n.type === 'follow' && n.actor_id && !followingIds.includes(n.actor_id) && <button type="button" className="am-primary" disabled={busy} onClick={async () => { try { await community.setFollowing(supabase, authUser.id, n.actor_id, true); setFollowingIds((ids) => [...new Set([...ids, n.actor_id])]); setNotice(`Following ${who}.`); } catch (e) { notifyError(e); } }}>Follow back</button>}
+                {openIt && <button type="button" className="am-secondary" onClick={openIt}>See post</button>}
+              </span>
+            </div>
+          );
+        })}
         {/* Nov 2 audit: an empty Updates page was blank. */}
         {page.type === 'notifications' && details == null && <p className="am-collab-empty" aria-busy="true">Loading updates…</p>}
         {page.type === 'notifications' && Array.isArray(details) && details.length === 0 && <p className="am-collab-empty">No likes, replies or follows yet. They show up here.</p>}

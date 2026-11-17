@@ -30,7 +30,9 @@ const typeText = {
   follow: 'Someone followed you.',
   friend_request: 'You have a friend request.',
   friend_accept: 'Your friend request was accepted.',
-  helpful: 'Someone found your answer helpful.',
+  friend_accepted: 'Your friend request was accepted.',
+  playlist_saved: 'Someone saved your playlist.',
+  helpful: 'Someone found your post helpful.',
   recommendation: 'A friend recommended a product to you.',
 };
 

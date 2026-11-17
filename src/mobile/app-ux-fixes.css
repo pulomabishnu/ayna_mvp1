@@ -647,3 +647,12 @@
 /* QA (Oct 27): the in-grid "Get matched" banner (legacy figma.css) had a 13px label pinned left in a
    full-width bar. One centred primary pill, like every other main action. */
 .ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile.ayna-mobile .ayna-figma-discover-cta button { justify-content: center !important; gap: 8px; min-height: 48px !important; border-radius: 999px !important; font: 600 16px/1 var(--ay-font-ui, 'Figtree', sans-serif) !important; }
+
+/* Nov 16: community updates say who, with the next step. */
+.am-note { display: grid; gap: 6px; }
+.am-note p { margin: 0; }
+.am-note__who { all: unset; cursor: pointer; font: inherit; color: inherit; }
+.am-note__who:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+.am-note__acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.am-note__acts:empty { display: none; }
+.am-note__done { font-size: 13px; font-weight: 600; opacity: .8; }
