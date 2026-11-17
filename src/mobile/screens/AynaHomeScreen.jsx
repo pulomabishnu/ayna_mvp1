@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import RoutineGoals from '../../components/today/RoutineGoals.jsx';
+import { syncEngagementNudges } from '../utils/engagementNudges.js';
 import TodayScreen from './TodayScreen.jsx';
 import DayPlan from '../../components/routine/DayPlan.jsx';
 import EcosystemScreen from './EcosystemScreen.jsx';
@@ -65,6 +66,10 @@ export default function AynaHomeScreen(props) {
   const hbc = usesHormonalBC(quizAnswers);
   // Her own log (TodayFeed reports changes; the calendar saves into it too).
   const [dayLog, setDayLog] = useState(() => { try { return readLog(); } catch { return {}; } });
+  // Nov 16 (founder): phone nudges (log tonight, come back, moving more than usual), re-planned as things change.
+  const loggedToday = Boolean(dayLog?.[today] && Object.keys(dayLog[today]).some((k) => !['day', 'updatedAt', 'fieldAt'].includes(k) && dayLog[today][k] != null));
+  const stepRows = useMemo(() => (healthInsightRows || []).filter((r) => r?.metric === 'steps').map((r) => ({ day: r.day, value: r.value })), [healthInsightRows]);
+  useEffect(() => { syncEngagementNudges({ loggedToday, steps: stepRows }); }, [loggedToday, stepRows]);
   // Her synced rows, read the dashboard's way (30-day charts, 90-day usual band); nothing new is computed.
   // Founder, Nov 11: periods she logs on ayna count too, so the cycle dial works without another app.
   const data = useMemo(() => {

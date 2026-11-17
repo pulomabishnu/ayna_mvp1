@@ -99,6 +99,7 @@ export function routeForPush(data = {}) {
   if (!data || typeof data !== 'object') return null;
   if (data.productId) return { screen: 'product', productId: String(data.productId) };
   if (data.route === 'today') return { screen: 'today' };
+  if (data.route === 'community') return { screen: 'community' };
   return null;
 }
 

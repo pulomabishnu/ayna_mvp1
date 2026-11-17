@@ -764,6 +764,8 @@ export default function MobileApp() {
   usePushRoutes((route) => {
     setAskAynaOpen(false);
     if (route.screen === 'today') { setOverlay(null); setScreen('today'); return; }
+    // Nov 16: community pushes open her Community updates (who followed, replied, sent a friend request).
+    if (route.screen === 'community') { setOverlay(null); setCommunitySeed(null); setScreen('community'); setTimeout(() => { try { window.dispatchEvent(new CustomEvent('ayna:open-community-notifications')); } catch { /* old browser */ } }, 350); return; }
     if (route.screen === 'product') {
       const item = getProductById(route.productId) || ALL_PRODUCTS.find((p) => String(p.id) === route.productId);
       if (item) setOverlay({ type: 'product', item: hydrateCatalogProduct(item) });

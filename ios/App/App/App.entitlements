@@ -6,6 +6,10 @@
 	     Clinical Health Records (allergies, conditions, medications only; see
 	     native/capacitor-ayna-records). No background delivery. The App ID must
 	     also have Clinical Health Records enabled in the developer account. -->
+	<!-- Nov 16: phone notifications from the server (community, reminders). Without this iOS never hands the
+	     app a push token, so device_tokens stayed empty. Push Notifications must also be on for the App ID. -->
+	<key>aps-environment</key>
+	<string>production</string>
 	<key>com.apple.developer.healthkit</key>
 	<true/>
 	<key>com.apple.developer.healthkit.access</key>

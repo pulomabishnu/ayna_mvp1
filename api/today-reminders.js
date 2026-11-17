@@ -20,6 +20,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { verifyUser } from './_usageLimit.js';
 import { apnsConfigured, pushToUser } from './_apns.js';
+import { communitySweep } from './_communityPush.js';
 
 export const KINDS = new Set(['tonight', 'follow_up', 'rundown', 'saved']);
 export const PUSH_MESSAGE = Object.freeze({ title: 'ayna', body: 'Your ayna check-in is ready', data: { route: 'today' } });
@@ -70,6 +71,9 @@ export function inQuietHours(hhmm, start, end) {
  */
 export function planDelivery(row, prefs = {}, sentDays = new Set(), now = Date.now()) {
   if (prefs.notificationsEnabled === false) return { action: 'skip', reason: 'notifications_off' };
+  // Nov 16: push was never set up on the server, so old reminders piled up. A reminder more than 6 hours late is
+  // dropped, never sent the day push turns on.
+  if (Number.isFinite(Date.parse(row.send_at)) && now - Date.parse(row.send_at) > 6 * 3600000) return { action: 'skip', reason: 'stale' };
   const tz = validTz(row.tz) ? row.tz : 'America/New_York';
   const { day, hhmm } = localParts(now, tz);
   const quiet = prefs.quietHoursEnabled && inQuietHours(hhmm, prefs.quietHoursStart, prefs.quietHoursEnd);
@@ -181,7 +185,16 @@ export default async function handler(req, res) {
     const admin = getAdmin();
     if (!admin) return res.status(503).json({ error: 'not_configured' });
     try {
-      return res.status(200).json({ ok: true, ...(await sweep(admin)) });
+      const today = await sweep(admin);
+      // Nov 16: community activity goes out as phone notifications in the same cron.
+      let community = null;
+      try {
+        community = await communitySweep(admin, {
+          prefsFor,
+          inQuiet: (p, t) => Boolean(p.quietHoursEnabled) && inQuietHours(localParts(t, 'America/New_York').hhmm, p.quietHoursStart, p.quietHoursEnd),
+        });
+      } catch (e) { console.error('[today-reminders] community push failed:', e?.message); }
+      return res.status(200).json({ ok: true, ...today, community });
     } catch (e) {
       console.error('[today-reminders] sweep failed:', e?.message);
       return res.status(500).json({ error: 'sweep_failed' });
