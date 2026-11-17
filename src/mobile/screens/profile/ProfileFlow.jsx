@@ -1,3 +1,4 @@
+import { usePinnedHidden, setPinnedHidden } from '../../../home/pinnedPref.js';
 import { useEdgeSwipeBack } from '../../hooks/useEdgeSwipeBack.js';
 import { CODE_COPY, SMS_CODE_LENGTH, cleanCode } from '../../../utils/authCodes.js';
 import BoxWaitlist, { SHOW_BOX_WAITLIST } from '../../../components/you/BoxWaitlist.jsx';
@@ -1521,6 +1522,9 @@ function PreferencesScreen({
             This is what body text looks like across ayna.
           </div>
         </div>
+
+        {/* Nov 16 (founder): she can hide Pinned on Home, and bring it back here. */}
+        <PinnedSetting />
 
         {IS_NATIVE_APP && <SectionLabel>Notifications</SectionLabel>}
         {IS_NATIVE_APP && loadState === 'loading' && (
@@ -3997,6 +4001,15 @@ export default function ProfileFlow({
       <div key={screen} className="ay-set-page" data-page={screen} {...swipeBack} style={{ flex: 1, minWidth: 0, display: 'flex', animation: 'ay-page .22s ease-out' }}>
         <SignInContext.Provider value={onSignIn || null}>{body}</SignInContext.Provider>
       </div>
+    </div>
+  );
+}
+
+function PinnedSetting() {
+  const hidden = usePinnedHidden();
+  return (
+    <div style={{ borderBottom: '1px solid var(--ayna-border)', padding: '6px 0' }}>
+      <ToggleRow first title="Show Pinned on Home" sub="Your pinned charts and lists, under This week's highlights." on={!hidden} onClick={() => setPinnedHidden(!hidden)} />
     </div>
   );
 }

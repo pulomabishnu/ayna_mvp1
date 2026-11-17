@@ -9,6 +9,7 @@ import { readLog, todayKey } from '../health/dailyLog.js';
 import { readTries } from '../health/outcomes.js';
 import { followedTopicsFor } from '../mobile/hooks/useRundownCommunity.js';
 import { liveAnnouncements } from '../data/announcements.js';
+import { usePinnedHidden, setPinnedHidden } from './pinnedPref.js';
 import './home-widgets.css';
 
 /**
@@ -58,7 +59,9 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
     setRowAt(best);
   };
   const goTo = (i) => { const row = rowRef.current; const c = cells()[i]; if (row && c) row.scrollTo({ left: c.offsetLeft - row.offsetLeft - 20, behavior: 'smooth' }); };
-  const shown = layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id));
+  // Nov 16 (founder): Pinned (the app's titled row) starts empty; only what she pins shows.
+  const shown = title && !layout.custom ? [] : layout.widgets.filter((w) => layout.custom || !hideDefault.includes(w.id));
+  const pinnedOff = usePinnedHidden();
   const change = (widgets) => { writeHomeLayout(surface, widgets); setLayout({ widgets, custom: true }); };
   const reset = () => { resetHomeLayout(surface); setLayout(effectiveLayout(surface, REGISTRY)); };
   const openSheet = () => { before.current = JSON.stringify(layout.widgets); setOpen(true); };
@@ -73,12 +76,17 @@ export default function HomeWidgets({ surface = 'app', userId = null, data = {},
 
   useEffect(() => { if (!open) before.current = null; }, [open]);
 
+  if (title && pinnedOff) return null;
   return (
     <section className={`ay-homewidgets is-${surface}`} aria-label={surface === 'web' ? 'Your widgets' : 'Your widgets on Today'} data-count={layout.widgets.length}>
       {/* title: a section head with Edit on the right (Apple Health's "Pinned  Edit"). */}
       {title && <div className="ay-homewidgets__head">
         <h2>{title}</h2>
-        <button type="button" className="ay-homewidgets__edit is-head" aria-haspopup="dialog" onClick={openSheet}>{shown.length ? editLabel : 'Add'}<span className="sr-only"> pinned items</span></button>
+        {shown.length > 0 && <button type="button" className="ay-homewidgets__edit is-head" aria-haspopup="dialog" onClick={openSheet}>{editLabel}<span className="sr-only"> pinned items</span></button>}
+      </div>}
+      {title && shown.length === 0 && <div className="ay-homewidgets__empty">
+        <p>Pin the charts and lists you want to see first.</p>
+        <span><button type="button" className="ay-homewidgets__pin" aria-haspopup="dialog" onClick={openSheet}>+ Pin something</button><button type="button" className="ay-homewidgets__hide" onClick={() => setPinnedHidden(true)}>Hide Pinned</button></span>
       </div>}
       {shown.length > 0 && (
         <div className="ay-homewidgets__grid" ref={rowRef} onScroll={title ? onRowScroll : undefined}>
