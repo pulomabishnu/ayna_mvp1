@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { supabaseFetch } from './network.js';
+import { DEFAULT_TIMEOUT_MS, supabaseFetch } from './network.js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
 
@@ -42,6 +42,7 @@ normalizeWebOAuthReturnPath();
 
 let client = null;
 let webGoogleOAuthClient = null;
+export const NATIVE_AUTH_LOCK_TIMEOUT_MS = DEFAULT_TIMEOUT_MS + 5000;
 
 function authStorageKey(url) {
   try {
@@ -234,7 +235,13 @@ export function getSupabaseClient() {
         // serialize auth calls whenever it's merely present, true in a
         // WKWebView, but not necessarily reliable there. processLock is
         // Supabase's own single-process alternative for Capacitor/native.
-        ...(isNative ? { lock: processLock } : {}),
+        // Nov 17: an iPhone app came back to the foreground and an auth call
+        // failed with a lock timeout. On resume, the token refresh holds the lock
+        // while the Pro rechecks wait for it. On a slow network the refresh can
+        // take up to one request's 30 s limit (network.js), but Supabase waits
+        // only 5 s, then rejects, sometimes inside its own onAuthStateChange
+        // where no caller can catch it. So wait a little longer than one request.
+        ...(isNative ? { lock: processLock, lockAcquireTimeout: NATIVE_AUTH_LOCK_TIMEOUT_MS } : {}),
       },
     });
 
