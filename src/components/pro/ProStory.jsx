@@ -10,7 +10,7 @@ import './pro-story.css';
  * motion. Every claim matches src/pro/plans.js and src/pro/features.js.
  */
 
-const I = {
+export const PRO_ICONS = {
   dash: <><circle cx="12" cy="12" r="8" /><path d="M12 4a8 8 0 0 1 8 8" strokeWidth="3" /><path d="M8.5 13.5l2-2 2 2 3-3.5" /></>,
   watch: <><rect x="7" y="6" width="10" height="12" rx="3" /><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3M12 10v2.5l1.5 1" /></>,
   trend: <><path d="M4 18h16" /><path d="M5 15l4-4 3 3 6-7" /><path d="M15 7h3v3" /></>,
@@ -19,7 +19,7 @@ const I = {
   infinity: <><path d="M7 15.5c-2 0-3.5-1.6-3.5-3.5S5 8.5 7 8.5c3.5 0 6.5 7 10 7 2 0 3.5-1.6 3.5-3.5S19 8.5 17 8.5c-3.5 0-6.5 7-10 7Z" /></>,
 };
 
-const PRO_STORY = [
+export const PRO_STORY = [
   { id: 'dashboard', icon: 'dash', tone: 'ink', t: 'Your health dashboard', d: 'Cycle, sleep and activity, together in one place.', match: ['dashboard'] },
   { id: 'connect', icon: 'watch', tone: 'pink', t: 'Connect your health data', d: 'Apple Health, Health Connect and Oura. You choose what to share.', match: ['wearables', 'health'] },
   { id: 'deeper', icon: 'trend', tone: 'butter', t: 'Patterns over time', d: 'Deeper insights and trends, not single data points.', match: ['insights', 'tracking'] },
@@ -54,7 +54,7 @@ export default function ProStory({ feature = '', moreHref = '/pro', seconds = 4 
         {PRO_STORY.map((x, k) => <span key={x.id} className={k < i ? 'is-done' : k === i ? `is-on${paused || still ? ' is-still' : ''}` : ''} style={k === i ? { '--ps-dur': `${seconds}s` } : undefined}><i key={`${x.id}-${i}`} /></span>)}
       </div>
       <div className={`ps__slide is-${s.tone}`} aria-live="polite" aria-atomic="true">
-        <span className="ps__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{I[s.icon]}</svg></span>
+        <span className="ps__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[s.icon]}</svg></span>
         <p className="ps__count">{i + 1} of {n}</p>
         <h3 className="ps__t">{s.t}</h3>
         <p className="ps__d">{s.d}</p>

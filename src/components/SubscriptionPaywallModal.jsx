@@ -11,7 +11,7 @@ import { announceProChanged, rememberProReturn, saveProResume } from '../pro/pay
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 import { PRO_TAGLINE } from '../pro/features.js';
 import { EARLY_ACCESS_LINE, PAID_TERM_STARTS, PLANS } from '../pro/plans.js';
-import ProStory from './pro/ProStory.jsx';
+import ProStory, { PRO_ICONS, PRO_STORY } from './pro/ProStory.jsx';
 import '../styles/pro-v4.css';
 
 const ANALYTICS_SOURCE = 'subscription_paywall';
@@ -135,6 +135,9 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   };
 
   if (!host) return <span ref={anchorRef} hidden />;
+  // Nov 17 (founder: "without scrolling, and don't forget the 14 day free trial"): in the app the sheet is one
+  // screen. The free trial first, a short list of what Pro adds, the plans and the button. Billing details fold.
+  const inApp = native || Boolean(host.classList?.contains('ayna-mobile'));
 
   // App Store rule 3.1.1: outside the US App Store the iPhone app never shows Pro prices or a link to
   // pay outside the App Store, so it says so plainly. US App Store users get the full sheet below.
@@ -151,6 +154,66 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
             <p className="pro-sheet__lede">{unlocking ? <>{unlocking} is part of ayna Pro, which you can't buy in the app in your country yet.</> : <>ayna Pro can't be bought in the app in your country yet.</>} Your matches, routine, log and Daily Rundown stay free.</p>
           </header>
           <div className="pro-sheet__body">{!signedOut && <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(close, 1400)} />}<button type="button" className="pro-sheet__cta" onClick={close}>Got it</button></div>
+        </section>
+      </div>,
+      host,
+    );
+  }
+
+  const plansGroup = (
+    <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
+      {PLANS.map((p) => (
+        <button key={p.id} type="button" role="radio" aria-checked={plan === p.id} className={`pro-plan${plan === p.id ? ' is-on' : ''}`} disabled={Boolean(busy)} onClick={() => choosePlan(p)}>
+          {p.badge && <span className="pro-plan__best">{p.badge}</span>}
+          <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.label}</span></span>
+          <span className="pro-plan__amount">
+            <strong className="pro-plan__price">{p.price}</strong>
+            <del className="pro-plan__was"><span className="pro-sr">Regular price </span>{p.regular}</del>
+          </span>
+          <span className="pro-plan__sub">{p.sub}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  if (inApp) {
+    return createPortal(
+      <div className={`pro-sheet is-app${closing ? ' is-closing' : ''}`} onClick={close}>
+        <section ref={trapRef} tabIndex={-1} className="pro-sheet__panel" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
+          <header className="pro-sheet__head">
+            <span className="pro-sheet__grab" aria-hidden="true" />
+            <button type="button" className="pro-sheet__close" onClick={close} aria-label="Close">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            </button>
+            <h2 id={titleId} className="pro-sheet__title">Get ayna <em>Pro</em></h2>
+            {unlocking && <p className="pro-sheet__lede">Unlock <b>{unlocking}</b>.</p>}
+          </header>
+          <div className="pro-sheet__body">
+            <ul className="pro-app__feats" aria-label="What ayna Pro adds">
+              {PRO_STORY.map((f) => (
+                <li key={f.id}><span className="pro-app__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[f.icon]}</svg></span>{f.t}</li>
+              ))}
+            </ul>
+            {signedOut
+              ? <div className="ay-trial"><button type="button" className="ay-trial__btn" onClick={signIn}>Try ayna Pro free for 14 days</button><p className="ay-trial__fine">Sign in to start. No card needed. Nothing renews.</p></div>
+              : <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(close, 1400)} />}
+            {plansGroup}
+            {error && <p className="pro-sheet__error" role="alert">{error}</p>}
+            {signedOut
+              ? <button type="button" className="pro-sheet__cta" onClick={signIn}>Sign in to get ayna Pro</button>
+              : <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>{busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}</button>}
+            <div className="pro-app__row">
+              <button type="button" className="pro-app__link" aria-expanded={billingOpen} aria-controls={billingId} onClick={() => setBillingOpen((v) => !v)}>How billing works</button>
+              <button type="button" className="pro-app__link" onClick={close}>Not now</button>
+            </div>
+            <div id={billingId} className="pro-sheet__billing" hidden={!billingOpen}>
+              <p>Pay securely with Stripe. Pro unlocks here as soon as you're done. Cancel anytime.</p>
+              <p>{EARLY_ACCESS_LINE}</p>
+              <p><b>Monthly.</b> {PLANS[1].terms}</p>
+              <p><b>Yearly.</b> {PLANS[0].terms}</p>
+              <p>Access already paid for stays active through the end of that purchased period.</p>
+            </div>
+          </div>
         </section>
       </div>,
       host,
