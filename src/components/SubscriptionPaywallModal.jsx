@@ -86,7 +86,6 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   const native = Capacitor.isNativePlatform();
   // US App Store: prices and a link to checkout on the web; elsewhere in the app: neither (Apple 3.1.1).
   const purchaseMode = useProPurchaseMode(native);
-  const webUrl = `https://www.aynahealth.co/pro${feature ? `?feature=${encodeURIComponent(feature)}` : ''}`;
 
   const choosePlan = (nextPlan) => {
     setPlan(nextPlan.id);
@@ -111,6 +110,15 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
       if (url.protocol !== 'https:' || url.hostname !== 'checkout.stripe.com') throw new Error('Checkout is unavailable. Please try again.');
       captureProEvent('pro_checkout_started', { feature: feature || 'general', plan: target, amount, currency: 'USD' });
       rememberProReturn(feature);
+      // Nov 16 (founder: "Get ayna Pro opens a page where you can't even see where to buy"): in the app, go straight
+      // to Stripe checkout for her signed-in account (no second sign-in on the website). Closing the sheet after
+      // paying re-checks Pro (main.jsx browserFinished), so it unlocks right away.
+      if (native) {
+        const { Browser } = await import('@capacitor/browser');
+        await Browser.open({ url: url.href, presentationStyle: 'popover' });
+        setBusy('');
+        return;
+      }
       window.location.assign(url.href);
     } catch (e) {
       captureProEvent('pro_checkout_failed', { feature: feature || 'general', plan: target, error_code: e?.code || 'unknown' });
@@ -214,8 +222,10 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
           {error && <p className="pro-sheet__error" role="alert">{error}</p>}
 
           {native ? <>
-            <a className="pro-sheet__cta" href={webUrl} target="_blank" rel="noopener noreferrer">Get ayna Pro · {chosen.price}</a>
-            <p className="pro-sheet__webnote">Opens aynahealth.co to pay securely with Stripe. Sign in there with the same ayna account and Pro unlocks here too.</p>
+            {signedOut
+              ? <button type="button" className="pro-sheet__cta" onClick={signIn}>Sign in to get ayna Pro</button>
+              : <button type="button" className="pro-sheet__cta" disabled={Boolean(busy)} aria-busy={busy ? 'true' : undefined} onClick={checkout}>{busy ? 'Opening secure checkout…' : `Get ayna Pro · ${chosen.price}`}</button>}
+            <p className="pro-sheet__webnote">Pay securely with Stripe. Pro unlocks here as soon as you're done.</p>
           </> : <>
           {signedOut
             ? <button type="button" className="pro-sheet__cta" onClick={signIn}>Sign in to get ayna Pro</button>
