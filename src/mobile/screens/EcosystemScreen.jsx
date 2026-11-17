@@ -364,6 +364,9 @@ export default function EcosystemScreen({
     <section className={`eco-app-hero${ecoTab === 'dashboard' && showTabs ? ' is-today' : ''}`} aria-labelledby="ayna-cabinet-title">
       <div className="eco-app-titlerow">
         <h1 id="ayna-cabinet-title" ref={titleRef}>Your products</h1>
+        {/* Nov 16 (founder: "the Updates pill looks disorganized" floating alone): with no summary card, it sits
+            beside the title. */}
+        {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton}
       </div>
       {ecoTab !== 'dashboard' && (currentProducts.length > 0 || savedList.length > 0) && <form className="eco-app-search" role="search" onSubmit={(e) => { e.preventDefault(); if (q && !anyMatch) onBrowse?.(query.trim()); }}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
@@ -387,7 +390,6 @@ export default function EcosystemScreen({
           </div>}
         </div>
       </div>}
-      {ecoTab !== 'dashboard' && myProducts.length === 0 && forYouButton && <div className="eco-app-stack__row is-loose">{forYouButton}</div>}
       {/* Empty: one clear way in (the quiz), the Shop as the quiet second choice. */}
       {ecoTab !== 'dashboard' && !hasAnything && !(quizDraft && onResumeQuiz) && (hasAnswers
         ? <EmptyState compact art="search" tone="pink" title="Find your products" body="Add the products you use or like from Shop. ayna learns from them and suggests similar ones in your Daily Rundown." actionLabel="Explore Shop" onAction={() => onBrowse?.()} secondaryLabel={onRetake ? 'Edit my answers' : undefined} onSecondary={onRetake} />
