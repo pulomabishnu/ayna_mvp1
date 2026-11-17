@@ -93,7 +93,7 @@ export default function AccountDataControls({ onOpenDeleteAccount }) {
           <div style={{ minWidth: '220px', flex: 1 }}>
             <div style={{ fontWeight: 600 }}>Usage analytics</div>
             <div style={{ color: 'var(--color-text-muted)', fontSize: 12.5, lineHeight: 1.45, marginTop: '0.2rem' }}>
-              Helps us understand which screens and products are useful. Raw health-search text, account email and direct health-account identifiers are excluded from PostHog analytics, and session recording is off.
+              Helps us understand which screens and products are useful. Raw health-search text, account email and direct health-account identifiers are excluded from PostHog analytics. Session replay runs only if you chose Turn on in the privacy notice, only on browsing pages, with all text and typing hidden.
               {gpcEnabled ? ' Your browser is sending Global Privacy Control, so analytics remain off.' : ''}
             </div>
           </div>

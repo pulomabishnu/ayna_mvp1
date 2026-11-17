@@ -133,7 +133,9 @@ export default function ConsentBanner() {
       </button>
       <p>
         <strong className="consent-banner__title">Help us improve ayna for women like you</strong>
-        Turn on analytics so we can see which products are popular. We don't know who you are unless
+        Turn on analytics so we can see which products are popular and where the site is confusing.
+        That includes screen replays of browsing pages, with every word and everything you type hidden;
+        never your quiz, profile or health screens. We don't know who you are unless
         you make an account, and it's never sold or used for ads. Until you choose, we only count
         visits and which steps of the site are used, anonymously; Keep off stops that too.{' '}
         <a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>

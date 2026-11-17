@@ -21,7 +21,10 @@ describe('commercial + health data regulatory regressions',()=>{
     expect(main).not.toContain('if (!mandatory) ph.set_config?.({ opt_out_capturing_by_default: false })');
     // Banner wording approved by Puloma, 2026-11-10; option B chosen 2026-11-11.
     expect(consent).toContain('Help us improve ayna for women like you');
-    expect(consent).toContain("Turn on analytics so we can see which products are popular. We don't know who you are unless");
+    // Session replay sentence added 2026-11-17 (PR for Ameera's approval).
+    expect(consent).toContain('Turn on analytics so we can see which products are popular and where the site is confusing.');
+    expect(consent).toContain('That includes screen replays of browsing pages, with every word and everything you type hidden;');
+    expect(consent).toContain("never your quiz, profile or health screens. We don't know who you are unless");
     expect(consent).toContain("you make an account, and it's never sold or used for ads. Until you choose, we only count");
     expect(consent).toContain('visits and which steps of the site are used, anonymously; Keep off stops that too.');
     // Same sentence in the policy and the health notice.
@@ -34,6 +37,11 @@ describe('commercial + health data regulatory regressions',()=>{
     expect(healthNotice).toContain('the products you view and click (product name or ID)');
     expect(healthNotice).toContain('only after you explicitly opt in');
     expect(policy).toContain('off until you explicitly opt in');
+    // Session replay is disclosed in all three places, and nowhere claims it is disabled.
+    expect(policy).toContain('Session replay runs only if you click Turn on in the privacy notice');
+    expect(healthNotice).toContain('PostHog may also receive session replays of browsing pages only');
+    expect(policy).not.toMatch(/Session recording[^.]*(?:are|is) disabled/);
+    expect(healthNotice).not.toContain('disables session recording');
   });
   it('does not make obsolete claims that the paid Pro subscription does not exist',()=>{
     expect(terms).not.toContain('No current paid ayna subscription');
