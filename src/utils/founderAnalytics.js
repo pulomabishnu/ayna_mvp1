@@ -71,13 +71,23 @@ function persistInternalBrowserMarker() {
  * Native/TestFlight builds deliberately keep this internal tag even though
  * hasInternalBrowserMarker() does not suppress their capture. That separation
  * lets QA see tester events while customer-facing metrics filter them out.
+ * On native, the tag is applied only when a founder email is known (after
+ * sign-in), never from the persisted device marker on app launch.
  */
 export function tagFounderAnalyticsIfNeeded(ph, email = '') {
   if (!ph) return false;
 
   const founder = isFounderEmail(email);
   if (founder) persistInternalBrowserMarker();
-  if (!founder && !hasPersistedInternalBrowserMarker()) return false;
+  if (!founder) {
+    // iOS/Android (TestFlight) builds: only tag after a founder email signs
+    // in. The device marker alone must not tag at app launch, or a non-founder
+    // who later uses the same phone/install would be marked internal too.
+    // Restored sessions still re-tag via identifyAccount(), which passes the
+    // signed-in email through posthog.identify.
+    if (isNativeRuntime()) return false;
+    if (!hasPersistedInternalBrowserMarker()) return false;
+  }
 
   try {
     ph.register?.({ is_internal: true, internal_role: 'founder' });

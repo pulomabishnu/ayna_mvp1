@@ -92,11 +92,29 @@ describe('founder analytics exclusion', () => {
     ph.register.mockClear();
     ph.people.set.mockClear();
 
-    // The persisted marker still tags future native sessions as internal, so
-    // customer dashboards can exclude them while the QA dashboard includes them.
-    expect(tagFounderAnalyticsIfNeeded(ph)).toBe(true);
+    // On native, the persisted marker alone does not tag (e.g. at app launch,
+    // before sign-in): only a known founder email does.
+    expect(tagFounderAnalyticsIfNeeded(ph)).toBe(false);
+    expect(ph.register).not.toHaveBeenCalled();
+    expect(ph.people.set).not.toHaveBeenCalled();
+
+    // A restored founder session passes the email again and is re-tagged.
+    expect(tagFounderAnalyticsIfNeeded(ph, 'ameera@aynahealth.co')).toBe(true);
     expect(ph.register).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
     expect(ph.people.set).toHaveBeenCalledWith({ is_internal: true, internal_role: 'founder' });
+  });
+
+  it('does not tag a non-founder who signs in on a native device a founder used before', () => {
+    window.Capacitor = { isNativePlatform: () => true };
+    const ph = { register: vi.fn(), people: { set: vi.fn() } };
+
+    tagFounderAnalyticsIfNeeded(ph, 'puloma@aynahealth.co');
+    ph.register.mockClear();
+    ph.people.set.mockClear();
+
+    expect(tagFounderAnalyticsIfNeeded(ph, 'tester@example.com')).toBe(false);
+    expect(ph.register).not.toHaveBeenCalled();
+    expect(ph.people.set).not.toHaveBeenCalled();
   });
 
   it('does not mark a normal user or browser as internal', () => {
