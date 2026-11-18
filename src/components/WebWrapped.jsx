@@ -93,7 +93,7 @@ function TypeWall({ value }) {
 
 const PERSONA_LINE = { 'The Researcher': 'You follow the evidence. Studies first, then the shelf.', 'The Listener': 'You trust real experiences from women like you.', 'The Curator': 'You go with expert picks and brands you trust.', 'The Explorer': 'You love finding a new brand before everyone else.' };
 
-export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null, onMore = null }) {
+export default function WebWrapped({ products = [], quizResults, healthProfile = null, matchOpts = undefined, onClose, onBrowse, onBack, startAtEnd = false, primaryLabel = 'See all your matches', onPrimary, onPersonalize = null, moreQuestions = 0, guest = false, inline = false, careNote = null, percentFor = null, whyFor = null, emptyBack = null, counts = null, onOpenProduct = null }) {
   // Backlog Nov 14 (M11: "only four categories until I left and came back"): re-render when the live
   // catalog replaces the bundled one, so the first view is the same as the next one.
   useCatalogReady();
@@ -343,7 +343,7 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
             </div></div>
             <div className="ays-act">
               <button type="button" className="ays-cta" onClick={onPrimary || onClose}>{primaryLabel}</button>
-              {onMore && <button type="button" className="ays-link ay-wr-better" onClick={onMore}>Answer more questions first</button>}
+              {/* Nov 17 (founder): no "Answer more questions first" here; the extra questions live on her results page. */}
               {onPersonalize && moreQuestions > 0 && <button type="button" className="ays-link ay-wr-better" onClick={onPersonalize}>Make my matches better · {moreQuestions} quick {moreQuestions === 1 ? 'question' : 'questions'}</button>}
               <div className="ay-wr-secondary">
                 <button type="button" className="ays-link" onClick={share} aria-describedby="wrapped-invite-note">
