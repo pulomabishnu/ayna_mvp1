@@ -99,15 +99,15 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 .ay-dp-row.is-missed .ay-dp-row__main span { opacity: 1; font-weight: 600; }
 .ay-dp-now { flex: none; font: 700 13px/1 var(--ay-font-ui, inherit); font-style: normal; padding: 4px 8px; border-radius: 999px; background: #f7badd; color: #3e2723; }
 .ay-dp-row__more { display: flex; flex-wrap: wrap; gap: 4px; margin: -4px 0 4px -10px; }
-.ay-dp-check { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; margin-top: 2px; }
-.ay-dp-check svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 150ms ease-out; }
-.ay-dp-check:hover svg { opacity: .35; }
-.ay-dp-check[aria-pressed='true'] { background: #3e2723; border-color: #3e2723; }
-.ay-dp-check[aria-pressed='true'] svg { stroke: #ffedac; opacity: 1; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-check[aria-pressed='true'] { background: #ffedac; border-color: #ffedac; }
-:is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-check[aria-pressed='true'] svg { stroke: #3e2723; }
-.ay-dp-check:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-.ay-dp-check:active { transform: scale(.94); }
+button.ay-dp-check { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; margin-top: 2px; }
+button.ay-dp-check svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 150ms ease-out; }
+button.ay-dp-check:hover svg { opacity: .35; }
+button.ay-dp-check[aria-pressed='true'] { background: #3e2723; border-color: #3e2723; }
+button.ay-dp-check[aria-pressed='true'] svg { stroke: #ffedac; opacity: 1; }
+:is([data-theme='dark'], [data-theme='brand-dark']) button.ay-dp-check[aria-pressed='true'] { background: #ffedac; border-color: #ffedac; }
+:is([data-theme='dark'], [data-theme='brand-dark']) button.ay-dp-check[aria-pressed='true'] svg { stroke: #3e2723; }
+button.ay-dp-check:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+button.ay-dp-check:active { transform: scale(.94); }
 .ay-dp-feel { margin: 0 0 4px; }
 .ay-dp-empty { display: grid; gap: 12px; }
 .ay-dp-empty p { margin: 0; font: 500 15px/1.45 var(--ay-font-ui, inherit); opacity: .85; }
@@ -117,21 +117,21 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 .ay-dp-seg--top button[aria-pressed='true'] { background: #3e2723; color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg--top button { border-color: #ffedac; }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp-seg--top button[aria-pressed='true'] { background: #ffedac; color: #3e2723; }
-@media (prefers-reduced-motion: reduce) { .ay-dp-progress b, .ay-dp-check svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-dp-progress b, button.ay-dp-check svg { transition: none; } }
 :is([data-theme='dark'], [data-theme='brand-dark']) .ay-dp .ay-dp__primary { background: #ffedac; color: #3e2723; }
 
 /* Motion (Ameera, Nov 15: smooth, small): sheets rise from the bottom, rows' extras drop in, checks pop. */
 .ay-dp-sheet { animation: ay-dp-fade 180ms ease-out both; }
 .ay-dp-sheet__panel { animation: ay-dp-rise 220ms cubic-bezier(.2, .8, .2, 1) both; }
 .ay-dp-row__more, .ay-dp-feel { animation: ay-dp-drop 180ms ease-out both; }
-.ay-dp-check { transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 120ms ease-out; }
-.ay-dp-check[aria-pressed='true'] svg { animation: ay-dp-pop 220ms cubic-bezier(.2, .8, .2, 1.4) both; }
+button.ay-dp-check { transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 120ms ease-out; }
+button.ay-dp-check[aria-pressed='true'] svg { animation: ay-dp-pop 220ms cubic-bezier(.2, .8, .2, 1.4) both; }
 .ay-dp-row { transition: opacity 160ms ease-out; }
 @keyframes ay-dp-fade { from { opacity: 0; } }
 @keyframes ay-dp-rise { from { transform: translateY(24px); opacity: .6; } }
 @keyframes ay-dp-drop { from { opacity: 0; transform: translateY(-4px); } }
 @keyframes ay-dp-pop { from { transform: scale(.4); } }
-@media (prefers-reduced-motion: reduce) { .ay-dp-sheet, .ay-dp-sheet__panel, .ay-dp-row__more, .ay-dp-feel, .ay-dp-check[aria-pressed='true'] svg { animation: none; } .ay-dp-check, .ay-dp-row { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ay-dp-sheet, .ay-dp-sheet__panel, .ay-dp-row__more, .ay-dp-feel, button.ay-dp-check[aria-pressed='true'] svg { animation: none; } button.ay-dp-check, .ay-dp-row { transition: none; } }
 
 /* Nov 15 (founder): Apple Health-style. The day switcher is centred; the empty plan is one grouped list on a soft fill, no outlines. */
 .ay-dp-days-nav { justify-content: center; }
@@ -169,3 +169,5 @@ html body :is(#dp1, .app-container, .ayna-mobile):is(#dp2, .app-container, .ayna
 /* Nov 16 (founder: "the clocks are bad color"): the browser's clock icon in the time fields matches the text. */
 .ay-dp-form input::-webkit-calendar-picker-indicator { opacity: .8; filter: invert(14%) sepia(18%) saturate(1400%) hue-rotate(330deg) brightness(.9); cursor: pointer; }
 .ay-dp-sheet[data-theme*='dark'] .ay-dp-form input::-webkit-calendar-picker-indicator { opacity: 1; filter: invert(1) sepia(.45) saturate(2.2) brightness(1.03); }
+label.ay-dp-check { display: grid; width: auto; height: auto; border: 0; border-radius: 0; cursor: pointer; }
+.ay-dp-manage .ay-dp-names { margin: 14px 0 4px; font: 500 15px/1.4 var(--ay-font-ui, inherit); }
