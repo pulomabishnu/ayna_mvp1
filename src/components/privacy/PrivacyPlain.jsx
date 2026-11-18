@@ -44,7 +44,7 @@ const PRIVACY_BLOCKS = [
 export function PrivacyPromise({ onMore }) {
   return (
     <section className="ay-pp-card" aria-labelledby="ay-pp-card-h">
-      <h2 id="ay-pp-card-h" className="ay-pp-card__h">Your data, in plain English</h2>
+      <h2 id="ay-pp-card-h" className="ay-pp-card__h">Your data is private</h2>
       <ul className="ay-pp-card__list">
         <li><Icon name="lock" /><span><b>Never sold.</b> Encrypted in transit and on our servers.</span></li>
         <li><Icon name="hand" /><span><b>Only what you choose.</b> Your email saves your matches. Health details are only what you add.</span></li>
