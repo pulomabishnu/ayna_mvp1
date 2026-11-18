@@ -17,10 +17,11 @@ describe('Save sheet areas', () => {
     expect(picksAreasLine(3, 2)).toBe('3 picks · 2 areas');
     expect(picksAreasLine(1, 0)).toBe('1 pick');
   });
-  it('app Save sheet shows her needs, not categories', () => {
+  // Nov 17 (founder: sign-up "shouldn't have to scroll, remove the pics"): the app's sign-up no longer shows a
+  // picks summary at all, so it can never show product categories.
+  it('app sign-up shows no picks summary and no categories', () => {
     const html = renderToStaticMarkup(<SigninScreen mode="signup" myProducts={[{ id: 'd-visana', name: 'Visana Health', category: 'telehealth', type: 'digital' }]} saveAreas={needAreaLabels(PERSONA, getSelectedNeeds)} />);
-    expect(html).toContain('1 pick · 2 areas');
-    expect(html).toContain('Heavy periods, Hot flashes');
-    expect(html).not.toMatch(/Virtual care|—/);
+    expect(html).not.toMatch(/pick ·|Virtual care/);
+    expect(html).toContain('Start my free 14-day ayna Pro trial');
   });
 });

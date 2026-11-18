@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { authErrorText } from '../../utils/authErrorText.js';
 import ProfileSetupStep from '../../components/ProfileSetupStep.jsx';
-import { picksAreasLine } from '../../utils/needAreas.js';
 import LegalFooter from '../components/LegalFooter.jsx';
-import ProductImage from '../components/ProductImage.jsx';
-import { hydrateCatalogProduct } from '../../data/products.js';
-import { safeProductImageSrc } from '../../utils/resolveProductImage.js';
-import { productImageOverride } from '../../data/productImageOverrides.js';
+import { setTrialOptIn, takeTrialOptIn } from '../../pro/trialOptIn.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, LEGAL_LINKS, acknowledgementLead, consentMetadata, markAskHeardAbout } from '../../utils/signupConsent.js';
 import { cleanFirstName } from '../data/intakeModel.js';
@@ -171,20 +167,9 @@ export default function SigninScreen({
   onAuthenticated,
   onAuthBack,
   onStartEcosystem,
-  myProducts = [],
-  // Her picked needs' labels (QA3 M11), never product categories.
-  saveAreas = [],
   firstName: intakeName = '',
 }) {
-  const topAreas = saveAreas || [];
-  const ecoPicks = (myProducts || []).filter(Boolean);
-  // Thumbnails use the catalog photo (same lookup as the product page), and
-  // picks that have one go first so the row shows real products.
-  const picksWithPhoto = ecoPicks.map((p) => hydrateCatalogProduct(p)).map((p) => {
-    const raw = p.image || p.imageUrl || p.images?.[0];
-    return { p, src: raw, hasPhoto: Boolean(productImageOverride(p) || safeProductImageSrc(raw, p.type === 'digital')) };
-  }).sort((a, b) => Number(b.hasPhoto) - Number(a.hasPhoto));
-  const showEcoSummary = ecoPicks.length > 0 && !authUser;
+  // Nov 17 (founder: "shouldn't have to scroll, remove the pics"): no picks summary on sign-up any more.
   // Back from Gmail after the phone reloaded the app: straight to the code
   // step with her email, not the start of sign-up (founder, Nov 2).
   const [pending] = useState(() => (authUser ? null : readPendingVerification()));
@@ -194,6 +179,7 @@ export default function SigninScreen({
   const [email, setEmail] = useState(pending?.email || '');
   const [password, setPassword] = useState('');
   const [aiConsent, setAiConsent] = useState(false);
+  const [trialOptIn, setTrialOptInState] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).
@@ -292,6 +278,7 @@ export default function SigninScreen({
 
   const handleSignUp = async () => {
     if (!validateRequired(SIGNUP_FIELDS, 'create your account')) return;
+    setTrialOptIn(trialOptIn);
     setError('');
     setLoading(true);
     // Signup always persists the new session (the Remember me choice is a
@@ -307,6 +294,7 @@ export default function SigninScreen({
       // email already has an account, so try signing her in with what she typed. Her matches save to that account.
       // If the password doesn't match, the sign-in form opens with her email filled in.
       if (e.code === 'email_already_exists') {
+        takeTrialOptIn(); // an existing account: the new-account trial choice doesn't apply
         try { setRememberMe(true); await onSignIn({ email: email.trim(), password }); onAuthenticated(); return; } catch { /* wrong password: sign in below */ }
         setPassword(''); setMode('signin');
         setError('You already have an ayna account with this email. Sign in to save your matches to it.');
@@ -343,7 +331,7 @@ export default function SigninScreen({
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
-    if (mode === 'signup') markAskHeardAbout();
+    if (mode === 'signup') { markAskHeardAbout(); setTrialOptIn(trialOptIn); }
     // Before the OAuth redirect: the flag must already be set when the
     // returning setSession writes the session through the storage adapter.
     setRememberMe(mode === 'signup' ? true : rememberMe);
@@ -362,7 +350,7 @@ export default function SigninScreen({
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
     stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
-    if (mode === 'signup') markAskHeardAbout();
+    if (mode === 'signup') { markAskHeardAbout(); setTrialOptIn(trialOptIn); }
     setRememberMe(mode === 'signup' ? true : rememberMe);
     setAppleLoading(true);
     try {
@@ -467,46 +455,20 @@ export default function SigninScreen({
           <header className="ay-auth-head">
             {/* Offered as "save these" (onboarding audit section 6, #36 PITCH). */}
             <h1>{mode === 'signup' ? 'Save your matches' : 'Sign in'}</h1>
-            {/* Nov 17 (founder: "the sign in part is messy"): one short line, the free trial named in it (no box). */}
-            {mode === 'signup' && <p>Free account. Includes 14 days of ayna Pro, no card needed.</p>}
           </header>
-
-          {mode === 'signup' && showEcoSummary && (
-            <section className="ay-auth-eco" aria-label="Your products">
-              <div className="ay-auth-eco-copy">
-                <strong>{picksAreasLine(ecoPicks.length, topAreas.length)}</strong>
-                {topAreas.length > 0 && <span>{topAreas.slice(0, 4).join(', ')}</span>}
-              </div>
-              <div className="ay-auth-eco-thumbs" aria-hidden="true">
-                {picksWithPhoto.slice(0, ecoPicks.length > 4 ? 3 : 4).map(({ p, src, hasPhoto }, i) => (
-                  <span key={p.id || i} className={hasPhoto ? 'has-photo' : 'no-photo'}>
-                    {hasPhoto
-                      ? <ProductImage product={p} src={src} allowBrandLogo={p.type === 'digital'} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }} />
-                      : <i className="ay-auth-eco-fallback ay-auth-eco-fallback--name">{String(p.brand || p.name || '').trim().split(/\s+/)[0] || 'ayna'}</i>}
-                  </span>
-                ))}
-                {ecoPicks.length > 4 && <span className="is-more">+{ecoPicks.length - 3}</span>}
-              </div>
-            </section>
-          )}
 
           {/* Nov 17 (focus group: Isabel left rather than give her email; Puloma and Ameera: plain English, like
               Verily): what ayna does with her data, before she types anything. */}
-          {mode === 'signup' && <PrivacyPromise onMore={() => setPrivacyOpen(true)} />}
+          {mode === 'signup' && <PrivacyPromise compact onMore={() => setPrivacyOpen(true)} />}
           {privacyOpen && <PrivacyPlainSheet onClose={() => setPrivacyOpen(false)} />}
 
-          {/* The one consent box sits ABOVE Apple and Google (focus group, Nov 9: it was below
-              the email form, so "Continue with Google" seemed not to work until you scrolled). */}
+          {/* Nov 17 (founder: "make sure you can opt in for your 14 day free trial"): her choice, started once the
+              account exists (pro/TrialOffer.jsx). */}
           {mode === 'signup' && (
-            <div className="ay-auth-consent">
-              <div className="ay-auth-consent-item">
-                <label className={`ay-auth-consent-row${fieldErrors.aiConsent ? ' ay-check-invalid' : ''}`}>
-                  <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
-                  <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
-                </label>
-                <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
-              </div>
-            </div>
+            <label className="ay-auth-trial-opt">
+              <input type="checkbox" checked={trialOptIn} onChange={(e) => setTrialOptInState(e.target.checked)} />
+              <span><b>Start my free 14-day ayna Pro trial.</b> No card needed. Nothing renews.</span>
+            </label>
           )}
 
           {/* Fastest way in first: Apple, then Google, then email (onboarding audit #1). */}
@@ -545,12 +507,6 @@ export default function SigninScreen({
           <InlineError className="ay-inline-err--summary">{summary}</InlineError>
 
 
-            {mode === 'signup' && (
-              <p className="ay-auth-ack">
-                {acknowledgementLead('creating an account')}{' '}
-                {LEGAL_LINKS.map((l, i) => <span key={l.href}>{i > 0 && (i === LEGAL_LINKS.length - 1 ? ' and ' : ', ')}<a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a></span>)}.
-              </p>
-            )}
             {mode === 'signup' ? (
               <PrimaryButton onClick={handleSignUp} disabled={loading}>
                 <span>{loading ? 'Creating account…' : 'Create account'}</span>
@@ -564,6 +520,25 @@ export default function SigninScreen({
               <PrimaryButton onClick={handleSignIn} disabled={loading}>
                 <span>{loading ? 'Signing in…' : 'Sign in'}</span>
               </PrimaryButton>
+            )}
+            {/* Nov 17 (founder: "put it under the sign up"): the one required box, under the buttons. Apple, Google
+                and Create account still check it first, and point to it if it isn't ticked. */}
+            {mode === 'signup' && (
+              <div className="ay-auth-consent">
+                <div className="ay-auth-consent-item">
+                  <label className={`ay-auth-consent-row${fieldErrors.aiConsent ? ' ay-check-invalid' : ''}`}>
+                    <input type="checkbox" checked={aiConsent} onChange={toggleAiConsent} {...invalidProps('aiConsent')} />
+                    <span className="ay-auth-consent-text">{AI_CONSENT_TEXT}</span>
+                  </label>
+                  <InlineError id={errId('aiConsent')}>{fieldErrors.aiConsent}</InlineError>
+                </div>
+              </div>
+            )}
+            {mode === 'signup' && (
+              <p className="ay-auth-ack">
+                {acknowledgementLead('creating an account')}{' '}
+                {LEGAL_LINKS.map((l, i) => <span key={l.href}>{i > 0 && (i === LEGAL_LINKS.length - 1 ? ' and ' : ', ')}<a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a></span>)}.
+              </p>
             )}
           </div>
 

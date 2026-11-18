@@ -45,3 +45,9 @@
 :is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] :is(.ay-pp-card, .ay-pp) { --pp-fg: #ffedac; --pp-tint: rgba(255, 237, 172, .08); --pp-ic: #f7badd; --pp-ic-fg: #3e2723; }
 :is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] .ay-pp-sheet__panel { background: #3e2723; color: #ffedac; }
 :is(#pp1, html):is(#pp2, html):is(#pp3, html) body [data-theme*='dark'] .ay-pp-sheet__done { background: #ffedac; color: #3e2723; }
+/* Compact (sign-up): one line. */
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card.is-compact { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; margin: 0 0 12px; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card.is-compact p { margin: 0; color: var(--pp-fg); font: 500 14px/1.4 var(--ayna-font-ui, inherit); }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card.is-compact .ay-pp-card__more { display: inline; min-height: 0; padding: 0; font-size: 14px; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card.is-compact .ay-pp-card__more::after { content: ''; position: absolute; inset: -12px 0; }
+:is(#pp1, html):is(#pp2, html):is(#pp3, html) body .ay-pp-card.is-compact .ay-pp-card__more { position: relative; }

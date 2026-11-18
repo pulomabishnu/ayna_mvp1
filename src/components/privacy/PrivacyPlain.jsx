@@ -41,7 +41,15 @@ const PRIVACY_BLOCKS = [
 ];
 
 /** The short version for sign-in: three lines and a way to read more. */
-export function PrivacyPromise({ onMore }) {
+export function PrivacyPromise({ onMore, compact = false }) {
+  // Nov 17 (founder: sign-up "shouldn't have to scroll"): one line and the link to the full version.
+  if (compact) return (
+    <section className="ay-pp-card is-compact" aria-label="Your data is private">
+      <Icon name="lock" />
+      <p><b>Your data is private.</b> Never sold, encrypted, and you can delete it anytime.{' '}
+        {onMore && <button type="button" className="ay-pp-card__more" onClick={onMore}>How we protect it</button>}</p>
+    </section>
+  );
   return (
     <section className="ay-pp-card" aria-labelledby="ay-pp-card-h">
       <h2 id="ay-pp-card-h" className="ay-pp-card__h">Your data is private</h2>

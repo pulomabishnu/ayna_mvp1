@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { takeTrialOptIn } from './trialOptIn.js';
+import { requestPro } from '../utils/proApi.js';
+import { PRO_CHANGED_EVENT } from './paywall.js';
+import { toast } from '../utils/toast.js';
+import posthog from 'posthog-js';
 import TrialStart from './TrialStart.jsx';
 import { useTrialAvailable } from './useTrialAvailable.js';
 import './trial.css';
@@ -9,8 +14,22 @@ const markSeen = () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch { /*
 
 /** Nov 16 (founder: "when you sign up it tells you"): once, right after sign-up, offer the free week. Opt-in only. */
 export default function TrialOffer() {
-  const [open, setOpen] = useState(() => !seen());
-  const { checked, available, days } = useTrialAvailable(open);
+  // She may already have chosen on the sign-up page: ticked starts the trial here, unticked means don't ask again.
+  const [choice] = useState(() => takeTrialOptIn());
+  const [open, setOpen] = useState(() => !seen() && choice == null);
+  const { checked, available, days } = useTrialAvailable(open || choice === 'yes');
+  const started = useRef(false);
+  useEffect(() => {
+    if (choice != null) markSeen();
+    if (choice !== 'yes' || !checked || !available || started.current) return;
+    started.current = true;
+    requestPro({ action: 'start_trial' }).then((r) => {
+      if (!r?.started) return;
+      try { posthog.capture('pro_trial_started', { source: 'signup_optin' }); } catch { /* analytics never blocks */ }
+      try { window.dispatchEvent(new Event(PRO_CHANGED_EVENT)); } catch { /* old browser */ }
+      toast(`Your free ayna Pro trial has started. It ends on its own in ${days} days.`);
+    }).catch(() => toast('Couldn’t start your free trial. You can start it from Profile.'));
+  }, [choice, checked, available, days]);
   if (!open || !checked || !available) return null;
   const close = () => { markSeen(); setOpen(false); };
   return (
