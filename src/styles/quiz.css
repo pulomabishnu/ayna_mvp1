@@ -667,3 +667,10 @@ html body .app-container .aq.aq--web .aq-cta > span { padding-right: 44px; }
 .ip-quick__chip:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
 /* Nov 15: the hold hint (not a link). */
 .aq .aq-terms--hint { justify-content: center; width: 100%; margin: 4px 0 0; font-size: 13px; font-weight: 600; opacity: .85; }
+
+/* Nov 17: the checkpoint after the short quiz. One main button; the optional questions are a plain link with
+   what they add underneath. No outlined box or button. */
+.aq-block .aq-cp-more { display: grid; justify-items: center; gap: 4px; margin-top: 10px; text-align: center; }
+.aq-block .aq-cp-link { min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: var(--aq-ink); font: 700 16px/1.2 var(--aq-ui); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.aq-block .aq-cp-more small { max-width: 30ch; color: var(--aq-ink); opacity: .85; font: 500 13px/1.4 var(--aq-ui); }
+.aq-block .aq-block-title { text-wrap: balance; }

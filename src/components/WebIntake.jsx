@@ -481,7 +481,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     }
     if (fromSummary) { setFromSummary(false); go(CHECKPOINT); return; }
     if (!isLast) { go(steps[index + 1].id); return; }
-    if (phase === 'core') go(CHECKPOINT); else finish(answers);
+    // Nov 17 (founder): no in-between page for a first quiz; straight to her results. A returning person still
+    // gets her answers summary to edit.
+    if (phase === 'core' && initialSnapshot) go(CHECKPOINT); else finish(answers);
   };
   const finish = async (answers = intake, opts = {}) => {
     const snapshot = buildSnapshot(answers);
@@ -881,12 +883,11 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
 
   if (atCheckpoint) {
     return <div className="ct qz-page aq-page">
-      <QuizBlock surface="web" stepKey="checkpoint" title="Your first matches are ready" onBack={back}
-        body={intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'That’s enough for your first picks. Add more now for closer ones, or any time later from your profile.'}
-        cta={{ label: saving ? 'Saving…' : 'See my results', onClick: () => finish(), disabled: saving }}
-        secondary={<button type="button" className="aq-ghost" onClick={() => go(moreSteps[0].id)} disabled={saving || !moreSteps.length}>Make my matches more personal</button>}>
+      <QuizBlock surface="web" stepKey="checkpoint" title="Your matches are ready" onBack={back}
+        body={intake.safetyConcern === 'Yes' ? 'You said something may be urgent, so care options come first.' : 'Picked from your answers and checked for safety.'}
+        cta={{ label: saving ? 'Saving…' : 'View my matches', onClick: () => finish(), disabled: saving }}
+        secondary={moreSteps.length > 0 && <div className="aq-cp-more"><button type="button" className="aq-cp-link" onClick={() => go(moreSteps[0].id)} disabled={saving}>Answer {moreSteps.length} more question{moreSteps.length === 1 ? '' : 's'} first</button><small>Optional: your budget, formats and ingredients. You can do this anytime from your profile.</small></div>}>
         {saveError && <p className="aq-err">{saveError}</p>}
-        <div className="aq-note-card"><p>Make my matches more personal adds your budget, formats and ingredient preferences. {moreSteps.length} optional questions, skip any of them.</p></div>
       </QuizBlock>
     </div>;
   }

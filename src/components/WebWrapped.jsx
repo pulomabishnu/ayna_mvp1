@@ -215,7 +215,9 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
   // A tappable photo: opens the product pop-up (never advances the story).
   // Nov 16 (founder: "tapping the summary doesn't change the page"): while the story plays, a tap on a product photo
   // moves on like anywhere else; on the last card the photos open the product preview.
-  const tapPlate = (p, cls = '') => !last ? <span className={`ay-wr-tap ${cls}`.trim()}>{plate(p)}</span> : <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
+  // Nov 17 (founder: "you can't click the product, like your #1 match"): every product photo opens it, on every
+  // slide (it worked only on the last one). The story pauses while it is open.
+  const tapPlate = (p, cls = '') => <button type="button" className={`ay-wr-tap ${cls}`.trim()} onClick={(e) => { e.stopPropagation(); setPeek(p); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`Open ${p.name}`}>{plate(p)}</button>;
   const peekPct = peek && quizResults ? (() => { const r = percentFor ? percentFor(peek) : getProfileMatchPercentForProduct(peek, quizResults, healthProfile, matchOpts); return Number.isFinite(r) && r > 0 ? shownMatchPercent(Math.round(r)) : null; })() : null;
   const peekWhy = peek && quizResults ? (whyFor ? whyFor(peek) : whyLine(peek, getProductMatchDetailsForProduct(peek, quizResults))) : '';
 
@@ -244,7 +246,8 @@ export default function WebWrapped({ products = [], quizResults, healthProfile =
               {/* Nov 13 (founder's Wrapped inspo: "Streams · Fans · Hours"): her numbers in one row. */}
               <dl className="ay-wr-statrow">
                 {counts && counts.needs > 0 ? <div><dt>Needs covered</dt><dd>{counts.needsCovered} of {counts.needs}</dd></div> : <div><dt>{groupWord === 'need' || groupWord === 'needs' ? 'Needs' : 'Areas'}</dt><dd>{byArea.length}</dd></div>}
-                {pct != null && <div><dt>#1 match</dt><dd>{pct}%</dd></div>}
+                {/* Nov 17 (founder: "you can't click your #1 match"): the stat opens it. */}
+                {pct != null && <div><dt>#1 match</dt><dd>{first ? <button type="button" className="ay-wr-statbtn" onClick={(e) => { e.stopPropagation(); setPeek(first); }} onPointerDown={(e) => e.stopPropagation()} aria-label={`${pct}% match. Open ${first.name}`}><span>{pct}%</span><small>{first.name}</small></button> : `${pct}%`}</dd></div>}
               </dl>
             </div>
           </>}

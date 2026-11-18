@@ -48,34 +48,27 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       window.open('https://www.aynahealth.co/pro?feature=wearables', '_blank', 'noopener');
     }
   };
-  const locked = (state) => (
-    <div className="ay-qc-locked">
-      <div className="ay-qc-blur" aria-hidden="true" ref={(el) => { if (el) el.setAttribute('inert', ''); }}>{sources(true)}</div>
-      {state === 'locked' && (
-        <section className="ay-qc-lock" aria-labelledby="ay-qc-lock-h">
-          <span className="ay-qc-lock__seal" aria-hidden="true"><LockIcon size={22} /></span>
-          <h2 id="ay-qc-lock-h">Part of ayna Pro</h2>
-          <p>Connect Apple Health, Oura and more for closer matches.</p>
-          <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? cta : 'Sign up to connect'}</button>
-          <small>Your answers are saved.</small>
-        </section>
-      )}
-    </div>
-  );
+  // Nov 17 (founder: "clean up the page that says link your wearables"): one plain card, no blurred
+  // copy of the sources behind it.
+  const locked = (state) => (state === 'locked' ? (
+    <section className="ay-qc-lock" aria-labelledby="ay-qc-lock-h">
+      <span className="ay-qc-lock__seal" aria-hidden="true"><LockIcon size={20} /></span>
+      <h2 id="ay-qc-lock-h">Part of ayna Pro</h2>
+      <p>{authUser?.id ? 'Link Apple Health or Oura for closer matches.' : 'Make a free account to link Apple Health or Oura. Your answers are saved.'}</p>
+      <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? cta : 'Sign up to connect'}</button>
+    </section>
+  ) : <div className="ay-qc-lock-wait" aria-hidden="true" />);
   return (
     <main className="ay-qc ay-qc--v2">
       <header className="ay-qc-top">
-        <button type="button" className="ay-qc-back" onClick={selected ? () => setSelected(null) : onBack} aria-label={selected ? 'Back to all sources' : 'Back to the quiz'}>
+        <button type="button" className="ay-qc-back" onClick={selected ? () => setSelected(null) : onBack} aria-label={selected ? 'Back to all sources' : 'Back to my matches'}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
         </button>
-        <span className="ay-qc-count">Optional</span>
-        <span className="ay-qc-spacer" aria-hidden="true" />
-        <div className="ay-qc-progress" role="progressbar" aria-label="Setup progress" aria-valuemin={1} aria-valuemax={5} aria-valuenow={5}><span /></div>
       </header>
       {!selected && (
         <div className="ay-qc-copy">
-          <h1>Connect your data</h1>
-          <p>Quick check-ins work too.</p>
+          <h1>Link your wearables</h1>
+          <p>Optional. It makes your matches closer.</p>
           <ul className="ay-qc-tiles" aria-label="What it adds">
             {TILES.map((x) => (
               <li key={x.k} className={x.tone}>
@@ -94,7 +87,7 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       <footer className="ay-qc-foot">
         <DataPrivacyNote className="ay-qc-privacy" />
         {connected && <p role="status">{health.connected.length === 1 ? '1 source connected' : `${health.connected.length} sources connected`}</p>}
-        <button type="button" className={connected ? 'ay-qc-primary' : 'ay-qc-skip'} onClick={onQuizConnectContinue}>{connected ? 'Done' : 'Skip for now'}</button>
+        <button type="button" className={connected ? 'ay-qc-primary' : 'ay-qc-skip'} onClick={onQuizConnectContinue}>{connected ? 'Done' : 'Back to my matches'}</button>
       </footer>
     </main>
   );

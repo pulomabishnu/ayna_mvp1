@@ -1613,7 +1613,7 @@ export default function MobileApp() {
       if (screen === 'quiz' && intakeFlow === 'more') { setIntakeFlow('auto'); setScreen('ready'); return; }
       if (screen === 'reveal' && revealFrom) { const to = revealFrom; setRevealFrom(null); goBackTo(to); return; }
       // Linking wearables is reached from her matches now: Back returns there, answers kept.
-      if (screen === 'connect' && session.pendingQuiz?.mode === 'new') { setScreen('ready'); return; }
+      if (screen === 'connect' && session.pendingQuiz?.answers) { setScreen('ready'); return; }
       if (['building', 'reveal', 'connect'].includes(screen)) {
         resumeQuizAtLastStep();
         return;
@@ -1655,7 +1655,9 @@ export default function MobileApp() {
       // First run: her matches straight away (focus group, Nov 9: the wearable step
       // before any matches read as "the quiz gave me nothing"). Connecting health data
       // is offered on the matches screen. Edits keep the plan step.
-      setScreen(intakeMode === 'new' ? 'ready' : (authUser && health.connected.length ? 'plan' : 'connect'));
+      // Nov 17 (founder: "it should just be the page that says link your wearables and take more questions"):
+      // every quiz, a retake too, lands on her results page, which offers both.
+      setScreen('ready');
     },
     // Monthly check-in: she already has an account and an ecosystem, so it
     // goes straight to her updated plan instead of back through the
@@ -1670,7 +1672,8 @@ export default function MobileApp() {
       setIntakeMode('new');
       setScreen('plan');
     },
-    onQuizConnectContinue: () => setScreen(session.pendingQuiz?.mode === 'new' ? 'ready' : 'plan'),
+    // Nov 17: every quiz lands on her results, so linking wearables always returns there.
+    onQuizConnectContinue: () => setScreen(session.pendingQuiz?.answers ? 'ready' : 'plan'),
     // The reveal (ReadyScreen): "See my Today" saves her first matches the
     // same way "See my matches" does, then opens Today instead of the story.
     // Signed out (Nov 2 audit, P0): Home is the landing for guests, so "See my

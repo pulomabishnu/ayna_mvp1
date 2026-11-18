@@ -27,7 +27,6 @@ import {
   URGENT_STATUS,
   firstUnansweredStepId,
   firstOptionalResumeStepId,
-  optionalProgress,
   setPerimenopausePeriods,
   syncPerimenopausePeriods,
   isStepAnswered,
@@ -731,12 +730,14 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     onDraftChange?.(false);
     onComplete(mapIntakeToLegacyQuizProfile(buildSnapshot(answers)));
   };
+  // Nov 17: the checkpoint page is gone; a saved place on it goes straight to her results.
+  useEffect(() => { if (atCheckpoint) finish(); }, [atCheckpoint]); // eslint-disable-line react-hooks/exhaustive-deps
   const goBack = () => {
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
     if (onboarding) { if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back'); else if (onBack) onBack(); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
     else if (phase === 'optional' && enteredAtOptional && onBack) onBack();
-    else if (phase === 'optional') goTo(CHECKPOINT_STEP, 'back');
+    else if (phase === 'optional') goTo(requiredSteps[requiredSteps.length - 1].id, 'back');
     else if (onBack) onBack();
   };
   const advance = (answers = intake) => {
@@ -752,8 +753,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       return;
     }
     if (!isLast) { goTo(visibleSteps[currentIndex + 1].id, 'forward'); return; }
-    if (phase === 'required') goTo(CHECKPOINT_STEP, 'forward');
-    else finish(answers);
+    // Nov 17 (founder: "that page should never be there"): no in-between page. The short quiz goes straight to her
+    // results, which offer linking wearables and the optional questions.
+    finish(answers);
   };
   const goNext = () => {
     if (step.id === 'age' && isMinorAge(intake.age)) return;
@@ -1034,19 +1036,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       cta={{ label: 'Continue', onClick: () => goTo(sectionBreak.nextId, 'forward') }} />;
   }
 
-  if (atCheckpoint) {
-    const remainingOptional = optionalProgress(intake).remaining;
-    const careFirst = intake.safetyConcern === 'Yes';
-    return (
-      <QuizBlock surface="app" stepKey={CHECKPOINT_STEP} title="Your first matches are ready" onBack={goBack}
-        body={careFirst ? 'You said something may be urgent, so your results start with ways to reach care.' : 'That’s enough for safe, personal picks.'}
-        cta={{ label: 'See my results', onClick: () => finish() }}
-        secondary={remainingOptional > 0 && <button type="button" className="aq-ghost" onClick={() => goTo(firstOptionalResumeStepId(intake), 'forward')}>Make my matches more personal</button>}>
-        {careFirst && <div className="aq-note-card" role="note"><b>If this is an emergency, call 911.</b><p>If you're thinking about harming yourself, call or text 988. Your results open with clinician and urgent care options.</p></div>}
-        {remainingOptional > 0 && <div className="aq-note-card"><b>Want closer matches?</b><p>Make my matches more personal adds your budget, formats and ingredient preferences. {remainingOptional} optional question{remainingOptional === 1 ? '' : 's'}, now or later.</p></div>}
-      </QuizBlock>
-    );
-  }
+  if (atCheckpoint) return null; // an old saved place on the removed page: the effect above sends her to her results
 
   const obProgress = onboarding ? onboardingProgress(step, obPart, visibleSteps) : null;
   const multi = isMultiSelectStep(step);

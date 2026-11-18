@@ -207,7 +207,6 @@ export default function SigninScreen({
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState('');
   // Nov 16 (founder): signing up with an email that already has an account says so, with a Sign in button.
-  const [exists, setExists] = useState(false);
   // Per-field required errors, shown inline under each field or box.
   const [fieldErrors, setFieldErrors] = useState({});
   const [summaryAction, setSummaryAction] = useState('create your account');
@@ -304,7 +303,15 @@ export default function SigninScreen({
       if (needsConfirmation) { setCheckNote(CODE_COPY.emailSent(email.trim())); setEmailCode(''); setMode('check-email'); }
       else onAuthenticated(firstName || undefined);
     } catch (e) {
-      if (e.code === 'email_already_exists') { setExists(true); return; }
+      // Nov 17 (founder: "it shouldn't let you create an account with one you already have, it's confusing"): her
+      // email already has an account, so try signing her in with what she typed. Her matches save to that account.
+      // If the password doesn't match, the sign-in form opens with her email filled in.
+      if (e.code === 'email_already_exists') {
+        try { setRememberMe(true); await onSignIn({ email: email.trim(), password }); onAuthenticated(); return; } catch { /* wrong password: sign in below */ }
+        setPassword(''); setMode('signin');
+        setError('You already have an ayna account with this email. Sign in to save your matches to it.');
+        return;
+      }
       setError(authErrorText(e, 'We couldn’t sign you in. Check your connection and try again.'));
     } finally {
       setLoading(false);
@@ -460,10 +467,8 @@ export default function SigninScreen({
           <header className="ay-auth-head">
             {/* Offered as "save these" (onboarding audit section 6, #36 PITCH). */}
             <h1>{mode === 'signup' ? 'Save your matches' : 'Sign in'}</h1>
-            {mode === 'signup' && <p>Free. Your matches are saved to your account.</p>}
-            {/* Nov 16 (founder: "make sure it shows when you're signing up"): the trial is named here; she starts it
-                (opt-in) on the next screen. No card needed. */}
-            {mode === 'signup' && <p className="ay-auth-trial"><b>Get ayna Pro free for 14 days.</b> No card needed.</p>}
+            {/* Nov 17 (founder: "the sign in part is messy"): one short line, the free trial named in it (no box). */}
+            {mode === 'signup' && <p>Free account. Includes 14 days of ayna Pro, no card needed.</p>}
           </header>
 
           {mode === 'signup' && showEcoSummary && (
@@ -537,16 +542,6 @@ export default function SigninScreen({
           )}
 
           {error && <div className="ay-auth-error" role="alert">{error}</div>}
-          {exists && (
-            <div className="ay-auth-exists" role="alertdialog" aria-modal="true" aria-labelledby="ay-auth-exists-h" onClick={() => setExists(false)}>
-              <div className="ay-auth-exists__card" onClick={(e) => e.stopPropagation()}>
-                <h2 id="ay-auth-exists-h">You already have an account</h2>
-                <p>There’s already an ayna account with <b>{email.trim()}</b>. Sign in to pick up where you left off. Your quiz answers come with you.</p>
-                <button type="button" className="ay-auth-exists__go" onClick={() => { setExists(false); setPassword(''); setError(''); setMode('signin'); }}>Sign in</button>
-                <button type="button" className="ay-auth-exists__other" onClick={() => setExists(false)}>Use a different email</button>
-              </div>
-            </div>
-          )}
           <InlineError className="ay-inline-err--summary">{summary}</InlineError>
 
 
@@ -592,7 +587,8 @@ export default function SigninScreen({
           </div>}
         </>
       )}
-      <LegalFooter variant="light" />
+      {/* Sign-up already links every policy above Create account; the footer repeated them. */}
+      {mode !== 'signup' && <LegalFooter variant="light" />}
     </div>
   );
 }

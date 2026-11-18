@@ -389,3 +389,19 @@ html body .ay-wr .ay-wr-wall { display: none !important; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-needs__plate, .ay-wr-bars5__plate) .ay-nophoto { padding: 4px !important; gap: 0 !important; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-needs__plate, .ay-wr-bars5__plate) .ay-nophoto > span:not(:first-child) { display: none !important; }
 .ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) :is(.ay-wr-needs__plate, .ay-wr-bars5__plate) .ay-nophoto > span:first-child { font-size: 13px !important; line-height: 1.1 !important; }
+
+/* Nov 17 (founder: no outlined boxes; "make that whole thing smoother"): product plates are filled, not outlined. */
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-plate,
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-wr-card__photos .ays-plate { border-color: transparent !important; background: rgba(62, 39, 35, .08) !important; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays)[data-theme='dark'] .ays-plate,
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays).is-ink .ays-plate { background: rgba(255, 237, 172, .10) !important; }
+:is(#wp1, html) .ay-wr-peek__img .ays-plate { border-color: transparent; background: rgba(62, 39, 35, .08); }
+:is(#wp1, html) [data-theme='dark'] .ay-wr-peek__img .ays-plate { background: rgba(255, 237, 172, .10); }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-wr-statbtn { all: unset; box-sizing: border-box; display: grid; gap: 2px; min-height: 44px; max-width: 100%; cursor: pointer; color: inherit; font: inherit; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-wr-statbtn small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/1.3 var(--s-ui, Figtree, sans-serif); text-decoration: underline; text-underline-offset: 3px; }
+.ay-wr.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-wr-statbtn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; border-radius: 8px; }
+:is(#wp1, html):is(#wp2, html) .ay-wr-peek__go { background: #3e2723 !important; color: #ffedac !important; box-shadow: none !important; width: 100%; }
+:is(#wp1, html):is(#wp2, html) [data-theme='dark'] .ay-wr-peek__go { background: #ffedac !important; color: #3e2723 !important; }
+/* Nov 17 (founder screenshot: a gap under the pop-up on her phone): the pop-up covers the whole screen, edge to edge. */
+:is(#wp1, html):is(#wp2, html) .ay-wr-peek { position: fixed; inset: 0; z-index: 10070; }
+:is(#wp1, html):is(#wp2, html) .ay-wr-peek__card { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
