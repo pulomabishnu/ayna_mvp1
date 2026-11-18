@@ -3107,3 +3107,6 @@ html body [data-theme*='dark'] .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-
 html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-ingcheck { border: 0 !important; background: rgba(62, 39, 35, .06) !important; }
 html body .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile)[data-theme*='dark'] .ay-ingcheck,
 html body [data-theme*='dark'] .ayna-mobile:is(#s1, .ayna-mobile):is(#s2, .ayna-mobile):is(#s3, .ayna-mobile):is(#s4, .ayna-mobile):is(#s5, .ayna-mobile) .ay-ingcheck { background: rgba(255, 237, 172, .08) !important; }
+/* Nov 17 (founder: "is the spacing off with the words in the box?"): the summary line fills the box instead of
+   balancing into short lines with a gap on the right. */
+html body :is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs):is(#pdp-v4, #ay-pdp, #ay-psheet, #ay-tabs) .ayv-oneline { text-wrap: pretty !important; max-width: none !important; }

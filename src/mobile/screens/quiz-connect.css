@@ -57,3 +57,7 @@ html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mo
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme*='dark'] .ay-qc.ay-qc--v2 .ay-qc-lock { background: rgba(255, 237, 172, .09); }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile)[data-theme*='dark'] .ay-qc.ay-qc--v2 .ay-qc-copy > p { color: rgba(255, 237, 172, .78) !important; }
 html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-privacy :is(p, span, a) { line-height: 1.45 !important; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-trial { width: 100%; margin: 8px 0 0; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-trial .ay-trial__fine { display: none; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-trial .ay-trial__btn { width: 100%; background: #ffedac; color: #3e2723; }
+html body .ayna-mobile:is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile):is(#ay,.ayna-mobile) .ay-qc.ay-qc--v2 .ay-qc-trial .ay-trial__msg { color: inherit; }

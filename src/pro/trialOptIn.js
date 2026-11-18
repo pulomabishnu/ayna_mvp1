@@ -9,3 +9,6 @@ export function setTrialOptIn(on) { try { localStorage.setItem(KEY, on ? '1' : '
 export function takeTrialOptIn() {
   try { const v = localStorage.getItem(KEY); localStorage.removeItem(KEY); return v === '1' ? 'yes' : v === '0' ? 'no' : null; } catch { return null; }
 }
+
+/** Read without clearing (the sign-up box starts ticked when she came from an "unlock with the trial" button). */
+export function peekTrialOptIn() { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } }

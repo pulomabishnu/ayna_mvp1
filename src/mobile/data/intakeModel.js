@@ -1043,11 +1043,11 @@ export function getIntakeSteps(intake) {
     ...(ttcOptional(intake) ? [opt(ttcStep)] : []),
     ...(trimesterOptional(intake) ? [opt(trimesterStep)] : []),
     opt({ id: 'products', section: 'history', title: 'What have you tried?', type: 'products', info: 'Products you have used before. We use what worked and what did not to avoid repeats and find better fits.' }),
-    opt({ id: 'avoidRepeat', section: 'history', title: 'Any products or brands to skip?', type: 'avoidRepeat', info: 'Anything you add here will never show up in your picks.' }),
+    opt({ id: 'avoidRepeat', section: 'history', title: 'Any brands or products you don’t want recommended?', type: 'avoidRepeat', info: 'Anything you add here will never show up in your picks.' }),
     opt({ id: 'formats', section: 'preferences', title: 'Preferred formats', type: 'formats', info: 'The kinds of products you like using. We rank these formats higher in your picks. Skip it and every format counts the same.' }),
-    opt({ id: 'recommendationCount', section: 'preferences', title: 'Picks per need', subtitle: 'For each area you want support with', info: 'How many products we show for each thing you picked, 3 if you skip. We never lower the bar to fill a slot.', type: 'recommendationCount' }),
+    opt({ id: 'recommendationCount', section: 'preferences', title: 'How many recommendations do you want for each concern?', info: 'How many products we show for each thing you picked, 3 if you skip. We never lower the bar to fill a slot.', type: 'recommendationCount' }),
     opt({ id: 'priceRange', section: 'preferences', title: 'Budget per item', info: 'What you usually spend on one item, not your total. We use it to rank picks within your range first. Skip it and we assume nothing.', type: 'price' }),
-    opt({ id: 'brandOpenness', section: 'preferences', title: 'New brands?', type: 'brand', info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' }),
+    opt({ id: 'brandOpenness', section: 'preferences', title: 'Do you like trying new brands?', type: 'brand', info: 'How open you are to brands you have not tried. It shifts your picks between familiar names and newer startups.' }),
     ...(intake.brandOpenness === 'I mostly stick with brands I already trust' || intake.brandOpenness === 'I prefer trusted brands but am open to something new' ? [opt({ id: 'trustedBrands', section: 'preferences', title: 'Trusted brands', info: 'Brands you already like, in our shop or not. We show them first when they fit what you need.', type: 'trustedBrands' })] : []),
     opt({ id: 'avoidIngredients', section: 'preferences', title: 'Avoid or must-have?', info: 'Preferences, not allergies. Leave out removes products with those ingredients. Should be favors products that match.', type: 'avoidIngredients' }),
     opt({ id: 'fsaHsa', section: 'preferences', title: 'FSA or HSA?', info: 'US pre-tax health accounts: a Flexible Spending Account (FSA) or Health Savings Account (HSA). If you have one, we can point out products that are usually eligible. Outside the US? Pick "I\'m not in the US".', type: 'fsa' }),
@@ -1097,7 +1097,7 @@ export function firstOptionalResumeStepId(intake) {
 // personal matches" card names them instead of a vague "add to my answers").
 const OPTIONAL_TOPIC = {
   products: 'Products you’ve tried', avoidRepeat: 'Products to skip', formats: 'Formats you like',
-  recommendationCount: 'How many picks per need', priceRange: 'Your budget', brandOpenness: 'Brands you trust',
+  recommendationCount: 'Recommendations per concern', priceRange: 'Your budget', brandOpenness: 'Brands you trust',
   trustedBrands: 'Brands you trust', avoidIngredients: 'Ingredients to avoid', fsaHsa: 'FSA or HSA',
   trust: 'What matters most to you', zip: 'Your ZIP code, for care near you',
 };

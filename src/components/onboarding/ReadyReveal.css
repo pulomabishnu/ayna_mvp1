@@ -719,3 +719,18 @@ html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn { all: unset; box-sizing: border-box; display: grid; gap: 6px; min-width: 0; cursor: pointer; color: inherit; text-align: left; -webkit-tap-highlight-color: transparent; }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn:active { transform: scale(.97); }
 html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-pz .ay-pz__topbtn:focus-visible { outline: 2px solid #ffedac; outline-offset: 3px; border-radius: 12px; }
+
+/* Nov 17 (founder: "really crowded ... you should see everything without scrolling"): rows sit together at the top
+   (the grid was stretching them to fill the screen), the back button is filled, the list rows are soft fills. */
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz { align-content: start !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__h { margin: 4px 0 8px !important; font-size: 17px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__go { margin: 18px 0 22px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__list { gap: 8px !important; margin: 0 !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__list button { min-height: 60px !important; padding: 8px 14px 8px 8px !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important; background: rgba(62, 39, 35, .07) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__list .ay-pz__blob { width: 44px !important; height: 44px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-pz__txt b { font-size: 16px !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz .ay-ob-back { border: 0 !important; box-shadow: none !important; background: rgba(62, 39, 35, .08) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) [data-theme*='dark'] .ay-ob-ready.ay-pz.ay-pz :is(.ay-ob-back, .ay-pz__list button),
+html body .ayna-mobile[data-theme*='dark'] .ay-ob-ready.ay-pz.ay-pz.ay-pz :is(.ay-ob-back, .ay-pz__list button) { background: rgba(255, 237, 172, .09) !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz { display: flex !important; flex-direction: column !important; justify-content: flex-start !important; }
+html body :is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container):is(.ayna-mobile, .app-container) .ay-ob-ready.ay-pz.ay-pz > * { flex: none !important; }

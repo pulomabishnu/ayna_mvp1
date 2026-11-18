@@ -5,7 +5,9 @@ import HealthConnectionsScreen from './profile/HealthConnectionsScreen.jsx';
 import ProFeatureGate from '../../components/ProFeatureGate.jsx';
 import { LockIcon } from '../../components/ProLock.jsx';
 import { openProPaywall } from '../../pro/paywall.js';
-import { useProCta } from '../../pro/useTrialAvailable.js';
+import { useTrialAvailable } from '../../pro/useTrialAvailable.js';
+import TrialStart from '../../pro/TrialStart.jsx';
+import { setTrialOptIn } from '../../pro/trialOptIn.js';
 import { useHealthData } from '../hooks/useHealthData.js';
 import './profile/health-connections.css';
 import '../../styles/onboarding.css';
@@ -28,7 +30,7 @@ const TILES = [
  * after checkout on the web the gate re-checks when she comes back, so she lands right here.
  */
 export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQuizConnectSignIn, onBack }) {
-  const cta = useProCta();
+  const trial = useTrialAvailable();
   const [selected, setSelected] = useState(null);
   const health = useHealthData(authUser?.id || null);
   const connected = health.connected.length > 0;
@@ -43,7 +45,8 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
     />
   );
   const unlock = () => {
-    if (!authUser?.id && onQuizConnectSignIn) { onQuizConnectSignIn(); return; }
+    // Signed out: her new account starts with the free trial box ticked, so linking works right after.
+    if (!authUser?.id && onQuizConnectSignIn) { setTrialOptIn(true); onQuizConnectSignIn(); return; }
     if (!openProPaywall({ feature: 'wearables', featureName: 'Health apps and wearables' }) && Capacitor.isNativePlatform()) {
       window.open('https://www.aynahealth.co/pro?feature=wearables', '_blank', 'noopener');
     }
@@ -53,9 +56,12 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
   const locked = (state) => (state === 'locked' ? (
     <section className="ay-qc-lock" aria-labelledby="ay-qc-lock-h">
       <span className="ay-qc-lock__seal" aria-hidden="true"><LockIcon size={20} /></span>
-      <h2 id="ay-qc-lock-h">Part of ayna Pro</h2>
-      <p>{authUser?.id ? 'Link Apple Health or Oura for closer matches.' : 'Make a free account to link Apple Health or Oura. Your answers are saved.'}</p>
-      <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? cta : 'Sign up to connect'}</button>
+      {/* Nov 17 (founder: "instead of get ayna Pro say unlock with the 14 day trial, no credit card"). */}
+      <h2 id="ay-qc-lock-h">{!authUser?.id || trial.available ? `Unlock with a free ${trial.days || 14}-day trial` : 'Part of ayna Pro'}</h2>
+      <p>{!authUser?.id || trial.available ? 'No card needed. Nothing renews.' : 'Link Apple Health or Oura for closer matches.'}</p>
+      {authUser?.id && trial.available
+        ? <TrialStart source="quiz_connect" label="Start my free trial" className="ay-qc-trial" />
+        : <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? 'Get ayna Pro' : 'Sign up free'}</button>}
     </section>
   ) : <div className="ay-qc-lock-wait" aria-hidden="true" />);
   return (
@@ -68,7 +74,6 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       {!selected && (
         <div className="ay-qc-copy">
           <h1>Link your wearables</h1>
-          <p>Optional. It makes your matches closer.</p>
           <ul className="ay-qc-tiles" aria-label="What it adds">
             {TILES.map((x) => (
               <li key={x.k} className={x.tone}>

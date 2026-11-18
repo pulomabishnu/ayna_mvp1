@@ -850,9 +850,10 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     ) : null;
     if (step.type === 'support' && onboarding) return (
       <>
+        {/* Nov 17 (founder: "people keep missing Nothing right now, put it first"): it's the first choice, above
+            the list, so no one has to scroll to find it. */}
+        <div className="ip-gap ip-nothing-first"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => { const on = !(intake.supportSelections || []).includes(item); toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC]); if (on) setTimeout(() => document.querySelector('.ay-learn-q')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120); }} /></div>
         <TopicPicker key={(intake.helpTopics || []).join('|')} groups={supportGroupsForTopics(intake.helpTopics)} selected={intake.supportSelections} search={search} onSearch={setSearch} onToggle={(item) => toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC])} onAdd={(value) => addCustomSelection('supportSelections', value, [NOTHING_SPECIFIC])} />
-        {/* Founder, Nov 10: picking "Nothing right now" scrolls to the learn question that appears under it. */}
-        <div className="ip-gap"><Chips items={[NOTHING_SPECIFIC]} selected={intake.supportSelections} onToggle={(item) => { const on = !(intake.supportSelections || []).includes(item); toggleExclusive('supportSelections', item, [NOTHING_SPECIFIC]); if (on) setTimeout(() => document.querySelector('.ay-learn-q')?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 120); }} muted={[NOTHING_SPECIFIC]} /></div>
         {/* Focus group, Nov 9: nothing to fix is fine. What would she like to learn about? Saved to her profile, never a match. */}
         {(intake.supportSelections || []).includes(NOTHING_SPECIFIC) && (
           <div className="aq-subq--under ay-learn-q"><SubQuestion title="Anything you'd like to learn about? (optional)">

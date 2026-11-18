@@ -12,6 +12,8 @@ function trialStatus() {
   }
   return cache.promise;
 }
+/** Forget the cached answer (the account changed, e.g. she just signed up). */
+export function resetTrialStatus() { cache = null; }
 if (typeof window !== 'undefined') { try { window.addEventListener(PRO_CHANGED_EVENT, () => { cache = null; }); } catch { /* old browser */ } }
 
 /** Is her free trial of ayna Pro still unused? (api/pro.js `trialAvailable`). Nov 16. */

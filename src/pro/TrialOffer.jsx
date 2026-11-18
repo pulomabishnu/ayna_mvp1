@@ -5,7 +5,7 @@ import { PRO_CHANGED_EVENT } from './paywall.js';
 import { toast } from '../utils/toast.js';
 import posthog from 'posthog-js';
 import TrialStart from './TrialStart.jsx';
-import { useTrialAvailable } from './useTrialAvailable.js';
+import { useTrialAvailable, resetTrialStatus } from './useTrialAvailable.js';
 import './trial.css';
 
 const SEEN_KEY = 'ayna_trial_offer_seen_v1';
@@ -15,7 +15,8 @@ const markSeen = () => { try { localStorage.setItem(SEEN_KEY, '1'); } catch { /*
 /** Nov 16 (founder: "when you sign up it tells you"): once, right after sign-up, offer the free week. Opt-in only. */
 export default function TrialOffer() {
   // She may already have chosen on the sign-up page: ticked starts the trial here, unticked means don't ask again.
-  const [choice] = useState(() => takeTrialOptIn());
+  // Mounted right after she signs in: anything cached was asked while signed out.
+  const [choice] = useState(() => { resetTrialStatus(); return takeTrialOptIn(); });
   const [open, setOpen] = useState(() => !seen() && choice == null);
   const { checked, available, days } = useTrialAvailable(open || choice === 'yes');
   const started = useRef(false);

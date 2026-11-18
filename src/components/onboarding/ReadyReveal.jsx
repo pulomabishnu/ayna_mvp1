@@ -174,17 +174,17 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   // The optional questions are always offered; with all of them answered it reads "Review your answers".
   const canMore = Boolean(onMorePersonal);
   const [stage, setStage] = useState(() => (!prefsDone && (canMore || onConnect) ? 'personal' : 'matches'));
-  const moreMin = Math.max(2, Math.round(((safetyLeft || remaining || 4) * 30) / 60));
   const Tag = variant === 'web' ? 'section' : 'main';
   const pctFor = (p) => { const d = getProductMatchDetailsForProduct(p, answers); return isSafetyHold(d) || isBleedingEvaluation(d) ? null : shownMatchPercent(d?.percent ?? d?.score); };
 
   if (stage === 'personal' && ready && total > 0) {
     // Signed in: her ayna Wrapped (results), then Home. Signed out: Wrapped, ending with "Save to a free account".
     const seeGo = onWatchWrapped || (signedIn ? onSeeToday : onCreateAccount) || (() => setStage('matches'));
+    // Nov 17 (founder): while a step is still open, the main button says it skips them.
+    const stepsLeft = (onConnect && !connected) || (canMore && (safetyLeft > 0 || remaining > 0));
     const seeBtn = (
       <div className="ay-pz__go">
-        <button type="button" className="ay-pz__see" onClick={seeGo}>{total === 1 ? 'View my match' : `View my ${total} matches`} <Arrow /></button>
-        <small className="ay-pz__gonote">{onWatchWrapped ? (signedIn ? 'A quick summary, then all of them in Your products.' : 'A quick summary, then save them with a free account.') : signedIn ? 'They’re saved in Your products on Home.' : 'Free account, no card.'}</small>
+        <button type="button" className="ay-pz__see" onClick={seeGo}>{`${stepsLeft ? 'Skip and view' : 'View'} ${total === 1 ? 'my match' : `my ${total} matches`}`} <Arrow /></button>
       </div>
     );
     return (
@@ -203,12 +203,9 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             {/* Nov 17 focus group (Elizabeth: "it said 10 matches but only three photos popped up"): say these are
                 a preview of the total, and that the % is right here on each one. */}
             <h2 className="ay-pz__toph">{top.length < total ? `Your top ${top.length} of ${total}` : total === 1 ? 'Your match' : `Your ${total} matches`}</h2>
-            <p className="ay-pz__what">The % is how well each fits what you told ayna.{top.length < total ? ` You’ll see all ${total} next.` : ''}</p>
             <ul className="ay-pz__top" aria-label="Your top matches">
               {top.map((m, k) => {
                 const { pc } = m;
-                let why = '';
-                try { why = whyLine(m.product, getProductMatchDetailsForProduct(m.product, answers)) || ''; } catch { why = ''; }
                 return (
                   <li key={m.product.id} style={{ '--i': k }}>
                     {(() => {
@@ -216,7 +213,6 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
                         <MatchPlate src={productImageOverride(m.product) || safeProductImageSrc(m.product.image)} product={m.product} />
                         <span className="ay-pz__topname">{m.product.name}</span>
                         {pc != null && <span className="ay-pz__toppct">{pc}% match</span>}
-                        {why && <span className="ay-pz__topwhy">{why}</span>}
                       </>;
                       return sheet?.open
                         ? <button type="button" className="ay-pz__topbtn" onClick={() => sheet.open(m.product)} aria-label={`${m.product.name}${pc != null ? `, ${pc}% match` : ''}. See details`}>{inner}</button>
@@ -230,9 +226,9 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
         })()}
         {/* Nov 17 focus group (Jackie, Elizabeth: unsure which to pick, "see your results" or more quizzes): one
             clear main step right under her matches. The extra steps below are optional. */}
-        {seeBtn}
-        <h2 id="ay-pz-h" className="ay-pz__h">Optional: get closer matches</h2>
-        <p className="ay-pz__time"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>About {(canMore ? moreMin : 0) + (onConnect && !connected ? 1 : 0)} minutes · all optional</p>
+        {/* Nov 17 (founder: "really crowded, you should see everything without scrolling, we don't need all the
+            subtext"): one line per thing, no notes. */}
+        <h2 id="ay-pz-h" className="ay-pz__h">Make your matches more personal</h2>
         <ul className="ay-pz__list">
           {/* Focus group, Nov 16 (Alyssa, Puloma agreed): linking her health data is the one step that matters most
               here, so it comes first. */}
@@ -240,7 +236,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             <li style={{ '--i': 0 }}>
               <button type="button" onClick={onConnect} className={connected ? 'is-done' : undefined}>
                 <span className="ay-pz__blob is-ink" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="10" height="12" rx="3.5" /><path d="M9 6l.6-3h4.8l.6 3M9 18l.6 3h4.8l.6-3M10 12h1l1-2 1.2 4 .8-2h1" /></svg></span>
-                <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b>{!connected && <em className="ay-pz__rec">Recommended</em>}<small>{connected ? 'Your matches use your health data too' : 'Apple Health, Oura · 1 min'}</small></span>
+                <span className="ay-pz__txt"><b>{connected ? 'Wearables linked' : 'Link your wearables'}</b></span>{!connected && <em className="ay-pz__min">1 min</em>}
                 {connected ? <span className="ay-pz__tick" aria-label="Linked"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" /></svg></span> : <Arrow />}
               </button>
             </li>
@@ -249,13 +245,16 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
             <li style={{ '--i': 1 }}>
               <button type="button" onClick={safetyLeft > 0 ? (onSafety || onMorePersonal) : onMorePersonal}>
                 <span className="ay-pz__blob is-pink" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 9.5a4 4 0 1 1 5.5 3.7c-.9.4-1.5 1.2-1.5 2.2V16" /><circle cx="12" cy="19.5" r=".6" /></svg></span>
-                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : remaining > 0 ? `Answer ${remaining} more ${remaining === 1 ? 'question' : 'questions'}` : 'Review your answers'}</b><small>{safetyLeft > 0 ? 'Allergies, conditions, medicines' : 'Goals, budget, what you like'} · about {moreMin} min</small></span>
+                <span className="ay-pz__txt"><b>{safetyLeft > 0 ? 'Answer the safety questions' : remaining > 0 ? `Answer ${remaining} more ${remaining === 1 ? 'question' : 'questions'}` : 'Review your answers'}</b></span>{(safetyLeft > 0 || remaining > 0) && <em className="ay-pz__min">2 min</em>}
                 <Arrow />
               </button>
             </li>
           )}
         </ul>
-        <p className="ay-pz__later">You can do these anytime from Profile.</p>
+        {/* Nov 17 (founder: "have people click link your wearables and answer the safety questions, but it's still
+            intuitive that you don't have to and can skip"): the two steps sit right under her matches, and the main
+            button, last on the screen, skips them. */}
+        {seeBtn}
       </Tag>
     );
   }

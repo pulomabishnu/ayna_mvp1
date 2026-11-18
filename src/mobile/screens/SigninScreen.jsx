@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { authErrorText } from '../../utils/authErrorText.js';
 import ProfileSetupStep from '../../components/ProfileSetupStep.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
-import { setTrialOptIn, takeTrialOptIn } from '../../pro/trialOptIn.js';
+import { setTrialOptIn, takeTrialOptIn, peekTrialOptIn } from '../../pro/trialOptIn.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, LEGAL_LINKS, acknowledgementLead, consentMetadata, markAskHeardAbout } from '../../utils/signupConsent.js';
 import { cleanFirstName } from '../data/intakeModel.js';
@@ -179,7 +179,7 @@ export default function SigninScreen({
   const [email, setEmail] = useState(pending?.email || '');
   const [password, setPassword] = useState('');
   const [aiConsent, setAiConsent] = useState(false);
-  const [trialOptIn, setTrialOptInState] = useState(false);
+  const [trialOptIn, setTrialOptInState] = useState(() => peekTrialOptIn());
   const [privacyOpen, setPrivacyOpen] = useState(false);
   // Remember me (sign-in): controls ONLY where the Supabase session token is
   // stored (localStorage vs sessionStorage, src/utils/supabaseClient.js).

@@ -141,7 +141,8 @@ const TITLES = {
   periodPain: { title: 'How much do period cramps get in your way?' },
   ttcDuration: { title: 'How long have you been trying to get pregnant?' },
   pregnancyTrimester: { title: 'How far along is your pregnancy?' },
-  safety: { title: 'Is anything new or getting worse fast?', subtitle: 'Like new pain, or something that feels very wrong.' },
+  // Nov 17 (founder): plain and direct, one line.
+  safety: { title: 'Are any of your symptoms new or getting worse fast?' },
   age: { title: 'How old are you?' },
   lifeStage: { title: 'Which of these is you right now?', subtitle: 'Pick all that fit. Not sure is OK.' },
   formats: { title: 'Which kinds of products do you like using?' },
