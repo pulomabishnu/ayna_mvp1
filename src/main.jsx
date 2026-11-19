@@ -39,7 +39,8 @@ if (devPreviewOn()) {
 import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
-import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
+import { applyStoredConsent, getStoredConsent, hasReplayConsent, CONSENT_CHANGED_EVENT } from './utils/analyticsConsent'
+import { SESSION_RECORDING_OPTIONS, VIEW_CHANGED_EVENT, createReplayGuard, installReplayHistoryWatch, installReplayViewWatch, isReplaySafeLocation, replayAllowed } from './utils/replayPrivacy.js'
 import { appErrorProperties, redactErrorMessage, exceptionProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { applyConsentTier } from './utils/essentialAnalytics'
@@ -185,6 +186,58 @@ if (originalIdentify) {
   };
 }
 
+// Session replay: see src/utils/replayPrivacy.js for the rules. replayGuard
+// remembers when she was on a screen that may not be recorded so before_send
+// can drop any frame from then, whenever it is flushed.
+const replayGuard = createReplayGuard();
+function currentReplayLocation() {
+  if (typeof window === 'undefined') return { view: '', pathname: '/' };
+  return { view: window.__aynaView, pathname: window.location.pathname, native: Capacitor.isNativePlatform() };
+}
+// Consent side of replay: a "Turn on" that named replay, no GPC, not a
+// founder's browser. (Which screen she is on is checked separately.)
+function replayConsentOk(ph = posthog) {
+  let optedIn = false;
+  try { optedIn = ph.has_opted_in_capturing?.() === true; } catch { /* not opted in */ }
+  return replayAllowed({
+    optedIn,
+    replayConsent: hasReplayConsent(),
+    gpc: GPC_ENABLED,
+    internal: hasInternalBrowserMarker(),
+    safeLocation: true,
+  });
+}
+// Start or stop recording to match consent and the current screen. Called on
+// load, on every screen change (window.__aynaView, set by App.jsx and
+// MobileApp.jsx), every address change, and every consent change.
+function syncSessionReplay(ph = posthog) {
+  try {
+    const safeLocation = isReplaySafeLocation(currentReplayLocation());
+    replayGuard.update(safeLocation);
+    if (!ph?.__loaded) return; // analytics off on this host, or not loaded yet
+    const allowed = safeLocation && replayConsentOk(ph);
+    const running = ph.sessionRecordingStarted?.() === true;
+    if (allowed && !running) ph.startSessionRecording?.();
+    else if (!allowed && (running || ph.config?.disable_session_recording === false)) ph.stopSessionRecording?.();
+  } catch { /* replay unavailable: nothing is recorded */ }
+}
+if (typeof window !== 'undefined') {
+  installReplayViewWatch();
+  installReplayHistoryWatch();
+  window.addEventListener(VIEW_CHANGED_EVENT, () => syncSessionReplay());
+  window.addEventListener(CONSENT_CHANGED_EVENT, () => syncSessionReplay());
+}
+
+// Replay frames ($snapshot) are sent only while the consent conditions hold,
+// and any frame recorded while she was on a screen that may not be recorded
+// is removed by its timestamp. Stopping recording flushes its buffer after
+// she has already switched screens, so the screen is judged per frame, not
+// at send time.
+function guardReplaySnapshot(event) {
+  if (!replayConsentOk()) return null;
+  return replayGuard.filterSnapshot(event);
+}
+
 function sanitizePosthogEvent(event) {
   // Once this browser has been recognized as one of the three founders, do not
   // send further analytics at all. The PostHog person is also tagged internal
@@ -195,6 +248,7 @@ function sanitizePosthogEvent(event) {
   // from this page. A pageview or click there would reveal that a specific
   // visitor looked for these resources.
   if (typeof window !== 'undefined' && /^\/campus-resources(\/|$)/.test(window.location.pathname)) return null;
+  if (event?.event === '$snapshot') return guardReplaySnapshot(event);
   // platform on every event, including the first pageview (which can be sent
   // before the `loaded` register below takes effect). Free text typed into
   // Shop/Community search (?q=) is stripped from every URL property.
@@ -253,7 +307,16 @@ if (!POSTHOG_KEY) {
     // anything on /campus-resources, since it runs after the URL changes. (Ram, PR #47)
     capture_pageview: 'history_change',
     mask_all_text: true,
+    // Session replay is opt-in and screen-limited: off at load, started by
+    // syncSessionReplay only after a "Turn on" that named replay, and only
+    // on browse-and-read screens. Everything is masked; see replayPrivacy.js.
     disable_session_recording: true,
+    session_recording: SESSION_RECORDING_OPTIONS,
+    // Console output and network requests can carry health details or
+    // search text; never record them with a replay (overrides the project
+    // setting).
+    enable_recording_console_log: false,
+    capture_performance: false,
     ip: false,
     // For a reproductive-health product, optional analytics stays OFF until
     // the user explicitly opts in. A stale grant also defaults to OFF.
@@ -279,6 +342,7 @@ if (!POSTHOG_KEY) {
       // Never override GPC by looking up a region; otherwise restore an
       // explicitly granted consent or continue with the default-off state.
       if (!GPC_ENABLED) applyStoredConsent(ph);
+      syncSessionReplay(ph);
       tagFounderAnalyticsIfNeeded(ph);
       tagInternalUserIfNeeded(ph);
       // Every event says where it came from, so app and website separate
