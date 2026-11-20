@@ -70,6 +70,7 @@ import { RundownSetting } from '../../../components/today/RundownNotifyAsk.jsx';
 import { localDayKey as rundownDayKey } from '../../../utils/localDate.js';
 import { openProPaywall } from '../../../pro/paywall.js';
 import { useProAccess } from '../../../pro/useProAccess.js';
+import { getStoredConsent, grantConsent, denyConsent } from '../../../utils/analyticsConsent.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -1990,8 +1991,10 @@ const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
 // consent UI anywhere yet, so this is the first place it's wired up.
 // window.posthog may be undefined if VITE_PUBLIC_POSTHOG_KEY isn't set
 // (e.g. this dev environment), every call below is guarded for that.
+// Nov 19: "on" only after an explicit yes (same rule as the website). It used to
+// read has_opted_out_capturing, which showed "on" for people who never chose.
 function isAnalyticsOptedOut() {
-  try { return typeof window !== 'undefined' && window.posthog?.has_opted_out_capturing?.() === true; } catch { return false; }
+  return getStoredConsent() !== 'granted';
 }
 
 function PrivacyDataScreen({ onBack, onOpenDeleteAccount, onOpenHealthData }) {
@@ -2001,8 +2004,10 @@ function PrivacyDataScreen({ onBack, onOpenDeleteAccount, onOpenHealthData }) {
     const nextOptedOut = !analyticsOptedOut;
     setAnalyticsOptedOut(nextOptedOut);
     try {
-      if (nextOptedOut) window.posthog?.opt_out_capturing?.();
-      else window.posthog?.opt_in_capturing?.();
+      if (window.posthog) {
+        if (nextOptedOut) denyConsent(window.posthog);
+        else grantConsent(window.posthog);
+      }
     } catch { /* posthog not initialized in this environment */ }
   };
 
