@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ArticlesCore, { ARTICLES } from './ArticlesCore.jsx';
 import ProFeatureGate from './ProFeatureGate.jsx';
+import posthog from 'posthog-js';
 
 export * from './ArticlesCore.jsx';
 
@@ -15,6 +16,12 @@ export default function Articles(props) {
   useEffect(() => {
     setActiveArticleId(props.initialArticleId || null);
   }, [props.initialArticleId]);
+
+  // read_opened: once each time a Read is opened (id only, never what she does in it).
+  useEffect(() => {
+    if (!activeArticleId) return;
+    try { posthog.capture('read_opened', { read_id: String(activeArticleId).slice(0, 80) }); } catch { /* analytics never blocks reading */ }
+  }, [activeArticleId]);
 
   const title = useMemo(
     () => ARTICLES.find((article) => article.id === activeArticleId)?.title || 'Read',

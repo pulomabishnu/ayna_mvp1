@@ -3,12 +3,18 @@
 // (pro_access_status: pro_focus_grants.expires_at > now()); nothing she saved is deleted. This file tells her:
 // a phone notification the day before and when it ends, and a note in the app the next time she opens it.
 import { Capacitor } from '@capacitor/core';
+import posthog from 'posthog-js';
 import { toast } from '../utils/toast.js';
 import { openProPaywall } from './paywall.js';
 
 const UNTIL_KEY = 'ayna_pro_trial_until_v1';
 const TOLD_KEY = 'ayna_pro_trial_end_told_v1';
 const IDS = [9950, 9951];
+
+// Analytics (Nov 19): trial started is captured where it starts (TrialStart / TrialOffer). These two close the loop:
+// pro_trial_ended once per trial when she is told it ended, pro_trial_converted once when a trial account turns paid.
+// No amounts, no health data; billing amounts stay in the anonymous webhook events.
+const defaultCapture = (event, props) => { try { posthog.capture(event, props); } catch { /* analytics never blocks */ } };
 
 const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 const write = (k, v) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch { /* storage off */ } };
@@ -37,7 +43,7 @@ async function schedule(list) {
 }
 
 /** Call with each server Pro status. */
-export function handleTrialStatus(status, now = Date.now()) {
+export function handleTrialStatus(status, now = Date.now(), capture = defaultCapture) {
   if (!status) return;
   const until = status.temporaryUntil || null;
   const paid = Boolean(status.hasPurchase || status.autoRenew || status.isAdmin);
@@ -45,11 +51,19 @@ export function handleTrialStatus(status, now = Date.now()) {
     if (read(UNTIL_KEY) !== until) { write(UNTIL_KEY, until); write(TOLD_KEY, null); schedule(trialNotifications(until, now)); }
     return;
   }
-  if (paid) { if (read(UNTIL_KEY)) { write(UNTIL_KEY, null); schedule([]); } return; }
+  if (paid) {
+    const had = read(UNTIL_KEY);
+    if (had) {
+      write(UNTIL_KEY, null); schedule([]);
+      if (!status.isAdmin) capture('pro_trial_converted', { converted_when: Date.parse(had) > now ? 'during_trial' : 'after_trial' });
+    }
+    return;
+  }
   // Not active: if her trial ended and she hasn't been told in the app yet, tell her once.
   const was = read(UNTIL_KEY);
   if (!status.active && was && Date.parse(was) <= now && read(TOLD_KEY) !== was) {
     write(TOLD_KEY, was);
+    capture('pro_trial_ended', {});
     toast('Your free ayna Pro trial ended. Everything you added is saved.', { label: 'Get Pro', onClick: () => openProPaywall({ feature: 'trial_ended', featureName: 'ayna Pro' }) });
   }
 }

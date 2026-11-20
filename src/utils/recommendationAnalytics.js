@@ -16,6 +16,21 @@ import { isPartnerBrandItem } from './partnerBrands.js';
 const seen = new Set();
 const MAX_POSITIONS = 24;
 
+/**
+ * Match % as a coarse band (never the exact score), so "do higher matches
+ * work better?" can be answered without sending anything health-derived.
+ * 'none' = the surface didn't attach a match % to this product.
+ */
+export function matchScoreBucket(p) {
+  const raw = [p?.matchPercent, p?.matchPercentage, p?._match].find((v) => Number.isFinite(Number(v)) && v !== null && v !== '');
+  const n = Number(raw);
+  if (raw === undefined || !Number.isFinite(n) || n <= 0) return 'none';
+  if (n >= 90) return '90+';
+  if (n >= 75) return '75-89';
+  if (n >= 50) return '50-74';
+  return 'under_50';
+}
+
 export function recommendationViewEvents(products, surface) {
   const out = [];
   (Array.isArray(products) ? products : []).slice(0, MAX_POSITIONS).forEach((p, i) => {
@@ -28,6 +43,7 @@ export function recommendationViewEvents(products, surface) {
       rank: i + 1,
       brand_id: p.brand ? String(p.brand).slice(0, 64) : undefined,
       is_partner: isPartnerBrandItem(p),
+      match_score_bucket: matchScoreBucket(p),
       surface,
     });
   });
