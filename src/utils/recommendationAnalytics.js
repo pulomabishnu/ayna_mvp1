@@ -72,3 +72,45 @@ export function useRecommendationViews(products, surface, { enabled = true, extr
 
 /** Tests only. */
 export function _resetRecommendationViews() { seen.clear(); }
+
+/**
+ * Match quality (Nov 19, analytics gap report P0): one summary per results page.
+ * Counts only, never which need or anything about her health:
+ *   recommendation_shelves_shown { shelves_count, picks_count, full_count, short_count,
+ *     empty_count, held_count, care_first_count, empty_reasons, surface, where }
+ * "full" = 3+ picks, "short" = 1-2, "empty" = none. empty_reasons is a sorted list of the
+ * engine's own reason codes (care_first, needs_safety_details, ...), so "why are shelves empty?"
+ * can be answered without a person's details.
+ */
+const EMPTY_REASONS = new Set(['care_first', 'needs_safety_details', 'clinician_first_for_stage', 'no_product_meets_quality_bar', 'no_matching_products']);
+export function shelfQualitySummary(shelves = [], rows = []) {
+  const list = Array.isArray(shelves) ? shelves : [];
+  const counts = (Array.isArray(rows) && rows.length === list.length ? rows : list).map((r, i) => {
+    const n = Array.isArray(r.products) || Array.isArray(r.services)
+      ? (r.products || []).length + (r.services || []).length
+      : (list[i]?.productIds || list[i]?.picks || []).length;
+    return { n, held: Boolean(r.held), care: Boolean(r.careFirst) || list[i]?.emptyReason === 'care_first' };
+  });
+  const reasons = [...new Set(list.map((s) => s?.emptyReason).filter((r) => EMPTY_REASONS.has(r)))].sort();
+  return {
+    shelves_count: counts.length,
+    picks_count: counts.reduce((a, c) => a + c.n, 0),
+    full_count: counts.filter((c) => c.n >= 3).length,
+    short_count: counts.filter((c) => c.n > 0 && c.n < 3).length,
+    empty_count: counts.filter((c) => c.n === 0).length,
+    held_count: counts.filter((c) => c.held).length,
+    care_first_count: counts.filter((c) => c.care).length,
+    empty_reasons: reasons.join(',') || 'none',
+  };
+}
+
+const shelfSeen = new Set();
+export function trackShelfQuality(summary, { surface = 'web', where = 'reveal' } = {}, capture = (e, p) => posthog.capture(e, p)) {
+  if (!summary || !summary.shelves_count) return;
+  const key = `${surface}:${where}:${JSON.stringify(summary)}`;
+  if (shelfSeen.has(key)) return;
+  shelfSeen.add(key);
+  try { capture('recommendation_shelves_shown', { ...summary, surface, where }); } catch { /* analytics never blocks */ }
+}
+/** Tests only. */
+export function _resetShelfQuality() { shelfSeen.clear(); }

@@ -9,6 +9,7 @@ import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 import { recordAppSignIn } from '../../utils/badges.js';
 import posthog from 'posthog-js';
 import { identifyAccount, recordNewAccount } from '../../utils/analyticsIdentity.js';
+import { AUTH_EVENTS, trackAuth, trackAuthFailure } from '../../utils/authAnalytics.js';
 
 // Real Supabase identity for the mobile app, separate from
 // useEcosystemSession.js's local app-data cache (products, quiz answers),
@@ -202,6 +203,7 @@ export function useSupabaseAuth() {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
     const consentAt = new Date().toISOString();
+    trackAuth(AUTH_EVENTS.SIGNUP_STARTED, { method: 'email', surface: 'app', mode: 'signup' });
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -221,8 +223,12 @@ export function useSupabaseAuth() {
     // Nov 16: an email that already has an account says so (Supabase answers either way) and is never
     // counted as a new sign-up.
     const dupError = () => { const dup = new Error('An account with this email already exists. Sign in instead.'); dup.code = 'email_already_exists'; return dup; };
-    if (error) throw (/already (registered|exists)/i.test(error.message || '') || error.code === 'user_already_exists' ? dupError() : error);
-    if (data.user?.identities?.length === 0) throw dupError();
+    if (error) {
+      const err = /already (registered|exists)/i.test(error.message || '') || error.code === 'user_already_exists' ? dupError() : error;
+      trackAuthFailure(AUTH_EVENTS.SIGNUP_FAILED, err, { method: 'email', surface: 'app', mode: 'signup' });
+      throw err;
+    }
+    if (data.user?.identities?.length === 0) { trackAuth(AUTH_EVENTS.SIGNUP_FAILED, { method: 'email', surface: 'app', mode: 'signup', reason: 'already_exists' }); throw dupError(); }
     // The account exists now, verified or not: count it (signed_up + account_created).
     recordNewAccount(posthog, data.user, { method: 'email' });
     // A live session here means this project's "Confirm email" setting is
@@ -234,8 +240,10 @@ export function useSupabaseAuth() {
   async function signInWithPassword({ email, password }) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
+    trackAuth(AUTH_EVENTS.LOGIN_STARTED, { method: 'email', surface: 'app', mode: 'signin' });
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    if (error) { trackAuthFailure(AUTH_EVENTS.LOGIN_FAILED, error, { method: 'email', surface: 'app', mode: 'signin' }); throw error; }
+    trackAuth(AUTH_EVENTS.LOGIN_SUCCEEDED, { method: 'email', surface: 'app', mode: 'signin' });
   }
 
   async function resendConfirmation(email) {
@@ -247,11 +255,13 @@ export function useSupabaseAuth() {
       options: { emailRedirectTo: emailConfirmRedirect() },
     });
     if (error) throw error;
+    trackAuth(AUTH_EVENTS.VERIFICATION_EMAIL_RESENT, { method: 'email', surface: 'app' });
   }
 
   async function signInWithGoogle({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
+    trackAuth(mode === 'save' ? AUTH_EVENTS.SIGNUP_STARTED : AUTH_EVENTS.LOGIN_STARTED, { method: 'google', surface: 'app', mode: mode === 'save' ? 'signup' : 'signin' });
 
     try {
       localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
@@ -312,6 +322,7 @@ export function useSupabaseAuth() {
   async function signInWithApple({ mode = 'signin' } = {}) {
     const supabase = getSupabaseClient();
     if (!supabase) throw new Error('Sign-in is not configured right now.');
+    trackAuth(mode === 'save' ? AUTH_EVENTS.SIGNUP_STARTED : AUTH_EVENTS.LOGIN_STARTED, { method: 'apple', surface: 'app', mode: mode === 'save' ? 'signup' : 'signin' });
 
     try {
       localStorage.setItem(MOBILE_OAUTH_PENDING_KEY, '1');
@@ -361,6 +372,7 @@ export function useSupabaseAuth() {
   async function signOut() {
     const supabase = getSupabaseClient();
     if (supabase) await supabase.auth.signOut();
+    trackAuth(AUTH_EVENTS.LOGOUT_COMPLETED, { surface: 'app' });
     resetChipPosition();
   }
 

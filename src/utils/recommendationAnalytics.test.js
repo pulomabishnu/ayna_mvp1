@@ -42,3 +42,32 @@ describe('matchScoreBucket', () => {
     expect(JSON.stringify(ev)).not.toContain('88');
   });
 });
+
+describe('shelf quality summary (Nov 19)', () => {
+  it('counts full, short, empty and held shelves with the engine reason codes only', async () => {
+    const { shelfQualitySummary, trackShelfQuality, _resetShelfQuality } = await import('./recommendationAnalytics.js');
+    _resetShelfQuality();
+    const shelves = [
+      { needId: 'a', emptyReason: null },
+      { needId: 'b', emptyReason: null },
+      { needId: 'c', emptyReason: 'needs_safety_details' },
+      { needId: 'd', emptyReason: 'care_first' },
+      { needId: 'e', emptyReason: 'made_up' },
+    ];
+    const rows = [
+      { products: [{}, {}], services: [{}] },
+      { products: [{}], services: [] },
+      { products: [], services: [], held: true },
+      { products: [], services: [], careFirst: true },
+      { products: [], services: [] },
+    ];
+    const s = shelfQualitySummary(shelves, rows);
+    expect(s).toEqual({ shelves_count: 5, picks_count: 4, full_count: 1, short_count: 1, empty_count: 3, held_count: 1, care_first_count: 1, empty_reasons: 'care_first,needs_safety_details' });
+    const sent = [];
+    trackShelfQuality(s, { surface: 'app' }, (e, p) => sent.push([e, p]));
+    trackShelfQuality(s, { surface: 'app' }, (e, p) => sent.push([e, p]));
+    expect(sent).toHaveLength(1);
+    expect(sent[0][0]).toBe('recommendation_shelves_shown');
+    expect(sent[0][1].surface).toBe('app');
+  });
+});

@@ -22,3 +22,8 @@ export function analyticsPlatform(isNative, capacitorPlatform) {
   if (capacitorPlatform === 'android') return 'android_app';
   return 'native_app';
 }
+
+/** 'development' for a local/dev build (npm run dev, a native build from a laptop), else 'production'. On every event as `environment`. */
+export function analyticsEnvironment(isDevBuild) {
+  return isDevBuild ? 'development' : 'production';
+}

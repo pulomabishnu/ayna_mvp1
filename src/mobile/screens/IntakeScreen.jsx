@@ -87,7 +87,7 @@ import {
   LEARN_INTERESTS,
 } from '../data/intakeModel.js';
 import { BRAND_SUGGESTIONS, CATALOG_PRODUCT_NAMES, PRODUCT_OR_BRAND_SUGGESTIONS } from '../data/intakeCatalog.js';
-import { trackQuizStep } from '../../utils/funnelEvents.js';
+import { trackQuizStep, trackQuizAction } from '../../utils/funnelEvents.js';
 import { GOALS, HELP_TOPICS, NOTHING_SPECIFIC, ONBOARDING_SCREENS, SOMETHING_ELSE, getOnboardingSteps, onboardingProgress, supportGroupsForTopics, pruneForTopics, pruneVasomotor } from '../data/onboardingFlow.js';
 // Questions whose options have a plain meaning on press-and-hold (glossary.js): the answers get data-tour="quiz-hold" and the quiz tip points there.
 const HOLD_TIP_TYPES = new Set(['aboutYou', 'lifeStage', 'support', 'topics', 'conditions', 'allergies', 'formats', 'price', 'avoidOnly', 'wantOnly', 'fsaHsa']);
@@ -732,7 +732,9 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
   // Nov 17: the checkpoint page is gone; a saved place on it goes straight to her results.
   useEffect(() => { if (atCheckpoint) finish(); }, [atCheckpoint]); // eslint-disable-line react-hooks/exhaustive-deps
+  const quizPart = () => (onboarding && obPart === 'more' ? 'more' : phase === 'optional' ? 'more' : 'core');
   const goBack = () => {
+    if (step?.id) trackQuizAction('back', { stepId: step.id, part: quizPart(), surface: 'app' });
     if (atCheckpoint) { goTo(requiredSteps[requiredSteps.length - 1].id, 'back'); return; }
     if (onboarding) { if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back'); else if (onBack) onBack(); return; }
     if (currentIndex > 0) goTo(visibleSteps[currentIndex - 1].id, 'back');
@@ -758,9 +760,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     finish(answers);
   };
   const goNext = () => {
-    if (step.id === 'age' && isMinorAge(intake.age)) return;
-    if (!requiredReady(step.id, intake)) return;
-    if (step.id === 'zip' && intake.zipcode && !isValidUsZip(intake.zipcode)) { setZipError('Invalid ZIP code'); return; }
+    const invalid = (reason) => trackQuizAction('invalid', { stepId: step.id, part: quizPart(), surface: 'app', reason });
+    if (step.id === 'age' && isMinorAge(intake.age)) { invalid('not_eligible'); return; }
+    if (!requiredReady(step.id, intake)) { invalid('incomplete'); return; }
+    if (step.id === 'zip' && intake.zipcode && !isValidUsZip(intake.zipcode)) { invalid('invalid_zip'); setZipError('Invalid ZIP code'); return; }
+    trackQuizAction(step.optional && !isStepAnswered(step.id, intake) ? 'skipped' : 'completed', { stepId: step.id, part: quizPart(), surface: 'app' });
     // Optional step left empty: same as Skip (stored as skipped, neutral).
     const next = step.optional ? markSkipped(intake, step.id) : intake;
     if (next !== intake) setIntake(next);
@@ -768,6 +772,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
   };
   // Skip never validates; a half-typed ZIP is dropped rather than saved.
   const skipStep = () => {
+    trackQuizAction('skipped', { stepId: step.id, part: quizPart(), surface: 'app' });
     const next = markSkipped(step.id === 'zip' && !isValidUsZip(intake.zipcode) ? { ...intake, zipcode: '' } : intake, step.id);
     setIntake(next);
     advance(next);

@@ -17,6 +17,7 @@ import { productImageOverride } from '../../data/productImageOverrides.js';
 import '../../styles/onboarding.css';
 import './ReadyReveal.css';
 import { eventSurface, trackFirstMatchShown } from '../../utils/analyticsEvents.js';
+import { shelfQualitySummary, trackShelfQuality } from '../../utils/recommendationAnalytics.js';
 import { groupRevealRows } from '../../matching/shelfGroups.js';
 import { loadProductCatalog } from '../../utils/productCatalog.js';
 
@@ -103,7 +104,9 @@ function perNeed(answers, matchOpts = undefined) {
     const total = new Set(grouped.flatMap((row) => [...row.products, ...row.services].map((p) => p.id))).size;
     // Needs she picked that have nothing yet, with the reason (shown only when there are no matches).
     const emptyNeeds = rows.filter((r) => !r.products.length && !r.services.length).map((r) => ({ id: r.id, label: r.label, why: r.why || r.heldWhy || '', needsAnswers: r.needsAnswers }));
-    return { rows: grouped, total, careNote, careNoteFor, everydayBasics, emptyNeeds };
+    // Nov 19 (analytics P0): counts only, so match quality (empty or held shelves) shows on the Matches dashboard.
+    const quality = shelfQualitySummary(shelves, rows);
+    return { rows: grouped, total, careNote, careNoteFor, everydayBasics, emptyNeeds, quality };
   } catch {
     return { rows: [], total: 0, careNote: '' };
   }
@@ -131,7 +134,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   // missing while Wrapped showed it).
   const previewPool = useMemo(() => (ready && liveReady ? firstMatches(answers, 60) : []), [answers, ready, liveReady]);
   // Her connected health data counts too (founder, Nov 9: results from the quiz AND wearables).
-  const { rows: needRows, total: needTotal, careNote, everydayBasics = false, emptyNeeds = [] } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
+  const { rows: needRows, total: needTotal, careNote, everydayBasics = false, emptyNeeds = [], quality: shelfQuality = null } = useMemo(() => (ready && liveReady ? perNeed(answers, matchOpts) : { rows: [], total: 0, careNote: '' }), [answers, ready, liveReady, matchOpts]);
   // Founder, Nov 10 ("this should never be a thing"): no screen that says there is nothing for her.
   // When no need produced a shelf, her top matches from the same engine show as "Picks for you".
   const basics = [];
@@ -153,6 +156,7 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   const bleeding = useMemo(() => (ready ? bleedingCareNote(answers) : null), [answers, ready]);
   // Analytics: the first match is on screen (quiz start to first match).
   useEffect(() => { if (matches.length) trackFirstMatchShown({ surface: eventSurface(), matches_count: matches.length }); }, [matches.length]);
+  useEffect(() => { if (shelfQuality) trackShelfQuality(shelfQuality, { surface: eventSurface(), where: 'reveal' }); }, [shelfQuality]);
   // Focus group, Nov 9: "nothing to fix, but I want to learn about birth control".
   const learn = Array.isArray(answers?.fullHealthIntake?.learnInterests) ? answers.fullHealthIntake.learnInterests : [];
   // Ameera, Nov 15 ("there's no option for the optional questions, just link your wearables"): a question

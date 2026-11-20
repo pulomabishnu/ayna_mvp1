@@ -42,9 +42,21 @@ async function schedule(list) {
   } catch { /* notifications are best effort */ }
 }
 
+/** Pure (tested): 'pro' | 'trial' | 'staff' | 'free' from a server Pro status. On every event as `subscription_tier`. */
+export function subscriptionTier(status) {
+  if (!status) return 'free';
+  if (status.isAdmin) return 'staff';
+  if (status.hasPurchase || status.autoRenew) return 'pro';
+  if (status.active && status.temporaryUntil) return 'trial';
+  if (status.active) return 'pro';
+  return 'free';
+}
+const defaultRegister = (props) => { try { posthog.register(props); } catch { /* analytics never blocks */ } };
+
 /** Call with each server Pro status. */
-export function handleTrialStatus(status, now = Date.now(), capture = defaultCapture) {
+export function handleTrialStatus(status, now = Date.now(), capture = defaultCapture, register = defaultRegister) {
   if (!status) return;
+  register({ subscription_tier: subscriptionTier(status) });
   const until = status.temporaryUntil || null;
   const paid = Boolean(status.hasPurchase || status.autoRenew || status.isAdmin);
   if (status.active && until && !paid) {
