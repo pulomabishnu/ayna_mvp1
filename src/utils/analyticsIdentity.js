@@ -142,6 +142,28 @@ export function recordNewAccount(posthog, user, { method } = {}) {
   return true;
 }
 
+const EMAIL_VERIFIED_PREFIX = 'ayna_email_verified_sent_';
+const EMAIL_VERIFIED_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * email_verified: once per account on this device, only when the email was
+ * confirmed in the last 7 days (so old accounts don't all fire on the first
+ * session after this ships). Sends the hours from sign-up to confirmation,
+ * bucketed, never the email itself. Returns true if it recorded.
+ */
+export function recordEmailVerified(posthog, user, { now = Date.now() } = {}) {
+  const confirmed = Date.parse(user?.email_confirmed_at || '');
+  if (!user?.id || !Number.isFinite(confirmed) || now - confirmed > EMAIL_VERIFIED_WINDOW_MS) return false;
+  const sentKey = `${EMAIL_VERIFIED_PREFIX}${opaqueAccountKey(user.id)}`;
+  if (readLocal(sentKey)) return false;
+  writeLocal(sentKey, '1');
+  const created = Date.parse(user.created_at || '');
+  const hours = Number.isFinite(created) ? Math.max(0, (confirmed - created) / 3600000) : null;
+  const bucket = hours == null ? 'unknown' : hours < 1 ? 'under_1h' : hours < 24 ? '1_24h' : 'over_24h';
+  try { posthog?.capture?.('email_verified', { time_to_verify: bucket }); } catch { /* analytics never blocks sign-in */ }
+  return true;
+}
+
 /**
  * Identify the signed-in account in PostHog, then record sign-up (once) and
  * the start of a session. Safe to call on every SIGNED_IN event: it does the
@@ -170,6 +192,7 @@ export function identifyAccount(posthog, supabase, user, { now = Date.now(), ses
     // sign-ups were already recorded at signUp (same once-per-account key).
     const isNew = Number.isFinite(createdAt) && now - createdAt <= NEW_ACCOUNT_WINDOW_MS;
     if (isNew) recordNewAccount(posthog, user);
+    recordEmailVerified(posthog, user, { now });
 
     const store = sessionStore || (typeof window !== 'undefined' ? window.sessionStorage : null);
     let started = null;

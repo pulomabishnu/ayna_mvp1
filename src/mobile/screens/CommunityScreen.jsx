@@ -1,4 +1,5 @@
 // Topic pods here are the curated ayna list (src/utils/community/topics.js).
+import { trackCommunity } from '../../utils/community/communityAnalytics.js';
 import TopicBands from '../../components/community/TopicBands.jsx';
 import PhotoThumbs from '../../components/community/PhotoThumbs.jsx';
 import { playlistDoor } from '../../pro/proDoor.js';
@@ -260,6 +261,8 @@ const readPendingInvite = () => { try { return sessionStorage.getItem(PENDING_IN
 const clearPendingInvite = () => { try { sessionStorage.removeItem(PENDING_INVITE_KEY); } catch { /* storage blocked */ } };
 
 export default function CommunityScreen({ authUser, products = [], articles = null, quizAnswers, matchOpts, headerInitial, onOpenProduct, onOpenArticle, onGoBrowse, onGoEco, onOpenSaved, onOpenProfile, onRequireAuth, onStartQuiz = null, seedKind, seedProductId, seedPlaylistId, seedPostId, seedUsername }) {
+  // community_viewed: once per mount (counts only).
+  useEffect(() => { trackCommunity('community_viewed', { surface: 'app' }); }, []);
   const supabase = authUser ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   const productsById = useMemo(() => new Map(products.map((p) => [String(p.id), p])), [products]);
   const [tab, setTab] = useState('for-you');

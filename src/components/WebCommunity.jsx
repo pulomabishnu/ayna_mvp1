@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { trackCommunity } from '../utils/community/communityAnalytics.js';
 import PhotoThumbs from './community/PhotoThumbs.jsx';
 import { playlistDoor } from '../pro/proDoor.js';
 import { hasWhy, whyLead } from '../utils/whyLine';
@@ -264,6 +265,8 @@ function Sheet({ title, onClose, children, className = '', overlay = null }) {
 }
 
 export default function WebCommunity({ user, products = [], quizResults = null, healthProfile = null, matchOpts = undefined, myProducts = null, onOpenProduct, onOpenArticle, onRequireAuth, onStartQuiz = null, seedKind = null, seedProductId = null, seedRating = null, initialProfileHandle = null, onProfileChange, initialPostId = null, onPostChange, composeOnly = false, onDone }) {
+  // community_viewed: once per mount (counts only).
+  useEffect(() => { trackCommunity('community_viewed', { surface: 'web' }); }, []);
   const supabase = user ? getSupabaseClient() : (getGuestClient() || getSupabaseClient());
   // Phones: the search box shares its row with Post, so the long placeholder was cut off mid-word.
   const [narrowSearch, setNarrowSearch] = useState(false);

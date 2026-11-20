@@ -10,6 +10,7 @@
 
 import { topicForHashtag } from './topics';
 import { announceReviewsChanged, normalizeRating } from './reviewRatings.js';
+import { trackCommunity } from './communityAnalytics.js';
 
 export const PAGE_SIZE = 20;
 
@@ -211,6 +212,7 @@ export async function createPost(supabase, userId, { kind, body, topics = [], is
     row.would_recommend = wouldRecommend;
   }
   const post = check(await supabase.from('community_posts').insert(row).select('id').single());
+  trackCommunity('community_post_created', { kind, isAnonymous: row.is_anonymous, hasProduct: Boolean(row.product_id || taggedProductIds.length), hasPhoto: Boolean(photoUrl || media.length), topicCount: row.topics.length });
   const tags = [...new Set(taggedProductIds.filter((id) => id && id !== productId))].slice(0, 3);
   if (tags.length) {
     const { error } = await supabase.from('community_post_products')
@@ -297,7 +299,7 @@ export async function listComments(supabase, postId) {
 }
 
 export async function createComment(supabase, userId, { postId, parentId = null, body, productId = null, isAnonymous = false }) {
-  return check(await supabase.from('community_comments').insert({
+  const created = check(await supabase.from('community_comments').insert({
     post_id: postId,
     parent_id: parentId,
     author_id: userId,
@@ -305,6 +307,8 @@ export async function createComment(supabase, userId, { postId, parentId = null,
     product_id: productId || null,
     is_anonymous: Boolean(isAnonymous),
   }).select('id').single());
+  trackCommunity('community_comment_submitted', { isReply: Boolean(parentId), isAnonymous: Boolean(isAnonymous), hasProduct: Boolean(productId) });
+  return created;
 }
 
 export async function deleteComment(supabase, commentId) {
@@ -319,6 +323,7 @@ export async function setHelpful(supabase, userId, { postId = null, commentId = 
   if (on) {
     const { error } = await supabase.from('community_helpful_votes').insert({ user_id: userId, post_id: postId, comment_id: commentId });
     if (error && error.code !== '23505') throw error;
+    if (!error) trackCommunity('community_reaction_added', { target: postId ? 'post' : 'comment' });
   } else {
     let q = supabase.from('community_helpful_votes').delete().eq('user_id', userId);
     q = postId ? q.eq('post_id', postId) : q.eq('comment_id', commentId);
@@ -330,6 +335,7 @@ export async function setSaved(supabase, userId, postId, on) {
   if (on) {
     const { error } = await supabase.from('community_saved_posts').insert({ user_id: userId, post_id: postId });
     if (error && error.code !== '23505') throw error;
+    if (!error) trackCommunity('community_post_saved', {});
   } else {
     check(await supabase.from('community_saved_posts').delete().eq('user_id', userId).eq('post_id', postId));
   }
@@ -357,6 +363,7 @@ export async function setFollowing(supabase, userId, targetId, on) {
   if (on) {
     const { error } = await supabase.from('community_follows').insert({ follower_id: userId, followee_id: targetId });
     if (error && error.code !== '23505') throw error;
+    if (!error) trackCommunity('community_followed', {});
   } else {
     check(await supabase.from('community_follows').delete().eq('follower_id', userId).eq('followee_id', targetId));
   }

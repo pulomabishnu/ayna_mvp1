@@ -44,7 +44,7 @@ describe('analytics identity', () => {
     const now = Date.parse('2026-10-17T12:05:00Z');
     await identifyAccount(ph, sb, U, { now });
     const names = ph.calls.map((c) => c[0] === 'capture' ? c[1] : c[0]);
-    expect(names).toEqual(['identify', 'set', 'signed_up', 'account_session_started']);
+    expect(names).toEqual(['identify', 'set', 'signed_up', 'email_verified', 'account_session_started']);
     expect(ph.calls.find((c) => c[1] === 'signed_up')[2]).toEqual({ method: 'google', referral_source: 'linkedin.com' });
     await new Promise((r) => setTimeout(r, 0));
     await identifyAccount(ph, sb, U, { now: now + 1000 });
@@ -112,5 +112,19 @@ describe('recordNewAccount (signed_up undercount fix, 2026-11-11)', () => {
     const phone = { ...NEW, id: '33333333-3333-3333-3333-333333333333', identities: undefined, app_metadata: { provider: 'phone' } };
     await identifyAccount(ph, fakeSupabase(), phone, { now: Date.parse('2026-11-11T12:05:00Z') });
     expect(ph.calls.find((c) => c[1] === 'signed_up')[2]).toMatchObject({ method: 'phone' });
+  });
+});
+
+describe('recordEmailVerified', () => {
+  it('fires once, only for recent confirmations, with a time bucket and no email', async () => {
+    const { recordEmailVerified } = await import('./analyticsIdentity.js');
+    const now = Date.parse('2026-11-20T12:00:00Z');
+    const ph = { capture: vi.fn() };
+    const user = { id: 'user-ev-1', email: 'a@b.co', created_at: '2026-11-20T10:00:00Z', email_confirmed_at: '2026-11-20T10:30:00Z' };
+    expect(recordEmailVerified(ph, user, { now })).toBe(true);
+    expect(recordEmailVerified(ph, user, { now })).toBe(false);
+    expect(ph.capture).toHaveBeenCalledWith('email_verified', { time_to_verify: 'under_1h' });
+    const old = { id: 'user-ev-2', created_at: '2026-01-01T00:00:00Z', email_confirmed_at: '2026-01-01T01:00:00Z' };
+    expect(recordEmailVerified(ph, old, { now })).toBe(false);
   });
 });
