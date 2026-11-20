@@ -108,11 +108,15 @@ export function acknowledgeAnalytics(ph) {
   grantConsent(ph);
 }
 
+/** Fired after an opt-in so a signed-in account is identified right away (PostHog ignores identify while not opted in). */
+export const ANALYTICS_GRANTED_EVENT = 'ayna:analytics-granted';
+
 /** Explicit opt-in used by settings controls when re-enabling analytics. */
 export function grantConsent(ph) {
   persist('granted');
   ph.opt_in_capturing();
   ph.capture('$pageview');
+  try { window.dispatchEvent(new Event(ANALYTICS_GRANTED_EVENT)); } catch { /* no window */ }
 }
 
 /**

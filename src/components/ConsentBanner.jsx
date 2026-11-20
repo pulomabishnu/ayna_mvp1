@@ -27,7 +27,11 @@ import { hasRecordedChoice, acknowledgeAnalytics, denyConsent, isMandatoryGpcVis
  * app sets no cookies — the necessary thing is the Supabase session living
  * in localStorage.
  */
-export default function ConsentBanner() {
+const PRIVACY_URL = 'https://www.aynahealth.co/privacy-policy#analytics'
+
+// Nov 19: `app` = the iPhone app. It never asked, so every new app user stayed
+// anonymous (identify is ignored until opt-in) and missed every app chart.
+export default function ConsentBanner({ app = false }) {
   // main.jsx assigns window.posthog inside posthog.init's `loaded` callback,
   // which can resolve after this component first renders. Rendering the bar
   // before then would give us buttons that call methods on `undefined`, so
@@ -114,14 +118,14 @@ export default function ConsentBanner() {
           {isGpcActive()
             ? <><strong>Opt-out request honored.</strong> Your browser&apos;s Global Privacy Control is on, so analytics stay off, including the anonymous visit and step counts.</>
             : <>Analytics aren&apos;t running in this browser, so nothing is being collected.</>}
-          {' '}<a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
+          {' '}<a href={app ? PRIVACY_URL : '/privacy-policy#analytics'} target="_blank" rel="noreferrer">What we collect</a>
         </p>
       </div>
     )
   }
 
   return (
-    <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics choice" className="consent-banner">
+    <div ref={bannerRef} role="dialog" aria-live="polite" aria-label="Analytics choice" className="consent-banner" style={app ? { paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' } : undefined}>
       <button
         type="button"
         className="consent-banner__close"
@@ -136,7 +140,7 @@ export default function ConsentBanner() {
         Turn on analytics so we can see which products are popular. We don't know who you are unless
         you make an account, and it's never sold or used for ads. Until you choose, we only count
         visits and which steps of the site are used, anonymously; Keep off stops that too.{' '}
-        <a href="/privacy-policy#analytics" target="_blank" rel="noreferrer">What we collect</a>
+        <a href={app ? PRIVACY_URL : '/privacy-policy#analytics'} target="_blank" rel="noreferrer">What we collect</a>
       </p>
       {/* Both buttons share one class and style: equal size, colour and weight. */}
       <div className="consent-banner__actions">

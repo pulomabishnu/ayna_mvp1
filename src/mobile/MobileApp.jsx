@@ -179,6 +179,7 @@ import { shownMatchPercent } from '../utils/matchDisplay.js';
 import UpdateRecap from '../components/recap/UpdateRecap.jsx';
 import { trackSave, intakeFailed, batchFailed } from '../utils/saveFeedback.js';
 import ChangeHistory from '../components/recap/ChangeHistory.jsx';
+import ConsentBanner from '../components/ConsentBanner.jsx';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -2309,6 +2310,8 @@ export default function MobileApp() {
       <FeedbackPrompts key={realAuthUser?.id || 'guest'} user={realAuthUser} authLoading={authLoading} currentView={overlayType || askAynaOpen ? 'busy' : screen} safeViews={APP_FEEDBACK_SCREENS} />
       {splash && <AppSplash onDone={endSplash} />}
       <OfflineBanner rootRef={rootRef} />
+      {/* Nov 19: ask once, like the website. Without a yes, app users stay anonymous in PostHog. */}
+      {!splash && <ConsentBanner app />}
       <GlobalToast variant="app" />
       {/* "Where did you hear about us?" once after sign-up, optional (onboarding audit #1). */}
       {authUser && !heardDismissed && screen !== 'signin' && shouldAskHeardAbout(authUser) && <HeardAboutPrompt variant="app" onDone={() => setHeardDismissed(true)} />}

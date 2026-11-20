@@ -9,6 +9,7 @@ import { resetChipPosition } from '../utils/askAynaChipPosition.js';
 import { recordAppSignIn } from '../../utils/badges.js';
 import posthog from 'posthog-js';
 import { identifyAccount, recordNewAccount } from '../../utils/analyticsIdentity.js';
+import { ANALYTICS_GRANTED_EVENT } from '../../utils/analyticsConsent.js';
 import { AUTH_EVENTS, trackAuth, trackAuthFailure } from '../../utils/authAnalytics.js';
 
 // Real Supabase identity for the mobile app, separate from
@@ -100,7 +101,12 @@ export function useSupabaseAuth() {
   // sign-ins and sign-ups were invisible in PostHog. Same account-wide
   // analytics id as the website (src/utils/analyticsIdentity.js).
   useEffect(() => {
-    if (user?.id) identifyAccount(posthog, getSupabaseClient(), user).catch(() => {});
+    if (!user?.id) return undefined;
+    identifyAccount(posthog, getSupabaseClient(), user).catch(() => {});
+    // Turning analytics on later: identify again now that PostHog will accept it.
+    const again = () => identifyAccount(posthog, getSupabaseClient(), user).catch(() => {});
+    window.addEventListener(ANALYTICS_GRANTED_EVENT, again);
+    return () => window.removeEventListener(ANALYTICS_GRANTED_EVENT, again);
   }, [user]);
 
   // "Got the app" badge: any signed-in user in the app counts, recorded once
