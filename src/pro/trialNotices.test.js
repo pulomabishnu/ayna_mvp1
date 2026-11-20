@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { trialNotifications } from './trialNotices.js';
+import { trialNotifications, subscriptionTier } from './trialNotices.js';
 
 describe('trial ending notices (Nov 16)', () => {
   const now = Date.parse('2026-11-16T12:00:00Z');
@@ -53,5 +53,15 @@ describe('trial analytics (Nov 19)', () => {
     } finally {
       Object.defineProperty(globalThis, 'localStorage', { value: prev, configurable: true });
     }
+  });
+});
+
+describe('subscription_tier (Nov 19)', () => {
+  it('maps server status to a tier', () => {
+    expect(subscriptionTier(null)).toBe('free');
+    expect(subscriptionTier({ active: false })).toBe('free');
+    expect(subscriptionTier({ active: true, temporaryUntil: '2026-12-01T00:00:00Z' })).toBe('trial');
+    expect(subscriptionTier({ active: true, hasPurchase: true })).toBe('pro');
+    expect(subscriptionTier({ active: true, isAdmin: true })).toBe('staff');
   });
 });

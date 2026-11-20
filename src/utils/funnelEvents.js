@@ -55,3 +55,26 @@ export function trackQuizStep({ stepId, number, total, part = 'core', surface = 
     });
   } catch { /* never blocks */ }
 }
+
+/**
+ * Quiz detail (Nov 19, analytics gap report P0): which question people finish, skip,
+ * go back from, or get stuck on. Only the step id and a short reason, never an answer.
+ *   quiz_step_completed     { step_id, part, surface }
+ *   quiz_step_skipped       { step_id, part, surface }
+ *   quiz_back_clicked       { step_id, part, surface }
+ *   quiz_validation_failed  { step_id, part, surface, reason: incomplete | invalid_zip | not_eligible }
+ */
+const QUIZ_ACTIONS = {
+  completed: 'quiz_step_completed',
+  skipped: 'quiz_step_skipped',
+  back: 'quiz_back_clicked',
+  invalid: 'quiz_validation_failed',
+};
+const QUIZ_REASONS = new Set(['incomplete', 'invalid_zip', 'not_eligible']);
+export function trackQuizAction(action, { stepId, part = 'core', surface = 'web', reason } = {}) {
+  const event = QUIZ_ACTIONS[action];
+  if (!event || !SAFE_ID.test(String(stepId || ''))) return;
+  const props = { step_id: stepId, part: part === 'more' ? 'more' : 'core', surface: SURFACES.has(surface) ? surface : 'web' };
+  if (action === 'invalid') props.reason = QUIZ_REASONS.has(reason) ? reason : 'incomplete';
+  try { client.capture(event, props); } catch { /* never blocks */ }
+}

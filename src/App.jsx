@@ -142,6 +142,7 @@ import { clearCachedLlmRecommendations, fingerprintIntake } from './utils/fetchL
 import posthog from 'posthog-js';
 import { productIdentity } from './utils/productEventProps.js';
 import { identifyAccount } from './utils/analyticsIdentity';
+import { AUTH_EVENTS, trackAuth } from './utils/authAnalytics.js';
 import { tagInternalUserIfNeeded } from './utils/posthogInternal';
 import { productHref, productRouteKey, parseProductIdFromPath } from './utils/productRoute';
 import { productSeoTitle, productSeoDescription } from './utils/seoMeta';
@@ -1100,6 +1101,8 @@ function App() {
         // already navigate on their own, this handler doesn't need to.
       }
       if (event === 'SIGNED_OUT') {
+        // Before reset, so the logout still belongs to her (Nov 19 analytics).
+        trackAuth(AUTH_EVENTS.LOGOUT_COMPLETED, { surface: 'web' });
         posthog.reset();
       }
       if (!session) {

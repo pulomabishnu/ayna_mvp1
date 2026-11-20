@@ -26,6 +26,7 @@ import ProLock from '../../components/ProLock.jsx';
 // (advanced tracking), Appointment note (appointment prep). Memory stays free.
 const PRO_GUIDE_PAGES = { recap: 'recap', trial: 'trial', report: 'appointment' };
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
+import { trackAsk, askFailReason } from '../../utils/askAnalytics.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -326,6 +327,7 @@ export default function AskAynaModal({
       // No sign-in wall: the note names the question and offers Sign in.
       setInput(msg);
       setNeedsAccount(msg);
+      trackAsk('ask_account_needed', { surface: 'app' });
       return;
     }
     setNeedsAccount('');
@@ -337,6 +339,8 @@ export default function AskAynaModal({
     const messagesWithUser = [...messages, userMsg];
     setMessages(messagesWithUser);
     setSending(true);
+    const askStartedAt = Date.now();
+    trackAsk('ask_message_sent', { surface: 'app', is_retry: false, history_len: messages.length });
 
     try {
       const token = session?.access_token;
@@ -383,8 +387,11 @@ export default function AskAynaModal({
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
+      trackAsk('ask_answer_received', { surface: 'app', duration_ms: Date.now() - askStartedAt, followups_count: Array.isArray(data.followUps) ? data.followUps.length : 0, has_products: Boolean(extras?.products?.length) });
       if (data.limitReached && Number(data.usage?.limit) < 50) setAskLock(true);
     } catch (err) {
+      if (err?.code === 'weekly_limit_reached') trackAsk('ask_limit_reached', { surface: 'app', kind: 'monthly' });
+      else if (err?.code !== 'not_signed_in') trackAsk('ask_answer_failed', { surface: 'app', reason: askFailReason(err) });
       if (err?.code !== 'not_signed_in' && err?.code !== 'weekly_limit_reached') {
         // Roll the unanswered question back out of the thread and keep it.
         setMessages(messages);

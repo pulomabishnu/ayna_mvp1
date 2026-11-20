@@ -43,7 +43,7 @@ import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
 import { appErrorProperties, redactErrorMessage, exceptionProperties } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { applyConsentTier } from './utils/essentialAnalytics'
-import { analyticsPlatform, resolvePosthogKey } from './utils/analyticsPlatform'
+import { analyticsPlatform, analyticsEnvironment, resolvePosthogKey } from './utils/analyticsPlatform'
 import { nativePosthogTransportConfig } from './utils/nativePosthogTransport.js'
 import { trackAppOpened, eventSurface } from './utils/analyticsEvents.js'
 
@@ -283,7 +283,7 @@ if (!POSTHOG_KEY) {
       tagInternalUserIfNeeded(ph);
       // Every event says where it came from, so app and website separate
       // with one filter: platform = ios_app / android_app / web.
-      ph.register({ platform: ANALYTICS_PLATFORM });
+      ph.register({ platform: ANALYTICS_PLATFORM, environment: analyticsEnvironment(Boolean(import.meta.env.DEV)) });
       // First-touch source on every event, so the TikTok funnel can be followed past the landing page.
       try { const ft = firstTouch(); if (ft.first_utm_source) ph.register(ft); } catch { /* storage blocked */ }
       if (Capacitor.isNativePlatform()) registerNativeAppAnalytics(ph);

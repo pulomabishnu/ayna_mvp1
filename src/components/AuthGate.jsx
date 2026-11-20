@@ -8,6 +8,7 @@ import { savePendingVerification, readPendingVerification, clearPendingVerificat
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import posthog from 'posthog-js';
 import { recordNewAccount } from '../utils/analyticsIdentity.js';
+import { AUTH_EVENTS, trackAuth, trackAuthFailure } from '../utils/authAnalytics.js';
 import { stashPendingConsent, stashPendingSignupMeta } from '../utils/pendingConsent.js';
 import { pendingReferralMeta } from '../utils/freeProductCampaign.js';
 import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, acknowledgementLead, LEGAL_LINKS, consentMetadata, markAskHeardAbout } from '../utils/signupConsent.js';
@@ -185,6 +186,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         redirectTo: `${window.location.origin}/auth/callback`,
       });
       if (resetError) throw resetError;
+      trackAuth(AUTH_EVENTS.PASSWORD_RESET_REQUESTED, { method: 'email', surface: 'web' });
       setSuccessMsg(`If an account exists for ${cleanEmail}, we sent a link to reset your password.`);
     } catch (e) {
       setError(e?.message || 'Could not send a reset email right now. Please try again.');
@@ -235,7 +237,10 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
 
   const handleEmailAuth = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    const authMode = isSignup ? 'signup' : 'signin';
+    const failEvent = isSignup ? AUTH_EVENTS.SIGNUP_FAILED : AUTH_EVENTS.LOGIN_FAILED;
+    if (!validate()) { trackAuth(failEvent, { method: 'email', surface: 'web', mode: authMode, reason: 'form_incomplete' }); return; }
+    trackAuth(isSignup ? AUTH_EVENTS.SIGNUP_STARTED : AUTH_EVENTS.LOGIN_STARTED, { method: 'email', surface: 'web', mode: authMode });
     if (!supabase) { setError('Sign-in is unavailable right now. Please try again later.'); return; }
     setError('');
     setSuccessMsg('');
@@ -260,13 +265,14 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
             },
           },
         });
-        if (error && /already (registered|exists)/i.test(error.message || '')) { setError('An account with this email already exists. You’re now on Sign in.'); setMode('signin'); return; }
+        if (error && /already (registered|exists)/i.test(error.message || '')) { trackAuth(failEvent, { method: 'email', surface: 'web', mode: authMode, reason: 'already_exists' }); setError('An account with this email already exists. You’re now on Sign in.'); setMode('signin'); return; }
         if (error) throw error;
         // "Where did you hear about us?" comes after sign-up, optional.
         if (data.user?.identities?.length !== 0) markAskHeardAbout();
         // Nov 16: an existing email is not a new account, so it is not counted as a sign-up.
         if (data.user?.identities?.length !== 0) recordNewAccount(posthog, data.user, { method: 'email' });
         if (data.user?.identities?.length === 0) {
+          trackAuth(failEvent, { method: 'email', surface: 'web', mode: authMode, reason: 'already_exists' });
           setError('An account with this email already exists. You’re now on Sign in: enter your password.');
           setMode('signin');
           return;
@@ -300,10 +306,12 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
           throw error;
         }
         if (!data?.session?.user) throw new Error('Sign-in succeeded but no session was created. Please try again.');
+        trackAuth(AUTH_EVENTS.LOGIN_SUCCEEDED, { method: 'email', surface: 'web', mode: authMode });
         setSuccessMsg('Signed in. Welcome back…');
         onAuthenticated?.(data.user || data.session.user, data.session);
       }
     } catch (err) {
+      trackAuthFailure(failEvent, err, { method: 'email', surface: 'web', mode: authMode });
       setError(authErrorText(err, 'We couldn’t sign you in. Check your email and password, then try again.'));
     } finally {
       setLoading(false);
@@ -321,6 +329,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         options: { emailRedirectTo: 'https://www.aynahealth.co/confirmed' },
       });
       if (error) throw error;
+      trackAuth(AUTH_EVENTS.VERIFICATION_EMAIL_RESENT, { method: 'email', surface: 'web' });
       setResendMsg(CODE_COPY.resent);
     } catch (err) {
       setResendMsg(authErrorText(err, 'Could not resend right now. Try again in a moment.'));
@@ -350,6 +359,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // in (founder, Oct 29). ProfileSetupStep calls onAuthenticated when done.
       setProfileSetup({ user: data.user || data.session.user, session: data.session });
     } catch (err) {
+      trackAuthFailure(AUTH_EVENTS.VERIFICATION_CODE_FAILED, err, { method: 'email', surface: 'web' });
       setError(authErrorText(err, CODE_COPY.wrongOrExpired));
     } finally {
       setLoading(false);
@@ -417,6 +427,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       // only on onAuthStateChange could hang), the SIGNED_IN handler still runs.
       if (data?.session?.user) onAuthenticated?.(data.user || data.session.user, data.session);
     } catch (err) {
+      trackAuthFailure(AUTH_EVENTS.VERIFICATION_CODE_FAILED, err, { method: 'phone', surface: 'web' });
       setError(codeErrorText(err));
     } finally {
       setLoading(false);
@@ -450,6 +461,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         stashPendingSignupMeta(null);
       }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
+      trackAuth(isSignup ? AUTH_EVENTS.SIGNUP_STARTED : AUTH_EVENTS.LOGIN_STARTED, { method: 'google', surface: 'web', mode: isSignup ? 'signup' : 'signin' });
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -459,6 +471,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       });
       if (error) throw error;
     } catch (err) {
+      trackAuthFailure(isSignup ? AUTH_EVENTS.SIGNUP_FAILED : AUTH_EVENTS.LOGIN_FAILED, err, { method: 'google', surface: 'web', mode: isSignup ? 'signup' : 'signin' });
       setError(authErrorText(err, 'Could not sign in with Google.'));
       setGoogleLoading(false);
     }
@@ -486,6 +499,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
         stashPendingSignupMeta(null);
       }
       if (onBeforeOAuthRedirect) onBeforeOAuthRedirect();
+      trackAuth(isSignup ? AUTH_EVENTS.SIGNUP_STARTED : AUTH_EVENTS.LOGIN_STARTED, { method: 'apple', surface: 'web', mode: isSignup ? 'signup' : 'signin' });
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
@@ -494,6 +508,7 @@ export default function AuthGate({ isModal = false, embedded = false, onSkip, co
       });
       if (error) throw error;
     } catch (err) {
+      trackAuthFailure(isSignup ? AUTH_EVENTS.SIGNUP_FAILED : AUTH_EVENTS.LOGIN_FAILED, err, { method: 'apple', surface: 'web', mode: isSignup ? 'signup' : 'signin' });
       setError(authErrorText(err, 'Could not sign in with Apple.'));
       setAppleLoading(false);
     }

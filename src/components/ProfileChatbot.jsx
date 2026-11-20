@@ -16,6 +16,7 @@ import { recentQuestions } from '../utils/askRecent.js';
 import { mayAutoFocus } from '../utils/delightRuntime.js';
 import ProLock from './ProLock.jsx';
 import { ASK_SIGN_IN, ASK_MONTHLY_LIMIT, ASK_BURST_LIMIT, askLimitCode } from '../pro/askLimitCopy.js';
+import { trackAsk, askFailReason } from '../utils/askAnalytics.js';
 
 /** Merges a profileUpdate the backend returned into the current profile, deduping against what's already there. */
 function mergeProfileUpdate(currentProfile, update) {
@@ -382,6 +383,7 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
       setInput(msg);
       setSendError('');
       setNeedsAccount(msg);
+      trackAsk('ask_account_needed', { surface: 'web' });
       return;
     }
     setNeedsAccount('');
@@ -395,6 +397,8 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
     const messagesWithUser = retryOf != null ? base : [...base, userMsg];
     setMessages(messagesWithUser);
     setSending(true);
+    const askStartedAt = Date.now();
+    trackAsk('ask_message_sent', { surface: 'web', is_retry: retryOf != null, history_len: messages.length });
 
     try {
       const token = session?.access_token;
@@ -440,8 +444,12 @@ export default function ProfileChatbot({ profile, user, onProfileUpdate, chatHis
 
       setMessages(newMessages);
       onChatHistoryUpdate?.(newMessages);
+      trackAsk('ask_answer_received', { surface: 'web', duration_ms: Date.now() - askStartedAt, followups_count: Array.isArray(data.followUps) ? data.followUps.length : 0, has_products: Boolean(extras?.products?.length) });
       if (data.limitReached && Number(data.usage?.limit) < 50) setAskLock(true);
     } catch (err) {
+      if (err?.code === 'rate_limited') trackAsk('ask_limit_reached', { surface: 'web', kind: 'burst' });
+      else if (err?.code === 'weekly_limit_reached') trackAsk('ask_limit_reached', { surface: 'web', kind: 'monthly' });
+      else if (err?.code !== 'not_signed_in') trackAsk('ask_answer_failed', { surface: 'web', reason: askFailReason(err) });
       if (err?.code === 'not_signed_in') {
         setSendError(ASK_SIGN_IN);
       } else if (err?.code === 'rate_limited') {

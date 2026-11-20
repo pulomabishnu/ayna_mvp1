@@ -27,7 +27,7 @@ import ReadyReveal from './onboarding/ReadyReveal.jsx';
 import { QuizFrame, QuizBlock, Chips as KitChips, Rows as KitRows, SubQuestion, GlossaryCard } from './quiz/QuizKit.jsx';
 import { isShortHelper } from './quiz/quizText.js';
 import MedicalNote from './MedicalNote.jsx';
-import { trackQuizStep } from '../utils/funnelEvents.js';
+import { trackQuizStep, trackQuizAction } from '../utils/funnelEvents.js';
 import { proNow } from '../pro/proDoor.js';
 import { rememberProReturn } from '../pro/paywall.js';
 import '../styles/onboarding.css';
@@ -435,7 +435,9 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   };
 
   const go = (id, dir = 'forward') => { setSearch(''); setZipError(''); setSectionBreak(null); setDirection(dir); setAboutPart(dir === 'back' ? 'stage' : 'age'); setStepId(id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const quizPart = () => (step?.obPart === 'more' || phase === 'more' ? 'more' : 'core');
   const back = () => {
+    if (step?.id) trackQuizAction('back', { stepId: step.id, part: quizPart(), surface: 'web' });
     if (step.type === 'aboutYou' && aboutPart === 'stage' && !atCheckpoint) { setDirection('back'); setAboutPart('age'); window.scrollTo({ top: 0 }); return; }
     if (onboarding) { if (index > 0) go(steps[index - 1].id, 'back'); return; }
     if (atCheckpoint) { go(coreSteps[coreSteps.length - 1].id, 'back'); return; }
@@ -504,24 +506,28 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
   const next = () => {
     // Connect health data has nothing to answer on the website: Next goes on, same as Skip.
     if (step.type === 'connect') { skip(); return; }
-    if (step.id === 'age' && isMinorAge(intake.age)) return;
+    const invalid = (reason) => trackQuizAction('invalid', { stepId: step.id, part: quizPart(), surface: 'web', reason });
+    if (step.id === 'age' && isMinorAge(intake.age)) { invalid('not_eligible'); return; }
     if (step.type === 'aboutYou' && aboutPart === 'age') {
-      if (!requiredReady('age', intake)) return;
+      if (!requiredReady('age', intake)) { invalid('incomplete'); return; }
       setDirection('forward'); setAboutPart('stage'); window.scrollTo({ top: 0 });
       return;
     }
     if (step.id === 'zip') {
-      if (!intake.zipcode) return;
-      if (!isValidUsZip(intake.zipcode)) { setZipError('Invalid ZIP code'); return; }
+      if (!intake.zipcode) { invalid('incomplete'); return; }
+      if (!isValidUsZip(intake.zipcode)) { invalid('invalid_zip'); setZipError('Invalid ZIP code'); return; }
+      trackQuizAction('completed', { stepId: step.id, part: quizPart(), surface: 'web' });
       advance();
       return;
     }
-    if (!requiredReady(answerId, intake) || !isStepAnswered(answerId, intake)) return;
+    if (!requiredReady(answerId, intake) || !isStepAnswered(answerId, intake)) { invalid('incomplete'); return; }
+    trackQuizAction('completed', { stepId: step.id, part: quizPart(), surface: 'web' });
     advance();
   };
   // Skip (optional steps only) never validates; a half-typed ZIP is dropped
   // rather than saved. The step is stored as skipped, which is neutral.
   const skip = () => {
+    trackQuizAction('skipped', { stepId: step.id, part: quizPart(), surface: 'web' });
     const next = markSkipped(step.id === 'zip' && !isValidUsZip(intake.zipcode) ? { ...intake, zipcode: '' } : intake, step.id);
     setIntake(next);
     advance(next);
