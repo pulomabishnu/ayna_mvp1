@@ -10846,7 +10846,11 @@ export const BRAND_PRODUCTS = [
     // with Founder note and FAQs, two blog articles) and the product photos Eliz
     // supplied. The lubricant's "Ingredients, in plain english" section and the
     // Lava Lit and Lava Lush ingredient graphics give Lava's own reason for each
-    // ingredient; those are quoted as "Per Lava" below. Lava To-Go and The Lava Ritual Bundle were added as their own
+    // ingredient; those are quoted as "Per Lava" below. FDA status (checked
+    // 2026-11-24): Lava's lube is a Westridge Laboratories formula; Westridge's FDA
+    // registration/listing names "Lava Intimates Silicone" under 510(k) K141767
+    // (cleared 2015-03-09, NUC, Class II), and GUDID DI 00198715540161 is Lava
+    // Intimates' 4 oz silicone personal lubricant (the UPC on Lava's photo). Lava To-Go and The Lava Ritual Bundle were added as their own
     // cards on 2026-11-23 at Eliz's request. Not added as products: Hanky by
     // Lava (intimacy towel, an accessory; it is described inside the bundle
     // card) and the discounted "Dented Batch" Lava Lush.
@@ -10876,7 +10880,7 @@ export const BRAND_PRODUCTS = [
         ],
         summary: 'A silicone-based personal lubricant made by Lava, a brand founded by pelvic health physical therapist Kristen Damery. It has three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says the glide lasts longer than water-based lubes, doesn\'t absorb into skin or get sticky, and is water resistant, so it works in the shower or bath. Lava says it is compatible with latex, polyurethane and polyisoprene condoms and is for vaginal, anal or penile use. Sold as a 4 oz bottle or a two-bottle pack; the same formula comes in travel sachets (Lava To-Go) and in The Lava Ritual Bundle.',
         safety: {
-            fdaStatus: 'Lava says the lubricant is "FDA 510(k) cleared as a Class II medical device" and made in the USA. ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name. Personal lubricants are often cleared under the manufacturer\'s name, which Lava doesn\'t list, so this is per Lava until a K-number is confirmed.',
+            fdaStatus: 'FDA 510(k)-cleared Class II personal lubricant under K141767 (Westridge Laboratories, cleared March 9, 2015, for use with latex, polyisoprene and polyurethane condoms). Lava\'s lube is made by Westridge: Westridge\'s FDA device listing names "Lava Intimates Silicone" under that clearance, and the FDA\'s device database (GUDID) lists Lava Intimates\' 4 oz silicone personal lubricant (product code NUC). Checked November 24, 2026.',
             materials: '4 fl oz (110 mL) bottle; also sold as 2 mL foil sachets (Lava To-Go, 7 per box). Ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Lava says it has no preservatives, dyes or fragrance and no animal-based ingredients.',
             recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
             sideEffects: 'Lava\'s product page lists no side effects. Stop using it if you notice irritation.',
@@ -10943,6 +10947,7 @@ export const BRAND_PRODUCTS = [
             doctor: { links: [] },
             scientific: {
                 links: [
+                    { platform: 'website', url: 'https://www.accessdata.fda.gov/cdrh_docs/pdf14/K141767.pdf', text: 'FDA: 510(k) K141767 clearance letter and summary (Westridge Laboratories, 2015)', summary: 'The FDA clearance that covers Lava\'s silicone lubricant: a Class II over-the-counter personal lubricant, tested as compatible with latex, polyisoprene and polyurethane condoms.' },
                     { platform: 'pubmed', url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', text: 'Is wetter better? Safety of over-the-counter personal lubricants (PLoS One, 2012)', summary: 'Lab study of 14 lubricants on cell lines and tissue samples: both silicone-based lubricants tested (not Lava) were among the safest; most hyperosmolar water-based gels damaged tissue. Not a study in people.' },
                     { platform: 'pubmed', url: 'https://pubmed.ncbi.nlm.nih.gov/21143591/', text: 'Lubricant use and women\'s sexual pleasure and genital symptoms (J Sex Med, 2011)', summary: '5-week diary study of 2,453 women using one of six water- or silicone-based lubricants (not Lava): both types were linked to more pleasure and satisfaction and rarely to genital symptoms; water-based had fewer symptoms than silicone-based.' },
                 ],
@@ -10956,7 +10961,7 @@ export const BRAND_PRODUCTS = [
             },
         },
         integrations: [],
-        badges: [],
+        badges: ['FDA-Cleared'],
         isEmergingBrand: true,
     },
     {
@@ -11139,7 +11144,7 @@ export const BRAND_PRODUCTS = [
         ],
         summary: 'Lava Lube in a box of seven pre-measured 2 mL foil sachets, for travel or to keep in a bag, purse or pocket. It is the same silicone-based lubricant as the Lava Lube bottle: three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says it is long-lasting, water resistant and compatible with latex, polyurethane and polyisoprene condoms. Made by Lava, founded by pelvic health physical therapist Kristen Damery.',
         safety: {
-            fdaStatus: 'Lava says its personal lubricant is "FDA 510(k) cleared as a Class II medical device" and made in the USA. ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name. Personal lubricants are often cleared under the manufacturer\'s name, which Lava doesn\'t list, so this is per Lava until a K-number is confirmed.',
+            fdaStatus: 'FDA 510(k)-cleared Class II personal lubricant under K141767 (Westridge Laboratories, cleared March 9, 2015, for use with latex, polyisoprene and polyurethane condoms). Lava\'s lube is made by Westridge: Westridge\'s FDA device listing names "Lava Intimates Silicone" under that clearance, and the FDA\'s device database (GUDID) lists Lava Intimates\' 4 oz silicone personal lubricant (product code NUC). Checked November 24, 2026.',
             materials: '7 single-use 2 mL (0.068 fl oz) foil sachets per box. Ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Lava says it has no preservatives, dyes or fragrance and no animal-based ingredients.',
             recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
             sideEffects: 'Lava\'s product page lists no side effects. Stop using it if you notice irritation.',
@@ -11186,7 +11191,11 @@ export const BRAND_PRODUCTS = [
         scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            scientific: {
+                links: [
+                    { platform: 'website', url: 'https://www.accessdata.fda.gov/cdrh_docs/pdf14/K141767.pdf', text: 'FDA: 510(k) K141767 clearance letter and summary (Westridge Laboratories, 2015)', summary: 'The FDA clearance that covers Lava\'s silicone lubricant: a Class II over-the-counter personal lubricant, tested as compatible with latex, polyisoprene and polyurethane condoms.' },
+                ],
+            },
             community: {
                 links: [
                     { platform: 'website', url: 'https://mylavalube.com/products/lava-to-go-1', text: 'mylavalube.com: Lava To-Go', summary: 'Lava\'s product page for the 7-sachet box.' },
@@ -11195,7 +11204,7 @@ export const BRAND_PRODUCTS = [
             },
         },
         integrations: [],
-        badges: [],
+        badges: ['FDA-Cleared'],
         isEmergingBrand: true,
     },
     {
@@ -11214,7 +11223,7 @@ export const BRAND_PRODUCTS = [
         image: '/products/lava/lava-ritual-bundle.webp',
         summary: 'A set of three Lava products: a full-size 4 oz bottle of Lava Lube (silicone-based, no preservatives, dyes or fragrance), Lava To-Go (seven 2 mL travel sachets of the same lube) and Hanky by Lava, a 17 x 30 inch water-resistant intimacy towel to lay down during sex to protect the sheets and for cleanup afterward. Bought separately on mylavalube.com the three cost $65.97 ($29.99, $16.99 and $18.99); the bundle is $55.',
         safety: {
-            fdaStatus: 'Lava says its personal lubricant is "FDA 510(k) cleared as a Class II medical device." ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name, so this is per Lava until a K-number is confirmed. The towel is not a medical device.',
+            fdaStatus: 'FDA 510(k)-cleared Class II personal lubricant under K141767 (Westridge Laboratories, cleared March 9, 2015, for use with latex, polyisoprene and polyurethane condoms). Lava\'s lube is made by Westridge: Westridge\'s FDA device listing names "Lava Intimates Silicone" under that clearance, and the FDA\'s device database (GUDID) lists Lava Intimates\' 4 oz silicone personal lubricant (product code NUC). Checked November 24, 2026. The towel is a textile, so no FDA review applies to it.',
             materials: 'Lava Lube 4 fl oz bottle and 7 x 2 mL Lava To-Go sachets. Lube ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Hanky by Lava: water-resistant intimacy towel, 17 x 30 inches (fabric not listed on mylavalube.com).',
             recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
             sideEffects: 'Lava\'s product pages list no side effects. Stop using the lube if you notice irritation.',
@@ -11260,7 +11269,11 @@ export const BRAND_PRODUCTS = [
         scientificCitations: [],
         verificationLinks: {
             doctor: { links: [] },
-            scientific: { links: [] },
+            scientific: {
+                links: [
+                    { platform: 'website', url: 'https://www.accessdata.fda.gov/cdrh_docs/pdf14/K141767.pdf', text: 'FDA: 510(k) K141767 clearance letter and summary (Westridge Laboratories, 2015)', summary: 'The FDA clearance that covers Lava\'s silicone lubricant: a Class II over-the-counter personal lubricant, tested as compatible with latex, polyisoprene and polyurethane condoms.' },
+                ],
+            },
             community: {
                 links: [
                     { platform: 'website', url: 'https://mylavalube.com/products/the-lava-ritual-bundle', text: 'mylavalube.com: The Lava Ritual Bundle', summary: 'Lava\'s bundle page, with what\'s inside.' },
@@ -11270,7 +11283,7 @@ export const BRAND_PRODUCTS = [
             },
         },
         integrations: [],
-        badges: [],
+        badges: ['FDA-Cleared'],
         isEmergingBrand: true,
     },
 ];
