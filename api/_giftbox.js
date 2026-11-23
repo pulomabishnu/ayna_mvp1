@@ -1,15 +1,45 @@
+/* global process */
 /**
  * Shared pieces for the gift box (monthly focus group winner): input checks,
- * public product shape, and the two emails. Tables and checkout live in
+ * public product shape, and the emails (checkout + order status updates). Tables and checkout live in
  * supabase/migrations/20261030120000_gift_box.sql.
  */
-import { SITE_URL, escapeHtml, renderLayout } from './_campaignEmail.js';
+import { SITE_URL, emailsEnabled, escapeHtml, renderLayout } from './_campaignEmail.js';
 
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const TOKEN_RE = /^[A-Za-z0-9_-]{20,64}$/;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const ORDER_STATUSES = ['new', 'preparing', 'shipped', 'delivered', 'canceled'];
 export const MAX_CART_LINES = 50;
+export const CARRIERS = { usps: 'USPS', ups: 'UPS', fedex: 'FedEx', dhl: 'DHL', other: 'Other' };
+/** Statuses that email the customer when an admin moves an order to them. */
+export const EMAILED_STATUSES = ['preparing', 'shipped', 'delivered', 'canceled'];
+
+/** Tracking number as typed: letters, digits, spaces and dashes only. Null when empty or junk. */
+export function cleanTracking(v) {
+  const s = String(v ?? '').replace(/[\s-]+/g, '').toUpperCase();
+  return /^[A-Z0-9]{4,60}$/.test(s) ? s : null;
+}
+
+/** Carrier tracking page, or null when we can't build one. */
+export function trackingUrl(carrier, number) {
+  const n = cleanTracking(number);
+  if (!n) return null;
+  const q = encodeURIComponent(n);
+  switch (carrier) {
+    case 'usps': return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${q}`;
+    case 'ups': return `https://www.ups.com/track?tracknum=${q}`;
+    case 'fedex': return `https://www.fedex.com/fedextrack/?trknbr=${q}`;
+    case 'dhl': return `https://www.dhl.com/us-en/home/tracking/tracking-express.html?tracking-id=${q}`;
+    default: return null;
+  }
+}
+
+/** Who is cc'd on status emails: GIFTBOX_CC_EMAILS (comma separated), else the three founders. */
+export function giftboxCcRecipients() {
+  const raw = process.env.GIFTBOX_CC_EMAILS ?? 'ameera@aynahealth.co,puloma@aynahealth.co,eliz@aynahealth.co';
+  return raw.split(',').map((e) => e.trim().toLowerCase()).filter((e) => EMAIL_RE.test(e));
+}
 
 const clean = (v, max) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
 
@@ -122,4 +152,92 @@ export function teamOrderEmail({ kind, placedBy, items, totalCents, budgetCents,
     </div></div>`,
     text: `${who}\n\n${itemText(items)}\n\n${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${adminUrl}`,
   };
+}
+
+const STATUS_COPY = {
+  preparing: {
+    subject: "We're packing your ayna gift box",
+    title: "We're packing your box.",
+    line: "Your picks are being packed now. We'll email you again when it ships.",
+  },
+  shipped: {
+    subject: 'Your ayna gift box has shipped',
+    title: "It's on the way.",
+    line: 'Your gift box has shipped.',
+  },
+  delivered: {
+    subject: 'Your ayna gift box was delivered',
+    title: 'Your box was delivered.',
+    line: 'Your gift box shows as delivered. We hope you love everything in it. Reply to this email if anything is missing or damaged.',
+  },
+  canceled: {
+    subject: 'Your ayna gift box order was canceled',
+    title: 'Your order was canceled.',
+    line: 'Your gift box order was canceled. Reply to this email if you have questions.',
+  },
+};
+
+/** To the customer when an admin moves their order to preparing / shipped / delivered / canceled. */
+export function orderStatusEmail({ status, name, items, carrier, trackingNumber }) {
+  const copy = STATUS_COPY[status];
+  if (!copy) return null;
+  const first = String(name || '').split(' ')[0];
+  const number = cleanTracking(trackingNumber);
+  const url = number ? trackingUrl(carrier, number) : null;
+  const carrierName = CARRIERS[carrier] && carrier !== 'other' ? CARRIERS[carrier] : '';
+  const showTracking = number && (status === 'shipped' || status === 'delivered');
+  const trackingLabel = [carrierName, number].filter(Boolean).join(' ');
+  const trackingHtml = showTracking
+    ? `<p style="margin:0 0 18px;font:400 17px/27px ${UI};color:${INK}">Tracking: <b>${escapeHtml(trackingLabel)}</b>${url ? `<br /><a href="${escapeHtml(url)}" style="color:${INK};font:600 17px/27px ${UI}">Track your package</a>` : ''}</p>`
+    : '';
+  const body = `
+    <h1 style="margin:0 0 16px;font:400 40px/44px 'DM Serif Display', Georgia, serif;color:${INK}">${escapeHtml(copy.title)}</h1>
+    <p style="margin:0 0 18px;font:400 17px/27px ${UI};color:${INK}">${first ? `Hi ${escapeHtml(first)}. ` : ''}${escapeHtml(copy.line)}</p>
+    ${trackingHtml}
+    ${items?.length ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e8d58f;border-bottom:1px solid #e8d58f;margin:0 0 18px">${itemRows(items)}</table>` : ''}`;
+  const text = [
+    copy.title,
+    `${first ? `Hi ${first}. ` : ''}${copy.line}`,
+    showTracking ? `Tracking: ${trackingLabel}${url ? `\n${url}` : ''}` : '',
+    items?.length ? itemText(items) : '',
+  ].filter(Boolean).join('\n\n');
+  return {
+    subject: copy.subject,
+    html: renderLayout({ title: copy.subject, preheader: copy.line, body, reason: 'You are getting this because you ordered an ayna gift box.' }),
+    text,
+  };
+}
+
+/**
+ * Sends a gift box email to the customer with cc. Same gates as
+ * sendCampaignEmail: CAMPAIGN_EMAILS_ENABLED=1, RESEND_API_KEY, and a real
+ * postal address in the footer. Never throws.
+ * @returns {Promise<{ ok: boolean, skipped?: boolean, error?: string }>}
+ */
+export async function sendGiftboxEmail(to, message, { cc = [], fetchImpl = fetch } = {}) {
+  if (!emailsEnabled()) return { ok: false, skipped: true };
+  if (!to) return { ok: false, error: 'no_recipient' };
+  if (String(message?.html || '').includes('{{COMPANY_POSTAL_ADDRESS}}')) return { ok: false, error: 'no_postal_address' };
+  const toLower = String(to).toLowerCase();
+  const ccList = [...new Set(cc.map((e) => String(e).toLowerCase()))].filter((e) => e !== toLower);
+  try {
+    const res = await fetchImpl('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: process.env.CAMPAIGN_FROM_EMAIL || process.env.CONTACT_FROM_EMAIL || 'ayna <puloma@aynahealth.co>',
+        to: [to],
+        ...(ccList.length ? { cc: ccList } : {}),
+        reply_to: ccList.length ? ccList : undefined,
+        subject: message.subject,
+        html: message.html,
+        text: message.text,
+      }),
+      signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined,
+    });
+    if (!res.ok) return { ok: false, error: `resend_${res.status}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e?.name === 'TimeoutError' ? 'timeout' : 'network' };
+  }
 }
