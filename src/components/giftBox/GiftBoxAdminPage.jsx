@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import './gift-box.css';
 import { adminAction, getAdmin, giftLink, money } from './giftBoxClient';
 import { localToday } from '../../utils/localDate.js';
+import OrderControls from './OrderControls.jsx';
+
+const CARRIERS = { usps: 'USPS', ups: 'UPS', fedex: 'FedEx', dhl: 'DHL', other: 'Other' };
 
 /**
  * /admin/gift: the team lists gift box products, makes one-time winner links,
@@ -24,9 +27,9 @@ function csvCell(v) {
 }
 
 function downloadCsv(orders) {
-  const head = ['placed', 'kind', 'placed_by', 'status', 'items', 'total', 'limit', 'ship_name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'note'];
+  const head = ['placed', 'kind', 'placed_by', 'status', 'carrier', 'tracking', 'items', 'total', 'limit', 'ship_name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'note'];
   const rows = orders.map((o) => [
-    o.created_at, o.kind, o.placed_by, o.status,
+    o.created_at, o.kind, o.placed_by, o.status, o.carrier ? CARRIERS[o.carrier] || o.carrier : '', o.tracking_number || '',
     (o.items || []).map((it) => `${[it.brand, it.name].filter(Boolean).join(' ')}${it.qty > 1 ? ` x${it.qty}` : ''}`).join('; '),
     money(o.total_cents), o.budget_cents ? money(o.budget_cents) : '',
     o.ship_name, o.ship_email, o.ship_phone, [o.address_line1, o.address_line2].filter(Boolean).join(', '), o.city, o.state, o.postal_code, o.note,
@@ -56,16 +59,7 @@ function Orders({ orders, act }) {
       <ul className="gb-admin__list">
         {orders.map((o) => (
           <li key={o.id} className="ay-group is-padded gb-order">
-            <div className="gb-order__top">
-              <div>
-                <b>{o.ship_name}</b>
-                <span className="ay-meta"> · {o.kind === 'admin' ? `admin (${o.placed_by})` : `winner: ${o.placed_by}`} · {new Date(o.created_at).toLocaleDateString()}</span>
-              </div>
-              <select className="ay-field ay-field--select gb-status" aria-label="Order status" value={o.status}
-                onChange={(e) => act({ action: 'order_status', id: o.id, status: e.target.value })}>
-                {Object.entries(ORDER_STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-              </select>
-            </div>
+            <OrderControls o={o} act={act} />
             <ul className="gb-lines">
               {(o.items || []).map((it) => (
                 <li key={it.id}><span>{[it.brand, it.name].filter(Boolean).join(' · ')}{it.qty > 1 ? ` × ${it.qty}` : ''}</span><b className="ay-num">{money(it.priceCents * it.qty)}</b></li>

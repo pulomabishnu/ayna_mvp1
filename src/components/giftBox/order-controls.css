@@ -1,0 +1,5 @@
+.app-container .gb-tracking { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ay-s8); margin: var(--ay-s12) 0 var(--ay-s8); }
+.app-container .gb-tracking__carrier { width: auto !important; min-height: 40px !important; padding-block: 8px !important; }
+.app-container .gb-tracking__number { flex: 1 1 200px; min-width: 0; min-height: 40px !important; padding-block: 8px !important; }
+.app-container .gb-tracking__notify { display: block; margin: 0 0 var(--ay-s8); }
+.app-container .gb-tracking__last, .app-container .gb-tracking__note { margin: 0 0 var(--ay-s8); }
