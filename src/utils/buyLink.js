@@ -70,6 +70,8 @@ const PARTNER_REF_PARAMS = [
   { pattern: /\blim method\b/, hosts: ['limmethod.com'], param: 'ref', value: 'Ayna_Health' },
   { pattern: /\belitone\b/, hosts: ['elitone.com'], param: 'af', value: 'aynahealth' },
   { pattern: /\bbuni\b/, hosts: ['bunibody.com'], param: 'ref', value: 'oxaevspm' },
+  // Lava: GoAffPro records ?ref=AYNA10 on any page of the store (tested 2026-11-24).
+  { pattern: /\blava\b/, hosts: ['mylavalube.com'], param: 'ref', value: 'AYNA10' },
 ];
 
 function withPartnerRef(product, url) {

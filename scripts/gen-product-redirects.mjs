@@ -6,6 +6,12 @@ import fs from 'node:fs';
 import { ALL_PRODUCTS, isTeenProduct } from '../src/data/products.js';
 import { productRouteKey } from '../src/utils/productRoute.js';
 
+/** Product renames after launch (old readable slug -> product id), so shared links keep working. */
+export const RENAMED_SLUGS = {
+  // "The Lava Ritual Bundle" -> "Lava Ritual Bundle" (Eliz, 2026-11-24); the old URL was in the sitemap for a day.
+  'lava-the-lava-ritual-bundle': 'p-lava-ritual-bundle',
+};
+
 export function productRedirects() {
   const seen = new Set();
   const out = [];
@@ -15,6 +21,12 @@ export function productRedirects() {
     if (!slug || slug === p.id || seen.has(p.id)) continue;
     seen.add(p.id);
     out.push({ source: `/product/${p.id}`, destination: `/product/${slug}`, permanent: true });
+  }
+  // Readable URLs that were live before a product was renamed: old slug -> product id.
+  for (const [oldSlug, id] of Object.entries(RENAMED_SLUGS)) {
+    const p = ALL_PRODUCTS.find((x) => x.id === id);
+    const slug = p && productRouteKey(p);
+    if (slug && slug !== oldSlug) out.push({ source: `/product/${oldSlug}`, destination: `/product/${slug}`, permanent: true });
   }
   return out.sort((a, b) => a.source.localeCompare(b.source));
 }

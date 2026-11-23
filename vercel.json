@@ -319,6 +319,11 @@
       "permanent": true
     },
     {
+      "source": "/product/lava-the-lava-ritual-bundle",
+      "destination": "/product/lava-ritual-bundle",
+      "permanent": true
+    },
+    {
       "source": "/product/p-aisle-underwear",
       "destination": "/product/aisle-period-underwear",
       "permanent": true
@@ -940,7 +945,7 @@
     },
     {
       "source": "/product/p-lava-ritual-bundle",
-      "destination": "/product/lava-the-lava-ritual-bundle",
+      "destination": "/product/lava-ritual-bundle",
       "permanent": true
     },
     {
