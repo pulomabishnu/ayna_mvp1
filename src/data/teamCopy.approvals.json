@@ -1864,5 +1864,41 @@
   "by": "Eliz",
   "what": "p-lava-ritual-bundle.name",
   "note": "Eliz asked to rename it to Lava Ritual Bundle (2026-11-24)"
+ },
+ {
+  "at": "2026-11-23T15:19:20.554Z",
+  "by": "Eliz",
+  "what": "p-lava-lube.safety.fdaStatus",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
+ },
+ {
+  "at": "2026-11-23T15:19:20.759Z",
+  "by": "Eliz",
+  "what": "p-lava-lube.badges",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
+ },
+ {
+  "at": "2026-11-23T15:19:20.958Z",
+  "by": "Eliz",
+  "what": "p-lava-to-go.safety.fdaStatus",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
+ },
+ {
+  "at": "2026-11-23T15:19:21.181Z",
+  "by": "Eliz",
+  "what": "p-lava-to-go.badges",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
+ },
+ {
+  "at": "2026-11-23T15:19:21.375Z",
+  "by": "Eliz",
+  "what": "p-lava-ritual-bundle.safety.fdaStatus",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
+ },
+ {
+  "at": "2026-11-23T15:19:21.560Z",
+  "by": "Eliz",
+  "what": "p-lava-ritual-bundle.badges",
+  "note": "Eliz: yes, mark Lava FDA-cleared (K141767, Westridge Laboratories), 2026-11-24"
  }
 ]
