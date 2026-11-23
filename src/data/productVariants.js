@@ -1556,13 +1556,6 @@ export const PRODUCT_VARIANTS = {
         "priceLabel": "$54.99",
         "url": "https://mylavalube.com/products/lava-lube-2-pack?variant=47260369813676",
         "image": "/products/lava/lava-lube-2-pack.webp"
-      },
-      {
-        "id": "45209753878700",
-        "label": "Lava To-Go (7 x 2 mL sachets)",
-        "priceLabel": "$16.99",
-        "url": "https://mylavalube.com/products/lava-to-go-1?variant=45209753878700",
-        "image": "/products/lava/lava-to-go.webp"
       }
     ]
   }

@@ -939,6 +939,16 @@
       "permanent": true
     },
     {
+      "source": "/product/p-lava-ritual-bundle",
+      "destination": "/product/lava-the-lava-ritual-bundle",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lava-to-go",
+      "destination": "/product/lava-to-go-lubricant-sachets",
+      "permanent": true
+    },
+    {
       "source": "/product/p-lelo-sona",
       "destination": "/product/lelo-sona-cruise",
       "permanent": true

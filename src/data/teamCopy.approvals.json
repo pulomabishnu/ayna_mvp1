@@ -1840,5 +1840,23 @@
   "by": "Eliz",
   "what": "added 3 new products",
   "note": "p-lava-lube, p-lava-lit-intimacy-balm, p-lava-lush-massage-oil-bar"
+ },
+ {
+  "at": "2026-11-23T03:11:56.995Z",
+  "by": "Eliz",
+  "what": "added 2 new products",
+  "note": "p-lava-to-go, p-lava-ritual-bundle"
+ },
+ {
+  "at": "2026-11-23T03:14:50.532Z",
+  "by": "Eliz",
+  "what": "p-lava-lube.price",
+  "note": "Lava To-Go moved to its own card (Eliz, 2026-11-23)"
+ },
+ {
+  "at": "2026-11-23T03:14:50.720Z",
+  "by": "Eliz",
+  "what": "p-lava-lube.summary",
+  "note": "Lava To-Go moved to its own card (Eliz, 2026-11-23)"
  }
 ]
