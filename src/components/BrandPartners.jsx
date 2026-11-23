@@ -189,6 +189,14 @@ const PARTNERS = [
       'Dentist-designed mouth tape that encourages nasal breathing during sleep.',
   },
   {
+    // Affiliate partner from 2026-11-23 (see src/utils/partnerBrands.js).
+    brand: 'Lava',
+    logo: '/products/lava/lava-lube-bottle.webp',
+    url: 'https://mylavalube.com/?ref=AYNA10',
+    blurb:
+      'Silicone lubricant and intimacy care from a brand founded by a pelvic health physical therapist.',
+  },
+  {
     // Confirmed partner from 2026-11-04, PRE-LAUNCH: waitlist only. waitlistUrl
     // is Naya's waitlist page until ayna's waitlist affiliate link is added.
     brand: 'Naya',

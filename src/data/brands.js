@@ -10837,7 +10837,8 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
-    // Lava (mylavalube.com): added 2026-11-23 at Eliz's request.
+    // Lava (mylavalube.com): added 2026-11-23 at Eliz's request; ayna affiliate
+    // partner (link https://mylavalube.com/?ref=AYNA10 on every product, from Eliz).
     // Sources, all read for these entries on 2026-11-23: mylavalube.com
     // (Shopify products.json, each product page's text and photos, About page
     // with Founder note and FAQs, two blog articles) and the product photos Eliz
@@ -10864,6 +10865,7 @@ export const BRAND_PRODUCTS = [
         price: '$29.99 (4 oz bottle); $54.99 for two bottles, per mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/personal-lubricant',
+        affiliateUrl: 'https://mylavalube.com/?ref=AYNA10', // ayna affiliate link (Eliz, 2026-11-23)
         // Customer reviews on Lava's own product page (Yotpo widget, checked 2026-11-23).
         brandReviewsUrl: 'https://mylavalube.com/products/personal-lubricant',
         brandReviewsLabel: 'Customer reviews on mylavalube.com: Lava Lube',
@@ -10971,6 +10973,7 @@ export const BRAND_PRODUCTS = [
         price: '$34.99 (0.45 oz / 13 g stick), pre-sale on mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/lava-lit',
+        affiliateUrl: 'https://mylavalube.com/?ref=AYNA10', // ayna affiliate link (Eliz, 2026-11-23)
         image: '/products/lava/lava-lit.webp',
         gallery: [
             '/products/lava/lava-lit-ingredients.webp',
@@ -11051,6 +11054,7 @@ export const BRAND_PRODUCTS = [
         price: '$24.99 (2.8 oz / 80 g bar in a tin), per mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/lava-lush',
+        affiliateUrl: 'https://mylavalube.com/?ref=AYNA10', // ayna affiliate link (Eliz, 2026-11-23)
         image: '/products/lava/lava-lush.webp',
         gallery: [
             '/products/lava/lava-lush-ingredients.webp',
@@ -11128,6 +11132,7 @@ export const BRAND_PRODUCTS = [
         price: '$16.99 (7 x 2 mL foil sachets), per mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/lava-to-go-1',
+        affiliateUrl: 'https://mylavalube.com/?ref=AYNA10', // ayna affiliate link (Eliz, 2026-11-23)
         image: '/products/lava/lava-to-go.webp',
         gallery: [
             '/products/lava/lava-lube-clean-care.webp',
@@ -11207,6 +11212,7 @@ export const BRAND_PRODUCTS = [
         price: '$55 (4 oz Lava Lube + Lava To-Go 7 x 2 mL sachets + Hanky by Lava towel), per mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/the-lava-ritual-bundle',
+        affiliateUrl: 'https://mylavalube.com/?ref=AYNA10', // ayna affiliate link (Eliz, 2026-11-23)
         image: '/products/lava/lava-ritual-bundle.webp',
         summary: 'A set of three Lava products: a full-size 4 oz bottle of Lava Lube (silicone-based, no preservatives, dyes or fragrance), Lava To-Go (seven 2 mL travel sachets of the same lube) and Hanky by Lava, a 17 x 30 inch water-resistant intimacy towel to lay down during sex to protect the sheets and for cleanup afterward. Bought separately on mylavalube.com the three cost $65.97 ($29.99, $16.99 and $18.99); the bundle is $55.',
         safety: {
