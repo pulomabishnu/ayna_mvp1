@@ -189,6 +189,10 @@ const NOV5_MAP = {
   'p-momotaro-bath-body-tonic': { 'vaginal.irritation': WEAK },
   'p-momotaro-body-oil': { 'skin.hormonal': WEAK, 'postpartum.body_skin': WEAK },
   'p-estherformula-ceramide-strips': { 'skin.hormonal': WEAK },
+  // Lava (Nov 23): tagged under what Lava markets each for. Lava Lit is a clitoral tingling/warming balm;
+  // Lava Lush is a body and massage bar Lava sells for intimacy (not a lubricant), so only a weak fit.
+  'p-lava-lit-intimacy-balm': { 'sexual.wellness': SECONDARY, 'sexual.libido': ADJACENT },
+  'p-lava-lush-massage-oil-bar': { 'sexual.wellness': WEAK },
   'p-livi-after-sex-absorption-device': { 'sexual.wellness': SECONDARY, 'vaginal.discharge': ADJACENT },
   'p-seeking-health-dao-enzyme-formerly-histamine-dig': { 'bloating.digestive': ADJACENT },
   'p-queen-of-the-thrones-ritual-starter-liver-castor': { 'bloating.digestive': WEAK },

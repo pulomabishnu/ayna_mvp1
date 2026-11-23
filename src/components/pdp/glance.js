@@ -130,7 +130,8 @@ export function formatLabel(product) {
   const cat = categoryLabel(product);
   if (product?.type === 'digital') return [cat, 'digital service'].filter(Boolean).join(' · ');
   const m = `${product?.price || ''} ${product?.name || ''}`.match(FORM_RE);
-  const form = m ? m[1].toLowerCase().replace(/^capsule$/, 'capsules').replace(/^softgel$/, 'softgels').replace(/^tablet$/, 'tablets') : '';
+  const form = m && /^oil$/i.test(m[1]) && /\boil bar\b/i.test(String(product?.name || '')) ? 'solid oil bar'
+    : m ? m[1].toLowerCase().replace(/^capsule$/, 'capsules').replace(/^softgel$/, 'softgels').replace(/^tablet$/, 'tablets') : '';
   return [cat, form && !norm(cat).includes(norm(form)) ? form : ''].filter(Boolean).join(' · ');
 }
 

@@ -1536,6 +1536,35 @@ export const PRODUCT_VARIANTS = {
         "amazonAsin": "B08TLMWZB4"
       }
     ]
+  },
+  "p-lava-lube": {
+    "sourceUrl": "https://mylavalube.com/products/personal-lubricant",
+    "verifiedAt": "2026-11-23",
+    "familyName": "Lava Lube",
+    "defaultVariantId": "44206281982124",
+    "variants": [
+      {
+        "id": "44206281982124",
+        "label": "4 oz bottle",
+        "priceLabel": "$29.99",
+        "url": "https://mylavalube.com/products/personal-lubricant?variant=44206281982124",
+        "image": "/products/lava/lava-lube-bottle.webp"
+      },
+      {
+        "id": "47260369813676",
+        "label": "2-pack (two 4 oz bottles)",
+        "priceLabel": "$54.99",
+        "url": "https://mylavalube.com/products/lava-lube-2-pack?variant=47260369813676",
+        "image": "/products/lava/lava-lube-2-pack.webp"
+      },
+      {
+        "id": "45209753878700",
+        "label": "Lava To-Go (7 x 2 mL sachets)",
+        "priceLabel": "$16.99",
+        "url": "https://mylavalube.com/products/lava-to-go-1?variant=45209753878700",
+        "image": "/products/lava/lava-to-go.webp"
+      }
+    ]
   }
 };
 
