@@ -18,7 +18,7 @@ const PACKSHOT_PENDING = new Set([
   'p-resa-rhythm-bracelet',
   // Nov 14 additions (verifiedNov14Products.js): brand/retailer photos until packshots are shot.
   'p-ostrichpillow-eye-mask', 'p-voltaren-arthritis-pain-gel', 'p-theralogix-theracran-one', 'p-this-works-deep-sleep-heavenly-candle', 'p-upup-hot-cold-reusable-pack',
-  'p-lava-lube', 'p-lava-lit-intimacy-balm', 'p-lava-lush-massage-oil-bar', // Lava (2026-11-23): Eliz's and mylavalube.com photos, no studio packshot yet
+  'p-lava-lube', 'p-lava-lit-intimacy-balm', 'p-lava-lush-massage-oil-bar', 'p-lava-to-go', 'p-lava-ritual-bundle', // Lava (2026-11-23): Eliz's and mylavalube.com photos, no studio packshot yet
   'p-goodcycle-dailybasis', // GoodCycle (2026-10-27): brand photos from takegoodcycle.com, no studio packshot yet
   // Livi (Nov 4, Eliz's photo): brand photo until a packshot is shot.
   'p-livi-after-sex-absorption-device',

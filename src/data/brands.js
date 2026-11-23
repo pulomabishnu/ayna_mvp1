@@ -10847,9 +10847,10 @@ export const BRAND_PRODUCTS = [
     // "FDA 510(k) cleared as a Class II medical device"; openFDA (510(k) and
     // registration/listing, searched by name, founder and "Lava") shows no
     // clearance under the Lava name, so the card says "per Lava" and asks for
-    // the K-number. Not added as products: Hanky by Lava (intimacy towel,
-    // an accessory), The Lava Ritual Bundle (lube + To-Go + Hanky; its photo is
-    // in the lube's gallery) and the discounted "Dented Batch" Lava Lush.
+    // the K-number. Lava To-Go and The Lava Ritual Bundle were added as their own
+    // cards on 2026-11-23 at Eliz's request. Not added as products: Hanky by
+    // Lava (intimacy towel, an accessory; it is described inside the bundle
+    // card) and the discounted "Dented Batch" Lava Lush.
     // Photos stored under public/products/lava/.
     {
         id: 'p-lava-lube',
@@ -10860,7 +10861,7 @@ export const BRAND_PRODUCTS = [
         internal: false,
         healthFunctions: ['sexual-health'],
         tags: ['comfort', 'discomfort', 'fragrance-free', 'hormone-free'],
-        price: '$29.99 (4 oz bottle); $54.99 for two bottles; $16.99 for Lava To-Go (7 x 2 mL sachets), per mylavalube.com',
+        price: '$29.99 (4 oz bottle); $54.99 for two bottles, per mylavalube.com',
         whereToBuy: ['mylavalube.com'],
         url: 'https://mylavalube.com/products/personal-lubricant',
         // Customer reviews on Lava's own product page (Yotpo widget, checked 2026-11-23).
@@ -10870,12 +10871,10 @@ export const BRAND_PRODUCTS = [
         image: '/products/lava/lava-lube-bottle.webp',
         gallery: [
             '/products/lava/lava-lube-2-pack.webp',
-            '/products/lava/lava-to-go.webp',
-            '/products/lava/lava-ritual-bundle.webp',
             '/products/lava/lava-lube-water-resistant.webp',
             '/products/lava/lava-lube-clean-care.webp',
         ],
-        summary: 'A silicone-based personal lubricant made by Lava, a brand founded by pelvic health physical therapist Kristen Damery. It has three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says the glide lasts longer than water-based lubes, doesn\'t absorb into skin or get sticky, and is water resistant, so it works in the shower or bath. Lava says it is compatible with latex, polyurethane and polyisoprene condoms and is for vaginal, anal or penile use. Sold as a 4 oz bottle, a two-bottle pack, or Lava To-Go, a box of seven 2 mL sachets for travel.',
+        summary: 'A silicone-based personal lubricant made by Lava, a brand founded by pelvic health physical therapist Kristen Damery. It has three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says the glide lasts longer than water-based lubes, doesn\'t absorb into skin or get sticky, and is water resistant, so it works in the shower or bath. Lava says it is compatible with latex, polyurethane and polyisoprene condoms and is for vaginal, anal or penile use. Sold as a 4 oz bottle or a two-bottle pack; the same formula comes in travel sachets (Lava To-Go) and in The Lava Ritual Bundle.',
         safety: {
             fdaStatus: 'Lava says the lubricant is "FDA 510(k) cleared as a Class II medical device" and made in the USA. ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name. Personal lubricants are often cleared under the manufacturer\'s name, which Lava doesn\'t list, so this is per Lava until a K-number is confirmed.',
             materials: '4 fl oz (110 mL) bottle; also sold as 2 mL foil sachets (Lava To-Go, 7 per box). Ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Lava says it has no preservatives, dyes or fragrance and no animal-based ingredients.',
@@ -11110,6 +11109,159 @@ export const BRAND_PRODUCTS = [
             community: {
                 links: [
                     { platform: 'website', url: 'https://mylavalube.com/products/lava-lush', text: 'mylavalube.com: Lava Lush', summary: 'Lava\'s product page, with directions, the full ingredient list and the ingredient graphic.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-lava-to-go',
+        name: 'Lava To-Go Lubricant Sachets',
+        brand: 'Lava',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health'],
+        tags: ['comfort', 'discomfort', 'fragrance-free', 'hormone-free'],
+        price: '$16.99 (7 x 2 mL foil sachets), per mylavalube.com',
+        whereToBuy: ['mylavalube.com'],
+        url: 'https://mylavalube.com/products/lava-to-go-1',
+        image: '/products/lava/lava-to-go.webp',
+        gallery: [
+            '/products/lava/lava-lube-clean-care.webp',
+            '/products/lava/lava-to-go-bedside.webp',
+            '/products/lava/lava-to-go-travel.webp',
+        ],
+        summary: 'Lava Lube in a box of seven pre-measured 2 mL foil sachets, for travel or to keep in a bag, purse or pocket. It is the same silicone-based lubricant as the Lava Lube bottle: three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says it is long-lasting, water resistant and compatible with latex, polyurethane and polyisoprene condoms. Made by Lava, founded by pelvic health physical therapist Kristen Damery.',
+        safety: {
+            fdaStatus: 'Lava says its personal lubricant is "FDA 510(k) cleared as a Class II medical device" and made in the USA. ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name. Personal lubricants are often cleared under the manufacturer\'s name, which Lava doesn\'t list, so this is per Lava until a K-number is confirmed.',
+            materials: '7 single-use 2 mL (0.068 fl oz) foil sachets per box. Ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Lava says it has no preservatives, dyes or fragrance and no animal-based ingredients.',
+            recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
+            sideEffects: 'Lava\'s product page lists no side effects. Stop using it if you notice irritation.',
+            opinionAlerts: 'Silicone lubricants can damage silicone toys: Lava says to avoid using it with silicone toys and to use glass, rubber or hard plastic instead. Trying to conceive? Lava recommends external use only and suggests asking your doctor.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Lava\'s own site (mylavalube.com), plus two independent studies of lubricants in general (not of Lava).',
+        doctorOpinion: 'Lava To-Go is the Lava Lube formula in single-use sachets. Lava was founded by Kristen Damery, a pelvic health physical therapist, who writes on Lava\'s About page that she created it as a comfortable, safe way for women to begin exploring sexual wellness.\n\nLava says the silicone formula lasts longer than water-based lubes, doesn\'t absorb into the skin or get sticky, and won\'t change vaginal pH. These are Lava\'s descriptions; no study of Lava itself is published on its site.\n\nWhat independent research says about lubricants in general: in a 2012 lab study of 14 over-the-counter lubricants, the two silicone-based ones tested (not Lava) were not toxic to cervical or rectal tissue samples. In a 5-week diary study of 2,453 women, water- and silicone-based lubricants were both linked to more pleasure and satisfaction and rarely to genital symptoms, with water-based ones linked to fewer symptoms than silicone-based ones.',
+        doctorOpinionShort: 'The Lava Lube silicone formula in seven 2 mL travel sachets. Made by a pelvic health physical therapist\'s brand. No study of Lava itself is published.',
+        doctorOpinionCitations: [
+            { url: 'https://mylavalube.com/pages/about-us', label: 'mylavalube.com: About (founder and FAQs)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', label: 'PubMed (NIH): Safety of over-the-counter lubricants on cells and tissue, lab study (PLoS One, 2012)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21143591/', label: 'PubMed (NIH): Lubricant use, pleasure and genital symptoms in 2,453 women (J Sex Med, 2011)' },
+        ],
+        whoItsFor: [
+            'Travel, or keeping lube in a bag, purse or pocket',
+            'Trying Lava before buying a full bottle',
+            'Sensitive skin: no preservatives, dyes or fragrance, per Lava',
+        ],
+        howToUse: {
+            intro: 'Per Lava\'s directions:',
+            steps: [
+                'Tear open one 2 mL sachet; each is pre-measured for one use.',
+                'Apply to the area you want to lubricate. For vaginal, anal or penile use.',
+                'Washes off with soap and water.',
+            ],
+            sourceUrl: 'https://mylavalube.com/products/lava-to-go-1',
+            sourceLabel: 'mylavalube.com: Lava To-Go',
+        },
+        warnings: [
+            'Avoid using with silicone toys: Lava says it will degrade the silicone.',
+            'Trying to conceive? Lava recommends using it externally only and checking with your doctor.',
+            'Stop using it if irritation, burning or itching develops, and see a clinician if it continues.',
+        ],
+        communityReview: 'mylavalube.com shows no reviews on the To-Go page itself (checked November 23, 2026). The same formula has 5.0 out of 5 from 14 reviews on the Lava Lube page, and one reviewer there says they bought a full bottle after trying the minis.',
+        effectiveness: 'Lava describes a long-lasting, water-resistant silicone glide. No study of Lava itself is published on its site.',
+        ingredients: 'Cyclopentasiloxane, dimethicone, dimethiconol (silicone-based). No preservatives, dyes or fragrance.',
+        ingredientScienceNote: 'Every ingredient Lava lists, with Lava\'s own explanation of why it\'s there (from the "Ingredients, in plain english" section on mylavalube.com). Lava\'s explanations are the brand\'s descriptions, not checked by ayna.',
+        ingredientScience: [
+            { name: 'Cyclopentasiloxane', text: 'Per Lava: gives Lava its lightweight, silky feel and helps it spread easily.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }] },
+            { name: 'Dimethicone', text: 'Per Lava: gives Lava the long-lasting glide.\n\nResearch: in a lab study of 14 over-the-counter lubricants, the two silicone-based ones tested (other brands, not Lava) were not toxic to cervical or rectal tissue samples. That was a lab study on cells and tissue, not in people.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }, { url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', label: 'PubMed (NIH): Safety of over-the-counter lubricants, lab study (PLoS One, 2012)' }] },
+            { name: 'Dimethiconol', text: 'Per Lava: helps Lava feel smooth and stay put.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }] },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://mylavalube.com/products/lava-to-go-1', text: 'mylavalube.com: Lava To-Go', summary: 'Lava\'s product page for the 7-sachet box.' },
+                    { platform: 'website', url: 'https://mylavalube.com/products/personal-lubricant', text: 'mylavalube.com: Lava Lube reviews', summary: 'Reviews of the same formula: 5.0 out of 5 from 14 reviews as of November 23, 2026.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-lava-ritual-bundle',
+        name: 'The Lava Ritual Bundle',
+        brand: 'Lava',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health'],
+        tags: ['comfort', 'discomfort', 'fragrance-free', 'hormone-free'],
+        price: '$55 (4 oz Lava Lube + Lava To-Go 7 x 2 mL sachets + Hanky by Lava towel), per mylavalube.com',
+        whereToBuy: ['mylavalube.com'],
+        url: 'https://mylavalube.com/products/the-lava-ritual-bundle',
+        image: '/products/lava/lava-ritual-bundle.webp',
+        summary: 'A set of three Lava products: a full-size 4 oz bottle of Lava Lube (silicone-based, no preservatives, dyes or fragrance), Lava To-Go (seven 2 mL travel sachets of the same lube) and Hanky by Lava, a 17 x 30 inch water-resistant intimacy towel to lay down during sex to protect the sheets and for cleanup afterward. Bought separately on mylavalube.com the three cost $65.97 ($29.99, $16.99 and $18.99); the bundle is $55.',
+        safety: {
+            fdaStatus: 'Lava says its personal lubricant is "FDA 510(k) cleared as a Class II medical device." ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name, so this is per Lava until a K-number is confirmed. The towel is not a medical device.',
+            materials: 'Lava Lube 4 fl oz bottle and 7 x 2 mL Lava To-Go sachets. Lube ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Hanky by Lava: water-resistant intimacy towel, 17 x 30 inches (fabric not listed on mylavalube.com).',
+            recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
+            sideEffects: 'Lava\'s product pages list no side effects. Stop using the lube if you notice irritation.',
+            opinionAlerts: 'Silicone lubricants can damage silicone toys: Lava says to avoid using the lube with silicone toys. Trying to conceive? Lava recommends external use only and suggests asking your doctor.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Lava\'s own site (mylavalube.com). See the Lava Lube card for independent research on silicone lubricants.',
+        doctorOpinion: 'Lava describes the bundle as its signature lubricant, travel-ready sachets and the Hanky towel together, "to create a complete, effortless ritual at home or away." Lava was founded by pelvic health physical therapist Kristen Damery.\n\nThe lube is the same silicone-based formula sold on its own as Lava Lube; Lava says it lasts longer than water-based lubes, isn\'t sticky and is condom compatible. The Lava Lube card has Lava\'s reason for each ingredient and the independent research on silicone lubricants in general. No study of Lava itself is published on its site.',
+        doctorOpinionShort: 'Lava Lube, Lava To-Go sachets and a water-resistant intimacy towel in one set, $10.97 less than buying them separately. No study of Lava itself is published.',
+        doctorOpinionCitations: [
+            { url: 'https://mylavalube.com/products/the-lava-ritual-bundle', label: 'mylavalube.com: The Lava Ritual Bundle' },
+        ],
+        whoItsFor: [
+            'Anyone who wants lube for home and for travel in one purchase',
+            'A gift set',
+            'Protecting sheets during sex and easy cleanup, with the towel',
+        ],
+        howToUse: {
+            intro: 'Per Lava\'s directions:',
+            steps: [
+                'Lube: apply a few drops to the area you want to lubricate, and add more as needed. Washes off with soap and water.',
+                'To-Go sachets: one pre-measured 2 mL sachet per use, for travel or your bag.',
+                'Hanky: lay the towel under you during intimacy to protect the sheets, and use it for cleanup afterward.',
+                'Store the lube upright in a cool, dry place.',
+            ],
+            sourceUrl: 'https://mylavalube.com/products/the-lava-ritual-bundle',
+            sourceLabel: 'mylavalube.com: The Lava Ritual Bundle',
+        },
+        warnings: [
+            'Avoid using the lube with silicone toys: Lava says it will degrade the silicone.',
+            'Trying to conceive? Lava recommends using the lube externally only and checking with your doctor.',
+            'Stop using the lube if irritation, burning or itching develops, and see a clinician if it continues.',
+        ],
+        communityReview: 'mylavalube.com shows no reviews on the bundle page itself (checked November 23, 2026). The lube in it has 5.0 out of 5 from 14 reviews on the Lava Lube page.',
+        effectiveness: 'A bundle of Lava\'s lube, travel sachets and towel. No study of Lava itself is published on its site.',
+        ingredients: 'Lube: cyclopentasiloxane, dimethicone, dimethiconol (silicone-based). No preservatives, dyes or fragrance.',
+        ingredientScienceNote: 'The lube\'s ingredients, with Lava\'s own explanation of why each is there (from the "Ingredients, in plain english" section on mylavalube.com). Lava\'s explanations are the brand\'s descriptions, not checked by ayna.',
+        ingredientScience: [
+            { name: 'Cyclopentasiloxane', text: 'Per Lava: gives Lava its lightweight, silky feel and helps it spread easily.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }] },
+            { name: 'Dimethicone', text: 'Per Lava: gives Lava the long-lasting glide.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }] },
+            { name: 'Dimethiconol', text: 'Per Lava: helps Lava feel smooth and stay put.', citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }] },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://mylavalube.com/products/the-lava-ritual-bundle', text: 'mylavalube.com: The Lava Ritual Bundle', summary: 'Lava\'s bundle page, with what\'s inside.' },
+                    { platform: 'website', url: 'https://mylavalube.com/products/hanky-by-lava', text: 'mylavalube.com: Hanky by Lava', summary: 'The towel on its own ($18.99): 17 x 30 inches, water resistant.' },
+                    { platform: 'website', url: 'https://mylavalube.com/products/personal-lubricant', text: 'mylavalube.com: Lava Lube reviews', summary: '5.0 out of 5 from 14 reviews as of November 23, 2026.' },
                 ],
             },
         },
