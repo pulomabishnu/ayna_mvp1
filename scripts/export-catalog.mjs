@@ -166,6 +166,9 @@ function normalizeForCompare(obj) {
     if (v === null && !REQUIRED_KEYS.has(k)) continue;
     if (FALSY_EQUIVALENT_KEYS.includes(k) && v === false) continue;
     if (k === 'whereToBuyInStock' && v && typeof v === 'object' && Object.keys(v).length === 0) continue;
+    // Same for safety: rows always store an object, so an entry with no safety
+    // section comes back as {}, which every consumer reads like none at all.
+    if (k === 'safety' && v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) continue;
     out[k] = v;
   }
   return stable(out);
