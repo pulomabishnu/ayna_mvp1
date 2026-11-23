@@ -57,6 +57,9 @@
  * the site yet, so it's left out until its products are live; slot it back in
  * at that position then.
  *
+ * Added 2026-11-23: Lava (mylavalube.com), affiliate partner (Eliz). Eliz: rank it
+ * toward the end, so it sits after VIO2 and before the Nov 4 brands she put last.
+ *
  * Added 2026-11-09: GoodCycle (DailyBasis), confirmed brand partner since
  * 2026-10-27, at its 10th place in the team's order (after Elitone).
  */
@@ -80,6 +83,7 @@ export const PARTNER_BRAND_ORDER = [
   /\btampon tribe\b/, // Tampon Tribe (partner from 2026-10-17)
   /\bmy pelvic bra\b/, // My Pelvic Bra
   /\bvio2\b/, // VIO2
+  /\blava\b/, // Lava (affiliate partner from 2026-11-23, near the end at Eliz's request)
   /\bnaya\b/, // Naya reusable tampon applicator (pre-launch partner from 2026-11-04)
   /\bthe fertility class\b/, // The Fertility Class (affiliate partner from 2026-11-04)
   /\blivi\b/, // Livi, LiviWell (affiliate partner from 2026-11-04)
@@ -97,7 +101,7 @@ export const PARTNER_BRAND_PATTERNS = PARTNER_BRAND_ORDER;
 export const PARTNER_BRANDS = [
   'Rèsa', 'BUNI', 'LiM Method', 'Winx Health', 'Momotaro Apotheca', 'Neycher', 'SootheHer', 'Alubri',
   'Connect Pelvic Floor Fitness', 'Elitone', 'GoodCycle', 'LOLA', 'Proov', 'gina', 'Tampon Tribe',
-  'My Pelvic Bra', 'VIO2', 'Naya', 'The Fertility Class', 'Livi',
+  'My Pelvic Bra', 'VIO2', 'Lava', 'Naya', 'The Fertility Class', 'Livi',
 ].map((name, i) => ({ name, pattern: PARTNER_BRAND_ORDER[i] }));
 
 /**
