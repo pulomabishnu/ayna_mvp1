@@ -10837,4 +10837,284 @@ export const BRAND_PRODUCTS = [
         badges: [],
         isEmergingBrand: true,
     },
+    // Lava (mylavalube.com): added 2026-11-23 at Eliz's request.
+    // Sources, all read for these entries on 2026-11-23: mylavalube.com
+    // (Shopify products.json, each product page's text and photos, About page
+    // with Founder note and FAQs, two blog articles) and the product photos Eliz
+    // supplied. The lubricant's "Ingredients, in plain english" section and the
+    // Lava Lit and Lava Lush ingredient graphics give Lava's own reason for each
+    // ingredient; those are quoted as "Per Lava" below. Lava says the lubricant is
+    // "FDA 510(k) cleared as a Class II medical device"; openFDA (510(k) and
+    // registration/listing, searched by name, founder and "Lava") shows no
+    // clearance under the Lava name, so the card says "per Lava" and asks for
+    // the K-number. Not added as products: Hanky by Lava (intimacy towel,
+    // an accessory), The Lava Ritual Bundle (lube + To-Go + Hanky; its photo is
+    // in the lube's gallery) and the discounted "Dented Batch" Lava Lush.
+    // Photos stored under public/products/lava/.
+    {
+        id: 'p-lava-lube',
+        name: 'Lava Lube',
+        brand: 'Lava',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health'],
+        tags: ['comfort', 'discomfort', 'fragrance-free', 'hormone-free'],
+        price: '$29.99 (4 oz bottle); $54.99 for two bottles; $16.99 for Lava To-Go (7 x 2 mL sachets), per mylavalube.com',
+        whereToBuy: ['mylavalube.com'],
+        url: 'https://mylavalube.com/products/personal-lubricant',
+        // Customer reviews on Lava's own product page (Yotpo widget, checked 2026-11-23).
+        brandReviewsUrl: 'https://mylavalube.com/products/personal-lubricant',
+        brandReviewsLabel: 'Customer reviews on mylavalube.com: Lava Lube',
+        brandReviewsSummary: '5.0 out of 5 from 14 reviews on mylavalube.com as of November 23, 2026.',
+        image: '/products/lava/lava-lube-bottle.webp',
+        gallery: [
+            '/products/lava/lava-lube-2-pack.webp',
+            '/products/lava/lava-to-go.webp',
+            '/products/lava/lava-ritual-bundle.webp',
+            '/products/lava/lava-lube-water-resistant.webp',
+            '/products/lava/lava-lube-clean-care.webp',
+        ],
+        summary: 'A silicone-based personal lubricant made by Lava, a brand founded by pelvic health physical therapist Kristen Damery. It has three ingredients (cyclopentasiloxane, dimethicone and dimethiconol) and no preservatives, dyes or fragrance. Lava says the glide lasts longer than water-based lubes, doesn\'t absorb into skin or get sticky, and is water resistant, so it works in the shower or bath. Lava says it is compatible with latex, polyurethane and polyisoprene condoms and is for vaginal, anal or penile use. Sold as a 4 oz bottle, a two-bottle pack, or Lava To-Go, a box of seven 2 mL sachets for travel.',
+        safety: {
+            fdaStatus: 'Lava says the lubricant is "FDA 510(k) cleared as a Class II medical device" and made in the USA. ayna searched the FDA\'s 510(k) and registration databases on November 23, 2026 and found no clearance under the Lava name. Personal lubricants are often cleared under the manufacturer\'s name, which Lava doesn\'t list, so this is per Lava until a K-number is confirmed.',
+            materials: '4 fl oz (110 mL) bottle; also sold as 2 mL foil sachets (Lava To-Go, 7 per box). Ingredients, per mylavalube.com: cyclopentasiloxane, dimethicone, dimethiconol. Lava says it has no preservatives, dyes or fragrance and no animal-based ingredients.',
+            recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
+            sideEffects: 'Lava\'s product page lists no side effects. Stop using it if you notice irritation.',
+            opinionAlerts: 'Silicone lubricants can damage silicone toys: Lava says to avoid using it with silicone toys and to use glass, rubber or hard plastic instead. Trying to conceive? Lava recommends external use only and suggests asking your doctor.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced from Lava\'s own site (mylavalube.com), plus two independent studies of lubricants in general (not of Lava).',
+        doctorOpinion: 'Lava was founded by Kristen Damery, a pelvic health physical therapist. On Lava\'s About page she writes that the women she treats are often nervous to talk about sexual wellness, and that she created Lava as a comfortable, safe way to begin exploring it. In Lava\'s words, a lubricant "does not take all the barriers away" but can be a fun, safe way to start.\n\nLava says the formula is silicone based, so the glide lasts longer than water-based lubes and doesn\'t absorb into the skin or get sticky, and that it is pH neutral and won\'t change vaginal pH. These are Lava\'s descriptions; no study of Lava itself is published on its site.\n\nWhat independent research says about lubricants in general: in a 2012 lab study of 14 over-the-counter lubricants, the two silicone-based ones tested (not Lava) were not toxic to cervical or rectal tissue samples, while most hyperosmolar water-based gels damaged the tissue. That was a lab study on cells and tissue, not in people. In a 5-week diary study of 2,453 women using one of six water- or silicone-based lubricants, both types were linked to higher sexual pleasure and satisfaction and were rarely linked to genital symptoms, though the water-based ones were linked to fewer symptoms than the silicone-based ones.',
+        doctorOpinionShort: 'Made by a pelvic health physical therapist. Lava says the silicone formula lasts longer than water-based lube, isn\'t sticky and won\'t change vaginal pH. Independent studies of other silicone lubes found them gentle on tissue in the lab and linked to more pleasure in women, with slightly more genital symptoms than water-based lubes.',
+        doctorOpinionCitations: [
+            { url: 'https://mylavalube.com/pages/about-us', label: 'mylavalube.com: About (founder and FAQs)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', label: 'PubMed (NIH): Safety of over-the-counter lubricants on cells and tissue, lab study (PLoS One, 2012)' },
+            { url: 'https://pubmed.ncbi.nlm.nih.gov/21143591/', label: 'PubMed (NIH): Lubricant use, pleasure and genital symptoms in 2,453 women (J Sex Med, 2011)' },
+        ],
+        whoItsFor: [
+            'Anyone who wants a long-lasting glide that doesn\'t need reapplying',
+            'Sensitive skin: no preservatives, dyes or fragrance, per Lava',
+            'Shower, bath or pool, since Lava says it is water resistant',
+            'Use with latex, polyurethane or polyisoprene condoms, per Lava',
+        ],
+        howToUse: {
+            intro: 'Per Lava\'s directions:',
+            steps: [
+                'Apply a few drops to the area you want to lubricate, and add more as needed.',
+                'For vaginal, anal or penile use.',
+                'Washes off with soap and water.',
+                'Store upright in a cool, dry place.',
+            ],
+            sourceUrl: 'https://mylavalube.com/products/personal-lubricant',
+            sourceLabel: 'mylavalube.com: Lava Lube',
+        },
+        warnings: [
+            'Avoid using with silicone toys: Lava says it will degrade the silicone. Glass (very slippery), rubber and hard plastic are fine, per Lava.',
+            'Trying to conceive? Lava recommends using it externally only and checking with your doctor.',
+            'Not meant to be swallowed in large amounts during oral sex, per Lava.',
+            'Stop using it if irritation, burning or itching develops, and see a clinician if it continues.',
+        ],
+        communityReview: 'On mylavalube.com, Lava Lube has 5.0 out of 5 stars from 14 reviews (checked November 23, 2026). Reviewers most often mention a long-lasting glide without reapplying, a light, silky feel that isn\'t sticky or goopy, and the simple, fragrance-free formula. In their words: "The glide lasts way longer than anything else I\'ve used and I didn\'t have to keep reapplying" (Sam); "The texture is insanely smooth and luxurious, not sticky, not tacky" (Emily C.); "Great lube. I have sensitive skin, no issues" (randy y.); "I am extremely cautious when using intimate products, so I could not have been happier to find Lava!" (Hannah); "Silky, smooth... Long lasting and not sticky at all!" (Krissy). These reviews are on Lava\'s own site, which chooses how reviews are shown; every review ayna could read there was 5 stars.',
+        effectiveness: 'Lava describes a long-lasting, water-resistant silicone glide. No study of Lava itself is published on its site; independent research on other silicone lubricants is summarized under Clinical.',
+        ingredients: 'Cyclopentasiloxane, dimethicone, dimethiconol (silicone-based). No preservatives, dyes or fragrance.',
+        ingredientScienceNote: 'Every ingredient Lava lists, with Lava\'s own explanation of why it\'s there (from the "Ingredients, in plain english" section on mylavalube.com). Lava\'s explanations are the brand\'s descriptions, not checked by ayna.',
+        ingredientScience: [
+            {
+                name: 'Cyclopentasiloxane',
+                text: 'Per Lava: gives Lava its lightweight, silky feel and helps it spread easily.',
+                citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }],
+            },
+            {
+                name: 'Dimethicone',
+                text: 'Per Lava: gives Lava the long-lasting glide.\n\nResearch: in a lab study of 14 over-the-counter lubricants, the two silicone-based ones tested (other brands, not Lava) were not toxic to cervical or rectal tissue samples and caused no damage to the tissue surface. That was a lab study on cells and tissue, not in people.',
+                citations: [
+                    { url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' },
+                    { url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', label: 'PubMed (NIH): Safety of over-the-counter lubricants, lab study (PLoS One, 2012)' },
+                ],
+            },
+            {
+                name: 'Dimethiconol',
+                text: 'Per Lava: helps Lava feel smooth and stay put.',
+                citations: [{ url: 'https://mylavalube.com/products/personal-lubricant', label: 'mylavalube.com: Ingredients, in plain english (Lava Lube page)' }],
+            },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: {
+                links: [
+                    { platform: 'pubmed', url: 'https://pubmed.ncbi.nlm.nih.gov/23144863/', text: 'Is wetter better? Safety of over-the-counter personal lubricants (PLoS One, 2012)', summary: 'Lab study of 14 lubricants on cell lines and tissue samples: both silicone-based lubricants tested (not Lava) were among the safest; most hyperosmolar water-based gels damaged tissue. Not a study in people.' },
+                    { platform: 'pubmed', url: 'https://pubmed.ncbi.nlm.nih.gov/21143591/', text: 'Lubricant use and women\'s sexual pleasure and genital symptoms (J Sex Med, 2011)', summary: '5-week diary study of 2,453 women using one of six water- or silicone-based lubricants (not Lava): both types were linked to more pleasure and satisfaction and rarely to genital symptoms; water-based had fewer symptoms than silicone-based.' },
+                ],
+            },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://mylavalube.com/products/personal-lubricant', text: 'mylavalube.com: Lava Lube reviews', summary: '5.0 out of 5 from 14 reviews as of November 23, 2026, on Lava\'s own site.' },
+                    { platform: 'website', url: 'https://mylavalube.com/pages/about-us', text: 'mylavalube.com: About and FAQs', summary: 'Founder note from Kristen Damery and Lava\'s answers on condoms, toys, pH, oral sex and trying to conceive.' },
+                    { platform: 'website', url: 'https://mylavalube.com/products/lava-to-go-1', text: 'mylavalube.com: Lava To-Go sachets', summary: 'The same lubricant in seven 2 mL travel sachets.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-lava-lit-intimacy-balm',
+        name: 'Lava Lit Intimacy Balm',
+        brand: 'Lava',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health'],
+        tags: ['organic', 'hormone-free'],
+        price: '$34.99 (0.45 oz / 13 g stick), pre-sale on mylavalube.com',
+        whereToBuy: ['mylavalube.com'],
+        url: 'https://mylavalube.com/products/lava-lit',
+        image: '/products/lava/lava-lit.webp',
+        gallery: [
+            '/products/lava/lava-lit-ingredients.webp',
+            '/products/lava/lava-lit-swatch.webp',
+        ],
+        summary: 'A clitoral stimulant balm in a 0.45 oz (13 g) stick, made for external use only. Lava says it gives a gentle tingling and warming feeling to heighten sensation and help you feel more present: apply 1 to 2 swipes and wait 60 to 90 seconds. The sensation comes from menthol (cooling) and vanillyl butyl ether (warming), in a base of squalane, organic coconut, jojoba and sea buckthorn oils, organic mango seed and shea butters, sunflower seed wax and sodium hyaluronate. Created by a pelvic health physical therapist. On pre-sale on mylavalube.com as of November 23, 2026.',
+        safety: {
+            fdaStatus: 'Lava sells Lava Lit as an intimacy balm for external use and does not describe it as FDA-cleared or approved.',
+            materials: '0.45 oz (13 g) stick. Ingredients, per mylavalube.com: squalane, Cocos nucifera (coconut) oil*, cetearyl alcohol, Helianthus annuus (sunflower) seed wax, Moringa oleifera seed oil*, Mangifera indica (mango) seed butter*, Butyrospermum parkii (shea) butter*, flavor*, Simmondsia chinensis (jojoba) seed oil*, ethylhexyl palmitate, trihydroxystearin, sodium hyaluronate, Amorphophallus konjac root powder, tocopherol (vitamin E), Hippophae rhamnoides (sea buckthorn) fruit oil*, Mentha arvensis (menthol)*, vanillyl butyl ether. *Organic.',
+            recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
+            sideEffects: 'Lava says the tingling and warming may build gradually and that a little goes a long way. Stop using it if irritation occurs.',
+            opinionAlerts: 'Contains coconut, shea butter and mango seed butter. Lava doesn\'t say whether it is safe with condoms; it contains oils, so ask Lava before using it with latex condoms.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Lava\'s own site (mylavalube.com), not independent clinical literature.',
+        doctorOpinion: 'Lava says Lava Lit was created by a pelvic health expert (Lava\'s founder, pelvic health physical therapist Kristen Damery) with a wellness-first approach, for targeted external use on the clitoris or any area where you want heightened sensation, before intimacy or as part of a personal routine.\n\nLava says menthol and vanillyl butyl ether "provide a gentle cooling and warming sensation to awaken and enhance intimacy," and that the butters and oils nourish and soften the skin. These are Lava\'s descriptions; no study of Lava Lit is published on its site.',
+        doctorOpinionShort: 'An external tingling and warming balm from a pelvic health physical therapist\'s brand. Menthol cools and vanillyl butyl ether warms, per Lava. No study of the product is published.',
+        doctorOpinionCitations: [
+            { url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Lava Lit' },
+        ],
+        whoItsFor: [
+            'Anyone who wants more sensation or a warming, tingling feeling during intimacy or solo',
+            'External use on the clitoris or other areas you want to heighten, per Lava',
+        ],
+        howToUse: {
+            intro: 'Per Lava\'s directions:',
+            steps: [
+                'Apply 1 to 2 swipes externally to the clitoris or any area where you want heightened sensation.',
+                'Wait 60 to 90 seconds; the tingling and warming may build gradually.',
+                'Use before intimacy or as part of your own routine. A little goes a long way.',
+            ],
+            sourceUrl: 'https://mylavalube.com/products/lava-lit',
+            sourceLabel: 'mylavalube.com: Lava Lit',
+        },
+        warnings: [
+            'For external use only. Not intended for internal use, per Lava.',
+            'Stop using it if irritation occurs.',
+            'Avoid contact with eyes.',
+        ],
+        communityReview: 'Lava Lit is on pre-sale, and mylavalube.com shows no customer reviews for it yet (checked November 23, 2026).',
+        effectiveness: 'Lava describes a gentle tingling and warming sensation from menthol and vanillyl butyl ether. No study of Lava Lit is published on its site.',
+        ingredients: 'Squalane, organic coconut oil, sunflower seed wax, organic moringa seed oil, organic mango seed butter, organic shea butter, organic jojoba oil, sodium hyaluronate, vitamin E, organic sea buckthorn oil, organic menthol, vanillyl butyl ether.',
+        ingredientScienceNote: 'The ingredients Lava highlights on its Lava Lit ingredient graphic, each with Lava\'s own explanation of why it\'s there. The full ingredient list is under Materials. Lava\'s explanations are the brand\'s descriptions, not checked by ayna.',
+        ingredientScience: [
+            { name: 'Squalane', text: 'Per Lava: deeply hydrates and helps maintain skin\'s natural moisture barrier.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Jojoba oil (organic)', text: 'Per Lava: balances and nourishes while supporting skin softness and elasticity.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Shea butter (organic)', text: 'Per Lava: rich in vitamins and fatty acids to comfort, smooth and protect.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Sodium hyaluronate', text: 'Per Lava: a moisture magnet that helps hydrate and plump delicate skin.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Sunflower seed wax', text: 'Per Lava: provides a silky texture and helps lock in moisture.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Mango seed butter (organic)', text: 'Per Lava: deeply nourishes and leaves skin feeling soft and supple.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Sea buckthorn oil (organic)', text: 'Per Lava: rich in antioxidants and essential fatty acids to support skin renewal.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Vitamin E (tocopherol)', text: 'Per Lava: a powerful antioxidant that helps protect and soothe sensitive skin.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+            { name: 'Menthol (organic) and vanillyl butyl ether', text: 'Per Lava: provide a gentle cooling and warming sensation to awaken and enhance intimacy.', citations: [{ url: 'https://mylavalube.com/products/lava-lit', label: 'mylavalube.com: Ingredient graphic on the Lava Lit page' }] },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://mylavalube.com/products/lava-lit', text: 'mylavalube.com: Lava Lit', summary: 'Lava\'s product page, with directions, the full ingredient list and the ingredient graphic. On pre-sale as of November 23, 2026.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
+    {
+        id: 'p-lava-lush-massage-oil-bar',
+        name: 'Lava Lush Solid Body and Massage Oil Bar',
+        brand: 'Lava',
+        category: 'intimate-care',
+        type: 'physical',
+        internal: false,
+        healthFunctions: ['sexual-health'],
+        tags: ['skin', 'comfort'],
+        price: '$24.99 (2.8 oz / 80 g bar in a tin), per mylavalube.com',
+        whereToBuy: ['mylavalube.com'],
+        url: 'https://mylavalube.com/products/lava-lush',
+        image: '/products/lava/lava-lush.webp',
+        gallery: [
+            '/products/lava/lava-lush-ingredients.webp',
+        ],
+        summary: 'A solid bar of butters and oils that melts with body heat, for massage and as a rich body moisturizer. It comes in a 2.8 oz (80 g) tin and is scented with amber, sandalwood and cedarwood. Main ingredients: candelilla wax, coconut oil, shea butter, cocoa seed butter, jojoba seed oil and safflower seed oil. For external use only.',
+        safety: {
+            fdaStatus: 'Sold as a body moisturizer and massage bar (a cosmetic); Lava does not describe it as FDA-cleared or approved.',
+            materials: '2.8 oz (80 g) bar in a tin. Ingredients, per mylavalube.com: Euphorbia cerifera (candelilla) wax, Cocos nucifera (coconut) oil, Butyrospermum parkii (shea) butter, Theobroma cacao (cocoa) seed butter, Simmondsia chinensis (jojoba) seed oil, Carthamus tinctorius (safflower) seed oil, Pueraria lobata root powder, fragrance (parfum), Cedrus atlantica bark oil, Santalum album (sandalwood) oil.',
+            allergens: 'Contains fragrance plus cedarwood and sandalwood oils, and coconut, shea and cocoa butter.',
+            recalls: 'No recalls are mentioned on mylavalube.com; check current FDA recall notices.',
+            sideEffects: 'Stop using it if irritation occurs, per Lava.',
+            opinionAlerts: 'This is a body and massage bar, not a personal lubricant, and it contains fragrance. Lava doesn\'t say whether it is safe with condoms or for internal use.',
+        },
+        clinicianOpinionSource: 'brand',
+        clinicianAttribution: 'Sourced only from Lava\'s own site (mylavalube.com), not independent clinical literature.',
+        doctorOpinion: 'Lava describes Lava Lush as a concentrated blend of butters and oils designed to melt into the skin, for massage, daily hydration and after-shower skin care. Lava says it moisturizes and nourishes dry skin, supports the skin barrier and leaves a smooth, non-greasy finish. These are Lava\'s descriptions; no study of the product is published on its site.',
+        doctorOpinionShort: 'A melt-on-contact body and massage bar of butters and oils, per Lava. For external use; it contains fragrance. No study of the product is published.',
+        doctorOpinionCitations: [
+            { url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Lava Lush' },
+        ],
+        whoItsFor: [
+            'Partner or solo massage',
+            'Dry skin, as a daily or after-shower body moisturizer',
+        ],
+        howToUse: {
+            intro: 'Per Lava\'s directions:',
+            steps: [
+                'Warm the bar between your hands, or glide it directly onto dry skin.',
+                'Massage until absorbed.',
+                'If it shipped somewhere warm, let the bar come back to room temperature before use.',
+                'Store in a cool, dry place away from direct sunlight.',
+            ],
+            sourceUrl: 'https://mylavalube.com/products/lava-lush',
+            sourceLabel: 'mylavalube.com: Lava Lush',
+        },
+        warnings: [
+            'For external use only. Avoid contact with eyes, per Lava.',
+            'Stop using it if irritation occurs.',
+            'Contains fragrance: if fragrance irritates your skin, patch test first.',
+        ],
+        communityReview: 'mylavalube.com shows no customer reviews for Lava Lush yet (checked November 23, 2026).',
+        effectiveness: 'Lava describes it as moisturizing and nourishing for dry skin. No study of the product is published on its site.',
+        ingredients: 'Candelilla wax, coconut oil, shea butter, cocoa seed butter, jojoba seed oil, safflower seed oil, kudzu root powder, fragrance, cedarwood oil, sandalwood oil.',
+        ingredientScienceNote: 'The main ingredients Lava highlights on its Lava Lush ingredient graphic, each with Lava\'s own explanation of why it\'s there. The full ingredient list is under Materials. Lava\'s explanations are the brand\'s descriptions, not checked by ayna.',
+        ingredientScience: [
+            { name: 'Coconut oil', text: 'Per Lava: deeply moisturizes and helps soften skin.', citations: [{ url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Ingredient graphic on the Lava Lush page' }] },
+            { name: 'Shea butter', text: 'Per Lava: rich in vitamins, helps nourish and improve skin texture.', citations: [{ url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Ingredient graphic on the Lava Lush page' }] },
+            { name: 'Jojoba seed oil', text: 'Per Lava: mimics the skin\'s natural oils, helps balance and protect.', citations: [{ url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Ingredient graphic on the Lava Lush page' }] },
+            { name: 'Cocoa seed butter', text: 'Per Lava: deeply hydrates and helps improve skin elasticity.', citations: [{ url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Ingredient graphic on the Lava Lush page' }] },
+            { name: 'Safflower seed oil', text: 'Per Lava: a lightweight oil that helps condition and soothe skin.', citations: [{ url: 'https://mylavalube.com/products/lava-lush', label: 'mylavalube.com: Ingredient graphic on the Lava Lush page' }] },
+        ],
+        scientificCitations: [],
+        verificationLinks: {
+            doctor: { links: [] },
+            scientific: { links: [] },
+            community: {
+                links: [
+                    { platform: 'website', url: 'https://mylavalube.com/products/lava-lush', text: 'mylavalube.com: Lava Lush', summary: 'Lava\'s product page, with directions, the full ingredient list and the ingredient graphic.' },
+                ],
+            },
+        },
+        integrations: [],
+        badges: [],
+        isEmergingBrand: true,
+    },
 ];

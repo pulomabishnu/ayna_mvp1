@@ -336,6 +336,8 @@ export function keyFormat(product, brand = '') {
   if (!product) return '';
   if (product.type === 'digital') return product.category === 'telehealth' ? 'Virtual care service' : 'Digital service';
   const m = `${product.name || ''} ${product.price || ''}`.match(FORM_WORD);
+  // A solid "oil bar" (e.g. a massage bar) is a bar, not a liquid oil.
+  if (m && /^oil$/i.test(m[1]) && /\boil bar\b/i.test(String(product.name || ''))) return 'Solid oil bar';
   if (m) return cap(m[1].toLowerCase().replace(/^capsule$/, 'capsules').replace(/^softgel$/, 'softgels').replace(/^tablet$/, 'tablets'));
   let name = String(product.name || '').replace(/\s*[,(].*$/, '').trim();
   const b = String(brand || product.brand || '').trim();

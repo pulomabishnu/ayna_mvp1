@@ -924,6 +924,21 @@
       "permanent": true
     },
     {
+      "source": "/product/p-lava-lit-intimacy-balm",
+      "destination": "/product/lava-lit-intimacy-balm",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lava-lube",
+      "destination": "/product/lava-lube",
+      "permanent": true
+    },
+    {
+      "source": "/product/p-lava-lush-massage-oil-bar",
+      "destination": "/product/lava-lush-solid-body-and-massage-oil-bar",
+      "permanent": true
+    },
+    {
       "source": "/product/p-lelo-sona",
       "destination": "/product/lelo-sona-cruise",
       "permanent": true
