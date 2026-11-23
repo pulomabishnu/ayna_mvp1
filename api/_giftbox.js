@@ -4,7 +4,7 @@
  * public product shape, and the emails (checkout + order status updates). Tables and checkout live in
  * supabase/migrations/20261030120000_gift_box.sql.
  */
-import { SITE_URL, emailsEnabled, escapeHtml, renderLayout } from './_campaignEmail.js';
+import { SITE_URL, escapeHtml, renderLayout } from './_campaignEmail.js';
 
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const TOKEN_RE = /^[A-Za-z0-9_-]{20,64}$/;
@@ -209,15 +209,17 @@ export function orderStatusEmail({ status, name, items, carrier, trackingNumber 
 }
 
 /**
- * Sends a gift box email to the customer with cc. Same gates as
- * sendCampaignEmail: CAMPAIGN_EMAILS_ENABLED=1, RESEND_API_KEY, and a real
- * postal address in the footer. Never throws.
+ * Sends a gift box order update to the customer with cc. These are
+ * transactional (about an order they placed), so they only need
+ * RESEND_API_KEY, not the campaign marketing switches. GIFTBOX_EMAILS_ENABLED=0
+ * turns them off. Without CAMPAIGN_POSTAL_ADDRESS the footer address line is
+ * left out. Never throws.
  * @returns {Promise<{ ok: boolean, skipped?: boolean, error?: string }>}
  */
 export async function sendGiftboxEmail(to, message, { cc = [], fetchImpl = fetch } = {}) {
-  if (!emailsEnabled()) return { ok: false, skipped: true };
+  if (!process.env.RESEND_API_KEY || process.env.GIFTBOX_EMAILS_ENABLED === '0') return { ok: false, skipped: true };
   if (!to) return { ok: false, error: 'no_recipient' };
-  if (String(message?.html || '').includes('{{COMPANY_POSTAL_ADDRESS}}')) return { ok: false, error: 'no_postal_address' };
+  const html = String(message?.html || '').replace(/<div[^>]*>\{\{COMPANY_POSTAL_ADDRESS\}\}<\/div>/g, '');
   const toLower = String(to).toLowerCase();
   const ccList = [...new Set(cc.map((e) => String(e).toLowerCase()))].filter((e) => e !== toLower);
   try {
@@ -230,7 +232,7 @@ export async function sendGiftboxEmail(to, message, { cc = [], fetchImpl = fetch
         ...(ccList.length ? { cc: ccList } : {}),
         reply_to: ccList.length ? ccList : undefined,
         subject: message.subject,
-        html: message.html,
+        html,
         text: message.text,
       }),
       signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined,
