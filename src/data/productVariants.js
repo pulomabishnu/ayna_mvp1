@@ -994,8 +994,7 @@ export const PRODUCT_VARIANTS = {
         "id": "34035512049723",
         "label": "Black / M",
         "url": "https://period.co/products/the-bikini?variant=34035512049723",
-        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712",
-        "amazonAsin": "B0CLSH74KW"
+        "image": "https://cdn.shopify.com/s/files/1/0306/8837/8939/products/20-0928_PERIOD_FLATS_BIKINI_0962_FINAL.jpg?v=1761336712"
       },
       {
         "id": "34035512082491",
@@ -1081,8 +1080,7 @@ export const PRODUCT_VARIANTS = {
       {
         "id": "51779703275885",
         "label": "14 Count",
-        "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703275885",
-        "amazonAsin": "B07X7GM5Q9"
+        "url": "https://www.getrael.com/products/large-organic-cotton-pads?variant=51779703275885"
       }
     ]
   },
@@ -1348,14 +1346,14 @@ export const PRODUCT_VARIANTS = {
         "label": "14 Count",
         "url": "https://www.veedausa.com/products/pads?variant=1148173689",
         "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_dae04116-e126-4d9c-9ea5-2b6e851c9620.png?v=1626101539",
-        "amazonAsin": "B00ZAVDST4"
+        "amazonAsin": "B0HJ6MG534"
       },
       {
         "id": "8716363858019",
         "label": "42 Count",
         "url": "https://www.veedausa.com/products/pads?variant=8716363858019",
         "image": "https://cdn.shopify.com/s/files/1/0394/7497/products/thumbnail_32c14e67-cb7f-44ef-a04d-94a38d301c4f.png?v=1626101539",
-        "amazonAsin": "B01N1ZHI2A"
+        "amazonAsin": "B0HJSPVWMF"
       }
     ]
   },

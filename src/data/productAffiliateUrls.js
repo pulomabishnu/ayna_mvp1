@@ -7,6 +7,12 @@
  * Pure Cotton -> Always pads, Wuka and Dear Kate -> Bambody, Snoogle ->
  * Momcozy, FemmyCycle -> Merula. Those products now fall back to the brand's
  * own page until a correct Amazon link is supplied.
+ *
+ * 2026-11-23: checked every Amazon link. Nine listings said "Currently unavailable"
+ * with no in-stock listing of the same product (Good Bug Gut Balance, FemmyCycle,
+ * both Seventh Generation rows, Snoogle, Rif Care, Ziggy Cup, Popmask, Tampax Pure),
+ * so those rows were removed and Buy Now uses the brand's page. Knix, Veeda and
+ * Proof moved to the same product's in-stock listing.
  */
 const AMAZON_ROWS = `
 Always Infinity FlexFoam Size 1|B0H8VXGSWB
@@ -49,7 +55,7 @@ Inito Fertility Monitor Starter Kit|B0FB4BCFJP
 Intimate Rose Pelvic Wand|B07HR3GL6V
 Intimate Rose Vaginal Dilators|B07BKBCFDL
 Kindra Daily Vaginal Lotion|B08Y671B3S
-Knix Leakproof Underwear|B0HFTVGGSP
+Knix Leakproof Underwear|B0BHL8MRL3
 Kotex Security Ultra Thin|B08HT5W7PF
 L. Organic Cotton Pads|B0DX2J1NFW
 Lansinoh Stay Dry Nursing Pads|B0070SKP1O
@@ -79,7 +85,7 @@ Period.co Period Underwear|B0BTPVSHKD
 pH-D Feminine Health Boric Acid Wash|B0FK84ZWXK
 Playtex Sport Tampons|B08L4Q75QP
 Poise Incontinence Pads Moderate Absorbency|B010OW806O
-Proof Period Underwear|B09CZWML57
+Proof Period Underwear|B0BG6F5P75
 Rael Organic Cotton Liners|B07258JQ9M
 Rael Organic Cotton Pads|B071VBZLPX
 Rael Organic Tampons|B083C6BYG9
@@ -89,7 +95,6 @@ Ritual Prenatal Multivitamin|B09W363MVD
 Saalt Menstrual Cup|B09JQ4G62Q
 Saalt Menstrual Disc|B0B13WT3KV
 Saalt Cup Steamer|B0CGX2Y8WM
-Seventh Generation Organic Tampons|B07FL7PNQK
 Silverette Nursing Cups|B00D4MWKNQ
 Softdisc Disposable Menstrual Disc|B000X29GY6
 Stayfree Ultra Thin|B079RGVB2V
@@ -140,7 +145,6 @@ CBB Women's 13 in 1 Supplement Gummies|B0BWSMCMTZ
 Intimina Lily Cup|B00BL1137Q
 SweetSpot Labs Wipes|B0DVGZLL7W
 SweetSpot Labs Buff and Brighten AHA BHA Exfoliating Pads|B0FWD26RJ4
-Tampax Pure Cotton|B0B986WL73
 Joylux vFit Device|B0B42KYZ98
 Joylux vFit PLUS|B0GL49K2MR
 Joylux Juicy Like A Peach Vaginal Gel|B0GZJ4LY4F
@@ -150,16 +154,11 @@ Joylux revitalizHER Hydrating Serum|B089NZ1FHB
 Joylux SHEbar Intimate Cleansing Bar|B091SVMHVH
 Joylux coldHER Cooling Bra Inserts|B0CM7C8LRW
 Intimina Laselle Kegel Exercisers|B00W88I1YY
-Veeda Natural Cotton Ultra-Thin Pads With Wings|B06XKB611F
+Veeda Natural Cotton Ultra-Thin Pads With Wings|B0HJSPVWMF
 Love Wellness Intimate Skin Support|B0DSQC9NXR
 Luna Daily Intimate Feminine Wash|B0DC1M8X9G
 Maude Vibe|B0BDHX58JB
-Leachco Snoogle Maternity Pillow|B0000635WI
-Seventh Generation Ultra Thin Pads|B07C57MK7P
-FemmyCycle Menstrual Cup|B00NHDLMTA
-Ziggy Cup|B079JYJBF2
 kieró Essential Boost Serum|B0FRMCLFT1
-The Good Bug Gut Balance SuperGut Stick|B0C24JR64C
 Happy Head Hair Growth Supplements|B0DSWM4B42
 Magnum Solace Nighttime Magnesium Cream|B0HFT7JXVZ
 InfiniWell PTD-DBM + Methyl Vanillate|B09J97Z29F
@@ -196,12 +195,10 @@ Thorne 5-MTHF 1 mg|B00FY8IQ7C
 Seeking Health DAO Enzyme|B00EOBH8KG
 Micro Ingredients Myo & D-Chiro Inositol Powder|B0DGRG846L
 Rif Care Organic Cotton and Hemp Fiber Menstrual Pads with Wings|B0B48ZWM9L
-Rif Care Organic Cotton Non-Applicator Tampons|B0CF4KTRRK
 Rif Care Organic Cotton and Hemp Fiber Leakproof Period Undies|B0CCTBP5DJ
 Viv for your V Viv Disc|B0DKZ6H3ZN
 Viv for your V Viv Menstrual Cup|B098HNHL5N
 Viv for your V Viv Organic Cotton Tampons|B0C59JW8C3
-Popmask Big Hug Self-Heating Patches|B09GV7J2H1
 Hoolest VeRelief Prime|B0GYBH7BP9
 Queen of the Thrones Ritual Starter - Liver Castor Oil Pack Kit|B09ZPWBQJ6
 Topicals Faded Brightening + Clearing Serum|B09V9QRHCD

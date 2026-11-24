@@ -15,8 +15,15 @@ describe('every Amazon link carries ayna’s tag (Nov 2)', () => {
   });
 });
 
+describe('Amazon links that went unavailable (checked Nov 23)', () => {
+  it.each(['p-tampax-pure', 'p-seventh-gen-tampon', 'p-snoogle-pillow', 'p-ziggy-disc'])('%s no longer goes to a dead Amazon listing', (id) => {
+    const p = ALL_PRODUCTS.find((x) => x.id === id);
+    expect(resolveBuyUrl(p) || '').not.toMatch(/amazon\.com/);
+  });
+});
+
 describe('Amazon links added from the Nov 2 sheet (same product only)', () => {
-  it.each([['p-tampax-pure', 'B0B986WL73'], ['p-intimina-lily', 'B00BL1137Q'], ['p-estroven-mood', 'B0091CG65G'], ['p-joylux-vfit', 'B0B42KYZ98'], ['p-sweet-spot-wipes', 'B0DVGZLL7W']])('%s goes to its Amazon listing with the tag', (id, asin) => {
+  it.each([['p-intimina-lily', 'B00BL1137Q'], ['p-estroven-mood', 'B0091CG65G'], ['p-joylux-vfit', 'B0B42KYZ98'], ['p-sweet-spot-wipes', 'B0DVGZLL7W']])('%s goes to its Amazon listing with the tag', (id, asin) => {
     const p = ALL_PRODUCTS.find((x) => x.id === id);
     expect(p).toBeTruthy();
     expect(resolveBuyUrl(p)).toBe(`https://www.amazon.com/dp/${asin}?tag=aynahealth-20`);
