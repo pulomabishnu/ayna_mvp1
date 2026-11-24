@@ -46,21 +46,21 @@ export const PRODUCT_VARIANTS_NOV2026 = {
         "id": "B2-028",
         "label": "Early Pregnancy Support Bundle",
         "priceLabel": "$135.12",
-        "url": "https://perelelhealth.com/products/essential-1st-trimester-prenatal-vitamin-bundle",
+        "url": "https://perelelhealth.com/products/essential-1st-trimester-regimen",
         "image": "https://perelelhealth.com/cdn/shop/files/1st_Tri_Bundle-1_53ba3a88-7b6b-4c02-ab3c-f8dc9ff3cff3.png?v=1778691116"
       },
       {
         "id": "B2-029",
         "label": "2nd Trimester Glow Bundle",
         "priceLabel": "$143.36",
-        "url": "https://perelelhealth.com/products/essential-2nd-trimester-prenatal-vitamin-bundle",
+        "url": "https://perelelhealth.com/products/essential-2nd-trimester-regimen",
         "image": "https://perelelhealth.com/cdn/shop/files/2nd_Tri_Bundle-1.png?v=1778691185"
       },
       {
         "id": "B2-030",
         "label": "Birth Prep Bundle",
         "priceLabel": "$126.89",
-        "url": "https://perelelhealth.com/products/essential-3rd-trimester-prenatal-vitamin-bundle",
+        "url": "https://perelelhealth.com/products/essential-3rd-trimester-regimen",
         "image": "https://perelelhealth.com/cdn/shop/files/3rd_Tri_Bundle-1.png?v=1778691253"
       },
       {
