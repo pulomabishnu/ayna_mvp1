@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { redactErrorMessage, componentFromStack, appErrorProperties } from './errorAnalytics';
+import { redactErrorMessage, componentFromStack, appErrorProperties, isChunkLoadError } from './errorAnalytics';
 
 describe('redactErrorMessage', () => {
   it('keeps the shape of ordinary errors', () => {
@@ -42,5 +42,19 @@ describe('appErrorProperties', () => {
   it('falls back to the current screen when the stack has no usable name', () => {
     const props = appErrorProperties(new Error('boom'), { componentStack: '\n    at Xe (a.js)' }, { view: 'discovery' });
     expect(props).toMatchObject({ component: 'discovery', view: 'discovery' });
+  });
+});
+
+describe('isChunkLoadError', () => {
+  it('matches a missing JavaScript chunk', () => {
+    expect(isChunkLoadError(new TypeError('Failed to fetch dynamically imported module: https://x/assets/Discovery-a1b2.js'))).toBe(true);
+    expect(isChunkLoadError(new TypeError('Importing a module script failed.'))).toBe(true);
+  });
+  it('matches a missing CSS chunk from Vite preload', () => {
+    expect(isChunkLoadError(new Error('Unable to preload CSS for /assets/WebIntake-Dk3x9.css'))).toBe(true);
+  });
+  it('does not match other errors', () => {
+    expect(isChunkLoadError(new Error("Cannot read properties of undefined (reading 'map')"))).toBe(false);
+    expect(isChunkLoadError(undefined)).toBe(false);
   });
 });

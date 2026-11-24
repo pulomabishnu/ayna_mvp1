@@ -43,6 +43,17 @@ export function componentFromStack(componentStack) {
   return '';
 }
 
+/**
+ * A stale-deploy asset error: the tab still has the old hashed chunk names,
+ * and the new deploy removed those files. Vite throws "Unable to preload CSS
+ * for /assets/…css" when a lazy chunk's stylesheet is gone.
+ */
+export function isChunkLoadError(error) {
+  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Unable to preload CSS/i.test(
+    String(error?.message || error || '')
+  );
+}
+
 /** Properties for an app_error event. $pathname comes from posthog-js. */
 // Production builds minify component names, so the stack often has none.
 // The app records its current screen (App.jsx / MobileApp.jsx set

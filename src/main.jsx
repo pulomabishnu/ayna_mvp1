@@ -40,7 +40,7 @@ import posthog from 'posthog-js'
 import { getInternalIds, tagInternalUserIfNeeded } from './utils/posthogInternal'
 import { hasInternalBrowserMarker, tagFounderAnalyticsIfNeeded } from './utils/founderAnalytics'
 import { applyStoredConsent, getStoredConsent } from './utils/analyticsConsent'
-import { appErrorProperties, redactErrorMessage, exceptionProperties } from './utils/errorAnalytics'
+import { appErrorProperties, redactErrorMessage, exceptionProperties, isChunkLoadError } from './utils/errorAnalytics'
 import { sanitizeEventPayload } from './utils/analyticsSanitize'
 import { applyConsentTier } from './utils/essentialAnalytics'
 import { analyticsPlatform, analyticsEnvironment, resolvePosthogKey } from './utils/analyticsPlatform'
@@ -318,32 +318,24 @@ function registerNativeAppAnalytics(ph) {
 // new deploy (we ship many in a session) still has the OLD hash cached in its
 // React.lazy() closures, so the next click into Discovery/MyEcosystem/
 // Articles 404s on a chunk that no longer exists on the CDN, surfacing as
-// "Failed to fetch dynamically imported module" in this boundary. That's not
+// "Failed to fetch dynamically imported module" (or, for its stylesheet,
+// "Unable to preload CSS") in this boundary. That's not
 // a real app error, it's a stale asset manifest: reload once, automatically,
 // rather than dead-ending on a scary error screen the user has to notice and
-// click through. The sessionStorage flag caps it at one silent retry per
-// session so a genuinely broken deploy still surfaces the real error instead
-// of reload-looping forever.
+// click through. The sessionStorage flag holds the time of the last silent
+// retry: a second chunk error within CHUNK_RELOAD_WINDOW_MS shows the real
+// error, so a genuinely broken deploy does not reload-loop forever. A LATER
+// chunk error (e.g. another deploy landing while the tab is still open) gets
+// its own retry. The flag is not cleared on mount: the boundary mounts
+// before a lazy chunk fails, so that would reset the guard on every reload.
 const CHUNK_RELOAD_KEY = 'ayna_chunk_reload_attempted';
-function isChunkLoadError(error) {
-  return /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i.test(
-    String(error?.message || error || '')
-  );
-}
+const CHUNK_RELOAD_WINDOW_MS = 60 * 1000;
 
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null, recovering: false };
 
   static getDerivedStateFromError(error) {
     return { hasError: true, error };
-  }
-
-  componentDidMount() {
-    // A clean mount means this reload (if any) actually fixed things, clear
-    // the one-shot flag so a LATER, unrelated chunk error in the same tab
-    // session (e.g. another deploy landing while it's still open) still gets
-    // its own automatic retry instead of going straight to the error screen.
-    try { sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch { /* private mode */ }
   }
 
   componentDidCatch(error, info) {
@@ -362,10 +354,10 @@ class ErrorBoundary extends React.Component {
     if (!isChunkLoadError(error)) return;
 
     let alreadyTried = false;
-    try { alreadyTried = sessionStorage.getItem(CHUNK_RELOAD_KEY) === '1'; } catch { /* storage unavailable */ }
+    try { alreadyTried = Date.now() - Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0) < CHUNK_RELOAD_WINDOW_MS; } catch { /* storage unavailable */ }
 
     if (!alreadyTried) {
-      try { sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch { /* storage unavailable */ }
+      try { sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now())); } catch { /* storage unavailable */ }
       this.setState({ recovering: true });
       window.location.reload();
     } else {
