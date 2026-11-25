@@ -388,8 +388,11 @@ export default function BrowseScreen({
   // still find every catalog product (focus group: Resa Rhythm Bracelet was
   // hidden, so she assumed it did not exist), so non-matches that fit the
   // search are kept aside and shown below as a labelled "More results" group.
-  const narrowToMatches = personalized && hasProfile;
-  const personalizedIds = narrowToMatches ? new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts)) : null;
+  // Focus group, Nov 16 (Alyssa): with "My matches" on and no matches yet (safety questions not answered, or
+  // nothing picked to help with), Shop showed nothing at all. Then it shows everything instead.
+  const matchIds = personalized && hasProfile ? new Set(getPersonalizedProductIds(quizAnswers, null, matchOpts)) : null;
+  const narrowToMatches = Boolean(matchIds && matchIds.size > 0);
+  const personalizedIds = narrowToMatches ? matchIds : null;
   if (activeGroup !== 'all') {
     filtered = filtered.filter((p) => itemMatchesMacroGroup(p, activeGroup));
   }

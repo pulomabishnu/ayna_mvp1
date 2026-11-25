@@ -282,13 +282,17 @@ function Segmented({ options, value, onChange, labels }) {
 // Pattern H1: search-styled input, added items as swatch+title cards (not
 // small chips), a dashed "Add" affordance implicit in the search bar
 // itself, and an × to remove, same values/suggestions/onChange contract.
+const keepFocus = (e) => e.preventDefault();
+
 function SuggestList({ draft, matches, onPick }) {
   if (!draft.trim()) return null;
   return (
     <div className="ip-suggest" role="listbox">
       {/* Focus group, Nov 16 (Alyssa typed "Olly gummies" and thought it wasn't allowed): add-your-own comes first. */}
-      {!matches.some((m) => m.toLowerCase() === draft.trim().toLowerCase()) && <button type="button" className="is-add" onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>}
-      {matches.map((option) => <button type="button" key={option} onClick={() => onPick(option)}>{option}</button>)}
+      {/* Focus group, Nov 17 + 23 (Elizabeth, Ruth): on iPhone the field lost focus first and saved the half-typed
+          letters, so the suggestion she tapped never landed. Pressing a suggestion now keeps focus in the field. */}
+      {!matches.some((m) => m.toLowerCase() === draft.trim().toLowerCase()) && <button type="button" className="is-add" onPointerDown={keepFocus} onMouseDown={keepFocus} onClick={() => onPick(draft)}>+ Add “{draft.trim()}”</button>}
+      {matches.map((option) => <button type="button" key={option} onPointerDown={keepFocus} onMouseDown={keepFocus} onClick={() => onPick(option)}>{option}</button>)}
     </div>
   );
 }
@@ -313,19 +317,25 @@ function TokenInput({ values, onChange, placeholder, suggestions = [], suggestio
     () => rankedSuggestions(draft, suggestions.filter((option) => !values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(option))), suggestionLimit),
     [draft, suggestions, values, suggestionLimit]
   );
+  const blurTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(blurTimer.current), []);
   const addValue = (raw) => {
+    window.clearTimeout(blurTimer.current);
     const next = String(raw || '').trim();
     if (!next || values.some((v) => normalizeSuggestion(v) === normalizeSuggestion(next))) return;
     onChange([...values, next]);
     setDraft('');
   };
   // Typed text is kept when she leaves the field without tapping Add (backlog Nov 14, Alyson/Ivy).
+  // Saved a moment later, so a tap on a suggestion (which wins) isn't beaten by the blur.
   const wrapRef = useRef(null);
+  const draftRef = useRef('');
+  draftRef.current = draft;
   return (
     <div className="ip-token-input" ref={wrapRef}>
       <label className="ip-search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={(e) => { if (draft.trim() && !(e.relatedTarget && wrapRef.current?.contains(e.relatedTarget))) addValue(draft); }} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(matches[0] || draft); }} placeholder={placeholder} aria-label={placeholder} />
+        <SmartSearchInput vocabulary={suggestions} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={(e) => { if (draft.trim() && !(e.relatedTarget && wrapRef.current?.contains(e.relatedTarget))) { window.clearTimeout(blurTimer.current); blurTimer.current = window.setTimeout(() => { if (draftRef.current.trim()) addValue(draftRef.current); }, 250); } }} onKeyDown={(e) => { if (e.key === 'Enter' && draft.trim()) addValue(matches[0] || draft); }} placeholder={placeholder} aria-label={placeholder} />
         {draft && <button type="button" aria-label="Clear" onClick={() => setDraft('')}>×</button>}
       </label>
       <SuggestList draft={draft} matches={matches} onPick={addValue} />
@@ -1031,7 +1041,11 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
     step.id === 'formats' ? intake.preferredFormats.length :
     step.id === 'avoidIngredients' ? intake.avoidIngredients.length : 0;
   const minorBlocked = step.id === 'age' && isMinorAge(intake.age);
-  const ready = requiredReady(step.id, intake) && !minorBlocked && (step.id !== 'zip' || String(intake.zipcode || '').length > 0);
+  // Focus group, Nov 23 (Vinita, Ruth): Continue looked dead on an optional question with nothing entered.
+  // An optional question can always move on: left empty it counts as skipped, and a shown default counts.
+  const ready = step.optional ? !minorBlocked : (requiredReady(step.id, intake) && !minorBlocked && (step.id !== 'zip' || String(intake.zipcode || '').length > 0));
+  // An optional question with nothing entered says Skip on its main button, so moving on is obvious.
+  const ctaSkips = step.optional && !isStepAnswered(step.id, intake) && !['trust', 'recommendationCount'].includes(step.id);
   if (minorGate) {
     return <MinorGateScreen onChangeAge={() => setMinorGate(false)} onBrowseLibrary={onBack} />;
   }
@@ -1068,7 +1082,7 @@ export default function IntakeScreen({ onBack, onComplete, onDraftChange, initia
       flag={!onboarding && flaggedStepIds.has(step.id) ? 'Not answered yet' : null}
       lead={onboarding && obPart === 'core' && currentIndex === 0 ? <MedicalNote href={MEDICAL_TERMS_URL} className="ip-med-note" /> : null}
       hint={!ready ? missingAnswerHint(step.id, intake) : null}
-      cta={{ label: isLast && phase === 'optional' ? 'See my results' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
+      cta={{ label: isLast && phase === 'optional' ? 'See my results' : ctaSkips ? 'Skip' : 'Continue', onClick: goNext, disabled: !ready, count: countForStep }}
       below={(termCount > 0 || (phase === 'optional' && !isLast)) ? <>
         {/* Ameera, Nov 15: a short hint instead of a list of every word. Screen readers still get the list. */}
         {termCount > 0 && <p className="aq-terms aq-terms--hint"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg><span aria-hidden="true">Not sure what one means? Press and hold it.</span><button type="button" className="sr-only" onClick={() => setTermList(termsOnScreen())}>What these words mean</button></p>}

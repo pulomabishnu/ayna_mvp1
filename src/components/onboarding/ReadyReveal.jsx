@@ -159,12 +159,15 @@ export default function ReadyReveal({ prefsDone = false, answers = null, variant
   useEffect(() => { if (shelfQuality) trackShelfQuality(shelfQuality, { surface: eventSurface(), where: 'reveal' }); }, [shelfQuality]);
   // Focus group, Nov 9: "nothing to fix, but I want to learn about birth control".
   const learn = Array.isArray(answers?.fullHealthIntake?.learnInterests) ? answers.fullHealthIntake.learnInterests : [];
-  // Ameera, Nov 15 ("there's no option for the optional questions, just link your wearables"): a question
-  // she skipped is still unanswered, so it counts here (moreRemaining treats skips as done).
+  // Ameera, Nov 15 ("there's no option for the optional questions, just link your wearables"): the row stays,
+  // as "Review your answers" once she has been through them.
   const remaining = useMemo(() => {
     if (!answers?.fullHealthIntake) return 0;
     const i = reconstructIntakeFromSnapshot(answers.fullHealthIntake);
-    return getOnboardingSteps(i, { part: 'more' }).filter((st) => !isStepAnswered(st.id, i)).length;
+    // Focus group, Nov 23 (Ruth): after going through them and skipping some, it still said "answer 4 more".
+    // A question she skipped is done here; the row then says "Review your answers" so she can still go back.
+    const skipped = new Set(i.skippedSteps || []);
+    return getOnboardingSteps(i, { part: 'more' }).filter((st) => !isStepAnswered(st.id, i) && !skipped.has(st.id)).length;
   }, [answers]);
   // Nov 3: the safety questions now come right after the reveal. Until they're
   // answered, anything she takes stays off her list, so ask for them first.
