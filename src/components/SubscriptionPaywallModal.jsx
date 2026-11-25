@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { useProPurchaseMode } from '../pro/appStorefront.js';
 import TrialStart from '../pro/TrialStart.jsx';
+import ApplePaywallSheet from './pro/ApplePaywallSheet.jsx';
+import { usesAppleIap } from '../pro/appleIap.js';
 import posthog from 'posthog-js';
 import { useEscapeToClose } from '../utils/useEscapeToClose';
 import { useFocusTrap } from '../utils/useFocusTrap';
@@ -138,6 +140,20 @@ export default function SubscriptionPaywallModal({ onClose, feature = '', featur
   // Nov 17 (founder: "without scrolling, and don't forget the 14 day free trial"): in the app the sheet is one
   // screen. The free trial first, a short list of what Pro adds, the plans and the button. Billing details fold.
   const inApp = native || Boolean(host.classList?.contains('ayna-mobile'));
+
+  // Nov 25 (App Review 3.1.1 / 3.1.3(b)): the iPhone app sells Pro with Apple in-app purchase only.
+  // No Stripe checkout and no link to buy on the web from the app.
+  if (usesAppleIap()) {
+    return createPortal(
+      <div className={`pro-sheet is-app${closing ? ' is-closing' : ''}`} onClick={close}>
+        <section ref={trapRef} tabIndex={-1} className="pro-sheet__panel" role="dialog" aria-modal="true" aria-labelledby={titleId} onClick={(e) => e.stopPropagation()}>
+          <ApplePaywallSheet titleId={titleId} unlocking={unlocking} signedOut={signedOut} onSignIn={signIn} onClose={close} feature={feature}
+            track={(event, props) => captureProEvent(event, { feature: feature || 'general', ...props })} />
+        </section>
+      </div>,
+      host,
+    );
+  }
 
   // App Store rule 3.1.1: outside the US App Store the iPhone app never shows Pro prices or a link to
   // pay outside the App Store, so it says so plainly. US App Store users get the full sheet below.

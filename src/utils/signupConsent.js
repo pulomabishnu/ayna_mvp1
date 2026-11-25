@@ -29,11 +29,12 @@ export const LEGAL_LINKS = [
 export const AGE_REQUIREMENT_VERSION = '18plus-v1';
 
 /** Consent + 18+ fields recorded on every new account (all sign-up paths and ConsentGate). */
-export function consentMetadata(now = new Date().toISOString()) {
+export function consentMetadata(now = new Date().toISOString(), { aiConsent = true } = {}) {
   return {
     consent_given_at: now,
     consent_version: CONSENT_VERSION,
-    ai_processing_consent: true,
+    // The iPhone app passes her choice (optional there, App Review 5.1.2(i)); the website still requires it.
+    ai_processing_consent: aiConsent === true,
     acknowledgements_shown: true,
     age_18_confirmed: true,
     age_18_confirmed_at: now,

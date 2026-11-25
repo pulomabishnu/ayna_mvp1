@@ -2,19 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- HealthKit read access for "Health data" (You -> Health data), plus
-	     Clinical Health Records (allergies, conditions, medications only; see
-	     native/capacitor-ayna-records). No background delivery. The App ID must
-	     also have Clinical Health Records enabled in the developer account. -->
+	<!-- HealthKit read access for "Health data" (You -> Health data). No background
+	     delivery. Nov 25: Clinical Health Records removed from 1.0 (App Review 2.1). -->
 	<!-- Nov 16: phone notifications from the server (community, reminders). Without this iOS never hands the
 	     app a push token, so device_tokens stayed empty. Push Notifications must also be on for the App ID. -->
 	<key>aps-environment</key>
 	<string>production</string>
 	<key>com.apple.developer.healthkit</key>
 	<true/>
-	<key>com.apple.developer.healthkit.access</key>
-	<array>
-		<string>health-records</string>
-	</array>
 </dict>
 </plist>

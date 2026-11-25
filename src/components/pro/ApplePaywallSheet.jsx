@@ -1,0 +1,112 @@
+import { useState } from 'react';
+import TrialStart from '../../pro/TrialStart.jsx';
+import { PRO_ICONS, PRO_STORY } from './ProStory.jsx';
+import { buyWithApple, introLine, perPeriod, restoreApplePurchases, useAppleProducts } from '../../pro/appleIap.js';
+import { announceProChanged } from '../../pro/paywall.js';
+
+const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
+const PRIVACY_URL = 'https://www.aynahealth.co/privacy-policy';
+const APPLE_EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+
+/**
+ * ayna Pro in the iPhone app, sold with Apple in-app purchase (App Review 3.1.1, Nov 25).
+ * Everything Apple asks a subscription screen to show (3.1.2(c) and Schedule 2): the name, the
+ * length, the price per period, that it renews automatically, how to cancel, Restore purchases,
+ * and links to the Terms and the Privacy Policy. Prices come from Apple, in her currency.
+ */
+export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSignIn, onClose, feature, track }) {
+  const { status, products } = useAppleProducts(true);
+  const [plan, setPlan] = useState('year');
+  const [busy, setBusy] = useState('');
+  const [note, setNote] = useState('');
+  const [error, setError] = useState('');
+  const chosen = products[plan] || products.year || products.month || null;
+  const plans = ['year', 'month'].map((id) => products[id]).filter(Boolean);
+
+  const buy = async () => {
+    if (busy || !chosen) return;
+    setBusy('buy'); setError(''); setNote('');
+    track?.('pro_checkout_started', { plan: chosen.plan, store: 'apple' });
+    try {
+      const out = await buyWithApple(chosen.plan);
+      if (out === 'success') { track?.('pro_purchase_completed', { plan: chosen.plan, store: 'apple' }); setNote('You’re Pro. Thank you.'); window.setTimeout(onClose, 1200); }
+      else if (out === 'pending') setNote('Your purchase is waiting for approval. Pro unlocks as soon as it goes through.');
+    } catch (e) {
+      if (e?.code === 'sign_in_required') { onSignIn?.(); return; }
+      track?.('pro_checkout_failed', { plan: chosen.plan, store: 'apple', error_code: e?.code || 'unknown' });
+      setError(e?.message && !/purchase_failed|unverified/.test(e.message) ? e.message : 'The purchase didn’t go through. Nothing was charged.');
+    } finally { setBusy(''); }
+  };
+
+  const restore = async () => {
+    if (busy) return;
+    setBusy('restore'); setError(''); setNote('');
+    try {
+      const out = await restoreApplePurchases();
+      if (out.restored) { announceProChanged(); setNote('Restored. ayna Pro is on.'); window.setTimeout(onClose, 1200); }
+      else setNote('No active ayna Pro subscription was found for this Apple ID.');
+    } catch (e) { setError(e?.message || 'Couldn’t restore right now. Try again in a minute.'); }
+    finally { setBusy(''); }
+  };
+
+  const intro = introLine(chosen);
+  const price = perPeriod(chosen);
+  const period = chosen?.periodUnit || 'period';
+
+  return (
+    <>
+      <header className="pro-sheet__head">
+        <span className="pro-sheet__grab" aria-hidden="true" />
+        <button type="button" className="pro-sheet__close" onClick={onClose} aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+        </button>
+        <h2 id={titleId} className="pro-sheet__title">Get ayna <em>Pro</em></h2>
+        {unlocking && <p className="pro-sheet__lede">Unlock <b>{unlocking}</b>.</p>}
+      </header>
+      <div className="pro-sheet__body">
+        <ul className="pro-app__feats" aria-label="What ayna Pro adds">
+          {PRO_STORY.map((f) => (
+            <li key={f.id}><span className="pro-app__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[f.icon]}</svg></span>{f.t}</li>
+          ))}
+        </ul>
+        {!signedOut && <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(onClose, 1400)} />}
+
+        {status === 'loading' && <p className="pro-sheet__billing" role="status">Loading prices…</p>}
+        {(status === 'error' || status === 'empty') && <p className="pro-sheet__error" role="alert">ayna Pro isn’t available to buy right now. Try again later.</p>}
+        {plans.length > 0 && (
+          <div className="pro-sheet__plans" role="radiogroup" aria-label="Choose a plan">
+            {plans.map((p) => (
+              <button key={p.id} type="button" role="radio" aria-checked={chosen?.id === p.id} className={`pro-plan${chosen?.id === p.id ? ' is-on' : ''}`} disabled={Boolean(busy)} onClick={() => setPlan(p.plan)}>
+                <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.plan === 'year' ? 'Yearly' : 'Monthly'}</span></span>
+                <span className="pro-plan__amount"><strong className="pro-plan__price">{perPeriod(p)}</strong></span>
+                {introLine(p) && <span className="pro-plan__sub">{introLine(p)}</span>}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {error && <p className="pro-sheet__error" role="alert">{error}</p>}
+        {note && <p className="pro-sheet__billing" role="status">{note}</p>}
+
+        {signedOut
+          ? <button type="button" className="pro-sheet__cta" onClick={onSignIn}>Sign in to get ayna Pro</button>
+          : <button type="button" className="pro-sheet__cta" disabled={!chosen || Boolean(busy)} aria-busy={busy === 'buy' ? 'true' : undefined} onClick={buy}>{busy === 'buy' ? 'Opening the App Store…' : chosen ? `Subscribe · ${intro || price}` : 'Subscribe'}</button>}
+
+        {chosen && (
+          <p className="pro-sheet__billing">
+            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {intro ? `${intro}, then ${price}` : price}. Payment is charged to your Apple ID when you confirm.
+            It renews automatically every {period} unless you turn off auto-renew at least 24 hours before the current period ends.
+            Manage or cancel any time in Settings › your name › Subscriptions.
+          </p>
+        )}
+        <p className="pro-sheet__billing">
+          <a href={TERMS_URL} target="_blank" rel="noopener noreferrer">Terms of Use</a> · <a href={APPLE_EULA_URL} target="_blank" rel="noopener noreferrer">Apple’s EULA</a> · <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        </p>
+        <div className="pro-app__row">
+          {!signedOut && <button type="button" className="pro-app__link" onClick={restore} disabled={Boolean(busy)}>{busy === 'restore' ? 'Restoring…' : 'Restore purchases'}</button>}
+          <button type="button" className="pro-app__link" onClick={onClose}>Not now</button>
+        </div>
+      </div>
+    </>
+  );
+}

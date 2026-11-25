@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { AynaRecords } from 'capacitor-ayna-records';
+import { AynaStore } from 'capacitor-ayna-store';
 
 /**
  * May the iPhone app link to buying Pro on the web? Apple allows it for the US App Store
@@ -19,7 +19,7 @@ export function proPurchaseModeFor({ native, countryCode }) {
   return countryCode === 'USA' ? 'us_link' : 'none';
 }
 
-export async function loadProPurchaseMode({ native = isNative(), lookup = () => AynaRecords.storefront() } = {}) {
+export async function loadProPurchaseMode({ native = isNative(), lookup = () => AynaStore.storefront() } = {}) {
   if (!native) return 'web';
   if (cached) return cached;
   if (!pending) {

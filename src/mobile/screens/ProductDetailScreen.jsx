@@ -53,6 +53,8 @@ import { fetchWithTimeout } from '../../utils/network.js';
 import { variantGroups } from '../../utils/variantGroups.js';
 import { productAskStarters, productMatchContext, PRODUCT_ASK_TITLE, PRODUCT_ASK_PLACEHOLDER } from '../../utils/productAsk.js';
 import { localMatchAnswer } from '../../utils/askMatch.js';
+import AiConsentCard from '../../components/AiConsentCard.jsx';
+import { grantAiConsent, hasAiConsent } from '../../utils/aiConsent.js';
 
 /**
  * Ask Ayna, ported from AskAynaProductTab in src/components/ProductModal.jsx
@@ -65,6 +67,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [aiAsk, setAiAsk] = useState('');
   const [error, setError] = useState('');
   const [session, setSession] = useState(undefined); // undefined = still checking
 
@@ -92,6 +95,8 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
     const local = await localMatchAnswer(q, { quizAnswers, matchOpts, focusProduct: product }).catch(() => null);
     if (local) { setError(''); setInput(''); setMessages((prev) => [...prev, { role: 'user', text: q }, { role: 'assistant', text: local.answer }]); return; }
     if (!session?.access_token) { onRequireAuth?.('Ask ayna'); return; }
+    // Nov 25 (App Review 5.1.2(i)): nothing goes to the AI provider until she agrees.
+    if (!hasAiConsent(session)) { setInput(q); setAiAsk(q); return; }
     setError('');
     setInput('');
     const nextMessages = [...messages, { role: 'user', text: q }];
@@ -184,6 +189,7 @@ function AskAynaTab({ product, quizAnswers, ecosystemProducts, onRequireAuth, ma
         </div>
       )}
 
+      {aiAsk && <AiConsentCard onAgree={() => { const pending = aiAsk; setAiAsk(''); grantAiConsent(session).finally(() => ask(pending)); }} onDecline={() => setAiAsk('')} />}
       {error && <div style={{ fontWeight: 500, fontSize: 'calc(13px * var(--ayna-text-scale, 1))', color: 'var(--ayna-heading)', lineHeight: 1.5 }}>{error}</div>}
 
       <form onSubmit={(e) => { e.preventDefault(); ask(input); }} style={{ display: 'flex', gap: 8 }}>

@@ -3,9 +3,12 @@
  * everywhere else every call reports "unavailable" and nothing is faked.
  * Records are read on the phone and parsed on the phone (src/health/records.js).
  */
-import { Capacitor } from '@capacitor/core';
-import { AynaRecords } from 'capacitor-ayna-records';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { RECORD_TYPES } from './records.js';
+
+// Nov 25: Health Records is out of the 1.0 app (App Review 2.1); the native plugin is not
+// installed, so this finds no plugin and the screen reports it unavailable.
+const AynaRecords = registerPlugin('AynaRecords');
 
 const validTypes = (types) => (Array.isArray(types) ? types.filter((t) => RECORD_TYPES[t]) : []);
 

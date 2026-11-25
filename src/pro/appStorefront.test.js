@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('@capacitor/core', () => ({ Capacitor: { isNativePlatform: () => false } }));
-vi.mock('capacitor-ayna-records', () => ({ AynaRecords: { storefront: vi.fn() } }));
+vi.mock('capacitor-ayna-store', () => ({ AynaStore: { storefront: vi.fn() } }));
 
 const { proPurchaseModeFor, loadProPurchaseMode, _resetStorefront } = await import('./appStorefront.js');
 

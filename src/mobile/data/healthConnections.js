@@ -119,6 +119,8 @@ export const HEALTH_SOURCES = [
   {
     id: 'records',
     group: 'records',
+    // Nov 25 (App Review 2.1): left out of the 1.0 app; back in an update. Hidden everywhere until then.
+    paused: true,
     name: 'Apple Health Records',
     kind: 'Allergies, conditions and medicines',
     availability: 'records',

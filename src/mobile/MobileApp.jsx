@@ -180,6 +180,7 @@ import UpdateRecap from '../components/recap/UpdateRecap.jsx';
 import { trackSave, intakeFailed, batchFailed } from '../utils/saveFeedback.js';
 import ChangeHistory from '../components/recap/ChangeHistory.jsx';
 import ConsentBanner from '../components/ConsentBanner.jsx';
+import { listenForAppleTransactions } from '../pro/appleIap.js';
 
 // Same real fallback chain used everywhere on desktop (App.jsx's
 // accountMonogram, Hero.jsx's displayNameFromUser, EcosystemBubbles.jsx,
@@ -731,6 +732,8 @@ export default function MobileApp() {
   const [askPush, setAskPush] = useState(() => { try { return localStorage.getItem('ayna_push_asked_v1') === '1'; } catch { return false; } });
   const markPushMoment = () => { if (askPush) return; try { localStorage.setItem('ayna_push_asked_v1', '1'); } catch { /* storage blocked */ } setAskPush(true); };
   usePushNotifications(authUser?.id, askPush);
+  // Nov 25: Apple renewals and purchases made elsewhere reach ayna while the app is open.
+  useEffect(() => { if (authUser?.id) listenForAppleTransactions(); }, [authUser?.id]);
   // Today's "Get your Daily Rundown each morning?" (after her first Rundown) is also a push moment.
   useEffect(() => {
     const ask = () => markPushMoment();

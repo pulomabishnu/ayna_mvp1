@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { verifyUser, getServiceClient, claimEcosystemBuild } from './_usageLimit.js';
 import { rateLimit } from './_rateLimit.js';
 import { proFeatureRules } from './_proFeatures.js';
+import { verifyAppTransactions } from './_proApple.js';
 import { PRO_FLOW, PRO_PLANS, proConfig, proStatus, proStripe, validateProPrices, renewalDate, syncProSubscription, isExpectedPaidTermStart, PRO_PAID_TERM_START_AT } from './_pro.js';
 
 function isAdminUser(user) {
@@ -96,7 +97,7 @@ export default async function handler(req, res) {
         weeklyRead,
         quizRetakeOpen,
         // Staff grants do not expire with a separate paid purchase.
-        accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0) || null),
+        accessExpiresAt: legacyPremium ? null : (Math.max(Date.parse(status.termEndsAt) || 0, Date.parse(status.temporaryUntil) || 0, Date.parse(status.appleExpiresAt) || 0) || null),
         offerOpen,
         isAdmin,
         paidTermStartsAt: PRO_PAID_TERM_START_AT,
@@ -156,6 +157,16 @@ export default async function handler(req, res) {
     }
 
     // Nov 16 (founder): a free week of Pro, no card, that she opts into. One per account, ever.
+    // ayna Pro bought in the iPhone app (Apple in-app purchase, Nov 25). The app sends Apple's signed
+    // transactions; each is verified against Apple's certificate chain before it counts.
+    if (body.action === 'apple_verify') {
+      const list = Array.isArray(body.transactions) ? body.transactions : [body.jws];
+      const results = await verifyAppTransactions(admin, user.id, list);
+      let next = status;
+      try { next = await proStatus(admin, user.id); } catch { /* the save already happened; status catches up */ }
+      return res.status(200).json({ ok: results.some((r) => r.result === 'saved' || r.result === 'kept'), results, active: legacyPremium || next.active || isAdmin });
+    }
+
     if (body.action === 'start_trial') {
       if (active) return res.status(200).json({ started: false, reason: 'already_pro' });
       const { data: used, error: usedError } = await admin.from('pro_trials').select('user_id').eq('user_id', user.id).maybeSingle();

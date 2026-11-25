@@ -71,6 +71,7 @@ import { localDayKey as rundownDayKey } from '../../../utils/localDate.js';
 import { openProPaywall } from '../../../pro/paywall.js';
 import { useProAccess } from '../../../pro/useProAccess.js';
 import { getStoredConsent, grantConsent, denyConsent } from '../../../utils/analyticsConsent.js';
+import { usesAppleIap, restoreApplePurchases, manageAppleSubscription } from '../../../pro/appleIap.js';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
@@ -1806,10 +1807,16 @@ const SET_ICONS = {
 
 function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAboutAyna, onOpenContact, onOpenAccountInfo, onOpenPrivacyData, onOpenLegal, authUser, onSignOut, onSignIn }) {
   const [query, setQuery] = useState('');
+  // Nov 25: Pro bought with Apple in-app purchase is restored and managed here (App Review 3.1.1).
+  const [storeMsg, setStoreMsg] = useState('');
+  const appleRows = authUser && usesAppleIap() ? [
+    { icon: 'account', title: 'Restore purchases', keywords: 'ayna pro subscription restore apple', onClick: () => { setStoreMsg('Restoring…'); restoreApplePurchases().then((r) => setStoreMsg(r.restored ? 'Restored. ayna Pro is on.' : 'No active ayna Pro subscription was found for this Apple ID.')).catch(() => setStoreMsg('Couldn’t restore right now. Try again in a minute.')); } },
+    { icon: 'account', title: 'Manage subscription', keywords: 'ayna pro subscription cancel renew apple billing', onClick: () => { manageAppleSubscription().catch(() => setStoreMsg('Open Settings › your name › Subscriptions to manage ayna Pro.')); } },
+  ] : [];
   const groups = [
     ['Preferences', 'butter', [{ icon: 'appearance', title: 'Appearance & preferences', keywords: 'theme text size notifications personalization health data ask ayna suggestions tips', onClick: onOpenPreferences }, { icon: 'texts', title: 'Text messages', keywords: 'sms phone alerts reminders', soon: true }]],
     ['About', 'pink', [{ icon: 'how', title: 'How it works', keywords: 'matching evidence recommendations', onClick: onOpenHowItWorks }, { icon: 'about', title: 'About ayna', keywords: 'team company', onClick: onOpenAboutAyna }, { icon: 'brands', title: 'Brand partnerships', keywords: 'partners companies', href: BRAND_PARTNERSHIPS_URL }, { icon: 'campus', title: 'Campus resources', keywords: 'college university', href: CAMPUS_RESOURCES_URL }]],
-    ['Account', 'mint', [{ icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
+    ['Account', 'mint', [...appleRows, { icon: 'account', title: 'Account information', keywords: 'email password name delete download', onClick: onOpenAccountInfo }, { icon: 'privacy', title: 'Privacy & data', keywords: 'health data analytics delete export connected', onClick: onOpenPrivacyData }, { icon: 'legal', title: 'Legal', keywords: 'privacy terms licenses policy', onClick: onOpenLegal }, { icon: 'contact', title: 'Contact', keywords: 'help support feedback partnership press', onClick: onOpenContact }]],
   ];
   const normalizedQuery = query.trim().toLowerCase();
   const matchesQuery = (text) => !normalizedQuery || String(text || '').toLowerCase().includes(normalizedQuery);
@@ -1835,6 +1842,7 @@ function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAbo
             : <button type="button" key={row.title} className="ay-set-row" onClick={row.onClick}>{rowInner(row)}</button>)}
         </div>
       </section>)}
+      {storeMsg && <p className="ay-set-no-results" role="status">{storeMsg}</p>}
       {showRundown && <RundownSetting today={rundownDayKey()} />}
       {/* Nov 16 (founder): tip bubbles and the old tour are off in the app, so no Tips settings here. */}
       {noResults && <p className="ay-set-no-results" role="status">No settings match “{query.trim()}”.</p>}

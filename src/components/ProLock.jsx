@@ -5,6 +5,7 @@ import { useProPurchaseMode } from '../pro/appStorefront.js';
 import { useProCta } from '../pro/useTrialAvailable.js';
 import '../styles/pro-v4.css';
 import { healthSourcesText } from '../utils/platformCopy.js';
+import { usesAppleIap } from '../pro/appleIap.js';
 
 const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
 
@@ -81,7 +82,8 @@ export default function ProLock({
     if (!openProPaywall({ feature, featureName: name })) setLocalSheet(true);
   };
   // The iPhone app: US App Store users buy on the web from the Pro sheet; elsewhere nothing to buy (Apple 3.1.1).
-  const usLink = useProPurchaseMode(native) === 'us_link';
+  // Nov 25: the iPhone app sells Pro with Apple in-app purchase, so it can always offer it.
+  const usLink = useProPurchaseMode(native) === 'us_link' || usesAppleIap();
   const sheet = (!native || usLink) && localSheet && <SubscriptionPaywallModal feature={feature} featureName={name} onClose={() => setLocalSheet(false)} />;
 
   if (folded) {

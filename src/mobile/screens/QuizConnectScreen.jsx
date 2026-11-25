@@ -47,7 +47,8 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
   const unlock = () => {
     // Signed out: her new account starts with the free trial box ticked, so linking works right after.
     if (!authUser?.id && onQuizConnectSignIn) { setTrialOptIn(true); onQuizConnectSignIn(); return; }
-    if (!openProPaywall({ feature: 'wearables', featureName: 'Health apps and wearables' }) && Capacitor.isNativePlatform()) {
+    // Nov 25: never send the iPhone app to buy on the web (Pro is an in-app purchase there).
+    if (!openProPaywall({ feature: 'wearables', featureName: 'Health apps and wearables' }) && Capacitor.isNativePlatform() && Capacitor.getPlatform() !== 'ios') {
       window.open('https://www.aynahealth.co/pro?feature=wearables', '_blank', 'noopener');
     }
   };

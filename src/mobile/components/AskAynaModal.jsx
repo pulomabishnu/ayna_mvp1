@@ -27,6 +27,8 @@ import ProLock from '../../components/ProLock.jsx';
 const PRO_GUIDE_PAGES = { recap: 'recap', trial: 'trial', report: 'appointment' };
 import { useAskHealthPref, ASK_HEALTH_LABEL } from '../../health/askHealthPref.js';
 import { trackAsk, askFailReason } from '../../utils/askAnalytics.js';
+import AiConsentCard from '../../components/AiConsentCard.jsx';
+import { grantAiConsent, hasAiConsent } from '../../utils/aiConsent.js';
 
 /**
  * Mobile port of ProfileChatbot's merge/summary logic
@@ -170,6 +172,8 @@ export default function AskAynaModal({
   // Signed out and the last question needed ayna's AI: that question, named
   // inline with why (QA M1). '' once a later question is answered.
   const [needsAccount, setNeedsAccount] = useState('');
+  // Nov 25 (App Review 5.1.2(i)): her first AI question waits here until she agrees.
+  const [aiAsk, setAiAsk] = useState(null);
   const [hasOpened, setHasOpened] = useState(open);
   // A bottom sheet: grabber, drag down to close (useSheetDrag).
   const { sheetRef, grabberProps } = useSheetDrag(onClose);
@@ -330,6 +334,7 @@ export default function AskAynaModal({
       trackAsk('ask_account_needed', { surface: 'app' });
       return;
     }
+    if (!hasAiConsent(session)) { setInput(msg); setAiAsk({ msg, context, stats }); return; }
     setNeedsAccount('');
     setInput('');
     setSendError('');
@@ -590,6 +595,12 @@ export default function AskAynaModal({
             <p>“{needsAccount.length > 90 ? `${needsAccount.slice(0, 88)}…` : needsAccount}” uses ayna’s AI, so it needs a free account. Your question is kept below.</p>
             <button type="button" onClick={() => onRequireAuth?.('Ask ayna')}>Sign in</button>
           </div>
+        )}
+        {aiAsk && (
+          <AiConsentCard
+            onAgree={() => { const pending = aiAsk; setAiAsk(null); grantAiConsent(session).finally(() => send(pending.msg, pending.context, pending.stats)); }}
+            onDecline={() => setAiAsk(null)}
+          />
         )}
         <div ref={bottomRef} />
       </AskPanel>

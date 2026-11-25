@@ -272,8 +272,10 @@ export default function SigninScreen({
     window.requestAnimationFrame(() => revealField(document.getElementById(FIELD_IDS[first])));
     return false;
   };
-  const SIGNUP_FIELDS = ['email', 'password', 'aiConsent'];
-  const SOCIAL_SIGNUP_FIELDS = ['aiConsent'];
+  // Nov 25 (App Review 5.1.2(i) / 5.1.1(iv)): the AI box is optional; if she leaves it, the first AI
+  // feature she uses asks. Nothing else here changed.
+  const SIGNUP_FIELDS = ['email', 'password'];
+  const SOCIAL_SIGNUP_FIELDS = [];
   const summary = errorSummary(fieldErrors, ['aiConsent'], summaryAction);
 
   const handleSignUp = async () => {
@@ -285,7 +287,7 @@ export default function SigninScreen({
     // sign-in option); see src/utils/supabaseClient.js.
     setRememberMe(true);
     try {
-      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName || undefined, metadata: consentMetadata() });
+      const { needsConfirmation } = await onSignUp({ email: email.trim(), password, firstName: firstName || undefined, metadata: consentMetadata(undefined, { aiConsent }) });
       markAskHeardAbout();
       if (needsConfirmation) { setCheckNote(CODE_COPY.emailSent(email.trim())); setEmailCode(''); setMode('check-email'); }
       else onAuthenticated(firstName || undefined);
@@ -330,7 +332,7 @@ export default function SigninScreen({
     // to. Signing in with an existing account needs no re-consent.
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
-    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
+    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata(undefined, { aiConsent }) } : null);
     if (mode === 'signup') { markAskHeardAbout(); setTrialOptIn(trialOptIn); }
     // Before the OAuth redirect: the flag must already be set when the
     // returning setSession writes the session through the storage adapter.
@@ -349,7 +351,7 @@ export default function SigninScreen({
     // Same gates as handleGoogle above.
     if (mode === 'signup' && !validateRequired(SOCIAL_SIGNUP_FIELDS, 'continue')) return;
     setError('');
-    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata() } : null);
+    stashPendingSignupMeta(mode === 'signup' ? { ...(firstName ? { first_name: firstName, full_name: firstName } : {}), ...consentMetadata(undefined, { aiConsent }) } : null);
     if (mode === 'signup') { markAskHeardAbout(); setTrialOptIn(trialOptIn); }
     setRememberMe(mode === 'signup' ? true : rememberMe);
     setAppleLoading(true);
