@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build && node scripts/prerender.mjs && node scripts/prerender-home.mjs",
+    "build": "node scripts/partner-studio-benchmark.mjs --if-enabled && node scripts/gen-sitemap.mjs && cross-env PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1 vite build && node scripts/prerender.mjs && node scripts/prerender-home.mjs",
     "lint": "eslint .",
     "test": "vitest run",
     "catalog:export": "node scripts/export-catalog.mjs",
@@ -20,7 +20,8 @@
     "research:plan": "node scripts/research-plan.mjs",
     "catalog:readiness": "node scripts/catalog-readiness.mjs",
     "safety:audit": "node scripts/safety-audit.mjs",
-    "match:groups": "node scripts/match-groups-report.mjs"
+    "match:groups": "node scripts/match-groups-report.mjs",
+    "partner:benchmark": "node scripts/partner-studio-benchmark.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",

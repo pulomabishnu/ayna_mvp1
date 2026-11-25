@@ -53,6 +53,7 @@ async function pickAllowedPort() {
 // here only once something under it is actually being tested locally.
 const LOCAL_API_ROUTES = [
   'contact',
+  'partner-studio',
   'notification-preferences',
   'export-data',
   'ask-ayna',
@@ -119,6 +120,8 @@ export default defineConfig(async ({ command, mode }) => {
     build: {
       sourcemap: false,
       rollupOptions: {
+        // A second page: ayna Partner Studio (admin-only data via /api/partner-studio).
+        input: { index: 'index.html', 'partner-studio': 'partner-studio.html' },
         output: {
           // Stable vendor chunks: react/posthog/supabase change only when a
           // dependency is upgraded, so splitting them out of the app chunk
