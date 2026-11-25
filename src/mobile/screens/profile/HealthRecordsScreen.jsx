@@ -54,7 +54,7 @@ export default function HealthRecordsScreen({ source, userId, saved, onSignIn, o
   const isNative = Capacitor.isNativePlatform();
   const [avail, setAvail] = useState(null);
   const [step, setStep] = useState(saved ? 'saved' : 'pick'); // pick | reading | review | saved
-  const [types, setTypes] = useState([]);
+  const [types, setTypes] = useState(() => [...TYPES]); // all on to start (App Review, Nov 25: an empty pick left the button dead)
   const [found, setFound] = useState(null);
   const [picked, setPicked] = useState([]);
   const [busy, setBusy] = useState(false);
@@ -209,7 +209,7 @@ export default function HealthRecordsScreen({ source, userId, saved, onSignIn, o
               </label>
             ))}
           </div>
-          <button type="button" className="ay-hc-primary" onClick={read} disabled={!ready || !types.length || step === 'reading'}>{step === 'reading' ? 'Reading…' : 'Read my records'}</button>
+          <button type="button" className="ay-hc-primary" onClick={read} disabled={!ready || !types.length || step === 'reading'}>{step === 'reading' ? 'Reading…' : 'Continue'}</button>
         </>
       )}
       {error && <p className="ay-hc-error" role="alert">{error}</p>}

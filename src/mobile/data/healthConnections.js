@@ -164,21 +164,21 @@ export function connectSteps(source) {
   if (!source) return [];
   if (source.availability === 'device' && source.platform === 'ios') {
     return [
-      'Tap Connect. Your iPhone shows the Health access sheet.',
+      'Tap Continue. Your iPhone shows the Apple Health access sheet.',
       'Turn on the items you want ayna to read, then tap Allow.',
       'ayna reads up to your last 90 days and shows when it last synced.',
     ];
   }
   if (source.availability === 'device') {
     return [
-      'Tap Connect. Health Connect asks which data ayna can read.',
+      'Tap Continue. Health Connect asks which data ayna can read.',
       'Allow the items you want, then come back to ayna.',
       'ayna reads up to your last 90 days and shows when it last synced.',
     ];
   }
   if (source.availability === 'oauth') {
     return [
-      `Tap Connect. You go to ${source.name} to sign in and approve ayna.`,
+      `Tap Continue. You go to ${source.name} to sign in and approve ayna.`,
       'You come back here automatically.',
       'ayna reads your recent days and shows when it last synced.',
     ];

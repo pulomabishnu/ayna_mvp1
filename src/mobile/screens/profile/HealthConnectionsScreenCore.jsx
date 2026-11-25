@@ -208,7 +208,10 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
   const isNative = Capacitor.isNativePlatform();
   const availability = availabilityFor(source, { isNative, nativePlatform: Capacitor.getPlatform() });
   const live = connection && connection.status !== 'disconnected';
-  const [selected, setSelected] = useState(() => (live ? connection.categories : []));
+  // App Review, Nov 25: with nothing picked the button was disabled, so tapping it looked unresponsive.
+  // A new connection starts with everything this source offers turned on; she turns off what she doesn't want,
+  // and for Apple Health the system sheet still lets her choose each type.
+  const [selected, setSelected] = useState(() => (live ? connection.categories : !availability.ok ? [] : providesFor(source).flatMap((g) => g.cats.filter((c) => source.categories.includes(c)))));
   const [busy, setBusy] = useState(false);
   // The success message lives in the parent: connecting reloads the connection,
   // which remounts this view (see the key below). Kept here, the "Connected"
@@ -412,7 +415,7 @@ function SourceDetail({ source, connection, signedIn, onSignIn, onDone, onRefres
               : 'Turn on at least one to connect. Nothing is collected until you do.'}
           </p>
           {signedIn
-            ? <button type="button" className="ay-hc-primary" disabled={!canConnect || busy} onClick={connect}>{busy ? 'Connecting…' : error ? 'Try again' : `Connect ${source.name}`}</button>
+            ? <button type="button" className="ay-hc-primary" disabled={!canConnect || busy} onClick={connect}>{busy ? 'Connecting…' : error ? 'Try again' : 'Continue'}</button>
             : <button type="button" className="ay-hc-primary" onClick={onSignIn}>Sign in to connect</button>}
         </>
       )}
