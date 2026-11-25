@@ -77,7 +77,9 @@ export async function buyWithApple(plan) {
   if (!id) throw new Error('That plan isn’t available.');
   const result = await AynaStore.purchase({ id, appAccountToken: s.user.id });
   if (result.status !== 'success') return result.status;
-  await sendAppleTransactions([result.jws]);
+  const out = await sendAppleTransactions([result.jws]);
+  // Only finished once ayna has saved it; otherwise Apple hands it back next launch.
+  if (!out.ok) throw Object.assign(new Error('We couldn’t confirm your purchase yet. Tap Restore purchases in a minute.'), { code: 'verify_failed' });
   try { await AynaStore.finish({ transactionId: result.transactionId }); } catch { /* finished next launch */ }
   return 'success';
 }
@@ -87,7 +89,8 @@ export async function restoreApplePurchases() {
   const { transactions = [] } = await AynaStore.restore();
   if (!transactions.length) return { restored: false };
   const out = await sendAppleTransactions(transactions.map((t) => t.jws));
-  return { restored: Boolean(out.active), results: out.results || [] };
+  const otherAccount = (out.results || []).some((r) => r.result === 'other_account');
+  return { restored: Boolean(out.active), otherAccount, results: out.results || [] };
 }
 
 export async function manageAppleSubscription() {
@@ -104,8 +107,8 @@ export function listenForAppleTransactions() {
   listening = true;
   AynaStore.addListener('transaction', async (t) => {
     try {
-      await sendAppleTransactions([t.jws]);
-      await AynaStore.finish({ transactionId: t.transactionId });
+      const out = await sendAppleTransactions([t.jws]);
+      if (out.ok) await AynaStore.finish({ transactionId: t.transactionId });
     } catch { /* stays unfinished; Apple delivers it again next launch */ }
   }).catch(() => { listening = false; });
 }

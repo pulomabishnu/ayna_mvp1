@@ -156,7 +156,6 @@ export default async function handler(req, res) {
       return res.status(200).json(rules);
     }
 
-    // Nov 16 (founder): a free week of Pro, no card, that she opts into. One per account, ever.
     // ayna Pro bought in the iPhone app (Apple in-app purchase, Nov 25). The app sends Apple's signed
     // transactions; each is verified against Apple's certificate chain before it counts.
     if (body.action === 'apple_verify') {
@@ -167,6 +166,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: results.some((r) => r.result === 'saved' || r.result === 'kept'), results, active: legacyPremium || next.active || isAdmin });
     }
 
+    // Nov 16 (founder): a free week of Pro, no card, that she opts into. One per account, ever.
     if (body.action === 'start_trial') {
       if (active) return res.status(200).json({ started: false, reason: 'already_pro' });
       const { data: used, error: usedError } = await admin.from('pro_trials').select('user_id').eq('user_id', user.id).maybeSingle();

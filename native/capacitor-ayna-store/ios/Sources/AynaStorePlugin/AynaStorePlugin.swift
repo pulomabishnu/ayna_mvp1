@@ -32,16 +32,16 @@ public class AynaStorePlugin: CAPPlugin, CAPBridgedPlugin {
 
     override public func load() {
         updates = Task.detached { [weak self] in
-            for await result in Transaction.updates {
+            for await result in StoreKit.Transaction.updates {
                 guard let self = self, case .verified(let t) = result else { continue }
-                self.notifyListeners("transaction", data: Self.signed(result.jwsRepresentation, t), retainUntilConsumed: true)
+                self.notifyListeners("transaction", data: AynaStorePlugin.signed(result.jwsRepresentation, t), retainUntilConsumed: true)
             }
         }
     }
 
     deinit { updates?.cancel() }
 
-    private static func signed(_ jws: String, _ t: Transaction) -> [String: Any] {
+    private static func signed(_ jws: String, _ t: StoreKit.Transaction) -> [String: Any] {
         return ["jws": jws, "productId": t.productID, "transactionId": String(t.id), "originalTransactionId": String(t.originalID)]
     }
 
@@ -84,13 +84,13 @@ public class AynaStorePlugin: CAPPlugin, CAPBridgedPlugin {
                         "periodUnit": NSNull(), "periodValue": NSNull(), "introOffer": NSNull(), "introEligible": false
                     ]
                     if let sub = p.subscription {
-                        row["periodUnit"] = Self.unit(sub.subscriptionPeriod.unit)
+                        row["periodUnit"] = AynaStorePlugin.unit(sub.subscriptionPeriod.unit)
                         row["periodValue"] = sub.subscriptionPeriod.value
                         row["introEligible"] = await sub.isEligibleForIntroOffer
                         if let intro = sub.introductoryOffer {
                             row["introOffer"] = [
-                                "displayPrice": intro.displayPrice, "paymentMode": Self.mode(intro.paymentMode),
-                                "periodUnit": Self.unit(intro.period.unit), "periodValue": intro.period.value, "periodCount": intro.periodCount
+                                "displayPrice": intro.displayPrice, "paymentMode": AynaStorePlugin.mode(intro.paymentMode),
+                                "periodUnit": AynaStorePlugin.unit(intro.period.unit), "periodValue": intro.period.value, "periodCount": intro.periodCount
                             ]
                         }
                     }
@@ -116,7 +116,7 @@ public class AynaStorePlugin: CAPPlugin, CAPBridgedPlugin {
                 case .success(let verification):
                     switch verification {
                     case .verified(let t):
-                        var data = Self.signed(verification.jwsRepresentation, t)
+                        var data = AynaStorePlugin.signed(verification.jwsRepresentation, t)
                         data["status"] = "success"
                         call.resolve(data)
                     case .unverified(_, let err):
@@ -137,8 +137,8 @@ public class AynaStorePlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func entitlements() async -> [[String: Any]] {
         var out: [[String: Any]] = []
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let t) = result { out.append(Self.signed(result.jwsRepresentation, t)) }
+        for await result in StoreKit.Transaction.currentEntitlements {
+            if case .verified(let t) = result { out.append(AynaStorePlugin.signed(result.jwsRepresentation, t)) }
         }
         return out
     }
@@ -160,7 +160,7 @@ public class AynaStorePlugin: CAPPlugin, CAPBridgedPlugin {
         guard let id = call.getString("transactionId") else { call.reject("missing_id"); return }
         Task {
             var done = false
-            for await result in Transaction.unfinished {
+            for await result in StoreKit.Transaction.unfinished {
                 if case .verified(let t) = result, String(t.id) == id { await t.finish(); done = true }
             }
             call.resolve(["finished": done])

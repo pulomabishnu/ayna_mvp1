@@ -1810,7 +1810,7 @@ function SettingsScreen({ onBack, onOpenPreferences, onOpenHowItWorks, onOpenAbo
   // Nov 25: Pro bought with Apple in-app purchase is restored and managed here (App Review 3.1.1).
   const [storeMsg, setStoreMsg] = useState('');
   const appleRows = authUser && usesAppleIap() ? [
-    { icon: 'account', title: 'Restore purchases', keywords: 'ayna pro subscription restore apple', onClick: () => { setStoreMsg('Restoring…'); restoreApplePurchases().then((r) => setStoreMsg(r.restored ? 'Restored. ayna Pro is on.' : 'No active ayna Pro subscription was found for this Apple ID.')).catch(() => setStoreMsg('Couldn’t restore right now. Try again in a minute.')); } },
+    { icon: 'account', title: 'Restore purchases', keywords: 'ayna pro subscription restore apple', onClick: () => { setStoreMsg('Restoring…'); restoreApplePurchases().then((r) => setStoreMsg(r.restored ? 'Restored. ayna Pro is on.' : r.otherAccount ? 'This Apple ID’s ayna Pro belongs to a different ayna account. Sign in with that account to use it.' : 'No active ayna Pro subscription was found for this Apple ID.')).catch(() => setStoreMsg('Couldn’t restore right now. Try again in a minute.')); } },
     { icon: 'account', title: 'Manage subscription', keywords: 'ayna pro subscription cancel renew apple billing', onClick: () => { manageAppleSubscription().catch(() => setStoreMsg('Open Settings › your name › Subscriptions to manage ayna Pro.')); } },
   ] : [];
   const groups = [

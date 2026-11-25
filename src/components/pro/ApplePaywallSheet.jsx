@@ -34,7 +34,8 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
     } catch (e) {
       if (e?.code === 'sign_in_required') { onSignIn?.(); return; }
       track?.('pro_checkout_failed', { plan: chosen.plan, store: 'apple', error_code: e?.code || 'unknown' });
-      setError(e?.message && !/purchase_failed|unverified/.test(e.message) ? e.message : 'The purchase didn’t go through. Nothing was charged.');
+      // Charged but not saved yet: say so (Apple redelivers it; Restore purchases also works). Anything else: nothing was charged.
+      setError(e?.code === 'verify_failed' ? e.message : 'The purchase didn’t go through. Nothing was charged.');
     } finally { setBusy(''); }
   };
 
@@ -44,7 +45,7 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
     try {
       const out = await restoreApplePurchases();
       if (out.restored) { announceProChanged(); setNote('Restored. ayna Pro is on.'); window.setTimeout(onClose, 1200); }
-      else setNote('No active ayna Pro subscription was found for this Apple ID.');
+      else setNote(out.otherAccount ? 'This Apple ID’s ayna Pro belongs to a different ayna account. Sign in with that account to use it.' : 'No active ayna Pro subscription was found for this Apple ID.');
     } catch (e) { setError(e?.message || 'Couldn’t restore right now. Try again in a minute.'); }
     finally { setBusy(''); }
   };

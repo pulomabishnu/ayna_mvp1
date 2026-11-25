@@ -1,5 +1,5 @@
 import { PRO_FEATURES } from './features.js';
-import { healthSourcesText } from '../utils/platformCopy.js';
+import { healthSourcesText, onIosApp } from '../utils/platformCopy.js';
 
 /**
  * One way in to ayna Pro from anywhere: a locked card, a limit she just hit,
@@ -42,7 +42,8 @@ const LOCK_LINES = {
   reads: 'Free ayna includes 1 Read per week. Pro gives you unlimited Reads.',
   playlists: 'Free ayna includes 1 playlist. Pro gives you unlimited playlists.',
   quiz: 'Free ayna includes 1 quiz retake per month. Pro lets you retake it whenever your needs change.',
-  wearables: `Connect ${healthSourcesText({ or: true })}, or upload your health data, so ayna can use the signals you choose to share.`,
+  // The iPhone app has no file upload in 1.0 (UPLOAD_LATER), so it doesn't offer one.
+  wearables: onIosApp() ? 'Connect Apple Health or Oura so ayna can use the signals you choose to share.' : `Connect ${healthSourcesText({ or: true })}, or upload your health data, so ayna can use the signals you choose to share.`,
   insights: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   history: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
   recap: 'More context around patterns, symptoms, goals, life stage and connected health signals. Basic insights stay free.',
