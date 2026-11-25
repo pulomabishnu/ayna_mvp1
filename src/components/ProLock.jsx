@@ -4,6 +4,7 @@ import SubscriptionPaywallModal from './SubscriptionPaywallModal.jsx';
 import { useProPurchaseMode } from '../pro/appStorefront.js';
 import { useProCta } from '../pro/useTrialAvailable.js';
 import '../styles/pro-v4.css';
+import { healthSourcesText } from '../utils/platformCopy.js';
 
 const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
 
@@ -11,7 +12,7 @@ const TESTFLIGHT_URL = 'https://testflight.apple.com/join/f3C9PypD';
 // What Pro adds, three short lines with icons (Oct 29: the lock was one long paragraph). Same facts as src/pro/plans.js.
 const PERKS = [
   { t: 'Your health dashboard', for: ['dashboard'], icon: <><circle cx="12" cy="12" r="8" /><path d="M8.5 13.5l2-2 2 2 3-3.5" /></> },
-  { t: 'Apple Health, Health Connect and Oura', for: ['wearables', 'health'], icon: <><rect x="7" y="6" width="10" height="12" rx="3" /><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3" /></> },
+  { t: healthSourcesText(), for: ['wearables', 'health'], icon: <><rect x="7" y="6" width="10" height="12" rx="3" /><path d="M9 6l1-3h4l1 3M9 18l1 3h4l1-3" /></> },
   { t: '50 Ask ayna chats a month', for: ['ask'], icon: <><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" /></> },
 ];
 

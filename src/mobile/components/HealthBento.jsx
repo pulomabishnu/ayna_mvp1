@@ -6,6 +6,7 @@ import { formatPrice } from '../../utils/formatPrice.js';
 import { LEVEL_WORD, NEED_WORDS } from '../../health/weekPicks.js';
 import { goalsCovered, aynaAdds } from '../../health/beyondNumbers.js';
 import '../../styles/week-explained.css';
+import { healthSourcesText } from '../../utils/platformCopy.js';
 
 /**
  * Pieces of Your health shared by the app and the website: the evidence
@@ -194,7 +195,7 @@ export function HealthStarter({ needIds = [], products = [], matches = [], onOpe
       <GoalsCovered goals={goals} onOpenProduct={onOpenProduct} title="Your goals, covered today" />
       {onConnect && (
         <div className="ay-wx-connect">
-          <p>Connect Apple Health, Health Connect or Oura and this page explains your week against your cycle: what changed, why it often does, and which of your products fit.</p>
+          <p>Connect {healthSourcesText({ or: true })} and this page explains your week against your cycle: what changed, why it often does, and which of your products fit.</p>
           <button type="button" className="ay-qc-primary ay-wx-connect-btn" onClick={onConnect}>{connectLabel}</button>
         </div>
       )}
