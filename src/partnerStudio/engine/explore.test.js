@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { compactScenarios, explore, OUTCOME } from './explore.js';
 
 const universe = [
-  { id: 'a1', name: 'A Gel', brand: 'A' },
+  { id: 'a1', name: 'A Gel', brand: 'A', partner: true },
   { id: 'b1', name: 'B Gel', brand: 'B' },
   { id: 'b2', name: 'B Balm', brand: 'B' },
   { id: 'c1', name: 'C Wash', brand: 'C' },
@@ -13,7 +13,7 @@ const results = [
   res('Dryness', 'any', 'Gels', ['b1', 'a1']),
   res('Itch', 'under-25', null, []),
 ];
-const cat = { k: 3, ...compactScenarios(results, universe, (p) => p.brand) };
+const cat = { k: 3, ...compactScenarios(results, universe, (p) => p.brand, (p) => p.partner) };
 // Brand A: placed, placed, not eligible
 const outcomes = [OUTCOME.selected, OUTCOME.selected, OUTCOME.insufficient_info].join('');
 
@@ -34,6 +34,12 @@ describe('explore', () => {
     expect(e.products).toHaveLength(4);
     expect(e.products.find((p) => p.id === 'c1')).toMatchObject({ slots: 0, share: 0 });
     expect(e.rank).toEqual({ rank: 2, of: 2 });
+  });
+  it('marks ayna partners for highlighting without changing ranks', () => {
+    const e = explore(cat, 'B', '');
+    expect(e.brands.find((b) => b.brand === 'A')).toMatchObject({ partner: true, rank: 2 });
+    expect(e.brands.find((b) => b.brand === 'C').partner).toBe(false);
+    expect(e.products.find((p) => p.id === 'a1').partner).toBe(true);
   });
   it('applies need, budget and format filters', () => {
     expect(explore(cat, 'A', outcomes, { need: 'Itch' })).toMatchObject({ scenarios: 1, slots: 0 });

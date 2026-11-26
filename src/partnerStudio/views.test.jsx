@@ -39,6 +39,9 @@ describe('Partner Studio screens', () => {
       ];
       for (const s of screens) expect(renderToStaticMarkup(s).length).toBeGreaterThan(50);
       expect(renderToStaticMarkup(screens[4])).toMatch(/Synthetic benchmark/);
+      // Real catalog brand names, never anonymized labels (founder, Nov 25).
+      expect(renderToStaticMarkup(screens[4])).not.toMatch(/Peer \d/);
+      if (name === 'Demo Brand') expect(renderToStaticMarkup(screens[4])).toMatch(/Other Labs/);
       expect(rollupCsv(data).split('\n')[0]).toMatch(/^brand,run_id/);
     });
   }

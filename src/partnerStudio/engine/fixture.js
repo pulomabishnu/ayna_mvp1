@@ -4,8 +4,15 @@
  * Built through the real rollup code so the shape always matches the API.
  */
 import { brandRollup } from './rollup.js';
+import { compactScenarios } from './explore.js';
 
-const CATEGORY = { id: 'demo-care', label: 'Demo care', needs: ['Need one', 'Need two'] };
+const CATEGORY = { id: 'demo-care', label: 'Demo care', needs: ['Need one', 'Need two'], format: 'Gels' };
+const UNIVERSE = [
+  { id: 'demo-1', name: 'Demo Gel', brand: 'Demo Brand' },
+  { id: 'peer-1', name: 'Peer Gel', brand: 'Peer Co', partner: true },
+  { id: 'peer-2', name: 'Peer Balm', brand: 'Peer Co' },
+  { id: 'other-1', name: 'Other Wash', brand: 'Other Labs' },
+];
 
 function results(set) {
   const out = [];
@@ -19,7 +26,8 @@ function results(set) {
     const candidates = placements.map((p) => ({ ...p, stage: 'selected', pct: 80 }));
     if (i % 3 === 1) candidates.push({ sku: 'demo-1', name: 'Demo Gel', brand: 'Demo Brand', stage: 'eligible_lost', pct: 60, reason: i % 2 ? 'budget' : 'evidence', detail: 'Fictional trace' });
     if (i % 3 === 2) candidates.push({ sku: 'demo-1', name: 'Demo Gel', brand: 'Demo Brand', stage: set === 'boundary' ? 'excluded' : 'insufficient_info', pct: null, detail: 'allergen_info' });
-    out.push({ scenarioId: `${set}-${i}`, set, label: `${need} · fictional ${i}`, need, budget, weight: 1, k: 3, placements, candidates });
+    candidates.push({ sku: 'other-1', name: 'Other Wash', brand: 'Other Labs', stage: 'eligible_lost', pct: 40, reason: 'below_cutoff', detail: 'Fictional trace' });
+    out.push({ scenarioId: `${set}-${i}`, set, label: `${need} · fictional ${i}`, need, budget, format: i % 2 ? 'Gels' : null, weight: 1, k: 3, placements, candidates });
   }
   return out;
 }
@@ -42,10 +50,11 @@ export function fixtureSnapshot() {
   const sims = [{ sku: 'demo-1', name: 'Demo Gel', category: 'demo-care', scenarios: 24, change: { field: 'price', from: 20, to: 16 }, changeLabel: '$16 (was $20)', before: { inclusion: { num: 8, den: 24, value: 8 / 24 }, skuSlots: 8 }, after: { inclusion: { num: 10, den: 24, value: 10 / 24 }, skuSlots: 10 }, displacedOtherSlots: 2, safetyOk: true }];
   const skus = [{ id: 'demo-1', name: 'Demo Gel', category: 'gel', price: 20, inScope: true, categories: ['demo-care'], scopeNote: null }];
   const feed = [{ type: 'stale', sku: 'demo-1', name: 'Demo Gel', date: '2026-10-01', days: 12, title: 'Facts 12 days past review', detail: 'Last verified 2026-10-01.' }];
-  const demo = brandRollup({ brand: 'Demo Brand', categories: [{ category: CATEGORY, baseline: results('baseline'), boundary: results('boundary'), unknown: results('unknown') }], evidence, simulations: sims, skus, feed });
+  const baseline = results('baseline');
+  const demo = brandRollup({ brand: 'Demo Brand', categories: [{ category: CATEGORY, baseline, boundary: results('boundary'), unknown: results('unknown') }], evidence, simulations: sims, skus, feed });
   return {
     run: { runId: 'run-fixture', createdAt: '2026-11-25T00:00:00.000Z', scenarioSetVersion: 'scn-fixture', categorySetVersion: 'cat-fixture', adapterVersion: 'adapter-fixture', engine: 'fixture', gitSha: 'fixture', k: 3, weights: 'equal', deterministic: true, seconds: 0 },
-    categories: [{ id: 'demo-care', label: 'Demo care', needs: CATEGORY.needs, catalogVersion: 'fixture', universe: 3, brands: 2, baseline: 24, boundary: 24, unknown: 24, noResult: 0, unfilled: 6 }],
+    categories: [{ id: 'demo-care', label: 'Demo care', needs: CATEGORY.needs, catalogVersion: 'fixture', universe: 4, brands: 3, baseline: 24, boundary: 24, unknown: 24, noResult: 0, unfilled: 6, k: 3, format: CATEGORY.format, ...compactScenarios(baseline, UNIVERSE, (p) => p.brand, (p) => p.partner) }],
     outOfScope: 'Fixture: out of scope.',
     brands: {
       'Demo Brand': { ...demo, displayName: 'Demo Brand' },

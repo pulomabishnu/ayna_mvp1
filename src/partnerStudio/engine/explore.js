@@ -17,9 +17,10 @@ export const OUTCOME = { selected: 's', eligible_lost: 'e', insufficient_info: '
 const rate = (num, den) => ({ num, den, pct: den > 0 ? Math.round((num / den) * 1000) / 10 : null });
 
 /** Compact scenario table for the snapshot. `results` are baseline runScenario results. */
-export function compactScenarios(results, universe, brandOf) {
+export function compactScenarios(results, universe, brandOf, isPartner = () => false) {
   const index = new Map(universe.map((p, i) => [p.id, i]));
-  const products = universe.map((p) => ({ id: p.id, name: p.name, brand: brandOf(p) }));
+  // partner: an ayna brand partner, for highlighting only. Never a ranking input.
+  const products = universe.map((p) => ({ id: p.id, name: p.name, brand: brandOf(p), partner: Boolean(isPartner(p)) }));
   const rows = results.map((r) => ({
     need: r.need,
     budget: r.budget,
@@ -69,7 +70,7 @@ export function explore(cat, brand, outcomes = '', filter = {}) {
   // denominator includes all brands in the fixed benchmark universe).
   const allBrands = [...new Set(cat.products.map((p) => p.brand))];
   const brands = allBrands
-    .map((b) => ({ brand: b, you: b === brand, slots: brandSlots.get(b) || 0, products: cat.products.filter((p) => p.brand === b).length }))
+    .map((b) => ({ brand: b, you: b === brand, partner: cat.products.some((p) => p.brand === b && p.partner), slots: brandSlots.get(b) || 0, products: cat.products.filter((p) => p.brand === b).length }))
     .sort((a, b) => b.slots - a.slots || a.brand.localeCompare(b.brand));
   brands.forEach((b) => { b.rank = brands.filter((x) => x.slots > b.slots).length + 1; b.share = slots ? Math.round((b.slots / slots) * 1000) / 10 : null; });
   const products = cat.products

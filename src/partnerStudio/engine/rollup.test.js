@@ -21,10 +21,10 @@ describe('shelfField', () => {
     expect(f.totalSlots).toBe(8);
     expect(f.zeroSlotPeers).toBe(1);
   });
-  it('anonymizes peers and marks the viewer', () => {
+  it('uses real brand names and marks the viewer', () => {
     expect(f.rows.filter((x) => x.you)).toHaveLength(1);
-    expect(f.rows.map((x) => x.label)).not.toContain('A');
-    expect(f.rows.every((x) => x.you || /^Peer \d+$/.test(x.label))).toBe(true);
+    expect(f.rows.find((x) => x.you).label).toBe('Me');
+    expect(f.rows.map((x) => x.label).sort()).toEqual(['A', 'B', 'C', 'Me']);
   });
   it('uses exact shares, tie-aware ranks and the peer median', () => {
     const me = f.rows.find((x) => x.you);
