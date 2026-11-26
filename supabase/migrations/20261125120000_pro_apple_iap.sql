@@ -6,7 +6,7 @@ create table if not exists public.pro_apple_subscriptions (
   original_transaction_id text primary key,
   user_id uuid not null references auth.users (id) on delete cascade,
   product_id text not null,
-  plan text not null check (plan in ('month', 'year')),
+  plan text not null check (plan in ('month', 'year', 'trial')), -- 'trial': the $0 14-Day Trial (no card, never renews)
   last_transaction_id text not null,
   purchased_at timestamptz,
   expires_at timestamptz not null,
@@ -15,6 +15,9 @@ create table if not exists public.pro_apple_subscriptions (
   environment text not null check (environment in ('Production', 'Sandbox', 'Xcode', 'LocalTesting')),
   updated_at timestamptz not null default now()
 );
+-- If an earlier copy of this file already created the table, allow the trial plan too.
+alter table public.pro_apple_subscriptions drop constraint if exists pro_apple_subscriptions_plan_check;
+alter table public.pro_apple_subscriptions add constraint pro_apple_subscriptions_plan_check check (plan in ('month', 'year', 'trial'));
 create index if not exists pro_apple_subscriptions_user_idx on public.pro_apple_subscriptions (user_id);
 
 alter table public.pro_apple_subscriptions enable row level security;

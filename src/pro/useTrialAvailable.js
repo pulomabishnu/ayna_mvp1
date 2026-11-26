@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { requestPro } from '../utils/proApi.js';
 import { PRO_CHANGED_EVENT } from './paywall.js';
+import { loadAppleProducts, usesAppleIap } from './appleIap.js';
 
 // One status check shared by every button on screen (Nov 17: many "Get ayna Pro" buttons now ask whether her
 // free trial is still unused). Cached for a minute; cleared whenever Pro changes (trial started, purchase).
@@ -8,7 +9,10 @@ let cache = null; // { at, promise }
 const TTL = 60 * 1000;
 function trialStatus() {
   if (!cache || Date.now() - cache.at > TTL) {
-    cache = { at: Date.now(), promise: requestPro().then((s) => ({ available: Boolean(s?.trialAvailable) && s?.gates !== false && !s?.active, days: s?.trialDays || 14 })).catch(() => ({ available: false, days: 14 })) };
+    // iPhone app (Nov 25, App Review 3.1.1): the trial is Apple's $0 "14-Day Trial", so it's offered only
+    // once Apple returns that product. Never a button that can't work.
+    const store = usesAppleIap() ? loadAppleProducts().then((p) => Boolean(p.trial)).catch(() => false) : Promise.resolve(true);
+    cache = { at: Date.now(), promise: Promise.all([requestPro(), store]).then(([s, inStore]) => ({ available: inStore && Boolean(s?.trialAvailable) && s?.gates !== false && !s?.active, days: s?.trialDays || 14 })).catch(() => ({ available: false, days: 14 })) };
   }
   return cache.promise;
 }

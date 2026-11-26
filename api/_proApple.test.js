@@ -78,3 +78,43 @@ describe('handleAppleNotification', () => {
     expect(await saveAppleRow(admin, { original_transaction_id: 'o1', user_id: USER, expires_at: '2028-01-01T00:00:00Z' })).toBe('other_account');
   });
 });
+
+describe('the $0 Apple 14-Day Trial', () => {
+  const TRIAL = 'co.aynahealth.app.pro.trial14';
+  function tableAdmin(seed = {}) {
+    const t = { pro_apple_subscriptions: {}, pro_trials: {}, ...seed };
+    return {
+      t,
+      from(table) {
+        return {
+          select() { return this; },
+          eq(_c, v) { this.key = v; return this; },
+          async maybeSingle() { return { data: t[table][this.key] || null, error: null }; },
+          async upsert(row) { t[table][row.original_transaction_id || row.user_id] = row; return { error: null }; },
+        };
+      },
+    };
+  }
+  const trialTx = (over = {}) => tx({ productId: TRIAL, expiresDate: undefined, purchaseDate: Date.UTC(2026, 10, 25), transactionId: 'tt1', originalTransactionId: 'ot1', ...over });
+
+  it('starts 14 days of Pro and marks the trial used', async () => {
+    const admin = tableAdmin();
+    const out = await verifyAppTransactions(admin, USER, [j(trialTx())], verify);
+    expect(out[0].result).toBe('saved');
+    expect(admin.t.pro_apple_subscriptions.ot1).toMatchObject({ plan: 'trial', auto_renew: false, expires_at: '2026-12-09T00:00:00.000Z' });
+    expect(admin.t.pro_trials[USER]).toBeTruthy();
+  });
+  it('a restore replays it without extending it', async () => {
+    const admin = tableAdmin({ pro_apple_subscriptions: { ot1: { user_id: USER, expires_at: '2026-12-09T00:00:00Z' } }, pro_trials: { [USER]: { user_id: USER } } });
+    expect((await verifyAppTransactions(admin, USER, [j(trialTx())], verify))[0].result).toBe('kept');
+  });
+  it('an account that already used its trial (e.g. on the website) gets no second one', async () => {
+    const admin = tableAdmin({ pro_trials: { [USER]: { user_id: USER } } });
+    expect((await verifyAppTransactions(admin, USER, [j(trialTx())], verify))[0].result).toBe('trial_used');
+    expect(admin.t.pro_apple_subscriptions.ot1).toBeUndefined();
+  });
+  it('the same Apple trial never unlocks a second ayna account', async () => {
+    const admin = tableAdmin({ pro_apple_subscriptions: { ot1: { user_id: 'someone-else', expires_at: '2026-12-09T00:00:00Z' } } });
+    expect((await verifyAppTransactions(admin, USER, [j(trialTx({ appAccountToken: undefined }))], verify))[0].result).toBe('other_account');
+  });
+});

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('capacitor-ayna-store', () => ({ AynaStore: {} }));
-const { introLine, perPeriod, APPLE_PRODUCTS } = await import('./appleIap.js');
-const { APPLE_PRO_PRODUCTS } = await import('../../api/_appleJws.js');
+const { introLine, perPeriod, APPLE_PRODUCTS, APPLE_TRIAL_PRODUCT } = await import('./appleIap.js');
+const { APPLE_PRO_PRODUCTS, APPLE_TRIAL_PRODUCT: SERVER_TRIAL } = await import('../../api/_appleJws.js');
 
 describe('Apple Pro copy', () => {
   const year = { displayPrice: '$89.99', periodUnit: 'year', periodValue: 1, introEligible: true, intro: { displayPrice: '$44.99', paymentMode: 'payUpFront', periodUnit: 'year', periodValue: 1, periodCount: 1 } };
@@ -16,5 +16,6 @@ describe('Apple Pro copy', () => {
   });
   it('the app and the server agree on the product ids', () => {
     expect(Object.fromEntries(Object.entries(APPLE_PRODUCTS).map(([plan, id]) => [id, plan]))).toEqual(APPLE_PRO_PRODUCTS);
+    expect(APPLE_TRIAL_PRODUCT).toBe(SERVER_TRIAL);
   });
 });

@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 /* global process */
 import { X509Certificate, verify as cryptoVerify } from 'node:crypto';
 
@@ -71,6 +72,13 @@ export const APPLE_PRO_PRODUCTS = {
   'co.aynahealth.app.pro.monthly': 'month',
   'co.aynahealth.app.pro.yearly': 'year',
 };
+/**
+ * The free 14-day trial in the iPhone app (founder, Nov 25: "no card"). Guideline 3.1.1 allows a free
+ * trial as a non-consumable at $0 named "14-Day Trial": nothing is charged and nothing renews.
+ * It has no expiry from Apple, so access runs APPLE_TRIAL_DAYS from the purchase.
+ */
+export const APPLE_TRIAL_PRODUCT = 'co.aynahealth.app.pro.trial14';
+export const APPLE_TRIAL_DAYS = 14;
 
 /** Sandbox purchases count only where we allow them (TestFlight / review). App Review buys in Sandbox. */
 export function environmentAllowed(env) {
@@ -85,10 +93,12 @@ export function environmentAllowed(env) {
  */
 export function subscriptionRow(tx, userId) {
   if (tx.bundleId !== APP_BUNDLE_ID) throw new AppleJwsError('bundle');
-  const plan = APPLE_PRO_PRODUCTS[tx.productId];
+  const trial = tx.productId === APPLE_TRIAL_PRODUCT;
+  const plan = trial ? 'trial' : APPLE_PRO_PRODUCTS[tx.productId];
   if (!plan) throw new AppleJwsError('product');
   if (!environmentAllowed(tx.environment)) throw new AppleJwsError('environment');
-  if (!tx.originalTransactionId || !tx.transactionId || !Number.isFinite(Number(tx.expiresDate))) throw new AppleJwsError('fields');
+  const expires = trial ? Number(tx.purchaseDate) + APPLE_TRIAL_DAYS * 864e5 : Number(tx.expiresDate);
+  if (!tx.originalTransactionId || !tx.transactionId || !Number.isFinite(expires)) throw new AppleJwsError('fields');
   return {
     original_transaction_id: String(tx.originalTransactionId),
     user_id: userId,
@@ -96,9 +106,10 @@ export function subscriptionRow(tx, userId) {
     plan,
     last_transaction_id: String(tx.transactionId),
     purchased_at: tx.purchaseDate ? new Date(Number(tx.purchaseDate)).toISOString() : null,
-    expires_at: new Date(Number(tx.expiresDate)).toISOString(),
+    expires_at: new Date(expires).toISOString(),
     revoked_at: tx.revocationDate ? new Date(Number(tx.revocationDate)).toISOString() : null,
     environment: tx.environment,
+    ...(trial ? { auto_renew: false } : {}),
     updated_at: new Date().toISOString(),
   };
 }

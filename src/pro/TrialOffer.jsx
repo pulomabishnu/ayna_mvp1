@@ -5,6 +5,7 @@ import { PRO_CHANGED_EVENT } from './paywall.js';
 import { toast } from '../utils/toast.js';
 import posthog from 'posthog-js';
 import TrialStart from './TrialStart.jsx';
+import { usesAppleIap } from './appleIap.js';
 import { useTrialAvailable, resetTrialStatus } from './useTrialAvailable.js';
 import './trial.css';
 
@@ -22,7 +23,8 @@ export default function TrialOffer() {
   const started = useRef(false);
   useEffect(() => {
     if (choice != null) markSeen();
-    if (choice !== 'yes' || !checked || !available || started.current) return;
+    // iPhone app: the trial goes through Apple's $0 purchase, which needs her tap (the button below), never an auto-start.
+    if (choice !== 'yes' || usesAppleIap() || !checked || !available || started.current) return;
     started.current = true;
     requestPro({ action: 'start_trial' }).then((r) => {
       if (!r?.started) return;

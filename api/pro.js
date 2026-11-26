@@ -163,7 +163,8 @@ export default async function handler(req, res) {
       const results = await verifyAppTransactions(admin, user.id, list);
       let next = status;
       try { next = await proStatus(admin, user.id); } catch { /* the save already happened; status catches up */ }
-      return res.status(200).json({ ok: results.some((r) => r.result === 'saved' || r.result === 'kept'), results, active: legacyPremium || next.active || isAdmin });
+      // ok = safe for the app to finish the transaction with Apple ('trial_used': her account already had its trial).
+      return res.status(200).json({ ok: results.some((r) => ['saved', 'kept', 'trial_used'].includes(r.result)), results, active: legacyPremium || next.active || isAdmin });
     }
 
     // Nov 16 (founder): a free week of Pro, no card, that she opts into. One per account, ever.

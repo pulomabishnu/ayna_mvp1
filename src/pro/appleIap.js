@@ -10,7 +10,9 @@ import { announceProChanged } from './paywall.js';
  * The website keeps Stripe. Product ids must match App Store Connect and api/_appleJws.js.
  */
 export const APPLE_PRODUCTS = { year: 'co.aynahealth.app.pro.yearly', month: 'co.aynahealth.app.pro.monthly' };
-const PLAN_BY_PRODUCT = Object.fromEntries(Object.entries(APPLE_PRODUCTS).map(([plan, id]) => [id, plan]));
+/** The free 14-day trial: a $0 non-consumable named "14-Day Trial" (guideline 3.1.1). No charge, never renews. */
+export const APPLE_TRIAL_PRODUCT = 'co.aynahealth.app.pro.trial14';
+const PLAN_BY_PRODUCT = { ...Object.fromEntries(Object.entries(APPLE_PRODUCTS).map(([plan, id]) => [id, plan])), [APPLE_TRIAL_PRODUCT]: 'trial' };
 
 /** True in the iPhone app, where Pro is sold with Apple in-app purchase. */
 export function usesAppleIap() {
@@ -44,7 +46,7 @@ export async function sendAppleTransactions(jwsList) {
  * { year: { id, plan: 'year', displayPrice: '$89.99', intro: { displayPrice: '$44.99', ... }, introEligible } }
  */
 export async function loadAppleProducts() {
-  const { products = [] } = await AynaStore.products({ ids: Object.values(APPLE_PRODUCTS) });
+  const { products = [] } = await AynaStore.products({ ids: [...Object.values(APPLE_PRODUCTS), APPLE_TRIAL_PRODUCT] });
   const out = {};
   for (const p of products) {
     const plan = PLAN_BY_PRODUCT[p.id];
@@ -82,6 +84,23 @@ export async function buyWithApple(plan) {
   if (!out.ok) throw Object.assign(new Error('We couldn’t confirm your purchase yet. Tap Restore purchases in a minute.'), { code: 'verify_failed' });
   try { await AynaStore.finish({ transactionId: result.transactionId }); } catch { /* finished next launch */ }
   return 'success';
+}
+
+/**
+ * Start the free 14-day trial in the iPhone app. Apple shows its sheet at $0; nothing is charged and nothing
+ * renews. Resolves { started: true } | { started: false, reason: 'cancelled'|'pending'|'used' }.
+ */
+export async function startAppleTrial() {
+  const s = await session();
+  if (!s?.user?.id) throw Object.assign(new Error('Sign in first to start your free trial.'), { code: 'sign_in_required' });
+  const result = await AynaStore.purchase({ id: APPLE_TRIAL_PRODUCT, appAccountToken: s.user.id });
+  if (result.status !== 'success') return { started: false, reason: result.status };
+  const out = await sendAppleTransactions([result.jws]);
+  if (!out.ok) throw Object.assign(new Error('We couldn’t start your trial yet. Try again in a minute.'), { code: 'verify_failed' });
+  try { await AynaStore.finish({ transactionId: result.transactionId }); } catch { /* finished next launch */ }
+  const r = (out.results || [])[0]?.result;
+  if (r === 'trial_used') return { started: false, reason: 'used' };
+  return { started: Boolean(out.active), reason: out.active ? undefined : 'used' };
 }
 
 /** "Restore purchases": her active Apple subscription goes back on her ayna account. */

@@ -1,4 +1,4 @@
-import { verifyAppleJws, subscriptionRow, AppleJwsError } from './_appleJws.js';
+import { verifyAppleJws, subscriptionRow, AppleJwsError, APPLE_TRIAL_PRODUCT } from './_appleJws.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -19,6 +19,27 @@ export async function saveAppleRow(admin, row) {
 }
 
 /**
+ * The free trial bought in the app ($0, see APPLE_TRIAL_PRODUCT). One per ayna account, shared with the
+ * website's no-card trial (pro_trials), and Apple allows it once per Apple ID. Restores replay it: 'kept'.
+ * @returns {{ result: 'saved'|'kept'|'other_account'|'trial_used', transactionId?: string }}
+ */
+export async function saveAppleTrial(admin, userId, row) {
+  const { data: existing, error } = await admin.from('pro_apple_subscriptions')
+    .select('user_id').eq('original_transaction_id', row.original_transaction_id).maybeSingle();
+  if (error) throw error;
+  if (existing) return { result: existing.user_id === userId ? 'kept' : 'other_account', transactionId: row.last_transaction_id };
+  const { data: used, error: usedError } = await admin.from('pro_trials').select('user_id').eq('user_id', userId).maybeSingle();
+  if (usedError) throw usedError;
+  if (used) return { result: 'trial_used', transactionId: row.last_transaction_id };
+  const result = await saveAppleRow(admin, row);
+  if (result === 'saved') {
+    const { error: markError } = await admin.from('pro_trials').upsert({ user_id: userId }, { onConflict: 'user_id' });
+    if (markError) throw markError;
+  }
+  return { result, transactionId: row.last_transaction_id };
+}
+
+/**
  * From the app: signed transactions from a purchase, a restore or Transaction.updates.
  * The purchase carries her account id as appAccountToken; a transaction tied to another
  * account is refused.
@@ -30,6 +51,7 @@ export async function verifyAppTransactions(admin, userId, list, verify = verify
       const tx = verify(jws);
       if (tx.appAccountToken && String(tx.appAccountToken).toLowerCase() !== String(userId).toLowerCase()) { results.push({ result: 'other_account' }); continue; }
       const row = subscriptionRow(tx, userId);
+      if (tx.productId === APPLE_TRIAL_PRODUCT) { results.push(await saveAppleTrial(admin, userId, row)); continue; }
       results.push({ result: await saveAppleRow(admin, row), transactionId: row.last_transaction_id });
     } catch (e) {
       if (e instanceof AppleJwsError) { results.push({ result: 'invalid', reason: e.reason }); continue; }

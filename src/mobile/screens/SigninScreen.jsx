@@ -3,6 +3,7 @@ import { authErrorText } from '../../utils/authErrorText.js';
 import ProfileSetupStep from '../../components/ProfileSetupStep.jsx';
 import LegalFooter from '../components/LegalFooter.jsx';
 import { setTrialOptIn, takeTrialOptIn, peekTrialOptIn } from '../../pro/trialOptIn.js';
+import { onIosApp } from '../../utils/platformCopy.js';
 import { stashPendingSignupMeta } from '../../utils/pendingConsent.js';
 import { AI_CONSENT_ERROR, AI_CONSENT_TEXT, LEGAL_LINKS, acknowledgementLead, consentMetadata, markAskHeardAbout } from '../../utils/signupConsent.js';
 import { cleanFirstName } from '../data/intakeModel.js';
@@ -466,7 +467,7 @@ export default function SigninScreen({
 
           {/* Nov 17 (founder: "make sure you can opt in for your 14 day free trial"): her choice, started once the
               account exists (pro/TrialOffer.jsx). */}
-          {mode === 'signup' && (
+          {mode === 'signup' && !onIosApp() && (
             <label className="ay-auth-trial-opt">
               <input type="checkbox" checked={trialOptIn} onChange={(e) => setTrialOptInState(e.target.checked)} />
               <span><b>Start my free 14-day ayna Pro trial.</b> No card needed. Nothing renews.</span>
