@@ -10,13 +10,17 @@ export function storyTheme() {
 }
 
 // A chart (figure role="group") is not a control: tapping it moves on (founder, Nov 11: "the third page of the rundown doesn't go to the next slide").
-const CONTROL = 'button, a, input, select, textarea, summary, details, label, [role="group"]:not(figure):not(li):not(.ay-wr-needs), .ay-pcard, [data-pid]';
+// Nov 25 (founder: "it's not clicking when you press the side of each page"): a closed "How ayna got this" counted
+// as a control across its whole row, so taps there did nothing. Only an open one (its sheet) does now.
+const CONTROL = 'button, a, input, select, textarea, summary, details[open], label, [role="group"]:not(figure):not(li):not(.ay-wr-needs), .ay-pcard, [data-pid]';
 export const isControl = (el) => Boolean(el?.closest?.(CONTROL));
 
 /**
  * Tap left (first 30%) for back, anywhere else for next; hold to pause;
  * swipe sideways to move, swipe down to close. Taps on controls are theirs.
  */
+const HOLD_MS = 450;
+
 export function useStoryGestures({ onPrev, onNext, onClose }) {
   const [held, setHeld] = useState(false);
   const start = useRef(null);
@@ -32,7 +36,7 @@ export function useStoryGestures({ onPrev, onNext, onClose }) {
     const dx = e.clientX - s.x; const dy = e.clientY - s.y;
     if (dy > 90 && dy > Math.abs(dx) * 1.2) { swallow.current = true; onClose?.(); return; }
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { swallow.current = true; (dx < 0 ? onNext : onPrev)?.(); return; }
-    if (wasHeld || Date.now() - s.t > 450) swallow.current = true;
+    if (wasHeld || Date.now() - s.t > HOLD_MS) swallow.current = true;
   };
   const bind = {
     onPointerDown: (e) => {
@@ -40,7 +44,9 @@ export function useStoryGestures({ onPrev, onNext, onClose }) {
       start.current = { x: e.clientX, y: e.clientY, t: Date.now() };
       swallow.current = false;
       window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setHeld(true), 260);
+      // Nov 25: a normal tap on a phone often lasts 250-400ms. Holding started at 260ms, so those taps paused the
+      // story instead of moving on ("glitchy"). Hold now means a real hold.
+      timer.current = window.setTimeout(() => setHeld(true), HOLD_MS);
     },
     onPointerUp: (e) => end(e),
     onPointerCancel: (e) => end(e, true),

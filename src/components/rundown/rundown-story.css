@@ -138,7 +138,7 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-delta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* period check: answers in one row */
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-check { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays) .ay-rdd-ask { grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); }
 
 /* the one chart motion (off in still mode and reduced motion) */
 @keyframes ay-rdd-grow { from { transform: scaleY(0); } }
@@ -375,9 +375,15 @@
 
 /* Nov 16 (founder screenshot): the period "Quick check" answers were narrow outlined boxes and "No, ended yesterday"
    spilled out of its box. Now full-width soft-filled rows like the check-in, no outlines; the "?" day is a soft fill. */
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check { display: grid !important; grid-template-columns: 1fr !important; gap: 10px !important; width: 100%; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check > .ay-rd-chip { width: 100% !important; min-height: 56px !important; height: auto !important; padding: 14px 20px !important; justify-content: flex-start !important; text-align: left !important; white-space: normal !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important; background: var(--s-btn) !important; color: var(--s-on-btn) !important; font: 700 17px/1.25 var(--s-ui) !important; }
-.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-check > .ay-rd-basis { margin: 0 0 2px; }
+/* Nov 25 (founder: "it asked are you still on your period, you can't click yes"): the answers' box shared its class
+   with the end card's 44px tick, so it was 44px tall and animated like the tick: the answers spilled out of it, looked
+   skewed, and what came after sat on top of them. Its own class now. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-ask { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; width: 100%; height: auto !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-ask > .ay-rd-chip { width: 100% !important; min-height: 52px !important; height: auto !important; padding: 14px 20px !important; justify-content: flex-start !important; text-align: left !important; white-space: normal !important; border: 0 !important; box-shadow: none !important; border-radius: 18px !important; background: var(--s-btn) !important; color: var(--s-on-btn) !important; font: 700 17px/1.25 var(--s-ui) !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-ask > .ay-rd-basis { margin: 0 0 2px; }
+/* "How heavy is it today?": three short answers sit in one row, so none hides below the fold. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays) .ay-rdd-ask.is-flow { grid-template-columns: repeat(3, 1fr) !important; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays) .ay-rdd-ask.is-flow > .ay-rd-chip { min-height: 48px !important; justify-content: center !important; text-align: center !important; padding: 10px 12px !important; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rdd-tile:is(.is-ahead, .is-gap, .is-maybe) { border: 0 !important; background: color-mix(in srgb, var(--s-fg) 14%, transparent) !important; }
 /* The end card's list of what she saw: soft rows, no outlines (Nov 16 pass). */
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays) .ay-rd-recap button { border: 0 !important; box-shadow: none !important; background: color-mix(in srgb, var(--s-fg) 10%, transparent) !important; }
@@ -428,3 +434,9 @@
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays) .ay-rd-prow__add svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays) .ay-rd-prow__add.is-on { background: #f7badd; color: #3e2723; }
 .ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays) .ay-rd-prow__swap { justify-self: center !important; min-height: 44px; font-size: 15px !important; }
+/* Nov 25: the "Saved." line under the answers lost its descenders at the bottom of the page. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ays-act { padding-bottom: 6px; }
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays) .ay-rd-note { line-height: 1.4; }
+/* Nov 25: the period page has a question and answers under its day strip; the strip needs less room so all of it
+   fits on one screen without scrolling. */
+.ay-rd.ays:is(#ays-a, .ays):is(#ays-b, .ays):is(#ays-c, .ays):is(#ays-d, .ays):is(#ays-e, .ays):is(#ays-f, .ays).is-period .ays-card.has-art .ays-visual { min-height: 96px !important; }

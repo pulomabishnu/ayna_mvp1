@@ -140,11 +140,15 @@ export default function Rundown({
     today, decision: t.decision, patterns: t.patterns, log: t.log, tries: t.tries,
     // Nights she typed (no watch) count too, only where nothing else recorded that night.
     healthRows: (() => { try { return [...(t.healthRows || []), ...enteredSleepRows(t.healthRows || [])]; } catch { return t.healthRows; } })(),
-    matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community, memory: memAtOpen, hasProfile: Boolean(intake), needLabels,
+    matches, complements, saved: savedForRundown, reads: Boolean(onOpenRead), community,
+    // The rest of memory stays as it was when she opened (cards don't reshuffle as she reads), but her answer to
+    // "Are you still on your period?" is live: Nov 25 (founder: "you can't click yes"), it was saved but the card
+    // never changed, because the rundown kept building from the copy taken when it opened.
+    memory: memory.periodAnswers === memAtOpen.periodAnswers ? memAtOpen : { ...memAtOpen, periodAnswers: memory.periodAnswers }, hasProfile: Boolean(intake), needLabels,
     hormonalBC: Boolean(t.hormonalBC), postCycle: Boolean(t.postCycle), pregnant: Boolean(t.pregnant),
     // Her day plan, read when the rundown builds (on this phone only).
     ...(() => { try { const y = new Date(); y.setDate(y.getDate() - 1); return { plan: planSummary(planDay()), planYesterday: planSummary(planDay(y), { now: new Date() }) }; } catch { return {}; } })(),
-  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memAtOpen, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
+  }), [today, t.decision, t.patterns, t.log, t.tries, t.healthRows, matches, complements, savedForRundown, onOpenRead, community, memAtOpen, memory.periodAnswers, intake, needLabels, t.hormonalBC, t.postCycle, t.pregnant]);
   const weekly = useMemo(() => buildWeeklyRecap({ today, log: t.log, tries: t.tries, patterns: t.patterns, saved }), [today, t.log, t.tries, t.patterns, saved]);
   const cards = open === 'weekly' ? weekly.cards : daily.cards;
 

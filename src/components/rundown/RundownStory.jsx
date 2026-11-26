@@ -214,14 +214,14 @@ function Body({ card, h, done }) {
     case 'cycle':
       if (card.check) {
         return (
-          <div className="ay-rd-choices ay-rdd-check" role="group" aria-label={card.title}>
+          <div className="ay-rd-choices ay-rdd-ask" role="group" aria-label={card.title}>
             {card.check.options.map((o) => <button key={o.value} type="button" className="ay-rd-chip" onClick={() => h.periodAnswer(card, o.value)}>{o.label}</button>)}
           </div>
         );
       }
       return (<>
         {card.flowAsk && (
-          <div className="ay-rd-choices ay-rdd-check" role="group" aria-label={card.flowAsk.title}>
+          <div className="ay-rd-choices ay-rdd-ask is-flow" role="group" aria-label={card.flowAsk.title}>
             <p className="ay-rd-basis">{card.flowAsk.title}</p>
             {card.flowAsk.options.map((o) => <button key={o.value} type="button" className="ay-rd-chip" onClick={() => h.logFlow(card, o.value)}>{o.label}</button>)}
           </div>
