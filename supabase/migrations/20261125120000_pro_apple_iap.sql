@@ -51,7 +51,9 @@ returns jsonb language sql stable security invoker set search_path = '' as $$
     'active', coalesce((select ends_at is null or ends_at > now() from best), false)
       or exists (select 1 from public.pro_focus_grants f where f.user_id = p_user_id and f.expires_at > now())
       or exists (select 1 from apple),
-    'hasPurchase', exists (select 1 from terms where ends_at is null or ends_at > now()) or exists (select 1 from apple),
+    -- The $0 14-Day Trial unlocks Pro but isn't a purchase.
+    'hasPurchase', exists (select 1 from terms where ends_at is null or ends_at > now())
+      or exists (select 1 from public.pro_apple_subscriptions a where a.user_id = p_user_id and a.revoked_at is null and a.expires_at > now() and a.plan <> 'trial'),
     'temporaryUntil', (select expires_at from public.pro_focus_grants where user_id = p_user_id and expires_at > now()),
     'autoRenew', exists (select 1 from public.pro_subscriptions s where s.user_id = p_user_id and not s.cancel_at_period_end and s.status in ('trialing','active','past_due'))
       or coalesce((select auto_renew from apple), false),
