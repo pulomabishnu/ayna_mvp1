@@ -1,7 +1,7 @@
 /* Partner Studio screens (Phase 1 plan, p.12). Each reads one brand rollup from /api/partner-studio. */
 import React, { useMemo, useState } from 'react';
-import { Kpi, HBar, Donut, SyntheticBadge, DraftBadge, Empty } from './ui.jsx';
-import { fmtPct, ratePct, money, SYNTHETIC } from './format.js';
+import { Kpi, HBar, Donut, SyntheticBadge, DraftBadge, Empty, CardHead, ShelfField, Heatmap, ReasonStack } from './ui.jsx';
+import { fmtPct, ratePct, money, SYNTHETIC, vsPeers } from './format.js';
 
 const STATUS_LABEL = {
   direct: 'Direct product study',
@@ -35,41 +35,73 @@ export function CategoryTabs({ cats, cat, setCat }) {
 }
 
 /* ---------------- Overview ---------------- */
+const reasonKey = (id) => (id === 'diversity_tie' || id === 'unclassified' ? 'ps-hatch' : id === 'budget' ? 'is-pink' : id === 'relevance' ? 'is-ink' : 'is-blue');
+const reasonFill = (id) => (id === 'diversity_tie' || id === 'unclassified' ? 'hatch' : id === 'budget' ? 'pink' : id === 'relevance' ? '' : 'sky');
+
+const shortCat = (label) => label.split(' and ')[0].toLowerCase();
+const rankText = (b) => b.categories.filter((c) => c.rank.rank).map((c) => `#${c.rank.rank} of ${c.rank.of} in ${shortCat(c.label)}`).join(' · ');
+
+/** Plain-language read of the by-need bars: strongest need and needs with no slots. */
+function Openings({ c }) {
+  const scored = c.byNeed.filter((n) => n.slotShare != null);
+  const best = [...scored].sort((x, y) => y.slotShare - x.slotShare)[0];
+  const none = scored.filter((n) => n.slotShare === 0).map((n) => n.need.toLowerCase());
+  if (!best) return null;
+  return (
+    <div className="ps-callout">
+      <strong>Read this as</strong>
+      {best.slotShare > 0 ? <span>Strongest: <b>{best.need}</b>, {best.slotShare}% of slots ({best.brandSlots} of {best.slots}).</span> : <span>No slots won in any need yet.</span>}
+      {none.length && best.slotShare > 0 ? <span>No slots in {none.join(', ')}. Check Lost recommendations for why.</span> : null}
+    </div>
+  );
+}
+
 export function Overview({ data, b, go, actionState }) {
   const t = b.totals;
   const open = (b.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done');
+  const one = b.categories.length === 1 ? b.categories[0] : null;
+  const shareCmp = one ? vsPeers(one.slotShare, one.field?.peerMedian) : (rankText(b) ? { dir: 'flat', text: rankText(b) } : null);
+  const ranks = rankText(b);
+  const lost = b.categories.reduce((a, c) => a + c.funnel.eligible_lost, 0);
+  const [fieldCat, setFieldCat] = useState(b.categories[0]?.id);
+  const fc = b.categories.find((c) => c.id === fieldCat) || b.categories[0];
   return (
     <>
       <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" label="Slot share" badge={<SyntheticBadge text="Synthetic" />} value={t.slotShare.pct == null ? 'N/A' : `${t.slotShare.pct}%`} den={`${t.slotShare.num} of ${t.slotShare.den} top-3 recommendation slots`} />
-        <Kpi tone="pink" label="Scenario inclusion" badge={<SyntheticBadge text="Synthetic" />} value={t.inclusion.pct == null ? 'N/A' : `${t.inclusion.pct}%`} den={`In ${t.inclusion.num} of ${t.inclusion.den} fictional scenarios`} />
-        <Kpi tone="deep" label="Eligible to placed" badge={<SyntheticBadge text="Synthetic" />} value={t.eligibleToPlaced.pct == null ? 'N/A' : `${t.eligibleToPlaced.pct}%`} den={`Placed in ${t.eligibleToPlaced.num} of ${t.eligibleToPlaced.den} scenarios where you were eligible`} />
-        <Kpi tone="plain" label="Evidence review coverage" badge={<DraftBadge text="Review" />} value={t.reviewCoverage.pct == null ? 'N/A' : `${t.reviewCoverage.pct}%`} den={`${t.reviewCoverage.num} of ${t.reviewCoverage.den} inventoried claims human-reviewed`} />
+        <Kpi tone="ink" label="Slot share" badge={<SyntheticBadge text="Synthetic" />} value={t.slotShare.pct == null ? 'N/A' : `${t.slotShare.pct}%`} meter={t.slotShare.pct} cmp={shareCmp} den={`${t.slotShare.num} of ${t.slotShare.den} top-3 recommendation slots`} />
+        <Kpi tone="pink" label="Scenario inclusion" badge={<SyntheticBadge text="Synthetic" />} value={t.inclusion.pct == null ? 'N/A' : `${t.inclusion.pct}%`} meter={t.inclusion.pct} cmp={ranks ? { dir: 'flat', text: `Rank by slots: ${ranks}` } : { dir: 'down', text: 'Not placed in any scenario yet' }} den={`In ${t.inclusion.num} of ${t.inclusion.den} fictional scenarios`} />
+        <Kpi tone="deep" label="Eligible to placed" badge={<SyntheticBadge text="Synthetic" />} value={t.eligibleToPlaced.pct == null ? 'N/A' : `${t.eligibleToPlaced.pct}%`} meter={t.eligibleToPlaced.pct} cmp={lost ? { dir: 'down', text: `Lost ${lost} eligible scenario${lost === 1 ? '' : 's'}` } : { dir: 'up', text: 'No eligible losses' }} den={`Placed in ${t.eligibleToPlaced.num} of ${t.eligibleToPlaced.den} scenarios where you were eligible`} />
+        <Kpi tone="plain" label="Evidence review coverage" badge={<DraftBadge text="Review" />} value={t.reviewCoverage.pct == null ? 'N/A' : `${t.reviewCoverage.pct}%`} meter={t.reviewCoverage.pct} cmp={t.reviewCoverage.den ? { dir: t.reviewCoverage.num < t.reviewCoverage.den ? 'down' : 'up', text: `${t.reviewCoverage.den - t.reviewCoverage.num} claim${t.reviewCoverage.den - t.reviewCoverage.num === 1 ? '' : 's'} awaiting a reviewer` } : { dir: 'flat', text: 'No claims logged yet' }} den={`${t.reviewCoverage.num} of ${t.reviewCoverage.den} inventoried claims human-reviewed`} />
+      </div>
+      <div className="ps-strip" aria-label="Benchmark scope">
+        {data.categories.filter((c) => b.categories.some((x) => x.id === c.id)).map((c) => (
+          <React.Fragment key={c.id}><span><b>{c.label}</b>: {c.baseline} fictional scenarios, {c.universe} products from {c.brands} brands, top {data.run.k}</span><span className="sep" /></React.Fragment>
+        ))}
+        <span>Run {new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · equal weights · {data.run.deterministic ? 'replay identical' : 'replay varied'}</span>
+        <button type="button" className="ps-link" onClick={() => go('reports')}>Methodology</button>
       </div>
       <div className="ps-row">
-        <section className="ps-card" style={{ flex: '2 1 520px' }} aria-labelledby="ov-cats">
-          <div className="ps-card-head"><h2 id="ov-cats">Where you show up</h2><SyntheticBadge /></div>
+        <section className="ps-card" style={{ flex: '3 1 520px' }} aria-labelledby="ov-cats">
+          <CardHead id="ov-cats" title="Where you show up" desc="Your share of the top-3 recommendation slots, overall and for each need ayna matches in this category." right={<SyntheticBadge />} />
           {b.categories.map((c) => (
             <div key={c.id} style={{ display: 'flex', flexWrap: 'wrap', gap: 22, alignItems: 'center' }}>
               <Donut value={c.slotShare == null ? null : c.slotShare / 100} label={c.label} sub={`${c.brandSlots} of ${c.slots} slots`} />
               <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <span className="ps-small" style={{ fontWeight: 700 }}>Slot share by need {c.rank.rank ? `· #${c.rank.rank} of ${c.rank.of} brands` : ''}</span>
                 {c.byNeed.map((n) => <HBar key={n.need} label={n.need} value={n.slotShare} text={n.slotShare == null ? 'N/A' : `${n.slotShare}%`} />)}
+                <Openings c={c} />
               </div>
             </div>
           ))}
           <p className="ps-chart-foot">{SYNTHETIC}.</p>
         </section>
-        <section className="ps-card ps-card--plain" style={{ flex: '1 1 300px' }} aria-labelledby="ov-scope">
-          <h2 id="ov-scope">Benchmark scope</h2>
-          <ul className="ps-list">
-            {data.categories.filter((c) => b.categories.some((x) => x.id === c.id)).map((c) => (
-              <li key={c.id} className="ps-item"><strong>{c.label}</strong><span className="ps-small">{c.baseline} fictional scenarios · {c.universe} products from {c.brands} brands · top {data.run.k}</span></li>
-            ))}
-          </ul>
-          <p className="ps-small ps-muted">Run {data.run.runId}, {new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. Equal weights. {data.run.deterministic ? 'Replay reproduced every placement.' : 'Replay varied: see Reports.'}</p>
-          <button type="button" className="ps-link" onClick={() => go('reports')}>Methodology</button>
-        </section>
+        {fc ? (
+          <section className="ps-card ps-card--plain" style={{ flex: '2 1 380px' }} aria-labelledby="ov-field">
+            <CardHead id="ov-field" title="You vs the shelf" desc="Every brand with a product in this benchmark, ranked by slots won. Other brands stay anonymous." right={<CategoryTabs cats={b.categories} cat={fc} setCat={setFieldCat} />} />
+            <ShelfField field={fc.field} max={10} />
+            <p className="ps-chart-foot">{SYNTHETIC}. {fc.field?.totalSlots} slots across {fc.scenarios} scenarios.</p>
+          </section>
+        ) : null}
       </div>
       <div className="ps-row">
         <section className="ps-card" style={{ flex: '1 1 420px' }} aria-labelledby="ov-actions">
@@ -230,23 +262,27 @@ export function Share({ data, b, cat, setCat }) {
     <>
       <div className="ps-top"><CategoryTabs cats={b.categories} cat={c} setCat={setCat} /><SyntheticBadge text={SYNTHETIC} /></div>
       <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" label="Slot share" value={c.slotShare == null ? 'N/A' : `${c.slotShare}%`} den={`${c.brandSlots} of ${c.slots} filled top-${c.k} slots`} />
+        <Kpi tone="ink" label="Slot share" value={c.slotShare == null ? 'N/A' : `${c.slotShare}%`} meter={c.slotShare} cmp={vsPeers(c.slotShare, c.field?.peerMedian)} den={`${c.brandSlots} of ${c.slots} filled top-${c.k} slots`} />
         <Kpi tone="pink" label="Scenario inclusion" value={c.inclusion.pct == null ? 'N/A' : `${c.inclusion.pct}%`} den={`${c.inclusion.num} of ${c.inclusion.den} scenarios`} />
         <Kpi tone="deep" label="Eligible to placed" value={c.eligibleToPlaced.pct == null ? 'N/A' : `${c.eligibleToPlaced.pct}%`} den={`${c.eligibleToPlaced.num} of ${c.eligibleToPlaced.den} eligible scenarios`} />
-        <Kpi tone="plain" label="Brand rank by slots" value={c.rank.rank ? `#${c.rank.rank}` : 'Unranked'} den={`of ${c.rank.of} brands with a placement`} />
+        <Kpi tone="plain" label="Brand rank by slots" value={c.rank.rank ? `#${c.rank.rank}` : 'Unranked'} cmp={c.field ? { dir: 'flat', text: `${c.field.brands} brands in this benchmark` } : null} den={`of ${c.rank.of} brands with a placement`} />
       </div>
       <div className="ps-row">
         <section className="ps-card" style={{ flex: '3 1 520px' }} aria-labelledby="sh-need">
-          <h2 id="sh-need">By need</h2>
+          <CardHead id="sh-need" title="By need" desc="Your slot share for each need ayna matches in this category." />
           {c.byNeed.map((n) => <HBar key={n.need} label={n.need} sub={`${n.brandSlots} of ${n.slots} slots · ${n.scenarios} scenarios`} value={n.slotShare} text={n.slotShare == null ? 'N/A' : `${n.slotShare}%`} />)}
           <p className="ps-chart-foot">{SYNTHETIC}. Slot share; brand-level shares favor larger assortments, so see products below.</p>
         </section>
-        <section className="ps-card ps-card--plain" style={{ flex: '2 1 320px' }} aria-labelledby="sh-sens">
-          <h2 id="sh-sens">Sensitivity by budget band</h2>
-          {c.sensitivity.rows.map((r) => <HBar key={r.key} label={r.label} value={r.slotShare} tone="blue" text={r.slotShare == null ? 'N/A' : `${r.slotShare}%`} />)}
-          <p className="ps-small">Range {c.sensitivity.min ?? 'N/A'}% to {c.sensitivity.max ?? 'N/A'}%. A sensitivity range, not a confidence interval for real shoppers.</p>
+        <section className="ps-card ps-card--plain" style={{ flex: '2 1 340px' }} aria-labelledby="sh-field">
+          <CardHead id="sh-field" title="You vs the shelf" desc="Slot share for every brand in this benchmark. Dashed line: peer median." />
+          <ShelfField field={c.field} max={10} />
         </section>
       </div>
+      <section className="ps-card" aria-labelledby="sh-heat">
+        <CardHead id="sh-heat" title="Need × budget map" desc="Where you win and where you vanish. Each cell is your slot share for one need at one budget band; darker means more slots." right={<SyntheticBadge />} />
+        <Heatmap grid={c.grid} />
+        <p className="ps-small">Budget sensitivity: {c.sensitivity.min ?? 'N/A'}% to {c.sensitivity.max ?? 'N/A'}% slot share across bands. A sensitivity range, not a confidence interval for real shoppers. Each cell shows your slots out of all slots in it.</p>
+      </section>
       <section className="ps-card ps-card--plain" aria-labelledby="sh-sku">
         <h2 id="sh-sku">Products</h2>
         <div className="ps-table-wrap">
@@ -267,7 +303,9 @@ export function Losses({ b, cat, setCat }) {
   if (!c) return null;
   const f = c.funnel;
   const max = Math.max(f.in_scope + f.out_of_scope, 1);
-  const sims = (b.simulations || []).filter((s) => s.category === c.id);
+  const allSims = (b.simulations || []).filter((s) => s.category === c.id);
+  const sims = [...allSims].sort((x, y) => ((y.after.inclusion.num - y.before.inclusion.num) - (x.after.inclusion.num - x.before.inclusion.num))).filter((s) => s.after.inclusion.num !== s.before.inclusion.num);
+  const flat = allSims.length - sims.length;
   const rows = [
     ['Scenarios in this category', f.in_scope + f.out_of_scope, 'Fixed synthetic set'],
     ['A product of yours is relevant', f.in_scope, 'At least one SKU mapped to the need'],
@@ -280,7 +318,7 @@ export function Losses({ b, cat, setCat }) {
       <div className="ps-top"><CategoryTabs cats={b.categories} cat={c} setCat={setCat} /><SyntheticBadge text={SYNTHETIC} /></div>
       <div className="ps-row">
         <section className="ps-card" style={{ flex: '3 1 520px' }} aria-labelledby="lo-funnel">
-          <h2 id="lo-funnel">Eligibility funnel</h2>
+          <CardHead id="lo-funnel" title="Eligibility funnel" desc="From every scenario in the category down to the ones where you made the top 3." />
           <div className="ps-funnel">
             {rows.map(([l, n, note]) => (
               <div key={l} className="ps-funnel-row"><span style={{ fontWeight: 700 }}>{l}</span><span><span className="ps-funnel-bar" style={{ width: `${Math.max((n / max) * 100, 4)}%` }}>{n}</span></span><span className="ps-small">{note}</span></div>
@@ -289,8 +327,9 @@ export function Losses({ b, cat, setCat }) {
           <p className="ps-small">Not eligible: <strong>{f.insufficient_info}</strong> on hold for a missing fact, <strong>{f.excluded}</strong> ruled out by safety or life-stage rules (never optimized away).</p>
         </section>
         <section className="ps-card ps-card--plain" style={{ flex: '2 1 340px' }} aria-labelledby="lo-reasons">
-          <h2 id="lo-reasons">Why eligible products weren't placed</h2>
-          {f.reasons.length ? f.reasons.map((r) => <HBar key={r.id} label={r.label} value={r.share} text={`${r.n} · ${fmtPct(r.share)}`} tone={r.id === 'diversity_tie' || r.id === 'unclassified' ? 'blue' : ''} />) : <p>No eligible losses.</p>}
+          <CardHead id="lo-reasons" title="Why eligible products weren't placed" desc="One primary reason per lost scenario, from the engine's own scores." />
+          <ReasonStack reasons={f.reasons} />
+          {f.reasons.length ? f.reasons.map((r) => <HBar key={r.id} name={r.label} label={<><i className={`ps-key ${reasonKey(r.id)}`} />{r.label}</>} max={Math.max(...f.reasons.map((x) => x.share || 0), 1)} value={r.share} text={`${r.n} · ${fmtPct(r.share)}`} tone={reasonFill(r.id)} />) : <p>No eligible losses.</p>}
           <p className="ps-small">One primary reason per lost scenario; they sum to {f.eligible_lost}{f.sumsToLost ? '' : ' (check failed)'}. Budget is observed (price vs band); the rest are inferred from the engine's own score components.</p>
         </section>
       </div>
@@ -320,7 +359,8 @@ export function Losses({ b, cat, setCat }) {
                 <span className="ps-small">Inclusion {s.before.inclusion.num} → {s.after.inclusion.num} of {s.scenarios} scenarios ({z - a >= 0 ? '+' : ''}{Math.round((z - a) * 1000) / 10} pp). {s.displacedOtherSlots} other-brand slots shift. Safety check {s.safetyOk ? 'passed' : 'failed'}.</span>
               </div>
             );
-          }) : <p>No priced product to simulate in this category.</p>}
+          }) : <p>{allSims.length ? 'A 20% lower price changes nothing for any of your products here.' : 'No priced product to simulate in this category.'}</p>}
+          {sims.length && flat ? <p className="ps-small">{flat} other product{flat === 1 ? '' : 's'}: no change at 20% lower.</p> : null}
           <p className="ps-small ps-muted">Simulated uplift is percentage points of fictional scenarios, not customers or sales. Only price can be simulated; safety facts, ingredients and evidence never change in a simulation.</p>
         </section>
         <section className="ps-card ps-card--plain" style={{ flex: '1 1 320px' }} aria-labelledby="lo-bound">
