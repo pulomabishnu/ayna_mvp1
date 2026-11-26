@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications } from '../../utils/localNotifications.js';
 import { DEFAULT_RUNDOWN_TIME, readRundownPush } from '../../components/today/rundownPush.js';
 
 /**

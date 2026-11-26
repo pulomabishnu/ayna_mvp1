@@ -33,7 +33,7 @@ export function trialNotifications(until, now = Date.now()) {
 async function schedule(list) {
   try {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return;
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await import('../utils/localNotifications.js');
     await LocalNotifications.cancel({ notifications: IDS.map((id) => ({ id })) }).catch(() => {});
     if (!list.length) return;
     const perm = await LocalNotifications.checkPermissions();
@@ -86,7 +86,7 @@ export function onTrialNoticeTap() {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return () => {};
   } catch { return () => {}; }
   let off = () => {};
-  import('@capacitor/local-notifications').then(({ LocalNotifications }) => {
+  import('../utils/localNotifications.js').then(({ LocalNotifications }) => {
     const h = LocalNotifications.addListener('localNotificationActionPerformed', (a) => {
       if (IDS.includes(Number(a?.notification?.id))) openProPaywall({ feature: 'trial_ended', featureName: 'ayna Pro' });
     });

@@ -1,6 +1,6 @@
 import { reminderNamesOn } from '../../health/planReminders.js';
 import { Capacitor } from '@capacitor/core';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications } from '../../utils/localNotifications.js';
 
 /**
  * Per product, on this phone only: the day she started using it, and an optional daily reminder.

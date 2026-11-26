@@ -15,7 +15,7 @@ export function setupNudge(left, now = new Date()) {
 export async function syncSetupNudge(left) {
   try {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return;
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await import('../utils/localNotifications.js');
     await LocalNotifications.cancel({ notifications: [{ id: SETUP_NUDGE_ID }] }).catch(() => {});
     const n = setupNudge(left);
     if (!n) return;

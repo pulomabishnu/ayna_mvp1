@@ -38,7 +38,7 @@ export function planNudges({ now = new Date(), loggedToday = false, steps = [], 
 export async function syncEngagementNudges(input) {
   try {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return;
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { LocalNotifications } = await import('../../utils/localNotifications.js');
     const perm = await LocalNotifications.checkPermissions();
     if (perm.display !== 'granted') return;
     let movingWeek = null; try { movingWeek = localStorage.getItem(MOVING_KEY); } catch { /* storage off */ }

@@ -1,5 +1,5 @@
 import { Capacitor } from '@capacitor/core';
-import { LocalNotifications } from '@capacitor/local-notifications';
+import { LocalNotifications } from '../utils/localNotifications.js';
 import { readMeds } from './medications.js';
 import { readActivities } from './dayPlan.js';
 
