@@ -9,22 +9,102 @@ export function DraftBadge({ text = 'Draft, pending human review' }) {
   return <span className="ps-badge ps-badge--draft">{text}</span>;
 }
 
-export function Kpi({ tone = 'plain', label, value, den, badge }) {
+/** KPI tile. `cmp` is the one comparison every number needs (peer median, rank). */
+export function Kpi({ tone = 'plain', label, value, den, badge, cmp, meter }) {
   return (
     <div className={`ps-kpi ps-kpi--${tone}`}>
       <div className="ps-kpi-label"><span>{label}</span>{badge}</div>
       <span className="ps-num">{value}</span>
+      {meter != null ? <span className="ps-kpi-meter" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, meter))}%` }} /></span> : null}
+      {cmp ? <span className={`ps-cmp ps-cmp--${cmp.dir || 'flat'}`}>{cmp.dir === 'up' ? '▲ ' : cmp.dir === 'down' ? '▼ ' : ''}{cmp.text}</span> : null}
       <span className="ps-kpi-den">{den}</span>
     </div>
   );
 }
 
-export function HBar({ label, value, max = 100, text, tone = '', sub }) {
+/** Card title with a one-line "what this shows" description. */
+export function CardHead({ id, title, desc, right }) {
+  return (
+    <div className="ps-card-head">
+      <div className="ps-card-title"><h2 id={id}>{title}</h2>{desc ? <p className="ps-desc">{desc}</p> : null}</div>
+      {right ? <div className="ps-card-right">{right}</div> : null}
+    </div>
+  );
+}
+
+/** Ranked slot share for every brand in the universe. You in ink, peers anonymized. */
+export function ShelfField({ field, max = 12 }) {
+  if (!field?.rows?.length) return null;
+  const youIdx = field.rows.findIndex((r) => r.you);
+  let rows = field.rows.slice(0, max);
+  if (youIdx >= max) rows = [...field.rows.slice(0, max - 1), field.rows[youIdx]];
+  const top = Math.max(...field.rows.map((r) => r.share ?? 0), 1);
+  const medPos = field.peerMedian == null ? null : (field.peerMedian / top) * 100;
+  return (
+    <div className="ps-field" role="img" aria-label={`Slot share by brand. You: ${field.rows[youIdx]?.share ?? 'N/A'}%. Peer median ${field.peerMedian ?? 'N/A'}%.`}>
+      {rows.map((r) => (
+        <div key={r.label} className={`ps-field-row${r.you ? ' is-you' : ''}`}>
+          <span className="ps-field-rank">#{r.rank}</span>
+          <span className="ps-field-name">{r.label}</span>
+          <span className="ps-field-track">
+            <span className="ps-field-fill" style={{ width: `${r.share == null ? 0 : Math.max((r.share / top) * 100, r.slots ? 1.5 : 0)}%` }} />
+            {medPos != null ? <span className="ps-field-med" style={{ left: `${medPos}%` }} /> : null}
+          </span>
+          <span className="ps-field-val">{r.share == null ? 'N/A' : `${r.share}%`}</span>
+        </div>
+      ))}
+      {field.rows.length > rows.length ? <p className="ps-small ps-muted">{field.rows.length - rows.length} more brands not shown{field.zeroSlotPeers ? `; ${field.zeroSlotPeers} peers have no placements` : ''}.</p> : null}
+      <div className="ps-legend"><span><i style={{ background: '#3e2723' }} />You</span><span><i style={{ background: '#c9d9e6' }} />Peer brand (anonymized)</span><span><i className="ps-legend-med" />Median of {field.placedPeers} placed peers: {field.peerMedian ?? 'N/A'}%</span></div>
+    </div>
+  );
+}
+
+/** Need × budget heatmap of slot share. Ink scale on butter; N/A cells hatched. */
+export function Heatmap({ grid }) {
+  if (!grid?.rows?.length) return null;
+  const vals = grid.rows.flatMap((r) => r.cells.map((c) => c.slotShare)).filter((v) => v != null);
+  const hi = Math.max(...vals, 1);
+  return (
+    <div className="ps-heat" style={{ gridTemplateColumns: `minmax(140px, 1.3fr) repeat(${grid.cols.length}, minmax(80px, 1fr))` }}>
+      <span />
+      {grid.cols.map((c) => <span key={c.key} className="ps-heat-col">{c.label}</span>)}
+      {grid.rows.map((r) => (
+        <React.Fragment key={r.need}>
+          <span className="ps-heat-row">{r.need}</span>
+          {r.cells.map((c) => {
+            const v = c.slotShare;
+            const a = v == null ? 0 : 0.08 + 0.92 * (v / hi);
+            return (
+              <span key={c.key} className={`ps-heat-cell${v == null ? ' ps-hatch' : ''}`} style={v == null ? undefined : { background: `rgba(62,39,35,${a.toFixed(2)})`, color: a > 0.5 ? '#ffedac' : '#3e2723' }} title={`${r.need}, ${c.key}: ${c.brandSlots} of ${c.slots} slots in ${c.scenarios} scenarios`}>
+                <b>{v == null ? 'N/A' : `${v}%`}</b>
+                <small>{v == null ? 'no slots' : `${c.brandSlots}/${c.slots}`}</small>
+              </span>
+            );
+          })}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+/** 100% stacked bar of loss reasons with direct labels. */
+export function ReasonStack({ reasons }) {
+  const total = reasons.reduce((a, r) => a + r.n, 0);
+  if (!total) return null;
+  const tone = (id) => (id === 'diversity_tie' || id === 'unclassified' ? 'ps-hatch' : id === 'budget' ? 'is-pink' : id === 'relevance' ? 'is-ink' : 'is-blue');
+  return (
+    <div className="ps-rstack" role="img" aria-label={reasons.map((r) => `${r.label} ${r.n}`).join(', ')}>
+      {reasons.map((r) => <span key={r.id} className={tone(r.id)} style={{ flex: `${r.n} 1 0` }} title={`${r.label}: ${r.n}`}>{r.n / total >= 0.12 ? <em>{Math.round((r.n / total) * 100)}%</em> : ''}</span>)}
+    </div>
+  );
+}
+
+export function HBar({ label, value, max = 100, text, tone = '', sub, name }) {
   const w = value == null ? 0 : Math.max(0, Math.min(100, (value / (max || 1)) * 100));
   return (
     <div className="ps-hbar">
       <span style={{ display: 'flex', flexDirection: 'column' }}><span style={{ fontWeight: 700 }}>{label}</span>{sub ? <span className="ps-small ps-muted">{sub}</span> : null}</span>
-      <span className="ps-hbar-track" role="img" aria-label={`${label}: ${text ?? fmtPct(value)}`}><span className={`ps-hbar-fill ${tone ? `ps-hbar-fill--${tone}` : ''}`} style={{ width: `${w}%` }} /></span>
+      <span className="ps-hbar-track" role="img" aria-label={`${name ?? label}: ${text ?? fmtPct(value)}`}><span className={`ps-hbar-fill ${tone ? `ps-hbar-fill--${tone}` : ''}`} style={{ width: `${w}%` }} /></span>
       <span className="ps-hbar-val">{text ?? fmtPct(value)}</span>
     </div>
   );
