@@ -21,7 +21,7 @@
  */
 import snapshot from './_partnerStudio/snapshot.js';
 import { verifyUser } from './_usageLimit.js';
-import { isAdminUser } from './_admin.js';
+import { isAdminUser, ADMIN_DOMAIN } from './_admin.js';
 
 function headers(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -52,7 +52,12 @@ export default async function handler(req, res) {
     if (error || !user || !admin) {
       return res.status(error === 'auth_required' || error === 'invalid_session' ? 401 : 503).json({ error: error || 'auth_required' });
     }
-    if (!isAdminUser(user)) return res.status(403).json({ error: 'forbidden' });
+    if (!isAdminUser(user)) {
+      // Tell the signed-in person why, about their own account only (never the allowlist itself).
+      const email = String(user.email || '').toLowerCase();
+      const reason = !user.email_confirmed_at ? 'unconfirmed' : !email.endsWith(ADMIN_DOMAIN) ? 'not_team_domain' : 'not_listed';
+      return res.status(403).json({ error: 'forbidden', reason, email: user.email || null });
+    }
   }
 
   if (!snapshot.run) return res.status(503).json({ error: 'no_snapshot' });

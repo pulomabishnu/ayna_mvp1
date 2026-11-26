@@ -58,6 +58,16 @@ describe('partner-studio route', () => {
     expect((await call()).statusCode).toBe(403);
   });
 
+  it('tells the signed-in person why they were refused, without revealing the allowlist', async () => {
+    const reasonOf = async (tok) => { const r = await call({}, tok); return [r.statusCode, r.body?.reason]; };
+    expect(await reasonOf('tok-member')).toEqual([403, 'not_team_domain']);
+    expect(await reasonOf('tok-unconfirmed')).toEqual([403, 'unconfirmed']);
+    vi.stubEnv('ADMIN_EMAILS', '');
+    expect(await reasonOf('tok-admin')).toEqual([403, 'not_listed']);
+    const r = await call({}, 'tok-member');
+    expect(JSON.stringify(r.body)).not.toMatch(/admin@aynahealth\.co/);
+  });
+
   it('returns a brand rollup with run metadata to an admin', async () => {
     const res = await call({ brand: 'Demo Brand' });
     expect(res.statusCode).toBe(200);

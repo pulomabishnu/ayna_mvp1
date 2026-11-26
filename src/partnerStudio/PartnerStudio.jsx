@@ -32,9 +32,15 @@ const SUBTITLE = {
   reports: 'Run details, definitions and exports.',
 };
 
-function Gate({ status }) {
+const DENIED = {
+  not_team_domain: 'Partner Studio is for @aynahealth.co accounts. Sign out, then sign in with your ayna work email.',
+  unconfirmed: 'This email isn’t confirmed yet. Open the confirmation link ayna sent you, then reload.',
+  not_listed: 'This account isn’t on the Partner Studio admin list for this deploy. Ask whoever manages Vercel to add it to ADMIN_EMAILS.',
+};
+
+function Gate({ status, denied }) {
   const copy = {
-    401: ['Sign in first', 'Partner Studio uses your ayna account. Sign in on aynahealth.co, then come back to this page.'],
+    401: ['Sign in first', 'Partner Studio uses your ayna account. Sign in on this site with your @aynahealth.co email, then come back to this page.'],
     403: ['Private preview', 'Partner Studio is open to the ayna team while Phase 1 is reviewed. Brand access comes next.'],
     404: ['Not available yet', 'Partner Studio is switched off here.'],
     503: ['No benchmark yet', 'The first benchmark run hasn’t been built for this deploy. It runs during the build when Partner Studio is switched on.'],
@@ -46,7 +52,13 @@ function Gate({ status }) {
         <span className="ps-num" style={{ fontSize: 30 }}>ayna</span>
         <h1 style={{ fontFamily: "'ayna Display','Bricolage Grotesque',sans-serif" }}>{copy[0]}</h1>
         <p>{copy[1]}</p>
-        {status === 401 ? <a className="ps-btn ps-btn--ink" href="/">Go to aynahealth.co</a> : null}
+        {status === 403 && denied?.reason ? (
+          <p className="ps-callout">
+            {denied.email ? <span>Signed in as <b>{denied.email}</b>.</span> : null}
+            <span>{DENIED[denied.reason] || DENIED.not_listed}</span>
+          </p>
+        ) : null}
+        {status === 401 || denied?.reason === 'not_team_domain' ? <a className="ps-btn ps-btn--ink" href="/">Sign in on this site</a> : null}
       </div>
     </main>
   );
@@ -55,6 +67,7 @@ function Gate({ status }) {
 export default function PartnerStudio({ fetcher = fetch }) {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState(null);
+  const [denied, setDenied] = useState(null);
   const [brand, setBrand] = useState(() => new URLSearchParams(window.location.search).get('brand') || '');
   const [view, setView] = useState(() => {
     const v = new URLSearchParams(window.location.search).get('view');
@@ -73,7 +86,11 @@ export default function PartnerStudio({ fetcher = fetch }) {
     const q = brand ? `?brand=${encodeURIComponent(brand)}` : '';
     fetcher(`/api/partner-studio${q}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
       .then(async (res) => {
-        if (!res.ok) { if (!cancelled) setStatus([401, 403, 404, 503].includes(res.status) ? res.status : 'error'); return; }
+        if (!res.ok) {
+          if (res.status === 403) { const j = await res.json().catch(() => ({})); if (!cancelled) setDenied({ reason: j.reason, email: j.email }); }
+          if (!cancelled) setStatus([401, 403, 404, 503].includes(res.status) ? res.status : 'error');
+          return;
+        }
         const json = await res.json();
         if (cancelled) return;
         setData(json);
@@ -123,7 +140,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
 
   const openCount = useMemo(() => (b?.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done').length, [b, actionState]);
 
-  if (status !== 'ok' || !data) return <Gate status={status} />;
+  if (status !== 'ok' || !data) return <Gate status={status} denied={denied} />;
   const scoped = inScope(b);
   const name = b.displayName || b.name;
 
