@@ -191,8 +191,10 @@
 .ps-drawer-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
 
 .ps-empty { border: 1.5px dashed var(--ps-ink); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 8px; background: var(--ps-butter); }
-.ps-gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--ps-butter); color: var(--ps-ink); font-family: var(--ay-font-ui, 'Figtree', sans-serif); padding: 24px; }
-.ps-gate .ps-card { max-width: 520px; }
+.ps-gate { --ps-ink: #3e2723; --ps-ink-2: rgba(62, 39, 35, .78); --ps-butter: #ffedac; --ps-butter-2: #f6e3a1; --ps-pink: #f7badd; --ps-line: 1.5px solid #3e2723; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--ps-butter); color: var(--ps-ink); font-family: var(--ay-font-ui, 'Figtree', sans-serif); padding: 24px; }
+.ps-gate .ps-card { max-width: 560px; }
+.ps-gate h1 { font-size: 34px; margin: 0; }
+.ps-gate p { margin: 0; }
 
 @media (max-width: 960px) {
   .ps { grid-template-columns: 1fr; padding: 12px; }
