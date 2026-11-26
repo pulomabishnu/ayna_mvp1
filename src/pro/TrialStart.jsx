@@ -42,9 +42,8 @@ export default function TrialStart({ source = 'paywall', onStarted, className = 
     <div className={`ay-trial ${className}`.trim()}>
       <button type="button" className="ay-trial__btn" onClick={start} disabled={busy}>{busy ? 'Starting…' : label || `Try ayna Pro free for ${days} days`}</button>
       <p className="ay-trial__fine">
-        No card needed. Nothing renews.
-        {/* 3.1.1: before an in-app trial, say how long it lasts, what ends, and what it costs after. */}
-        {apple && ` After ${days} days, Pro features lock again unless you subscribe${products.month ? ` (${perPeriod(products.month)})` : ''}.`}
+        {/* 3.1.1: before an in-app trial, say how long it lasts, what ends, and what it costs after. Short (Nov 26). */}
+        {apple ? `No card, nothing renews. After ${days} days Pro locks unless you subscribe${products.month ? ` (${perPeriod(products.month)})` : ''}.` : 'No card needed. Nothing renews.'}
       </p>
       {msg && <p className="ay-trial__msg" role="status">{msg}</p>}
     </div>

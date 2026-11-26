@@ -66,7 +66,8 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
       </header>
       <div className="pro-sheet__body">
         <ul className="pro-app__feats" aria-label="What ayna Pro adds">
-          {PRO_STORY.map((f) => (
+          {/* Nov 26 (founder: "less text"): the three that matter most. */}
+          {PRO_STORY.slice(0, 3).map((f) => (
             <li key={f.id}><span className="pro-app__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[f.icon]}</svg></span>{f.t}</li>
           ))}
         </ul>
@@ -79,7 +80,7 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
             {plans.map((p) => (
               <button key={p.id} type="button" role="radio" aria-checked={chosen?.id === p.id} className={`pro-plan${chosen?.id === p.id ? ' is-on' : ''}`} disabled={Boolean(busy)} onClick={() => setPlan(p.plan)}>
                 <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.plan === 'year' ? 'Yearly' : 'Monthly'}</span></span>
-                <span className="pro-plan__amount"><strong className="pro-plan__price">{perPeriod(p)}</strong></span>
+                <span className="pro-plan__amount"><strong className="pro-plan__price">{p.displayPrice}</strong><span className="pro-plan__per">/{p.periodUnit === 'year' ? 'year' : 'month'}</span></span>
                 {introLine(p) && <span className="pro-plan__sub">{introLine(p)}</span>}
               </button>
             ))}
@@ -94,13 +95,12 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
           : <button type="button" className="pro-sheet__cta" disabled={!chosen || Boolean(busy)} aria-busy={busy === 'buy' ? 'true' : undefined} onClick={buy}>{busy === 'buy' ? 'Opening the App Store…' : chosen ? `Subscribe · ${intro || price}` : 'Subscribe'}</button>}
 
         {chosen && (
-          <p className="pro-sheet__billing">
-            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {intro ? `${intro}, then ${price}` : price}. Payment is charged to your Apple ID when you confirm.
-            It renews automatically every {period} unless you turn off auto-renew at least 24 hours before the current period ends.
-            Manage or cancel any time in Settings › your name › Subscriptions.
+          <p className="pro-sheet__billing pro-app__fine">
+            {/* Everything Apple requires (3.1.2): length, price, renewal, how to cancel. As short as it can be (Nov 26). */}
+            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {intro ? `${intro}, then ${price}` : price}, charged to your Apple ID. Renews automatically unless canceled at least 24 hours before the {period} ends, in Settings › Subscriptions.
           </p>
         )}
-        <p className="pro-sheet__billing">
+        <p className="pro-sheet__billing pro-app__fine">
           <a href={TERMS_URL} target="_blank" rel="noopener noreferrer">Terms of Use</a> · <a href={APPLE_EULA_URL} target="_blank" rel="noopener noreferrer">Apple’s EULA</a> · <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
         </p>
         <div className="pro-app__row">
