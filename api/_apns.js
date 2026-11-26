@@ -67,7 +67,7 @@ export async function sendPush(deviceTokens, { title, body, data = {} }, { conne
   if (!apnsConfigured()) return tokens.map((deviceToken) => ({ deviceToken, ok: false, status: 0, reason: 'apns_not_configured' }));
 
   // PCOS is now PMOS in everything people read, push alerts included.
-  const payload = JSON.stringify({ aps: { alert: { title: renamePcos(title), body: renamePcos(body) }, sound: 'default' }, ...data });
+  const payload = JSON.stringify({ aps: { alert: { title: renamePcos(title), body: renamePcos(body) }, sound: 'ayna-notify.caf' }, ...data });
   const jwt = providerToken();
   const topic = process.env.APNS_BUNDLE_ID || DEFAULT_BUNDLE_ID;
   const client = connect(apnsHost());

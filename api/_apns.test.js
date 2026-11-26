@@ -56,7 +56,7 @@ describe('sendPush', () => {
     expect(calls[0].host).toBe('https://api.push.apple.com');
     expect(calls[0].headers['apns-topic']).toBe('co.aynahealth.app');
     expect(calls[0].headers['apns-push-type']).toBe('alert');
-    expect(calls[0].payload).toEqual({ aps: { alert: { title: 'T', body: 'B' }, sound: 'default' }, type: 'test' });
+    expect(calls[0].payload).toEqual({ aps: { alert: { title: 'T', body: 'B' }, sound: 'ayna-notify.caf' }, type: 'test' });
   });
 
   it('reports per-token failures without throwing', async () => {

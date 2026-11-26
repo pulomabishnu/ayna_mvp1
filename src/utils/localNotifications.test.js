@@ -8,7 +8,7 @@ const { LocalNotifications, withSound } = await import('./localNotifications.js'
 describe('reminders make a sound', () => {
   it('adds the default sound to every reminder', async () => {
     await LocalNotifications.schedule({ notifications: [{ id: 1, title: 'a' }, { id: 2, title: 'b' }] });
-    expect(schedule).toHaveBeenCalledWith({ notifications: [{ id: 1, title: 'a', sound: 'default', threadIdentifier: 'ayna' }, { id: 2, title: 'b', sound: 'default', threadIdentifier: 'ayna' }] });
+    expect(schedule).toHaveBeenCalledWith({ notifications: [{ id: 1, title: 'a', sound: 'ayna-notify.caf', threadIdentifier: 'ayna' }, { id: 2, title: 'b', sound: 'ayna-notify.caf', threadIdentifier: 'ayna' }] });
   });
   it('keeps a sound that was chosen on purpose', () => {
     expect(withSound({ notifications: [{ id: 1, sound: 'chime.wav' }] }).notifications[0].sound).toBe('chime.wav');

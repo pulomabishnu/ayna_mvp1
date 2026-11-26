@@ -6,7 +6,9 @@ import { LocalNotifications as Plugin } from '@capacitor/local-notifications';
  * reminder now asks for the system default, which also vibrates when the phone is on silent. (A sound name
  * the app doesn't bundle makes iOS play its default tone.) Push already sends sound: 'default' (api/_apns.js).
  */
-export const NOTIFICATION_SOUND = 'default';
+// Nov 25 (founder): ayna's own notification sound, bundled in the iPhone app (ios/App/App/ayna-notify.caf,
+// 3.3 s, from Ameera's upload). If iOS can't find it, it plays the default tone.
+export const NOTIFICATION_SOUND = 'ayna-notify.caf';
 
 /**
  * Nov 25 (founder: "use all these" notification types). Lock Screen, Notification Center and banners come with
