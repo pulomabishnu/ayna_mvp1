@@ -7,14 +7,16 @@
 import { recommendationShare, brandRank, lossFunnel, skuBreakdown, sensitivityRange, brandOutcome, rate } from './metrics.js';
 import { evidenceMetrics, claimLandscape } from './evidence.js';
 import { BUDGETS } from './scenarios.js';
+import { OUTCOME } from './explore.js';
 
+// Reason families from the Phase 1 plan (p.10).
 export const REASON_LABEL = {
-  budget: 'Budget band',
-  format: 'Format preference',
-  evidence: 'Evidence signal',
-  relevance: 'How directly it fits the need',
-  diversity_tie: 'Shelf variety or tie',
-  below_cutoff: 'Under the 50% shelf bar',
+  budget: 'Budget mismatch',
+  format: 'Format mismatch',
+  evidence: 'Evidence ranking factor',
+  relevance: 'Relevance ranking factor',
+  diversity_tie: 'Shelf diversity / tie',
+  below_cutoff: 'Below the shelf cutoff',
   unclassified: 'Unclassified',
 };
 
@@ -39,8 +41,8 @@ const median = (xs) => {
 
 /**
  * Slot share for every brand with at least one product in the universe, with
- * the viewing brand marked. Peer brands are anonymized ("Peer 1" is the peer
- * with the most slots), so no tenant sees another brand's named numbers.
+ * the viewing brand marked. Names are public catalog brands; the numbers are
+ * the synthetic benchmark, never sales or consumer data.
  */
 export function shelfField(results, brand) {
   const universe = new Set();
@@ -51,12 +53,11 @@ export function shelfField(results, brand) {
   const rows = [...slots.entries()]
     .map(([b, n]) => ({ b, n, share: total ? Math.round((n / total) * 1000) / 10 : null }))
     .sort((a, b) => b.n - a.n || String(a.b).localeCompare(String(b.b)));
-  let peer = 0;
   // Ties share a rank, matching brandRank().
   const rankOf = (n) => rows.filter((x) => x.n > n).length + 1;
   const out = rows.map((r) => (r.b === brand
-    ? { label: 'You', you: true, rank: rankOf(r.n), slots: r.n, share: r.share }
-    : { label: `Peer ${++peer}`, you: false, rank: rankOf(r.n), slots: r.n, share: r.share }));
+    ? { label: r.b, you: true, rank: rankOf(r.n), slots: r.n, share: r.share }
+    : { label: r.b, you: false, rank: rankOf(r.n), slots: r.n, share: r.share }));
   // Median across peers that won at least one slot: brands with no placement
   // would pull it to 0% in long-tail categories and make every brand look "above".
   const med = median(out.filter((r) => !r.you && r.slots > 0).map((r) => r.share));
@@ -134,6 +135,8 @@ export function brandRollup({ brand, categories, evidence, simulations = [], sku
         },
         byNeed,
         field: shelfField(baseline, brand),
+        // One outcome code per baseline scenario, same order as the snapshot's category rows.
+        outcomes: baseline.map((r) => OUTCOME[brandOutcome(r, brand)]).join(''),
         grid: needBudgetGrid(baseline, brand, category.needs),
         skus: skuBreakdown(baseline, brand),
         funnel: { ...funnel.counts, reasons: Object.entries(funnel.reasons).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, label: REASON_LABEL[id] || id, n, share: funnel.counts.eligible_lost ? Math.round((n / funnel.counts.eligible_lost) * 1000) / 10 : null, action: REASON_ACTION[id] })), sumsToLost: funnel.check, examples: funnel.examples },
@@ -153,15 +156,23 @@ export function brandRollup({ brand, categories, evidence, simulations = [], sku
   };
   const landscape = claimLandscape(mine, peers);
 
-  // Competitors: up to three peers per SKU, same product category, closest price.
+  // Competitors: comparable products (same product category in the same
+  // benchmark universe), nearest in price first. The screen preselects three
+  // and lets the brand swap in any of the others (p.12: "compare up to three SKUs").
+  const STATUS_RANK = { direct: 1, indirect: 2, regulatory_only: 3, brand_reported: 4, experience_only: 5, not_located: 6 };
+  const card = (p) => {
+    const themeStatus = {};
+    for (const c of p.claims) for (const t of c.themes) if (!themeStatus[t] || STATUS_RANK[c.status] < STATUS_RANK[themeStatus[t]]) themeStatus[t] = c.status;
+    return { sku: p.sku, name: p.name, brand: p.brand, price: p.price, completeness: p.completeness, claims: p.claims.length, direct: p.claims.filter((c) => c.status === 'direct').length, themes: Object.keys(themeStatus), themeStatus, materials: p.dimensions?.materials || null, instructions: p.dimensions?.instructions || null, regulatory: p.dimensions?.regulatory || null, freshness: p.freshness?.state || null, lastVerified: p.freshness?.lastVerified || null, qa: p.qa.label };
+  };
   const competitors = mine.map((r) => {
     const near = peers
       .filter((p) => p.productCategory === r.productCategory)
       .map((p) => ({ p, d: r.price != null && p.price != null ? Math.abs(Math.log((p.price + 1) / (r.price + 1))) : 9 }))
       .sort((a, b) => a.d - b.d || String(a.p.name).localeCompare(String(b.p.name)))
-      .slice(0, 3)
-      .map(({ p }) => ({ sku: p.sku, name: p.name, brand: p.brand, price: p.price, completeness: p.completeness, claims: p.claims.length, direct: p.claims.filter((c) => c.status === 'direct').length, themes: [...new Set(p.claims.flatMap((c) => c.themes))], freshness: p.freshness?.state || null, qa: p.qa.label }));
-    return { sku: r.sku, name: r.name, price: r.price, completeness: r.completeness, claims: r.claims.length, direct: r.claims.filter((c) => c.status === 'direct').length, themes: [...new Set(r.claims.flatMap((c) => c.themes))], freshness: r.freshness?.state || null, qa: r.qa.label, peers: near };
+      .slice(0, 12)
+      .map(({ p }) => card(p));
+    return { ...card(r), peers: near };
   });
 
   const actions = buildActions({ cats, evidenceOut, simulations, feed });
