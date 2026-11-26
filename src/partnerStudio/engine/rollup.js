@@ -30,6 +30,62 @@ export const REASON_ACTION = {
 
 const pct = (r) => (r?.value == null ? null : Math.round(r.value * 1000) / 10);
 
+const median = (xs) => {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+
+/**
+ * Slot share for every brand with at least one product in the universe, with
+ * the viewing brand marked. Peer brands are anonymized ("Peer 1" is the peer
+ * with the most slots), so no tenant sees another brand's named numbers.
+ */
+export function shelfField(results, brand) {
+  const universe = new Set();
+  for (const r of results) for (const c of r.candidates) universe.add(c.brand);
+  const slots = new Map([...universe].map((b) => [b, 0]));
+  let total = 0;
+  for (const r of results) for (const p of r.placements) { slots.set(p.brand, (slots.get(p.brand) || 0) + 1); total += 1; }
+  const rows = [...slots.entries()]
+    .map(([b, n]) => ({ b, n, share: total ? Math.round((n / total) * 1000) / 10 : null }))
+    .sort((a, b) => b.n - a.n || String(a.b).localeCompare(String(b.b)));
+  let peer = 0;
+  // Ties share a rank, matching brandRank().
+  const rankOf = (n) => rows.filter((x) => x.n > n).length + 1;
+  const out = rows.map((r) => (r.b === brand
+    ? { label: 'You', you: true, rank: rankOf(r.n), slots: r.n, share: r.share }
+    : { label: `Peer ${++peer}`, you: false, rank: rankOf(r.n), slots: r.n, share: r.share }));
+  // Median across peers that won at least one slot: brands with no placement
+  // would pull it to 0% in long-tail categories and make every brand look "above".
+  const med = median(out.filter((r) => !r.you && r.slots > 0).map((r) => r.share));
+  const medAll = median(out.filter((r) => !r.you && r.share != null).map((r) => r.share));
+  return {
+    rows: out,
+    brands: out.length,
+    totalSlots: total,
+    peerMedian: med == null ? null : Math.round(med * 10) / 10,
+    peerMedianAll: medAll == null ? null : Math.round(medAll * 10) / 10,
+    placedPeers: out.filter((r) => !r.you && r.slots > 0).length,
+    zeroSlotPeers: out.filter((r) => !r.you && r.slots === 0).length,
+  };
+}
+
+/** Slot share per need × budget band (cells keep their own denominators). */
+export function needBudgetGrid(results, brand, needs) {
+  const cols = BUDGETS.map((b) => ({ key: b.id, label: b.label }));
+  const rows = needs.map((need) => ({
+    need,
+    cells: cols.map((c) => {
+      const rs = results.filter((r) => r.need === need && r.budget === c.key);
+      const m = recommendationShare(rs, brand);
+      return { key: c.key, scenarios: rs.length, brandSlots: m.brandSlots, slots: m.slots, slotShare: pct(m.slotShare) };
+    }),
+  }));
+  return { cols, rows };
+}
+
 function stageCounts(results, brand) {
   const c = { selected: 0, eligible_lost: 0, insufficient_info: 0, excluded: 0, out_of_scope: 0 };
   for (const r of results) c[brandOutcome(r, brand)] += 1;
@@ -77,6 +133,8 @@ export function brandRollup({ brand, categories, evidence, simulations = [], sku
           rows: sens.rows.map((x) => ({ key: x.key, label: BUDGETS.find((b) => b.id === x.key)?.label || x.key, slotShare: pct(x.slotShare), inclusion: pct(x.inclusion) })),
         },
         byNeed,
+        field: shelfField(baseline, brand),
+        grid: needBudgetGrid(baseline, brand, category.needs),
         skus: skuBreakdown(baseline, brand),
         funnel: { ...funnel.counts, reasons: Object.entries(funnel.reasons).sort((a, b) => b[1] - a[1]).map(([id, n]) => ({ id, label: REASON_LABEL[id] || id, n, share: funnel.counts.eligible_lost ? Math.round((n / funnel.counts.eligible_lost) * 1000) / 10 : null, action: REASON_ACTION[id] })), sumsToLost: funnel.check, examples: funnel.examples },
         boundary: stageCounts(boundary, brand),
