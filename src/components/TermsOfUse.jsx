@@ -9,7 +9,7 @@ export default function TermsOfUse({ onBack, backLabel }) {
     return () => clearTimeout(t);
   }, []);
   return (
-    <EdPage title="Terms of use" crumb="Terms" updated="Last updated November 6, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
+    <EdPage title="Terms of use" crumb="Terms" updated="Last updated November 25, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           These Terms govern your use of www.aynahealth.co and related ayna services (the “Services”). The Services are currently operated by Ayna Health, Inc., doing business as ayna (“ayna,” “we,” “us,” or “our”). By using the Services, you agree to these Terms and our Privacy Policy.
         </p>
@@ -74,9 +74,15 @@ export default function TermsOfUse({ onBack, backLabel }) {
         </section>
 
         <section>
-          <h2>8. ayna Pro Early Access and automatic renewal</h2>
+          <h2>8. ayna Pro, Early Access and automatic renewal</h2>
           <p>
-            ayna Pro is an optional subscription purchased through Stripe Checkout. Early Access costs $4.99 for the first month or $45 for the first year, charged when you subscribe. Pro access unlocks immediately and is included through January 31, 2027, including ayna's full January launch. Your purchased month or year starts February 1, 2027, without using up that term during Early Access.
+            <strong>In the ayna iPhone app,</strong> ayna Pro is sold only through Apple in-app purchase. ayna Pro Monthly and ayna Pro Yearly are auto-renewable subscriptions at the price shown in the app before you confirm, in your App Store currency; new subscribers may be offered a reduced first month or first year. Payment is charged to your Apple ID when you confirm. The subscription renews automatically at the regular price for the same period unless you turn off auto-renew at least 24 hours before the current period ends. You can manage or cancel it any time in your iPhone's Settings › your name › Subscriptions. Apple handles billing and refunds for purchases made in the app. Apple's Licensed Application End User License Agreement also applies to the iPhone app.
+          </p>
+          <p>
+            The iPhone app also offers a free 14-day trial of ayna Pro, offered through Apple at no cost. It needs no payment and does not renew: after 14 days, Pro features lock again unless you subscribe. Each ayna account can use one free trial, on the website or in the app.
+          </p>
+          <p>
+            <strong>On the website,</strong> ayna Pro is an optional subscription purchased through Stripe Checkout, and the Early Access terms below apply. Early Access costs $4.99 for the first month or $45 for the first year, charged when you subscribe. Pro access unlocks immediately and is included through January 31, 2027, including ayna's full January launch. Your purchased month or year starts February 1, 2027, without using up that term during Early Access.
           </p>
           <p>
             Unless you cancel automatic renewal, the monthly subscription first renews March 1, 2027 at $8.99 per month and the yearly subscription first renews February 1, 2028 at $90 per year. The subsequent term renews at that regular rate and frequency. Cancellation of automatic renewal is available at <a href="/pro">ayna Pro account and billing</a>; when canceled, paid access continues through the end of the purchased period. Cancel before the applicable renewal date to avoid that charge. Any applicable taxes or payment details appear during checkout.

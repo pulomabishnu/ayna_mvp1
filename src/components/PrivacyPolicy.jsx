@@ -4,6 +4,7 @@ import { EdPage } from './editorial/EdPage';
 const PROCESSORS = [
   ['Supabase', 'Authentication and storage of account-linked data, including health-profile data you choose to save.'],
   ['Vercel', 'Website hosting and server-side API infrastructure.'],
+  ['Apple', 'In-app purchases of ayna Pro in the iPhone app. Apple processes your payment; ayna receives Apple\'s signed record of the purchase (product, dates, renewal status and transaction ID) linked to your ayna account, not your payment details.'],
   ['Stripe', 'Payment checkout, payment-card processing and subscription billing when you choose ayna Pro. ayna receives transaction status and subscription reference information, not your full card number.'],
   ['PostHog', 'Optional product analytics are off until you explicitly opt in. Before you choose, ayna counts page visits and app errors anonymously, without cookies, browser storage or an identifier, so we can tell whether the site is reached and working; choosing Keep analytics off or sending Global Privacy Control stops this too. If you turn analytics on, ayna uses a dedicated analytics identifier instead of your account ID, and analytics include the pages you visit and the products you view and click (product name or ID), across your visits; they exclude search text, quiz answers, conditions, symptoms and other health-profile details, and page titles. Session recording and automatic click/text capture are disabled. Analytics are never sold or used for advertising. You can opt out again in Privacy Preferences.'],
   ['OpenAI, Anthropic, and Google Gemini', 'Depending on feature availability and server configuration, one provider may process a prompt, product information and limited relevant health context when you intentionally use an AI-powered feature such as Ask ayna or AI product insights. Not every request is sent to every provider. A health screenshot you choose to read in Upload health data is sent to Anthropic only after you tap "Read it", and ayna does not store the image.'],
@@ -15,7 +16,7 @@ const PROCESSORS = [
 
 export default function PrivacyPolicy({ onBack, backLabel }) {
   return (
-    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated November 11, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
+    <EdPage title="Privacy policy" crumb="Privacy" updated="Last updated November 25, 2026" onBack={onBack} backLabel={backLabel} toc glance bandLabel="In short" band={<div className="uq-legal-intro">
         <p>
           This policy explains how ayna handles personal information when you use www.aynahealth.co and related ayna services. ayna is a wellness, educational and product-discovery service, not a healthcare provider or emergency service. ayna accounts and account-only health features are for adults age 18 and older.
         </p>
@@ -30,7 +31,10 @@ export default function PrivacyPolicy({ onBack, backLabel }) {
             Depending on the features you use, we may collect account information such as your name, email address, authentication details, phone number and notification preferences; health-profile information you choose to provide such as symptoms, concerns, conditions, medications, allergies, cycle information, life stage, preferences and notes; products you save, track, hide, review or add to your ecosystem; support or feedback messages; and technical information needed to operate and secure the service.
           </p>
           <p>
-            ayna Pro offers an Early Access paid subscription with automatic renewal. If you choose it, Stripe Checkout processes your payment-card details and ayna stores the subscription status, amount, plan, payment reference and access period needed to administer your purchase. ayna does not store your full payment-card number. Your purchased subscription term begins February 1, 2027; see the current offer terms on /pro and the Terms of Use.
+            In the iPhone app, ayna Pro and its free 14-day trial are purchased through Apple. Apple processes the payment; ayna stores the product, purchase and expiry dates, renewal status and Apple transaction ID needed to give your account Pro access, and never receives your payment details.
+          </p>
+          <p>
+            On the website, ayna Pro offers an Early Access paid subscription with automatic renewal. If you choose it, Stripe Checkout processes your payment-card details and ayna stores the subscription status, amount, plan, payment reference and access period needed to administer your purchase. ayna does not store your full payment-card number. Your purchased subscription term begins February 1, 2027; see the current offer terms on /pro and the Terms of Use.
           </p>
         </section>
 
