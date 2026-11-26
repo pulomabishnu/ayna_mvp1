@@ -8,9 +8,26 @@ import { LocalNotifications as Plugin } from '@capacitor/local-notifications';
  */
 export const NOTIFICATION_SOUND = 'default';
 
+/**
+ * Nov 25 (founder: "use all these" notification types). Lock Screen, Notification Center and banners come with
+ * the alert permission. On top of that, each reminder gets:
+ * - a thread, so iOS groups them by kind (reminders, daily rundown, Pro, updates);
+ * - Time Sensitive for the reminders she set herself (medicines, products, plan), so they come through a Focus
+ *   or a Scheduled Summary. Apple reserves Time Sensitive for things that matter right now, so nudges and Pro
+ *   notices stay at the normal level.
+ */
+const THREADS = { routine: 'ayna-reminders', today: 'ayna-updates', pro: 'ayna-pro' };
+
 export function withSound(options) {
   if (!options || !Array.isArray(options.notifications)) return options;
-  return { ...options, notifications: options.notifications.map((n) => ({ sound: NOTIFICATION_SOUND, ...n })) };
+  return {
+    ...options,
+    notifications: options.notifications.map((n) => {
+      const route = n?.extra?.route;
+      const thread = n?.extra?.rundown ? 'ayna-rundown' : THREADS[route] || 'ayna';
+      return { sound: NOTIFICATION_SOUND, threadIdentifier: thread, ...(route === 'routine' ? { interruptionLevel: 'timeSensitive' } : {}), ...n };
+    }),
+  };
 }
 
 /** Same plugin, but schedule() always asks for a sound. Use this instead of importing the plugin directly. */

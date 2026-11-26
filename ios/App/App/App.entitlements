@@ -10,5 +10,9 @@
 	<string>production</string>
 	<key>com.apple.developer.healthkit</key>
 	<true/>
+	<!-- Nov 25: reminders she sets herself (medicines, products, plan) are Time Sensitive, so they come through
+	     a Focus or Scheduled Summary. Nudges stay at the normal level (src/utils/localNotifications.js). -->
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
 </dict>
 </plist>
