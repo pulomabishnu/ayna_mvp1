@@ -79,7 +79,8 @@ function SearchBox({ data, b, go, setCat }) {
   return (
     <div className="ps-search" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false); }}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-      <input type="search" placeholder="Search any product, brand or page" value={q} aria-label="Search products, brands and pages" onChange={(e) => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onKeyDown={(e) => { if (e.key === 'Enter' && results[0]) pick(results[0]); if (e.key === 'Escape') setOpen(false); }} />
+      <input type="search" placeholder="Search" value={q} aria-label="Search products, brands and pages" onChange={(e) => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onKeyDown={(e) => { if (e.key === 'Enter' && results[0]) pick(results[0]); if (e.key === 'Escape') setOpen(false); }} />
+      <span className="ps-search-scope" aria-hidden="true"><span>Products</span><span>Brands</span><span>Pages</span></span>
       {open && q.trim().length >= 2 ? (
         <ul className="ps-search-results" role="listbox">
           {results.map((r, i) => (
@@ -236,19 +237,26 @@ export default function PartnerStudio({ fetcher = fetch }) {
             </div>
           ))}
         </nav>
-        <p className="ps-side-foot">Private preview for the ayna team. Synthetic scenarios and public product facts only.</p>
+        <div className="ps-side-ask">
+          <strong>Need a quick read?</strong>
+          <p>Ask why you’re missing the top 3, who’s beating you, or what to fix first.</p>
+          <button type="button" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
+        </div>
+        <p className="ps-side-foot">Private preview for the ayna team. Made-up shoppers and public product facts only.</p>
       </aside>
       <main className="ps-main" id="main">
+        <div className="ps-toolbar">
+          <SearchBox data={data} b={b} go={go} setCat={setCat} />
+          <div className="ps-top-actions">
+            <SyntheticBadge text={`Updated ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`} />
+            <button type="button" className="ps-btn ps-btn--ink" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
+          </div>
+        </div>
         <header className="ps-top">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span className="ps-small" style={{ fontWeight: 700 }}>{name}</span>
             <h1>{view === 'overview' ? `Stay up to date, ${name}` : TITLES[view]}</h1>
             <p className="ps-muted">{SUBTITLE[view]}</p>
-          </div>
-          <div className="ps-top-actions">
-            <SearchBox data={data} b={b} go={go} setCat={setCat} />
-            <button type="button" className="ps-btn ps-btn--ink ps-btn--sm" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
-            <SyntheticBadge text={`Updated ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`} />
           </div>
         </header>
         {body}
