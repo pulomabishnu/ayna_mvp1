@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { supabaseFetch } from './network.js';
 import { processLock } from '@supabase/auth-js';
 import { Capacitor } from '@capacitor/core';
+import { rememberReturnTo, restoreAfterSignIn, safeReturnPath } from './authReturn.js';
 
 // Supabase's implicit OAuth flow can fall back to SITE_URL when a requested
 // redirect is not allowed. In that case Google may successfully return to
@@ -281,11 +282,23 @@ export function getSupabaseClient() {
       // main client above, not by this temporary starter client.
       const signInWithOAuth = client.auth.signInWithOAuth.bind(client.auth);
       client.auth.signInWithOAuth = (credentials) => {
+        // Come back to this page after the provider round trip (src/utils/authReturn.js).
+        rememberReturnTo();
         if (credentials?.provider === 'google') {
           const googleClient = getWebGoogleOAuthClient();
           if (googleClient) return googleClient.auth.signInWithOAuth(credentials);
         }
         return signInWithOAuth(credentials);
+      };
+
+      // Email sign-in stays on the page, but the app's post-login step can still
+      // land on the landing page. Put her back where she signed in.
+      const signInWithPassword = client.auth.signInWithPassword.bind(client.auth);
+      client.auth.signInWithPassword = async (credentials) => {
+        const back = safeReturnPath(`${window.location.pathname}${window.location.search}${window.location.hash}`);
+        const res = await signInWithPassword(credentials);
+        if (back && !res?.error && res?.data?.session) restoreAfterSignIn(back);
+        return res;
       };
     }
   } catch (e) {
