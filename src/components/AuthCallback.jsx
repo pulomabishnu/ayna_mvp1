@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSupabaseClient, getWebGoogleOAuthClient } from '../utils/supabaseClient';
 import { flushPendingConsent } from '../utils/pendingConsent.js';
+import { restoreAfterSignIn, takeReturnTo } from '../utils/authReturn.js';
 import { EdState } from './editorial/EdPage';
 
 export default function AuthCallback({ onAuthenticated }) {
@@ -78,7 +79,10 @@ export default function AuthCallback({ onAuthenticated }) {
         window.location.replace(mobileUrl.toString());
         return;
       }
+      // Back to the page she signed in from, if the app would otherwise land on "/".
+      const back = takeReturnTo();
       onAuthenticated(user);
+      restoreAfterSignIn(back);
     }
 
     // Web Google OAuth now uses an isolated PKCE client. Supabase returns a
