@@ -60,7 +60,7 @@ export function lossReason({ pct, components, price, scenario, weakest }) {
     return { reason: 'relevance', detail: 'Less directly made for this need than the placed picks.' };
   }
   if (pct != null && pct < 50) {
-    return { reason: 'below_cutoff', detail: `Scored ${pct}%, under the 50% shelf bar.` };
+    return { reason: 'below_cutoff', detail: `Scored ${pct}%, below the 50% shelf cutoff.` };
   }
   return { reason: 'unclassified', detail: 'The engine trace does not explain this one.' };
 }
@@ -101,7 +101,7 @@ export function runScenario(scenario, universe, { k = K, brandOf = (p) => p.bran
       candidates.push({ ...base, stage: 'eligible_lost', pct, reason: r.reason, detail: r.detail });
     }
   }
-  return { scenarioId: scenario.id, set: scenario.set, label: scenario.label, need: scenario.need, budget: scenario.budget, weight: scenario.weight ?? 1, k, placements, candidates };
+  return { scenarioId: scenario.id, set: scenario.set, label: scenario.label, need: scenario.need, budget: scenario.budget, format: scenario.format ?? null, stage: scenario.stage ?? null, sensitivity: scenario.sensitivity ?? null, weight: scenario.weight ?? 1, k, placements, candidates };
 }
 
 export function runScenarios(scenarios, universe, opts) {

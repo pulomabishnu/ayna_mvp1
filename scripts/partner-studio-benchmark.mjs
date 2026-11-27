@@ -24,6 +24,8 @@ import { getPassport, getCompleteness } from '../src/data/passport/index.js';
 import { isPartnerBrandItem, PARTNER_BRANDS } from '../src/utils/partnerBrands.js';
 import { PHASE1_CATEGORIES, CATEGORY_SET_VERSION, OUT_OF_SCOPE_CATEGORIES, OUT_OF_SCOPE_REASON, universeFor } from '../src/partnerStudio/engine/categories.js';
 import { scenariosFor, SCENARIO_SET_VERSION } from '../src/partnerStudio/engine/scenarios.js';
+import { compactScenarios } from '../src/partnerStudio/engine/explore.js';
+import { brandOf as appBrandOf } from '../src/mobile/data/brandFallback.js';
 import { runScenarios, counterfactual, priceOf, K, ENGINE_ADAPTER_VERSION } from '../src/partnerStudio/engine/benchmark.js';
 import { recommendationShare } from '../src/partnerStudio/engine/metrics.js';
 import { evidenceRecord } from '../src/partnerStudio/engine/evidence.js';
@@ -36,7 +38,8 @@ if (process.argv.includes('--if-enabled') && process.env.PARTNER_STUDIO_ENABLED 
 }
 const OUT = 'api/_partnerStudio/snapshot.js';
 const sha = (x) => createHash('sha256').update(typeof x === 'string' ? x : JSON.stringify(x)).digest('hex').slice(0, 16);
-const brandOf = (p) => String(p?.brand || '').trim() || 'Unbranded';
+// Same brand lookup the app uses (explicit field, else the brand at the start of the product's name).
+const brandOf = (p) => appBrandOf(p) || 'Unbranded';
 let gitSha = 'unknown';
 try { gitSha = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { /* not a checkout */ }
 
@@ -152,6 +155,10 @@ const snapshot = {
     baseline: r.baseline.length, boundary: r.boundary.length, unknown: r.unknown.length,
     noResult: r.baseline.filter((x) => x.placements.length === 0).length,
     unfilled: r.baseline.reduce((n, x) => n + Math.max(0, K - x.placements.length), 0),
+    k: K,
+    format: r.category.format,
+    // Every catalog product in the universe (public facts) and one compact row per baseline scenario.
+    ...compactScenarios(r.baseline, r.universe, brandOf, isPartnerBrandItem),
   })),
   outOfScope: OUT_OF_SCOPE_REASON,
   brands,
