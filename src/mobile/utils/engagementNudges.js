@@ -18,10 +18,10 @@ export function planNudges({ now = new Date(), loggedToday = false, steps = [], 
   const out = [];
   // Evening log, today, if she hasn't logged yet and it's not too late.
   const evening = at(now, 0, 20, 30);
-  if (!loggedToday && evening > now) out.push({ id: NUDGE_IDS.log, title: 'How was today?', body: 'Log it in 10 seconds. It makes tomorrow’s rundown more you.', schedule: { at: evening, allowWhileIdle: true }, extra: { route: 'today' } });
+  if (!loggedToday && evening > now) out.push({ id: NUDGE_IDS.log, title: 'How was today?', body: 'Log it in 10 seconds. It makes tomorrow’s rundown more you.', schedule: { at: evening, allowWhileIdle: true }, extra: { route: 'today', open: 'log' } });
   // Haven't opened the app in a while (moved forward every time she opens it).
-  out.push({ id: NUDGE_IDS.away3, title: 'Your rundown has something new', body: 'A few things changed since you last looked. Come see.', schedule: { at: at(now, 3, 18, 30), allowWhileIdle: true }, extra: { route: 'today' } });
-  out.push({ id: NUDGE_IDS.away7, title: 'ayna found new picks for you', body: 'New products that fit what you told us. Take a look.', schedule: { at: at(now, 7, 18, 30), allowWhileIdle: true }, extra: { route: 'today' } });
+  out.push({ id: NUDGE_IDS.away3, title: 'Your rundown has something new', body: 'A few things changed since you last looked. Come see.', schedule: { at: at(now, 3, 18, 30), allowWhileIdle: true }, extra: { route: 'today', open: 'rundown' } });
+  out.push({ id: NUDGE_IDS.away7, title: 'ayna found new picks for you', body: 'New products that fit what you told us. Take a look.', schedule: { at: at(now, 7, 18, 30), allowWhileIdle: true }, extra: { route: 'today', open: 'products' } });
   // Moving more than usual: the last 3 days vs the 3 weeks before, at most once a week.
   const vals = [...steps].filter((r) => Number(r.value) > 0).sort((a, b) => (a.day < b.day ? -1 : 1));
   if (vals.length >= 14 && movingWeek !== weekOf(now)) {

@@ -763,8 +763,26 @@ export default function MobileApp() {
     // log, Your month on Home, instead of a second check-in card.
     const openMonth = () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); setHomeView(homeRoot); window.setTimeout(() => window.dispatchEvent(new Event('ayna:open-month')), 250); };
     window.addEventListener('ayna:open-month-log', openMonth);
-    const offRundown = onRundownReminderTap(() => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); });
-    return () => { offPlan(); offTrial(); offRundown(); window.removeEventListener('ayna:open-month-log', openMonth); };
+    // Nov 27 (founder: "if it says time for your medication it should take you to the part to log it"): every
+    // reminder opens the exact place it talks about. Medicines and plan reminders open Routine (where she ticks them
+    // off, onPlanReminderTap); the rundown reminder opens the rundown itself; "How was today?" opens the log;
+    // "new picks" opens her products; a product reminder opens Routine.
+    const openRundown = () => { setAskAynaOpen(false); setOverlay(null); setScreen('today'); setHomeView(homeRoot); window.setTimeout(() => window.dispatchEvent(new Event('ayna:rundown-start')), 700); };
+    const offRundown = onRundownReminderTap(openRundown);
+    let offOther = () => {};
+    import('../utils/localNotifications.js').then(({ LocalNotifications }) => {
+      let h; try { h = LocalNotifications.addListener('localNotificationActionPerformed', (a) => {
+        const ex = a?.notification?.extra || {};
+        if (ex.rundown || ex.route === 'pro') return; // handled above
+        if (ex.open === 'log') openMonth();
+        else if (ex.open === 'rundown') openRundown();
+        else if (ex.open === 'products') { setAskAynaOpen(false); setOverlay(null); setScreen('ayna'); setHomeView('products'); }
+        else if (ex.productId) showRoutine();
+      }); } catch { return; } // web: no local notifications
+      Promise.resolve(h).catch(() => {});
+      offOther = () => { Promise.resolve(h).then((x) => x?.remove?.()).catch(() => {}); };
+    }).catch(() => {});
+    return () => { offPlan(); offTrial(); offRundown(); offOther(); window.removeEventListener('ayna:open-month-log', openMonth); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // A tapped notification opens Today, or the product a recall alert is about.
   usePushRoutes((route) => {

@@ -20,3 +20,16 @@ describe('phone nudges (Nov 16)', () => {
     expect(planNudges({ now, steps: flat }).some((n) => n.id === NUDGE_IDS.moving)).toBe(false);
   });
 });
+
+// Nov 27: each nudge says where a tap should take her.
+import { describe as d2, it as i2, expect as e2 } from 'vitest';
+import { planNudges as plan2, NUDGE_IDS as IDS2 } from './engagementNudges.js';
+d2('nudge tap targets', () => {
+  i2('log → log, away3 → rundown, away7 → products', () => {
+    const now = new Date(2026, 10, 27, 9, 0);
+    const byId = Object.fromEntries(plan2({ now }).map((n) => [n.id, n.extra.open]));
+    e2(byId[IDS2.log]).toBe('log');
+    e2(byId[IDS2.away3]).toBe('rundown');
+    e2(byId[IDS2.away7]).toBe('products');
+  });
+});
