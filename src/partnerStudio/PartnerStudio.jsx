@@ -11,6 +11,7 @@ import { inScope } from './format.js';
 import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
 import { initPartnerAnalytics, track } from './analytics.js';
 import { rollupCsv } from './csv.js';
+import { QUESTIONS, answer, matchQuestion, search } from './assistant.js';
 
 const NAV = [
   { group: 'Workspace', items: [['overview', 'Overview'], ['actions', 'Action queue']] },
@@ -21,15 +22,15 @@ const NAV = [
 const TITLES = Object.fromEntries(NAV.flatMap((g) => g.items));
 const ICON = { overview: 'overview', actions: 'actions', evidence: 'evidence', claims: 'claims', share: 'share', losses: 'losses', competitors: 'competitors', feed: 'feed', reports: 'reports' };
 const SUBTITLE = {
-  overview: 'Where you stand this month, and what to do next.',
-  actions: 'Every finding that has something you can do about it.',
-  evidence: 'Which evidence and documentation gaps to close first, against comparable products.',
-  claims: 'How your public claims compare with peers, and which ones a reviewer should look at.',
-  share: 'How often your products are recommended across fixed, fictional shopper scenarios.',
-  losses: 'When you were eligible but not placed, and what explains it.',
-  competitors: 'Your products next to the closest comparable products.',
+  overview: 'How often ayna recommends your products, how you compare, and what to do next.',
+  actions: 'Everything you can act on, most important first.',
+  evidence: 'Which research and documentation gaps to close first, compared with similar products.',
+  claims: 'How your product promises compare with competitors, and which ones need a closer look.',
+  share: 'Who ayna recommends most in your category, and where you rank. Filter by need, format and budget.',
+  losses: 'When your product was a fit but didn’t make the top 3, and why.',
+  competitors: 'Your products next to the most similar products in ayna’s catalog.',
   feed: 'What changed on your products and in your category.',
-  reports: 'Run details, definitions and exports.',
+  reports: 'How the numbers are made, run details and downloads.',
 };
 
 const DENIED = {
@@ -64,6 +65,62 @@ function Gate({ status, denied }) {
   );
 }
 
+function SearchBox({ data, b, go, setCat }) {
+  const [q, setQ] = useState('');
+  const [open, setOpen] = useState(false);
+  const screens = useMemo(() => NAV.flatMap((g) => g.items), []);
+  const results = useMemo(() => search(q, data, b, screens), [q, data, b, screens]);
+  const pick = (r) => {
+    if (r.kind === 'screen') go(r.id);
+    else { setCat(r.cat); go('share'); }
+    setQ(''); setOpen(false);
+    track('partner_studio_search_used', { kind: r.kind });
+  };
+  return (
+    <div className="ps-search" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false); }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+      <input type="search" placeholder="Search any product, brand or page" value={q} aria-label="Search products, brands and pages" onChange={(e) => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onKeyDown={(e) => { if (e.key === 'Enter' && results[0]) pick(results[0]); if (e.key === 'Escape') setOpen(false); }} />
+      {open && q.trim().length >= 2 ? (
+        <ul className="ps-search-results" role="listbox">
+          {results.map((r, i) => (
+            <li key={`${r.kind}-${r.label}-${i}`}><button type="button" onClick={() => pick(r)}>
+              <span className="ps-search-kind">{r.kind === 'screen' ? 'Page' : r.kind === 'brand' ? 'Brand' : 'Product'}</span>
+              <span><strong>{r.label}</strong>{r.you ? <em> (you)</em> : null}{r.partner && !r.you ? <span className="ps-tag">ayna partner</span> : null}{r.sub ? <small>{r.sub}</small> : null}</span>
+            </button></li>
+          ))}
+          {!results.length ? <li className="ps-search-empty">No product, brand or page matches “{q}”.</li> : null}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+function AskPanel({ data, b, go, onClose }) {
+  const [current, setCurrent] = useState(null);
+  const [text, setText] = useState('');
+  const ask = (id) => { setCurrent(id); track('partner_studio_question_asked', { question: id }); };
+  const res = current ? answer(current, data, b) : null;
+  return (
+    <Drawer title="Ask about your results" onClose={onClose}>
+      <p className="ps-small ps-muted">Pick a question or type your own. Answers use only the numbers on this dashboard.</p>
+      <div className="ps-prompts">
+        {QUESTIONS.map((q) => <button key={q.id} type="button" className="ps-prompt" aria-pressed={current === q.id} onClick={() => ask(q.id)}>{q.q}</button>)}
+      </div>
+      <form className="ps-ask-form" onSubmit={(e) => { e.preventDefault(); const m = matchQuestion(text); ask(m ? m.id : 'none'); }}>
+        <input type="text" value={text} placeholder="e.g. why am I not recommended?" aria-label="Your question" onChange={(e) => setText(e.target.value)} />
+        <button type="submit" className="ps-btn ps-btn--ink ps-btn--sm">Ask</button>
+      </form>
+      {res ? (
+        <div className="ps-answer" role="status">
+          <h3>{res.title}</h3>
+          <ul>{res.lines.map((l, i) => <li key={i}>{l}</li>)}</ul>
+          {res.go ? <button type="button" className="ps-btn ps-btn--sm" onClick={() => { go(res.go); onClose(); }}>Show me the details</button> : null}
+        </div>
+      ) : null}
+    </Drawer>
+  );
+}
+
 export default function PartnerStudio({ fetcher = fetch }) {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState(null);
@@ -77,6 +134,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
   const [source, setSource] = useState(null);
   const [actionMap, setActionMap] = useState({});
   const [ackMap, setAckMap] = useState({});
+  const [asking, setAsking] = useState(false);
 
   useEffect(() => { initPartnerAnalytics(); track('partner_studio_opened'); }, []);
 
@@ -188,12 +246,14 @@ export default function PartnerStudio({ fetcher = fetch }) {
             <p className="ps-muted">{SUBTITLE[view]}</p>
           </div>
           <div className="ps-top-actions">
-            <SyntheticBadge text={`Run ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`} />
-            <button type="button" className="ps-btn ps-btn--sm" onClick={() => { go('reports'); track('partner_studio_methodology_opened'); }}>Methodology</button>
+            <SearchBox data={data} b={b} go={go} setCat={setCat} />
+            <button type="button" className="ps-btn ps-btn--ink ps-btn--sm" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
+            <SyntheticBadge text={`Updated ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`} />
           </div>
         </header>
         {body}
       </main>
+      {asking ? <AskPanel data={data} b={b} go={go} onClose={() => setAsking(false)} /> : null}
       {source ? (
         <Drawer title={source.name} onClose={closeSource}>
           <div className="ps-item"><strong>ayna review record</strong><span className="ps-small">{source.qa.label}{source.qa.at ? ` · ${source.qa.at}` : ''}</span><span className="ps-small">{source.qa.by || 'Not reviewed yet'}</span></div>
