@@ -32,33 +32,6 @@ export function CardHead({ id, title, desc, right }) {
   );
 }
 
-/** Ranked slot share for every brand in the universe. You in ink, peers anonymized. */
-export function ShelfField({ field, max = 12 }) {
-  if (!field?.rows?.length) return null;
-  const youIdx = field.rows.findIndex((r) => r.you);
-  let rows = field.rows.slice(0, max);
-  if (youIdx >= max) rows = [...field.rows.slice(0, max - 1), field.rows[youIdx]];
-  const top = Math.max(...field.rows.map((r) => r.share ?? 0), 1);
-  const medPos = field.peerMedian == null ? null : (field.peerMedian / top) * 100;
-  return (
-    <div className="ps-field" role="img" aria-label={`Slot share by brand. You: ${field.rows[youIdx]?.share ?? 'N/A'}%. Peer median ${field.peerMedian ?? 'N/A'}%.`}>
-      {rows.map((r) => (
-        <div key={r.label} className={`ps-field-row${r.you ? ' is-you' : ''}`}>
-          <span className="ps-field-rank">#{r.rank}</span>
-          <span className="ps-field-name">{r.label}</span>
-          <span className="ps-field-track">
-            <span className="ps-field-fill" style={{ width: `${r.share == null ? 0 : Math.max((r.share / top) * 100, r.slots ? 1.5 : 0)}%` }} />
-            {medPos != null ? <span className="ps-field-med" style={{ left: `${medPos}%` }} /> : null}
-          </span>
-          <span className="ps-field-val">{r.share == null ? 'N/A' : `${r.share}%`}</span>
-        </div>
-      ))}
-      {field.rows.length > rows.length ? <p className="ps-small ps-muted">{field.rows.length - rows.length} more brands not shown{field.zeroSlotPeers ? `; ${field.zeroSlotPeers} peers have no placements` : ''}.</p> : null}
-      <div className="ps-legend"><span><i style={{ background: '#3e2723' }} />You</span><span><i style={{ background: '#c9d9e6' }} />Peer brand (anonymized)</span><span><i className="ps-legend-med" />Median of {field.placedPeers} placed peers: {field.peerMedian ?? 'N/A'}%</span></div>
-    </div>
-  );
-}
-
 /** Need × budget heatmap of slot share. Ink scale on butter; N/A cells hatched. */
 export function Heatmap({ grid }) {
   if (!grid?.rows?.length) return null;
