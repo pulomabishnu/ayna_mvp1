@@ -79,6 +79,26 @@ export function explore(cat, brand, outcomes = '', filter = {}) {
   products.forEach((p) => { p.rank = products.filter((x) => x.slots > p.slots).length + 1; p.share = slots ? Math.round((p.slots / slots) * 1000) / 10 : null; });
   const me = brands.find((b) => b.you);
 
+  // Head-to-head on the same shoppers: for every shopper your product fit but
+  // missed the top 3, which brands (and which of their products) got the picks.
+  const lostIdx = idx.filter((i) => outcomes[i] === OUTCOME.eligible_lost);
+  const taken = new Map();
+  for (const i of lostIdx) {
+    const seen = new Set();
+    for (const pi of cat.rows[i].p) {
+      const p = cat.products[pi];
+      if (p.brand === brand) continue;
+      const t = taken.get(p.brand) || { brand: p.brand, partner: false, shoppers: 0, items: new Map() };
+      t.partner = t.partner || p.partner;
+      t.items.set(p.name, (t.items.get(p.name) || 0) + 1);
+      if (!seen.has(p.brand)) { t.shoppers += 1; seen.add(p.brand); }
+      taken.set(p.brand, t);
+    }
+  }
+  const takenBy = [...taken.values()]
+    .map((t) => ({ brand: t.brand, partner: t.partner, shoppers: t.shoppers, top: [...t.items.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([name, n]) => ({ name, n })) }))
+    .sort((a, b) => b.shoppers - a.shoppers || a.brand.localeCompare(b.brand));
+
   return {
     scenarios: idx.length,
     slots,
@@ -91,5 +111,7 @@ export function explore(cat, brand, outcomes = '', filter = {}) {
     rank: me && me.slots ? { rank: me.rank, of: brands.filter((b) => b.slots > 0).length } : { rank: null, of: brands.filter((b) => b.slots > 0).length },
     brands,
     products,
+    lost: lostIdx.length,
+    takenBy,
   };
 }

@@ -18,6 +18,14 @@ const cat = { k: 3, ...compactScenarios(results, universe, (p) => p.brand, (p) =
 const outcomes = [OUTCOME.selected, OUTCOME.selected, OUTCOME.insufficient_info].join('');
 
 describe('explore', () => {
+  it('counts which brands took the spots on shoppers a brand fit but lost', () => {
+    // Brand C fit shopper 1 and 2 but was never placed.
+    const e = explore(cat, 'C', [OUTCOME.eligible_lost, OUTCOME.eligible_lost, OUTCOME.out_of_scope].join(''));
+    expect(e.lost).toBe(2);
+    expect(e.takenBy.map((t) => [t.brand, t.shoppers])).toEqual([['A', 2], ['B', 2]]);
+    expect(e.takenBy.find((t) => t.brand === 'B').top).toEqual([{ name: 'B Gel', n: 2 }, { name: 'B Balm', n: 1 }]);
+    expect(e.takenBy.find((t) => t.brand === 'A').partner).toBe(true);
+  });
   it('matches hand counts with no filter, including no-result scenarios', () => {
     const e = explore(cat, 'A', outcomes);
     expect(e.scenarios).toBe(3);
