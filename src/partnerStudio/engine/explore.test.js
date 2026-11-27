@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { compactScenarios, explore, OUTCOME } from './explore.js';
+import { compactScenarios, explore, versus, OUTCOME } from './explore.js';
 
 const universe = [
   { id: 'a1', name: 'A Gel', brand: 'A', partner: true },
@@ -55,6 +55,13 @@ describe('explore', () => {
     expect(explore(cat, 'A', outcomes, { budget: 'any' }).scenarios).toBe(1);
     expect(explore(cat, 'A', outcomes, { format: 'pref' }).scenarios).toBe(1);
     expect(explore(cat, 'A', outcomes, { format: 'any' }).scenarios).toBe(2);
+  });
+  it('splits head to head on the shoppers you fit', () => {
+    // Brand C fit shoppers 1 and 2 and was picked for neither; brand A was picked for both.
+    expect(versus(cat, 'C', [OUTCOME.eligible_lost, OUTCOME.eligible_lost, OUTCOME.out_of_scope].join(''), 'A')).toEqual({ fit: 2, onlyYou: 0, both: 0, onlyThem: 2, neither: 0 });
+    // Brand A vs B: A picked in 1 and 2, B picked in 1 and 2; scenario 3 not eligible.
+    expect(versus(cat, 'A', outcomes, 'B')).toEqual({ fit: 2, onlyYou: 0, both: 2, onlyThem: 0, neither: 0 });
+    expect(versus(cat, 'A', outcomes, 'C')).toEqual({ fit: 2, onlyYou: 2, both: 0, onlyThem: 0, neither: 0 });
   });
   it('returns N/A, not zero, when no scenario was eligible', () => {
     expect(explore(cat, 'C', 'ooo').eligibleToPlaced.pct).toBeNull();

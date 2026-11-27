@@ -115,3 +115,24 @@ export function explore(cat, brand, outcomes = '', filter = {}) {
     takenBy,
   };
 }
+
+/**
+ * Head to head with one rival on the same shoppers: of the shoppers your
+ * product fit, who got picked. A rival counts as picked if any of its
+ * products made that shopper's top 3.
+ */
+export function versus(cat, brand, outcomes, rival) {
+  const out = { fit: 0, onlyYou: 0, both: 0, onlyThem: 0, neither: 0 };
+  cat.rows.forEach((r, i) => {
+    const o = outcomes[i];
+    if (o !== OUTCOME.selected && o !== OUTCOME.eligible_lost) return;
+    out.fit += 1;
+    const you = o === OUTCOME.selected;
+    const them = r.p.some((pi) => cat.products[pi].brand === rival);
+    if (you && them) out.both += 1;
+    else if (you) out.onlyYou += 1;
+    else if (them) out.onlyThem += 1;
+    else out.neither += 1;
+  });
+  return out;
+}
