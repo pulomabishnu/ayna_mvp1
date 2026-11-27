@@ -344,6 +344,19 @@
 .ps-answer { border: none; background: var(--ps-butter); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .ps-answer ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
 
+/* Summary sentence and head-to-head */
+.ps-summary { gap: 10px; }
+.ps-summary-lead { font-size: 17px; line-height: 1.5; max-width: 95ch; }
+.ps-summary-lead b { font-weight: 800; }
+.ps-h2h { display: flex; flex-direction: column; gap: 10px; }
+.ps-h2h-row { display: grid; grid-template-columns: minmax(200px, 1.2fr) minmax(0, 1.6fr) 90px; gap: 14px; align-items: center; }
+.ps-h2h-name { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 0; min-width: 0; }
+.ps-h2h-name small { flex-basis: 100%; font-size: 12px; color: var(--ps-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ps-h2h-bar { height: 12px; border-radius: 999px; background: var(--ps-butter-2); overflow: hidden; display: flex; }
+.ps-h2h-bar > span { background: var(--ps-blue); border-radius: 999px; }
+.ps-h2h-val { text-align: right; font-size: 13px; white-space: nowrap; }
+.ps-h2h-val b { font-size: 16px; font-variant-numeric: tabular-nums; }
+
 @media (max-width: 960px) {
   .ps { grid-template-columns: 1fr; padding: 12px; }
   .ps-side { position: static; height: auto; }
@@ -358,6 +371,8 @@
   .ps-search { width: 100%; }
   .ps-search-results { min-width: 0; }
   .ps-hero, .ps-overview-grid { grid-template-columns: 1fr; }
+  .ps-h2h-row { grid-template-columns: 1fr 70px; }
+  .ps-h2h-bar { display: none; }
 }
 @media print {
   .ps { display: block; background: #fff; }
