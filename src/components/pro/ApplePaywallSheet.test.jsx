@@ -24,6 +24,8 @@ describe('Apple paywall free trial (Nov 27)', async () => {
     expect(terms).toContain('Renews automatically');
     expect(terms).toContain('Cancel anytime in Settings › Subscriptions');
     expect(html).not.toContain('No card');
+    expect(html).toContain('Link your health apps for smarter matches');
+    expect(html).not.toContain('Patterns over time');
     expect(html).toContain('14 days free</span>');
   });
 });

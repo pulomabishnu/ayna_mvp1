@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { PRO_ICONS, PRO_STORY } from './ProStory.jsx';
+import { PRO_ICONS } from './ProStory.jsx';
+
+// The iPhone Pro screen's three lines (founder pick, Nov 27). Only what Pro does today.
+export const APP_PRO_LINES = [
+  { id: 'dashboard', icon: 'dash', t: 'See how your cycle, sleep and steps connect' },
+  { id: 'connect', icon: 'watch', t: 'Link your health apps for smarter matches' },
+  { id: 'ask', icon: 'chat', t: '50 Ask ayna chats a month (10x free)' },
+];
 import { buyWithApple, freeTrialDays, introLine, perPeriod, restoreApplePurchases, useAppleProducts } from '../../pro/appleIap.js';
 import { scheduleAppleTrialReminder } from '../../pro/trialNotices.js';
 import { announceProChanged } from '../../pro/paywall.js';
@@ -75,8 +82,8 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
       </header>
       <div className="pro-sheet__body">
         <ul className="pro-app__feats" aria-label="What ayna Pro adds">
-          {/* Nov 26 (founder: "less text"): the three that matter most. */}
-          {PRO_STORY.slice(0, 3).map((f) => (
+          {/* Nov 27 (founder: "we need people to buy"): three lines that say what she gets. */}
+          {APP_PRO_LINES.map((f) => (
             <li key={f.id}><span className="pro-app__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[f.icon]}</svg></span>{f.t}</li>
           ))}
         </ul>
