@@ -83,6 +83,27 @@ export function HBar({ label, value, max = 100, text, tone = '', sub, name }) {
   );
 }
 
+/** Multi-segment ring (hero chart). segments: [{ label, value, color }]. */
+export function Ring({ segments, center, sub, size = 240, label }) {
+  const total = segments.reduce((a, x) => a + x.value, 0) || 1;
+  const r = 84;
+  const c = 2 * Math.PI * r;
+  const gap = segments.filter((x) => x.value > 0).length > 1 ? 4 : 0;
+  const shown = segments.filter((x) => x.value > 0);
+  const starts = shown.map((_, i) => shown.slice(0, i).reduce((a, x) => a + (x.value / total) * c, 0));
+  return (
+    <svg width={size} height={size} viewBox="0 0 220 220" role="img" aria-label={label || segments.map((x) => `${x.label} ${Math.round((x.value / total) * 100)}%`).join(', ')}>
+      <circle cx="110" cy="110" r={r} fill="none" stroke="#f6e3a1" strokeWidth="26" />
+      {shown.map((x, i) => {
+        const len = Math.max((x.value / total) * c - gap, 1.5);
+        return <circle key={x.label} cx="110" cy="110" r={r} fill="none" stroke={x.color} strokeWidth="26" strokeLinecap="round" strokeDasharray={`${len} ${c - len}`} strokeDashoffset={-starts[i]} transform="rotate(-90 110 110)" />;
+      })}
+      <text x="110" y="112" textAnchor="middle" fontFamily="'ayna Display','Bricolage Grotesque',sans-serif" fontWeight="700" fontSize="40" fill="#3e2723">{center}</text>
+      {sub ? <text x="110" y="136" textAnchor="middle" fontFamily="Figtree,sans-serif" fontSize="12" fontWeight="600" fill="rgba(62,39,35,.75)">{sub}</text> : null}
+    </svg>
+  );
+}
+
 /** Donut of one share: ink arc on a butter track. */
 export function Donut({ value, label, size = 168, center, sub }) {
   const v = value == null ? 0 : Math.max(0, Math.min(1, value));
