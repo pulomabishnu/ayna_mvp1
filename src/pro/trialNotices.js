@@ -80,7 +80,28 @@ export function handleTrialStatus(status, now = Date.now(), capture = defaultCap
   }
 }
 
-/** Tapping a trial notice opens the Pro screen. Returns a remover. */
+// Nov 27 (founder: "make it really easy to cancel"): Apple's free trial renews on its own, so 2 days before it ends we
+// say so, with the price, and a tap opens Apple's Manage Subscriptions sheet where she can cancel in one step.
+export const APPLE_TRIAL_REMINDER_ID = 9952;
+/** Pure (tested). */
+export function appleTrialReminder(days, priceText, now = Date.now()) {
+  const at = now + (Math.max(0, days - 2)) * 24 * 3600 * 1000;
+  if (!days || at <= now + 60 * 1000) return null;
+  return { id: APPLE_TRIAL_REMINDER_ID, title: 'Your ayna Pro free trial ends in 2 days', body: `After that it renews${priceText ? ` at ${priceText}` : ''}. Tap to keep it or cancel.`, schedule: { at: new Date(at), allowWhileIdle: true }, extra: { route: 'pro', manage: true } };
+}
+export async function scheduleAppleTrialReminder(days, priceText) {
+  const n = appleTrialReminder(days, priceText);
+  if (!n) return;
+  try {
+    if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return;
+    const { LocalNotifications } = await import('../utils/localNotifications.js');
+    const perm = await LocalNotifications.checkPermissions();
+    if (perm.display !== 'granted') return;
+    await LocalNotifications.schedule({ notifications: [n] });
+  } catch { /* best effort */ }
+}
+
+/** Tapping a trial notice opens the Pro screen (or, for the Apple trial reminder, Manage Subscriptions). Returns a remover. */
 export function onTrialNoticeTap() {
   try {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return () => {};
@@ -88,7 +109,9 @@ export function onTrialNoticeTap() {
   let off = () => {};
   import('../utils/localNotifications.js').then(({ LocalNotifications }) => {
     const h = LocalNotifications.addListener('localNotificationActionPerformed', (a) => {
-      if (IDS.includes(Number(a?.notification?.id))) openProPaywall({ feature: 'trial_ended', featureName: 'ayna Pro' });
+      const id = Number(a?.notification?.id);
+      if (id === APPLE_TRIAL_REMINDER_ID) import('./appleIap.js').then((m) => m.manageAppleSubscription()).catch(() => {});
+      else if (IDS.includes(id)) openProPaywall({ feature: 'trial_ended', featureName: 'ayna Pro' });
     });
     off = () => { h.then((x) => x.remove()).catch(() => {}); };
   }).catch(() => {});

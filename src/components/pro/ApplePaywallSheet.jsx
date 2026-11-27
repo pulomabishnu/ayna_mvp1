@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import TrialStart from '../../pro/TrialStart.jsx';
 import { PRO_ICONS, PRO_STORY } from './ProStory.jsx';
-import { buyWithApple, introLine, perPeriod, restoreApplePurchases, useAppleProducts } from '../../pro/appleIap.js';
+import { buyWithApple, freeTrialDays, introLine, perPeriod, restoreApplePurchases, useAppleProducts } from '../../pro/appleIap.js';
+import { scheduleAppleTrialReminder } from '../../pro/trialNotices.js';
 import { announceProChanged } from '../../pro/paywall.js';
 
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
@@ -29,7 +29,13 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
     track?.('pro_checkout_started', { plan: chosen.plan, store: 'apple' });
     try {
       const out = await buyWithApple(chosen.plan);
-      if (out === 'success') { track?.('pro_purchase_completed', { plan: chosen.plan, store: 'apple' }); setNote('You’re Pro. Thank you.'); window.setTimeout(onClose, 1200); }
+      if (out === 'success') {
+        const days = freeTrialDays(chosen);
+        track?.(days ? 'pro_trial_started' : 'pro_purchase_completed', { plan: chosen.plan, store: 'apple', ...(days ? { source: feature || 'paywall' } : {}) });
+        if (days) scheduleAppleTrialReminder(days, perPeriod(chosen));
+        setNote(days ? 'Your free trial has started. Cancel anytime in Profile › Settings › Manage subscription.' : 'You’re Pro. Thank you.');
+        window.setTimeout(onClose, days ? 2400 : 1200);
+      }
       else if (out === 'pending') setNote('Your purchase is waiting for approval. Pro unlocks as soon as it goes through.');
     } catch (e) {
       if (e?.code === 'sign_in_required') { onSignIn?.(); return; }
@@ -53,6 +59,9 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
   const intro = introLine(chosen);
   const price = perPeriod(chosen);
   const period = chosen?.periodUnit || 'period';
+  // Nov 27: the free trial is Apple's intro offer on each plan; the main button starts it. 3.1.2(c): the billed amount
+  // stays the most prominent price (the button and the big number), the trial is the smaller line.
+  const trialDays = freeTrialDays(chosen);
 
   return (
     <>
@@ -71,7 +80,6 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
             <li key={f.id}><span className="pro-app__icon" aria-hidden="true"><svg viewBox="0 0 24 24">{PRO_ICONS[f.icon]}</svg></span>{f.t}</li>
           ))}
         </ul>
-        {!signedOut && <TrialStart source={feature || 'paywall'} onStarted={() => window.setTimeout(onClose, 1400)} />}
 
         {status === 'loading' && <p className="pro-sheet__billing" role="status">Loading prices…</p>}
         {(status === 'error' || status === 'empty') && <p className="pro-sheet__error" role="alert">ayna Pro isn’t available to buy right now. Try again later.</p>}
@@ -92,12 +100,12 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
 
         {signedOut
           ? <button type="button" className="pro-sheet__cta" onClick={onSignIn}>Sign in to get ayna Pro</button>
-          : <button type="button" className="pro-sheet__cta" disabled={!chosen || Boolean(busy)} aria-busy={busy === 'buy' ? 'true' : undefined} onClick={buy}>{busy === 'buy' ? 'Opening the App Store…' : chosen ? `Subscribe · ${intro || price}` : 'Subscribe'}</button>}
+          : <button type="button" className="pro-sheet__cta" disabled={!chosen || Boolean(busy)} aria-busy={busy === 'buy' ? 'true' : undefined} onClick={buy}>{busy === 'buy' ? 'Opening the App Store…' : chosen ? `Subscribe · ${trialDays ? price : intro || price}` : 'Subscribe'}</button>}
 
         {chosen && (
           <p className="pro-sheet__billing pro-app__fine">
             {/* Everything Apple requires (3.1.2): length, price, renewal, how to cancel. As short as it can be (Nov 26). */}
-            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {intro ? `${intro}, then ${price}` : price}, charged to your Apple ID. Renews automatically unless canceled at least 24 hours before the {period} ends, in Settings › Subscriptions.
+            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {trialDays ? `${price} after a ${trialDays}-day free trial` : intro ? `${intro}, then ${price}` : price}, charged to your Apple ID. Renews automatically unless canceled at least 24 hours before the {trialDays ? 'trial' : period} ends{trialDays ? '; cancel before then and you pay nothing' : ''}. Cancel anytime in Settings › Subscriptions.
           </p>
         )}
         <p className="pro-sheet__billing pro-app__fine">

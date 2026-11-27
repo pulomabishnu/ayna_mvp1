@@ -65,3 +65,16 @@ describe('subscription_tier (Nov 19)', () => {
     expect(subscriptionTier({ active: true, isAdmin: true })).toBe('staff');
   });
 });
+
+describe('Apple trial reminder (Nov 27)', async () => {
+  const { appleTrialReminder, APPLE_TRIAL_REMINDER_ID } = await import('./trialNotices.js');
+  it('2 days before a 14-day trial ends, with the price, tapping opens Manage Subscriptions', () => {
+    const now = Date.UTC(2026, 10, 27);
+    const n = appleTrialReminder(14, '$89.99/year', now);
+    expect(n.id).toBe(APPLE_TRIAL_REMINDER_ID);
+    expect(n.schedule.at.getTime()).toBe(now + 12 * 864e5);
+    expect(n.body).toContain('$89.99/year');
+    expect(n.extra.manage).toBe(true);
+    expect(appleTrialReminder(0, '', now)).toBeNull();
+  });
+});

@@ -10,7 +10,7 @@ import { announceProChanged } from './paywall.js';
  * The website keeps Stripe. Product ids must match App Store Connect and api/_appleJws.js.
  */
 export const APPLE_PRODUCTS = { year: 'co.aynahealth.app.pro.yearly', month: 'co.aynahealth.app.pro.monthly' };
-/** The free 14-day trial: a $0 non-consumable named "14-Day Trial" (guideline 3.1.1). No charge, never renews. */
+/** Retired Nov 27: the old $0 "14-Day Trial" non-consumable. Kept so the server still recognises any already bought. */
 export const APPLE_TRIAL_PRODUCT = 'co.aynahealth.app.pro.trial14';
 const PLAN_BY_PRODUCT = { ...Object.fromEntries(Object.entries(APPLE_PRODUCTS).map(([plan, id]) => [id, plan])), [APPLE_TRIAL_PRODUCT]: 'trial' };
 
@@ -46,7 +46,7 @@ export async function sendAppleTransactions(jwsList) {
  * { year: { id, plan: 'year', displayPrice: '$89.99', intro: { displayPrice: '$44.99', ... }, introEligible } }
  */
 export async function loadAppleProducts() {
-  const { products = [] } = await AynaStore.products({ ids: [...Object.values(APPLE_PRODUCTS), APPLE_TRIAL_PRODUCT] });
+  const { products = [] } = await AynaStore.products({ ids: Object.values(APPLE_PRODUCTS) });
   const out = {};
   for (const p of products) {
     const plan = PLAN_BY_PRODUCT[p.id];
@@ -86,21 +86,21 @@ export async function buyWithApple(plan) {
   return 'success';
 }
 
+/** Days of free trial Apple will give her on this plan (introductory offer "Free"), or 0 if none / already used. */
+export function freeTrialDays(p) {
+  const i = p?.introEligible ? p.intro : null;
+  if (!i || i.paymentMode !== 'freeTrial') return 0;
+  const per = { day: 1, week: 7, month: 30, year: 365 }[i.periodUnit] || 0;
+  return per * (i.periodValue || 1) * Math.max(1, i.periodCount || 1);
+}
+
 /**
- * Start the free 14-day trial in the iPhone app. Apple shows its sheet at $0; nothing is charged and nothing
- * renews. Resolves { started: true } | { started: false, reason: 'cancelled'|'pending'|'used' }.
+ * Nov 27 (founder: "a normal free trial, card on file, make it automatic and really easy to cancel"): the free trial
+ * is Apple's introductory offer on the subscription itself. Apple's sheet shows "14 days free, then $89.99/year";
+ * it renews automatically unless she cancels in Settings › Subscriptions. Resolves 'success' | 'pending' | 'cancelled'.
  */
-export async function startAppleTrial() {
-  const s = await session();
-  if (!s?.user?.id) throw Object.assign(new Error('Sign in first to start your free trial.'), { code: 'sign_in_required' });
-  const result = await AynaStore.purchase({ id: APPLE_TRIAL_PRODUCT, appAccountToken: s.user.id });
-  if (result.status !== 'success') return { started: false, reason: result.status };
-  const out = await sendAppleTransactions([result.jws]);
-  if (!out.ok) throw Object.assign(new Error('We couldn’t start your trial yet. Try again in a minute.'), { code: 'verify_failed' });
-  try { await AynaStore.finish({ transactionId: result.transactionId }); } catch { /* finished next launch */ }
-  const r = (out.results || [])[0]?.result;
-  if (r === 'trial_used') return { started: false, reason: 'used' };
-  return { started: Boolean(out.active), reason: out.active ? undefined : 'used' };
+export async function startAppleFreeTrial(plan = 'year') {
+  return buyWithApple(plan);
 }
 
 /** "Restore purchases": her active Apple subscription goes back on her ayna account. */
@@ -144,7 +144,7 @@ export function introLine(p) {
   const i = p?.introEligible ? p.intro : null;
   if (!i) return '';
   const span = `${i.periodValue * Math.max(1, i.periodCount)} ${i.periodUnit}${i.periodValue * Math.max(1, i.periodCount) > 1 ? 's' : ''}`;
-  if (i.paymentMode === 'freeTrial') return `${span} free`;
+  if (i.paymentMode === 'freeTrial') return `${freeTrialDays(p)} days free`;
   if (i.paymentMode === 'payUpFront') return `First ${span === `1 ${i.periodUnit}` ? i.periodUnit : span} ${i.displayPrice}`;
   return `${i.displayPrice}/${i.periodUnit} for ${span}`;
 }

@@ -37,6 +37,8 @@ export function useTrialAvailable(enabled = true) {
 
 /** Nov 17 (founder): while her free trial is unused, Pro buttons offer it instead of "Get ayna Pro". */
 export function useProCta(fallback = 'Get ayna Pro') {
-  const { available, days } = useTrialAvailable();
-  return available ? `Try Pro free for ${days} days` : fallback;
+  // iPhone app (Nov 27): the trial is Apple's, shown with its price on the Pro screen (3.1.2(c)); buttons stay plain.
+  const apple = usesAppleIap();
+  const { available, days } = useTrialAvailable(!apple);
+  return available && !apple ? `Try Pro free for ${days} days` : fallback;
 }

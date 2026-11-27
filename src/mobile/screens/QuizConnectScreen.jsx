@@ -59,7 +59,8 @@ export default function QuizConnectScreen({ authUser, onQuizConnectContinue, onQ
       <span className="ay-qc-lock__seal" aria-hidden="true"><LockIcon size={20} /></span>
       {/* Nov 17 (founder: "instead of get ayna Pro say unlock with the 14 day trial, no credit card"). */}
       <h2 id="ay-qc-lock-h">{!authUser?.id || trial.available ? `Unlock with a free ${trial.days || 14}-day trial` : 'Part of ayna Pro'}</h2>
-      <p>{!authUser?.id || trial.available ? 'No card needed. Nothing renews.' : 'Link Apple Health or Oura for closer matches.'}</p>
+      {/* Nov 27: the iPhone trial is Apple's (renews unless canceled); its terms sit under the button. */}
+      <p>{(!authUser?.id || trial.available) && Capacitor.getPlatform() !== 'ios' ? 'No card needed. Nothing renews.' : 'Link Apple Health or Oura for closer matches.'}</p>
       {authUser?.id && trial.available
         ? <TrialStart source="quiz_connect" label="Start my free trial" className="ay-qc-trial" />
         : <button type="button" className="ay-qc-lock__go" onClick={unlock}>{authUser?.id ? 'Get ayna Pro' : 'Sign up free'}</button>}
