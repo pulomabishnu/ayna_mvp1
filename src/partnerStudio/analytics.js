@@ -31,12 +31,13 @@ export function initPartnerAnalytics() {
   ready = true;
 }
 
-const ALLOWED = new Set(['partner_studio_opened', 'partner_studio_module_viewed', 'partner_studio_brand_switched', 'partner_studio_source_opened', 'partner_studio_action_updated', 'partner_studio_export_downloaded', 'partner_studio_methodology_opened']);
+const ALLOWED = new Set(['partner_studio_opened', 'partner_studio_module_viewed', 'partner_studio_brand_switched', 'partner_studio_source_opened', 'partner_studio_action_updated', 'partner_studio_export_downloaded', 'partner_studio_methodology_opened', 'partner_studio_search_used', 'partner_studio_ask_opened', 'partner_studio_question_asked']);
 
+// Search sends only the result kind and Ask only the preset question id, never typed text.
 /** @param {string} event one of ALLOWED  @param {Record<string, string|number|boolean>} props */
 export function track(event, props = {}) {
   if (!ready || !ALLOWED.has(event)) return;
   const safe = {};
-  for (const [k, v] of Object.entries(props)) if (['module', 'brand', 'status', 'kind', 'category'].includes(k) && ['string', 'number', 'boolean'].includes(typeof v)) safe[k] = v;
+  for (const [k, v] of Object.entries(props)) if (['module', 'brand', 'status', 'kind', 'category', 'question'].includes(k) && ['string', 'number', 'boolean'].includes(typeof v)) safe[k] = v;
   try { posthog.capture(event, safe); } catch { /* analytics never breaks the page */ }
 }
