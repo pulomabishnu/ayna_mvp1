@@ -80,6 +80,10 @@ export async function buyWithApple(plan) {
   const result = await AynaStore.purchase({ id, appAccountToken: s.user.id });
   if (result.status !== 'success') return result.status;
   const out = await sendAppleTransactions([result.jws]);
+  // Nov 27: one Apple ID's subscription belongs to one ayna account. Say so plainly instead of "couldn't confirm".
+  if (!out.ok && (out.results || []).some((r) => r.result === 'other_account')) {
+    throw Object.assign(new Error('This Apple ID already has ayna Pro on a different ayna account. Sign in with that account to use it.'), { code: 'other_account' });
+  }
   // Only finished once ayna has saved it; otherwise Apple hands it back next launch.
   if (!out.ok) throw Object.assign(new Error('We couldn’t confirm your purchase yet. Tap Restore purchases in a minute.'), { code: 'verify_failed' });
   try { await AynaStore.finish({ transactionId: result.transactionId }); } catch { /* finished next launch */ }
@@ -130,6 +134,14 @@ export function listenForAppleTransactions() {
       if (out.ok) await AynaStore.finish({ transactionId: t.transactionId });
     } catch { /* stays unfinished; Apple delivers it again next launch */ }
   }).catch(() => { listening = false; });
+}
+
+/** Whole-percent saving of the yearly plan over 12 months of the monthly one (from Apple's prices), or 0. */
+export function yearlySaving(year, month) {
+  const y = Number(year?.price), m = Number(month?.price);
+  if (!(y > 0) || !(m > 0) || year?.periodUnit !== 'year' || month?.periodUnit !== 'month') return 0;
+  const pct = Math.floor((1 - y / (m * 12)) * 100);
+  return pct >= 5 ? pct : 0;
 }
 
 /** "$89.99/year", "$8.99/month". */

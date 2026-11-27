@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PRO_ICONS } from './ProStory.jsx';
 
 // The iPhone Pro screen's three lines (founder pick, Nov 27). Only what Pro does today.
@@ -7,8 +7,8 @@ export const APP_PRO_LINES = [
   { id: 'connect', icon: 'watch', t: 'Link your health apps for smarter matches' },
   { id: 'ask', icon: 'chat', t: '50 Ask ayna chats a month (10x free)' },
 ];
-import { buyWithApple, freeTrialDays, introLine, perPeriod, restoreApplePurchases, useAppleProducts } from '../../pro/appleIap.js';
-import { scheduleAppleTrialReminder } from '../../pro/trialNotices.js';
+import { buyWithApple, freeTrialDays, introLine, perPeriod, restoreApplePurchases, useAppleProducts, yearlySaving } from '../../pro/appleIap.js';
+import { scheduleAppleTrialReminder, trialReminderState } from '../../pro/trialNotices.js';
 import { announceProChanged } from '../../pro/paywall.js';
 
 const TERMS_URL = 'https://www.aynahealth.co/terms-of-use';
@@ -28,6 +28,9 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
   const chosen = products[plan] || products.year || products.month || null;
+  // Only promise a reminder when we can send one (notifications not turned off for ayna).
+  const [canRemind, setCanRemind] = useState(true);
+  useEffect(() => { let live = true; trialReminderState().then((s) => { if (live) setCanRemind(s !== 'denied'); }); return () => { live = false; }; }, []);
   const plans = ['year', 'month'].map((id) => products[id]).filter(Boolean);
 
   const buy = async () => {
@@ -48,7 +51,7 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
       if (e?.code === 'sign_in_required') { onSignIn?.(); return; }
       track?.('pro_checkout_failed', { plan: chosen.plan, store: 'apple', error_code: e?.code || 'unknown' });
       // Charged but not saved yet: say so (Apple redelivers it; Restore purchases also works). Anything else: nothing was charged.
-      setError(e?.code === 'verify_failed' ? e.message : 'The purchase didn’t go through. Nothing was charged.');
+      setError(['verify_failed', 'other_account'].includes(e?.code) ? e.message : 'The purchase didn’t go through. Nothing was charged.');
     } finally { setBusy(''); }
   };
 
@@ -69,6 +72,7 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
   // Nov 27: the free trial is Apple's intro offer on each plan; the main button starts it. 3.1.2(c): the billed amount
   // stays the most prominent price (the button and the big number), the trial is the smaller line.
   const trialDays = freeTrialDays(chosen);
+  const saving = yearlySaving(products.year, products.month);
 
   return (
     <>
@@ -96,12 +100,21 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
               <button key={p.id} type="button" role="radio" aria-checked={chosen?.id === p.id} className={`pro-plan${chosen?.id === p.id ? ' is-on' : ''}`} disabled={Boolean(busy)} onClick={() => setPlan(p.plan)}>
                 <span className="pro-plan__top"><span className="pro-plan__dot" aria-hidden="true" /><span className="pro-plan__label">{p.plan === 'year' ? 'Yearly' : 'Monthly'}</span></span>
                 <span className="pro-plan__amount"><strong className="pro-plan__price">{p.displayPrice}</strong><span className="pro-plan__per">/{p.periodUnit === 'year' ? 'year' : 'month'}</span></span>
-                {introLine(p) && <span className="pro-plan__sub">{introLine(p)}</span>}
+                {p.plan === 'year' && saving > 0 && <span className="pro-plan__best">Save {saving}%</span>}
+                {!freeTrialDays(p) && introLine(p) && <span className="pro-plan__sub">{introLine(p)}</span>}
               </button>
             ))}
           </div>
         )}
 
+        {trialDays > 0 && (
+          // Nov 27 (founder: "make the trial clear, not overwhelming"): how the free trial works, in three steps.
+          <ol className="pro-trial-steps" aria-label="How the free trial works">
+            <li><b>Today</b><span>Full access, free</span></li>
+            <li><b>Day {Math.max(1, trialDays - 2)}</b><span>{canRemind ? 'We remind you' : 'Cancel anytime'}</span></li>
+            <li><b>Day {trialDays}</b><span>{price} starts</span></li>
+          </ol>
+        )}
         {error && <p className="pro-sheet__error" role="alert">{error}</p>}
         {note && <p className="pro-sheet__billing" role="status">{note}</p>}
 
@@ -112,7 +125,7 @@ export default function ApplePaywallSheet({ titleId, unlocking, signedOut, onSig
         {chosen && (
           <p className="pro-sheet__billing pro-app__fine">
             {/* Everything Apple requires (3.1.2): length, price, renewal, how to cancel. As short as it can be (Nov 26). */}
-            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {trialDays ? `${price} after a ${trialDays}-day free trial` : intro ? `${intro}, then ${price}` : price}, charged to your Apple ID. Renews automatically unless canceled at least 24 hours before the {trialDays ? 'trial' : period} ends{trialDays ? '; cancel before then and you pay nothing' : ''}. Cancel anytime in Settings › Subscriptions.
+            ayna Pro {chosen.plan === 'year' ? 'Yearly' : 'Monthly'}: {trialDays ? `${trialDays} days free, then ${price}` : intro ? `${intro}, then ${price}` : price}, charged to your Apple ID. Renews automatically unless canceled at least 24 hours before the {trialDays ? 'trial' : period} ends. Cancel anytime in Settings › Subscriptions.
           </p>
         )}
         <p className="pro-sheet__billing pro-app__fine">

@@ -19,13 +19,13 @@ describe('Apple paywall free trial (Nov 27)', async () => {
     const html = renderToStaticMarkup(<ApplePaywallSheet titleId="t" onClose={() => {}} />).replace(/<!-- -->/g, '');
     expect(html).toContain('>Subscribe · $89.99/year</button>');
     const terms = html;
-    expect(terms).toContain('$89.99/year after a 14-day free trial');
-    expect(terms).toContain('cancel before then and you pay nothing');
+    expect(terms).toContain('14 days free, then $89.99/year');
+    expect(html).toContain('How the free trial works');
+    expect(html).toContain('Day 12');
     expect(terms).toContain('Renews automatically');
     expect(terms).toContain('Cancel anytime in Settings › Subscriptions');
     expect(html).not.toContain('No card');
     expect(html).toContain('Link your health apps for smarter matches');
     expect(html).not.toContain('Patterns over time');
-    expect(html).toContain('14 days free</span>');
   });
 });

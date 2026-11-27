@@ -31,3 +31,11 @@ describe('free trial days', async () => {
     expect(introLine({ introEligible: true, intro })).toBe('14 days free');
   });
 });
+
+describe('yearly saving (Nov 27)', async () => {
+  const { yearlySaving } = await import('./appleIap.js');
+  it('rounds down, needs both prices', () => {
+    expect(yearlySaving({ price: 89.99, periodUnit: 'year' }, { price: 8.99, periodUnit: 'month' })).toBe(16);
+    expect(yearlySaving({ periodUnit: 'year' }, { price: 8.99, periodUnit: 'month' })).toBe(0);
+  });
+});

@@ -89,13 +89,24 @@ export function appleTrialReminder(days, priceText, now = Date.now()) {
   if (!days || at <= now + 60 * 1000) return null;
   return { id: APPLE_TRIAL_REMINDER_ID, title: 'Your ayna Pro free trial ends in 2 days', body: `After that it renews${priceText ? ` at ${priceText}` : ''}. Tap to keep it or cancel.`, schedule: { at: new Date(at), allowWhileIdle: true }, extra: { route: 'pro', manage: true } };
 }
+/** 'granted' | 'prompt' | 'denied' | 'unavailable': can we send her the trial reminder? */
+export async function trialReminderState() {
+  try {
+    if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return 'unavailable';
+    const { LocalNotifications } = await import('../utils/localNotifications.js');
+    const perm = await LocalNotifications.checkPermissions();
+    return perm.display === 'granted' ? 'granted' : perm.display === 'denied' ? 'denied' : 'prompt';
+  } catch { return 'unavailable'; }
+}
 export async function scheduleAppleTrialReminder(days, priceText) {
   const n = appleTrialReminder(days, priceText);
   if (!n) return;
   try {
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('LocalNotifications')) return;
     const { LocalNotifications } = await import('../utils/localNotifications.js');
-    const perm = await LocalNotifications.checkPermissions();
+    let perm = await LocalNotifications.checkPermissions();
+    // The Pro screen promised a reminder, so ask once, right after she starts the trial (she just said yes to it).
+    if (perm.display === 'prompt' || perm.display === 'prompt-with-rationale') perm = await LocalNotifications.requestPermissions();
     if (perm.display !== 'granted') return;
     await LocalNotifications.schedule({ notifications: [n] });
   } catch { /* best effort */ }
