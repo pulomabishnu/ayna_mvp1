@@ -118,88 +118,159 @@ function ProductRanking({ rows, limit = 15 }) {
 }
 
 /* ---------------- Overview (p.12) ---------------- */
+const pct1 = (n, d) => (d ? `${Math.round((n / d) * 1000) / 10}%` : 'N/A');
+
+/** Who got the picks on the shoppers your product fit but lost. Real brand and product names. */
+function TakenBy({ ex, name, limit = 6 }) {
+  const rows = ex.takenBy.slice(0, limit);
+  if (!ex.lost) return <p className="ps-small">Your products made the top 3 every time they fit. Nobody took your spot.</p>;
+  return (
+    <div className="ps-h2h">
+      {rows.map((t) => (
+        <div key={t.brand} className="ps-h2h-row">
+          <div className="ps-h2h-name"><strong>{t.brand}</strong>{t.partner ? <PartnerTag /> : null}<small>{t.top.slice(0, 2).map((x) => x.name).join(' · ')}</small></div>
+          <div className="ps-h2h-bar" role="img" aria-label={`${t.brand}: picked for ${t.shoppers} of the ${ex.lost} shoppers ${name} lost`}><span style={{ width: `${(t.shoppers / ex.lost) * 100}%` }} /></div>
+          <div className="ps-h2h-val"><b>{t.shoppers}</b> of {ex.lost}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** One row per need: your picks next to the brand that leads that need. */
+function ByNeed({ meta, brand, outcomes, name }) {
+  const rows = useMemo(() => meta.needs.map((n) => {
+    const e = explore(meta, brand, outcomes, { need: n });
+    const leader = e.brands[0];
+    return { need: n, me: e.brandSlots, share: e.slotShare.pct, rank: e.rank.rank, of: e.brands.length, leader, slots: e.slots };
+  }), [meta, brand, outcomes]);
+  return (
+    <div className="ps-table-wrap">
+      <table className="ps-table">
+        <thead><tr><th>Shopper need</th><th className="ps-r">{name}</th><th className="ps-r">Your rank</th><th>Leader</th><th className="ps-r">Leader picks</th></tr></thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.need}>
+              <td><strong>{r.need}</strong></td>
+              {!r.slots ? <td colSpan={4} className="ps-muted">ayna didn’t recommend any product to these shoppers.</td> : <>
+              <td className="ps-r">{r.me} <span className="ps-small ps-muted">({r.share == null ? 'N/A' : `${r.share}%`})</span></td>
+              <td className="ps-r">{r.me ? `#${r.rank}` : 'Not picked'}</td>
+              <td>{r.leader && r.leader.slots ? <>{r.leader.you ? <b>You</b> : r.leader.brand}{r.leader.partner && !r.leader.you ? <PartnerTag /> : null}</> : '–'}</td>
+              <td className="ps-r">{r.leader && r.leader.slots ? `${r.leader.slots} (${r.leader.share}%)` : '–'}</td>
+              </>}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function Overview({ data, b, go, actionState }) {
-  const t = b.totals;
   const open = (b.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done');
   const [catId, setCatId] = useState(b.categories[0]?.id);
   const c = b.categories.find((x) => x.id === catId) || b.categories[0];
   const meta = data.categories.find((x) => x.id === c?.id);
   const ex = useMemo(() => (meta?.rows ? explore(meta, b.brand, c.outcomes) : null), [meta, b.brand, c]);
-  const ranks = b.categories.filter((x) => x.rank.rank).map((x) => `#${x.rank.rank} of ${x.field?.brands ?? x.rank.of} brands in ${x.label.split(' and ')[0].toLowerCase()}`);
-  const lost = b.categories.reduce((a, x) => a + x.funnel.eligible_lost, 0);
+  const name = b.displayName || b.brand;
   const RING_COLORS = ['#f7badd', '#769ebe', '#c9d9e6'];
   const ring = ex ? (() => {
     const me = ex.brands.find((x) => x.you);
     const others = ex.brands.filter((x) => !x.you && x.slots > 0).slice(0, 3);
     const rest = ex.slots - (me?.slots || 0) - others.reduce((a2, x) => a2 + x.slots, 0);
     return [
-      { label: `${b.displayName || b.brand} (you)`, value: me?.slots || 0, color: '#3e2723', you: true },
+      { label: `${name} (you)`, value: me?.slots || 0, color: '#3e2723', you: true },
       ...others.map((x, k) => ({ label: x.brand, value: x.slots, color: RING_COLORS[k] })),
       { label: 'Everyone else', value: Math.max(rest, 0), color: '#e4cf86' },
     ];
   })() : [];
+  if (!ex) return null;
+  const me = ex.brands.find((x) => x.you) || { slots: 0 };
+  const leader = ex.brands[0];
+  const fit = ex.eligibleToPlaced.den;
+  const topRival = ex.takenBy[0];
+  const reasons = (c.funnel.reasons || []).filter((r) => r.n && r.id !== 'diversity_tie' && r.id !== 'unclassified');
+  const sims = (b.simulations || []).filter((s) => s.category === c.id && s.after.inclusion.num > s.before.inclusion.num)
+    .sort((x, y) => (y.after.inclusion.num - y.before.inclusion.num) - (x.after.inclusion.num - x.before.inclusion.num));
+  const feed = [];
+  for (const f of b.feed || []) {
+    const hit = feed.find((x) => x.title === f.title);
+    if (hit) hit.names.push(f.name); else feed.push({ title: f.title, names: [f.name] });
+  }
+  const catLabel = c.label.toLowerCase();
   return (
     <>
+      <section className="ps-card ps-summary" aria-label="Summary">
+        <CategoryTabs cats={b.categories} cat={c} setCat={setCatId} />
+        <p className="ps-summary-lead">
+          In {catLabel}, ayna picked <b>{name}</b> for <b>{ex.inclusion.num} of {ex.scenarios}</b> shoppers.
+          {me.slots ? <> You rank <b>#{me.rank} of {ex.brands.length} brands</b>.</> : <> You weren’t picked yet.</>}
+          {leader && !leader.you ? <> <b>{leader.brand}</b> leads with {leader.slots} picks.</> : null}
+          {topRival ? <> When your product was a fit but lost, <b>{topRival.brand}</b> took the spot most often ({topRival.shoppers} of {ex.lost} shoppers).</> : null}
+        </p>
+      </section>
       <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" label="Share of top-3 picks" badge={<SyntheticBadge text="Synthetic" />} value={t.slotShare.pct == null ? 'N/A' : `${t.slotShare.pct}%`} cmp={ranks.length ? { dir: 'flat', text: ranks.join(' · ') } : { dir: 'down', text: 'Not recommended yet' }} den={`${t.slotShare.num} of the ${t.slotShare.den} top-3 picks went to your products`} />
-        <Kpi tone="pink" label="Shoppers you reached" badge={<SyntheticBadge text="Synthetic" />} value={t.inclusion.pct == null ? 'N/A' : `${t.inclusion.pct}%`} den={`Recommended to ${t.inclusion.num} of ${t.inclusion.den} fictional shoppers`} />
-        <Kpi tone="deep" label="Win rate when you qualified" badge={<SyntheticBadge text="Synthetic" />} value={t.eligibleToPlaced.pct == null ? 'N/A' : `${t.eligibleToPlaced.pct}%`} cmp={lost ? { dir: 'down', text: `Qualified but missed the top 3 for ${lost} shopper${lost === 1 ? '' : 's'}` } : null} den={`Made the top 3 for ${t.eligibleToPlaced.num} of the ${t.eligibleToPlaced.den} shoppers your products fit`} />
-        <Kpi tone="plain" label="Claims checked by a person" badge={<DraftBadge text="Review" />} value={t.reviewCoverage.pct == null ? 'N/A' : `${t.reviewCoverage.pct}%`} den={t.reviewCoverage.den ? `${t.reviewCoverage.num} of ${t.reviewCoverage.den} of your claims have a human sign-off` : 'No claims on file yet'} />
+        <Kpi tone="ink" label="Your rank" value={me.slots ? `#${me.rank}` : '–'} den={`of ${ex.brands.length} brands in ${catLabel}`} />
+        <Kpi tone="pink" label="Times picked" value={String(me.slots)} den={`of ${ex.slots} top-3 spots (${ex.slotShare.pct ?? 0}%)`} />
+        <Kpi tone="deep" label="Fit but lost" value={String(ex.lost)} den={`of the ${fit} shoppers your products fit`} />
+        <Kpi tone="plain" label="Category leader" value={leader?.brand || '–'} den={leader ? `${leader.slots} picks (${leader.share}%)` : ''} />
       </div>
-      {ex ? (
-        <div className="ps-overview-grid">
-          <div className="ps-stack-col">
-            <section className="ps-card" aria-labelledby="ov-ring">
-              <CardHead id="ov-ring" title="Your share of top-3 picks" desc={`Out of ${ex.slots} top-3 picks across ${meta.baseline} made-up shoppers in ${c.label.toLowerCase()}.`} right={<CategoryTabs cats={b.categories} cat={c} setCat={setCatId} />} />
-              <div className="ps-hero">
-                <Ring segments={ring} center={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} sub={`#${ex.rank.rank ?? '–'} of ${ex.brands.length} brands`} />
-                <ul className="ps-list ps-ring-legend">
-                  {ring.map((x) => <li key={x.label} className={x.you ? 'is-you' : ''}><i style={{ background: x.color }} /><span>{x.label}</span><b>{ex.slots ? `${Math.round((x.value / ex.slots) * 1000) / 10}%` : 'N/A'}</b></li>)}
-                </ul>
-              </div>
-              <p className="ps-chart-foot">{SYNTHETIC}.</p>
-            </section>
-            <section className="ps-card" aria-labelledby="ov-mine">
-              <CardHead id="ov-mine" title="Your products" desc={`Rank among all ${meta.universe} ${c.label.toLowerCase()} products in ayna’s catalog.`} right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('share')}>Full ranking</button>} />
-              <ul className="ps-list">
-                {ex.products.filter((p) => p.you).map((p) => (
-                  <li key={p.id} className="ps-item ps-item--row"><span><strong>{p.name}</strong><br /><span className="ps-small ps-muted">#{p.rank} of {ex.products.length} products</span></span><span className="ps-num" style={{ fontSize: 22, whiteSpace: 'nowrap' }}>{p.slots}<span className="ps-small"> in top 3</span></span></li>
-                ))}
+      <div className="ps-overview-grid">
+        <div className="ps-stack-col">
+          <section className="ps-card" aria-labelledby="ov-ring">
+            <CardHead id="ov-ring" title="Who gets the top-3 spots" desc={`All ${ex.slots} spots across ${ex.scenarios} shoppers.`} />
+            <div className="ps-hero">
+              <Ring segments={ring} center={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} sub="your share" />
+              <ul className="ps-list ps-ring-legend">
+                {ring.map((x) => <li key={x.label} className={x.you ? 'is-you' : ''}><i style={{ background: x.color }} /><span>{x.label}</span><b>{pct1(x.value, ex.slots)}</b></li>)}
               </ul>
-            </section>
-          </div>
-          <section className="ps-card" aria-labelledby="ov-rank">
-            <CardHead id="ov-rank" title="Who gets recommended most" desc="Every brand in this category, partners or not, by how often its products made a shopper’s top 3." />
-            <BrandRanking rows={ex.brands} brand={b.brand} totalSlots={ex.slots} limit={9} />
-            <RankKey />
+            </div>
+          </section>
+          <section className="ps-card" aria-labelledby="ov-mine">
+            <CardHead id="ov-mine" title="Your products" desc={`Out of ${meta.universe} ${catLabel} products in ayna’s catalog.`} right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('share')}>Full ranking</button>} />
+            <ul className="ps-list">
+              {ex.products.filter((p) => p.you).map((p) => (
+                <li key={p.id} className="ps-item ps-item--row"><span><strong>{p.name}</strong><br /><span className="ps-small ps-muted">{p.slots ? `#${p.rank} of ${ex.products.length} products` : 'Not picked for any shopper yet'}</span></span><span className="ps-num" style={{ fontSize: 22, whiteSpace: 'nowrap' }}>{p.slots}<span className="ps-small"> picks</span></span></li>
+              ))}
+            </ul>
           </section>
         </div>
-      ) : null}
-      <div className="ps-explain">
-        <strong>How this works</strong>
-        <span>ayna runs {data.categories.filter((x) => b.categories.some((y) => y.id === x.id)).map((x) => `${x.baseline} made-up shoppers in ${x.label.toLowerCase()} (${x.universe} products, ${x.brands} brands)`).join(' and ')} through the same matching engine the app uses, then counts which products land in each shopper’s top 3. No real people or sales data. Updated {new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. <button type="button" className="ps-link" onClick={() => go('reports')}>Methodology</button></span>
-      </div>
-      <div className="ps-row">
-        <section className="ps-card" style={{ flex: '1 1 420px' }} aria-labelledby="ov-actions">
-          <CardHead id="ov-actions" title="What to do next" right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('actions')}>All {open.length}</button>} />
-          <ol className="ps-list">
-            {open.slice(0, 3).map((a) => (
-              <li key={a.id} className="ps-item">
-                <div className="ps-item-head"><strong>{a.title}</strong><span className="ps-chip">{TIER_LABEL[a.tier]}</span></div>
-                <span className="ps-small">{a.action}</span>
-              </li>
-            ))}
-            {!open.length ? <li className="ps-item">No open actions.</li> : null}
-          </ol>
+        <section className="ps-card" aria-labelledby="ov-rank">
+          <CardHead id="ov-rank" title="Brand leaderboard" desc="Every brand in the category, partner or not, by times picked." />
+          <BrandRanking rows={ex.brands} brand={b.brand} totalSlots={ex.slots} limit={9} />
+          <RankKey />
         </section>
-        <section className="ps-card ps-card--plain" style={{ flex: '1 1 420px' }} aria-labelledby="ov-alerts">
-          <CardHead id="ov-alerts" title="Heads up" right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('feed')}>Feed</button>} />
+      </div>
+      <section className="ps-card" aria-labelledby="ov-h2h">
+        <CardHead id="ov-h2h" title="Who took your spot" desc={`The ${ex.lost} times your product fit a shopper but missed the top 3, these brands were picked instead. Same shoppers, head to head.`} right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('losses')}>Why you lost</button>} />
+        <TakenBy ex={ex} name={name} />
+      </section>
+      <section className="ps-card" aria-labelledby="ov-need">
+        <CardHead id="ov-need" title="By shopper need" desc="Your picks for each need next to the brand that wins it." />
+        <ByNeed meta={meta} brand={b.brand} outcomes={c.outcomes} name={name} />
+      </section>
+      <div className="ps-row">
+        <section className="ps-card" style={{ flex: '1 1 420px' }} aria-labelledby="ov-levers">
+          <CardHead id="ov-levers" title="What would move you up" right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('actions')}>Action queue ({open.length})</button>} />
           <ul className="ps-list">
-            {(b.feed || []).slice(0, 4).map((f, i) => <li key={i} className="ps-item"><strong>{f.title}</strong><span className="ps-small">{f.name}</span></li>)}
-            {!(b.feed || []).length ? <li className="ps-item">Nothing flagged on your products in this snapshot.</li> : null}
+            {sims.slice(0, 2).map((s) => (
+              <li key={s.sku} className="ps-item"><strong>Price: {s.name} at {s.changeLabel}</strong><span className="ps-small">Picked for {s.before.inclusion.num} → {s.after.inclusion.num} shoppers in a test run. Nothing else changes.</span></li>
+            ))}
+            {reasons.slice(0, 3).map((r) => (
+              <li key={r.id} className="ps-item"><strong>{r.label}: {r.n} of {c.funnel.eligible_lost} losses</strong><span className="ps-small">{r.action}</span></li>
+            ))}
+            {!sims.length && !reasons.length ? <li className="ps-item">Nothing to change: you made the top 3 every time you fit.</li> : null}
+          </ul>
+        </section>
+        <section className="ps-card" style={{ flex: '1 1 420px' }} aria-labelledby="ov-alerts">
+          <CardHead id="ov-alerts" title="On your products" right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('feed')}>Feed</button>} />
+          <ul className="ps-list">
+            {feed.slice(0, 4).map((f) => <li key={f.title} className="ps-item"><strong>{f.title}</strong><span className="ps-small">{f.names.join(', ')}</span></li>)}
+            {!feed.length ? <li className="ps-item">Nothing flagged on your products.</li> : null}
           </ul>
         </section>
       </div>
+      <p className="ps-small ps-muted">How this works: ayna runs {ex.scenarios} made-up shoppers through the same matching engine the app uses and counts which products land in each top 3. Every {catLabel} product in ayna’s catalog competes ({meta.universe} products, {meta.brands} brands). No real customers or sales data. Updated {new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}. <button type="button" className="ps-link" onClick={() => go('reports')}>Methodology</button></p>
     </>
   );
 }

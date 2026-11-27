@@ -12,6 +12,7 @@ import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
 import { initPartnerAnalytics, track } from './analytics.js';
 import { rollupCsv } from './csv.js';
 import { QUESTIONS, answer, matchQuestion, search } from './assistant.js';
+import { getSupabaseClient } from '../utils/supabaseClient.js';
 
 const NAV = [
   { group: 'Workspace', items: [['overview', 'Overview'], ['actions', 'Action queue']] },
@@ -34,22 +35,65 @@ const SUBTITLE = {
 };
 
 const DENIED = {
-  not_team_domain: 'Partner Studio is for @aynahealth.co accounts. Sign out, then sign in with your ayna work email.',
+  not_team_domain: 'Partner Studio is for @aynahealth.co accounts. Sign in below with your ayna work email.',
   unconfirmed: 'This email isn’t confirmed yet. Open the confirmation link ayna sent you, then reload.',
   not_listed: 'This account isn’t on the Partner Studio admin list for this deploy. Ask whoever manages Vercel to add it to ADMIN_EMAILS.',
 };
 
-function Gate({ status, denied }) {
+/** Sign in right here, so she never leaves this page. Google comes back here too (src/utils/authReturn.js). */
+function SignIn({ onDone, switching }) {
+  const supabase = getSupabaseClient();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState('');
+  const [error, setError] = useState('');
+  if (!supabase) return <a className="ps-btn ps-btn--ink" href="/">Sign in on the main site</a>;
+  const field = { border: '1px solid rgba(62,39,35,.25)', borderRadius: 12, padding: '10px 12px', background: '#fff8dc', minHeight: 44, width: '100%', boxSizing: 'border-box', font: 'inherit' };
+  const google = async () => {
+    setError(''); setBusy('google');
+    try {
+      if (switching) await supabase.auth.signOut();
+      const { error: e } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback`, queryParams: { prompt: 'select_account' } } });
+      if (e) throw e;
+    } catch (e) { setError(e?.message || 'Couldn’t start Google sign-in.'); setBusy(''); }
+  };
+  const submit = async (e) => {
+    e.preventDefault();
+    setError(''); setBusy('email');
+    try {
+      if (switching) await supabase.auth.signOut();
+      const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (err) throw err;
+      onDone();
+    } catch (err) { setError(err?.message || 'Couldn’t sign in. Check your email and password.'); }
+    setBusy('');
+  };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <button type="button" className="ps-btn ps-btn--ink" onClick={google} disabled={Boolean(busy)} style={{ justifyContent: 'center', width: '100%' }}>{busy === 'google' ? 'Opening Google…' : 'Continue with Google'}</button>
+      <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <input type="email" autoComplete="email" required placeholder="you@aynahealth.co" aria-label="Work email" value={email} onChange={(e) => setEmail(e.target.value)} style={field} />
+        <input type="password" autoComplete="current-password" required placeholder="Password" aria-label="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={field} />
+        <button type="submit" className="ps-btn" disabled={Boolean(busy)} style={{ justifyContent: 'center', width: '100%' }}>{busy === 'email' ? 'Signing in…' : 'Sign in with email'}</button>
+      </form>
+      {error ? <p className="ps-small" role="alert" style={{ color: '#3e2723', fontWeight: 700 }}>{error}</p> : null}
+      <p className="ps-small ps-muted">You’ll stay on this page.</p>
+    </div>
+  );
+}
+
+function Gate({ status, denied, onSignedIn }) {
   const copy = {
-    401: ['Sign in first', 'Partner Studio uses your ayna account. Sign in on this site with your @aynahealth.co email, then come back to this page.'],
+    401: ['Sign in to Partner Studio', 'Use your @aynahealth.co account.'],
     403: ['Private preview', 'Partner Studio is open to the ayna team while Phase 1 is reviewed. Brand access comes next.'],
     404: ['Not available yet', 'Partner Studio is switched off here.'],
     503: ['No benchmark yet', 'The first benchmark run hasn’t been built for this deploy. It runs during the build when Partner Studio is switched on.'],
     error: ['Couldn’t load', 'Something went wrong loading the benchmark. Try again in a minute.'],
   }[status] || ['Loading', 'Loading the latest benchmark…'];
+  const switching = status === 403 && denied?.reason === 'not_team_domain';
   return (
     <main className="ps-gate">
-      <div className="ps-card ps-card--plain" role={status ? 'alert' : 'status'}>
+      <div className="ps-card ps-card--plain" role={status ? 'alert' : 'status'} style={{ width: 'min(440px, 100%)' }}>
         <span className="ps-num" style={{ fontSize: 30 }}>ayna</span>
         <h1 style={{ fontFamily: "'ayna Display','Bricolage Grotesque',sans-serif" }}>{copy[0]}</h1>
         <p>{copy[1]}</p>
@@ -59,7 +103,7 @@ function Gate({ status, denied }) {
             <span>{DENIED[denied.reason] || DENIED.not_listed}</span>
           </p>
         ) : null}
-        {status === 401 || denied?.reason === 'not_team_domain' ? <a className="ps-btn ps-btn--ink" href="/">Sign in on this site</a> : null}
+        {status === 401 || switching ? <SignIn onDone={onSignedIn} switching={switching} /> : null}
       </div>
     </main>
   );
@@ -136,6 +180,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
   const [actionMap, setActionMap] = useState({});
   const [ackMap, setAckMap] = useState({});
   const [asking, setAsking] = useState(false);
+  const [reload, setReload] = useState(0);
 
   useEffect(() => { initPartnerAnalytics(); track('partner_studio_opened'); }, []);
 
@@ -158,7 +203,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
       })
       .catch(() => { if (!cancelled) setStatus('error'); });
     return () => { cancelled = true; };
-  }, [brand, fetcher]);
+  }, [brand, fetcher, reload]);
 
   const b = data?.brand;
   const bname = b?.name || '';
@@ -199,7 +244,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
 
   const openCount = useMemo(() => (b?.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done').length, [b, actionState]);
 
-  if (status !== 'ok' || !data) return <Gate status={status} denied={denied} />;
+  if (status !== 'ok' || !data) return <Gate status={status} denied={denied} onSignedIn={() => { setStatus(null); setDenied(null); setReload((n) => n + 1); }} />;
   const scoped = inScope(b);
   const name = b.displayName || b.name;
 
