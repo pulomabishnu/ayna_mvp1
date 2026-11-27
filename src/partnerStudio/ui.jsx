@@ -9,11 +9,22 @@ export function DraftBadge({ text = 'Draft, pending human review' }) {
   return <span className="ps-badge ps-badge--draft">{text}</span>;
 }
 
+/** Small (i) button. Hover or focus shows the explanation, so cards stay short. */
+export function InfoTip({ text, label = 'What this means' }) {
+  if (!text) return null;
+  return (
+    <span className="ps-tip">
+      <button type="button" className="ps-tip-btn" aria-label={`${label}: ${text}`}>i</button>
+      <span className="ps-tip-pop" role="tooltip">{text}</span>
+    </span>
+  );
+}
+
 /** KPI tile. `cmp` is the one comparison every number needs (peer median, rank). */
-export function Kpi({ tone = 'plain', label, value, den, badge, cmp, meter }) {
+export function Kpi({ tone = 'plain', label, value, den, badge, cmp, meter, icon, info }) {
   return (
     <div className={`ps-kpi ps-kpi--${tone}`}>
-      <div className="ps-kpi-label"><span>{label}</span>{badge}</div>
+      <div className="ps-kpi-label">{icon ? <span className="ps-kpi-icon"><Icon name={icon} /></span> : null}<span className="ps-kpi-text">{label}</span>{badge}<InfoTip text={info} /></div>
       <span className="ps-num">{value}</span>
       {meter != null ? <span className="ps-kpi-meter" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, meter))}%` }} /></span> : null}
       {cmp ? <span className={`ps-cmp ps-cmp--${cmp.dir || 'flat'}`}>{cmp.dir === 'up' ? '▲ ' : cmp.dir === 'down' ? '▼ ' : ''}{cmp.text}</span> : null}
@@ -23,10 +34,10 @@ export function Kpi({ tone = 'plain', label, value, den, badge, cmp, meter }) {
 }
 
 /** Card title with a one-line "what this shows" description. */
-export function CardHead({ id, title, desc, right }) {
+export function CardHead({ id, title, desc, right, icon, info }) {
   return (
     <div className="ps-card-head">
-      <div className="ps-card-title"><h2 id={id}>{title}</h2>{desc ? <p className="ps-desc">{desc}</p> : null}</div>
+      <div className="ps-card-title"><h2 id={id}>{icon ? <span className="ps-h-icon"><Icon name={icon} /></span> : null}{title}<InfoTip text={info} /></h2>{desc ? <p className="ps-desc">{desc}</p> : null}</div>
       {right ? <div className="ps-card-right">{right}</div> : null}
     </div>
   );
@@ -158,6 +169,17 @@ const ICONS = {
   competitors: 'M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M17 11a3 3 0 1 0 0-6M22 21v-1a5 5 0 0 0-4-4.9',
   feed: 'M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0',
   reports: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
+  trophy: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4',
+  hash: 'M5 9h14M5 15h14M10 3 8 21M16 3l-2 18',
+  swap: 'M4 8h13l-3-3M20 16H7l3 3',
+  crown: 'M3 8l4 4 5-7 5 7 4-4-2 11H5z',
+  tag: 'M3 12V3h9l9 9-9 9zM7.5 7.5h.01',
+  target: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 12h.01',
+  doc: 'M6 2h9l5 5v15H6zM9 13h6M9 17h6',
+  layers: 'M12 3 2 8l10 5 10-5zM2 13l10 5 10-5',
+  alert: 'M12 3 2 20h20zM12 9v5M12 17h.01',
+  box: 'M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10',
+  grid: 'M4 4h16v16H4zM4 10h16M4 16h16M10 4v16',
 };
 export function Icon({ name }) {
   return (
