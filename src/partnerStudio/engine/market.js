@@ -54,7 +54,7 @@ export function brandSnapshot(catalog, brand) {
     if (!me || !me[key]) return null;
     return sorted.filter((r) => r[key] > me[key]).length + 1;
   };
-  const tot = mine.reduce((a, p) => ({ opened: a.opened + p.opened, detail: a.detail + p.detail, buy: a.buy + p.buy }), { opened: 0, detail: 0, buy: 0 });
+  const tot = mine.reduce((a, p) => ({ seen: a.seen + p.seen, opened: a.opened + p.opened, detail: a.detail + p.detail, buy: a.buy + p.buy }), { seen: 0, opened: 0, detail: 0, buy: 0 });
   const others = brands.filter((r) => r.brand !== brand);
   const otherOpened = others.reduce((a, r) => a + r.opened, 0);
   const otherBuy = others.reduce((a, r) => a + r.buy, 0);

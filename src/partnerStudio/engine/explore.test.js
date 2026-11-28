@@ -36,9 +36,9 @@ describe('explore', () => {
     expect(e.eligibleToPlaced).toEqual({ num: 2, den: 2, pct: 100 });
     expect(e.noResult).toEqual({ num: 1, den: 3, pct: 33.3 });
   });
-  it('ranks every brand and product in the universe by name, zero-slot ones included', () => {
+  it('lists every brand and product, and gives no rank to ones never selected', () => {
     const e = explore(cat, 'A', outcomes);
-    expect(e.brands.map((b) => [b.brand, b.slots, b.rank])).toEqual([['B', 3, 1], ['A', 2, 2], ['C', 0, 3]]);
+    expect(e.brands.map((b) => [b.brand, b.slots, b.rank])).toEqual([['B', 3, 1], ['A', 2, 2], ['C', 0, null]]);
     expect(e.products).toHaveLength(4);
     expect(e.products.find((p) => p.id === 'c1')).toMatchObject({ slots: 0, share: 0 });
     expect(e.rank).toEqual({ rank: 2, of: 2 });

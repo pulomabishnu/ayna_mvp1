@@ -72,11 +72,11 @@ export function explore(cat, brand, outcomes = '', filter = {}) {
   const brands = allBrands
     .map((b) => ({ brand: b, you: b === brand, partner: cat.products.some((p) => p.brand === b && p.partner), slots: brandSlots.get(b) || 0, products: cat.products.filter((p) => p.brand === b).length }))
     .sort((a, b) => b.slots - a.slots || a.brand.localeCompare(b.brand));
-  brands.forEach((b) => { b.rank = brands.filter((x) => x.slots > b.slots).length + 1; b.share = slots ? Math.round((b.slots / slots) * 1000) / 10 : null; });
+  brands.forEach((b) => { b.rank = b.slots ? brands.filter((x) => x.slots > b.slots).length + 1 : null; b.share = slots ? Math.round((b.slots / slots) * 1000) / 10 : null; });
   const products = cat.products
     .map((p, i) => ({ ...p, you: p.brand === brand, slots: productSlots.get(i) || 0 }))
     .sort((a, b) => b.slots - a.slots || a.name.localeCompare(b.name));
-  products.forEach((p) => { p.rank = products.filter((x) => x.slots > p.slots).length + 1; p.share = slots ? Math.round((p.slots / slots) * 1000) / 10 : null; });
+  products.forEach((p) => { p.rank = p.slots ? products.filter((x) => x.slots > p.slots).length + 1 : null; p.share = slots ? Math.round((p.slots / slots) * 1000) / 10 : null; });
   const me = brands.find((b) => b.you);
 
   // Head-to-head on the same shoppers: for every shopper your product fit but
