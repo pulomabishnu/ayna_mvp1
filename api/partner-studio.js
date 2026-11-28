@@ -11,9 +11,10 @@
  *
  * Gates, all on the server:
  * - PARTNER_STUDIO_ENABLED=1, otherwise 404 (feature flag).
- * - A confirmed @aynahealth.co admin (isAdminUser). Brand tenants come in a
- *   later phase with their own row-level security; until then no brand
- *   account can call this.
+ * - A confirmed @aynahealth.co admin (isAdminUser) sees every brand. A brand
+ *   member sees only their own brands, and only when
+ *   PARTNER_STUDIO_BRAND_ACCESS=1 (see _partnerStudio/access.js). Until then
+ *   no brand account can call this.
  * - brand must be a partner brand or a brand in the catalog.
  *
  * Local design QA only: with no VERCEL_ENV (never set off Vercel) and
@@ -22,7 +23,9 @@
  */
 import snapshot from './_partnerStudio/snapshot.js';
 import { verifyUser } from './_usageLimit.js';
-import { isAdminUser, ADMIN_DOMAIN } from './_admin.js';
+import { ADMIN_DOMAIN } from './_admin.js';
+import { accessFor, brandAccessOn, canOpen, scopeCatalog, scopeCategories, submissionsOn } from './_partnerStudio/access.js';
+import { DISCOVERY, DISC_FROM, DISC_TO } from './_partnerStudio/discovery.js';
 
 function headers(res) {
   res.setHeader('Cache-Control', 'private, no-store, max-age=0');
@@ -60,21 +63,25 @@ export default async function handler(req, res) {
   headers(res);
 
   const localDemo = !process.env.VERCEL_ENV && process.env.PARTNER_STUDIO_LOCAL_DEMO === '1';
+  let access = { team: true, brands: [] };
   if (!localDemo) {
     const { user, error, admin } = await verifyUser(req);
     if (error || !user || !admin) {
       return res.status(error === 'auth_required' || error === 'invalid_session' ? 401 : 503).json({ error: error || 'auth_required' });
     }
-    if (!isAdminUser(user)) {
+    access = await accessFor(admin, user);
+    if (!access.team && !access.brands.length) {
       // Tell the signed-in person why, about their own account only (never the allowlist itself).
       const email = String(user.email || '').toLowerCase();
-      const reason = !user.email_confirmed_at ? 'unconfirmed' : !email.endsWith(ADMIN_DOMAIN) ? 'not_team_domain' : 'not_listed';
+      const reason = !user.email_confirmed_at ? 'unconfirmed' : !email.endsWith(ADMIN_DOMAIN) ? (brandAccessOn() ? 'no_brand_access' : 'not_team_domain') : 'not_listed';
       return res.status(403).json({ error: 'forbidden', reason, email: user.email || null });
     }
   }
 
   if (!snapshot.run) return res.status(503).json({ error: 'no_snapshot' });
-  const brands = brandList();
+  // Brand members only ever see their own brands in the picker and payload.
+  const brands = brandList().filter((x) => access.team || canOpen(access, x.name));
+  if (!brands.length) return res.status(403).json({ error: 'forbidden', reason: access.team ? 'not_listed' : 'no_brand_access' });
   // Vercel fills req.query; the local dev proxy may not, so fall back to the URL.
   let query = req.query;
   if (!query && typeof req.url === 'string') {
@@ -86,11 +93,19 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     run: snapshot.run,
-    categories: snapshot.categories,
+    categories: access.team ? snapshot.categories : scopeCategories(snapshot.categories, access.brands),
     // Earlier comparable runs (slot counts only) for trends; empty until run history is stored.
     history: snapshot.history || [],
     // Every catalog product with public facts and aggregate app activity, for whole-catalog comparisons.
-    catalog: snapshot.catalog || [],
+    // Website discovery source per product (search, browse, other) rides along with activity.
+    // Brand accounts never see another brand's per-product numbers: those fold into one combined row per category.
+    catalog: (() => {
+      const full = (snapshot.catalog || []).map((p) => (DISCOVERY.has(p.id) ? { ...p, src: DISCOVERY.get(p.id) } : p));
+      return access.team ? full : scopeCatalog(full, access.brands);
+    })(),
+    discoveryRange: { from: DISC_FROM, to: DISC_TO },
+    access: access.team ? 'team' : 'brand',
+    features: { submissions: submissionsOn() },
     outOfScope: snapshot.outOfScope,
     brands,
     brand: { name, ...(Object.hasOwn(snapshot.brands, name) ? snapshot.brands[name] : catalogBrand(name)) },
