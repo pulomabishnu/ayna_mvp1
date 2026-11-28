@@ -4,7 +4,8 @@
  *
  * ayna Partner Studio, Phase 1 (behind a feature flag). Returns one brand's
  * precomputed rollup: counts, denominators, versions and source references
- * from a synthetic benchmark over public catalog facts. There is no
+ * from a synthetic benchmark over public catalog facts, plus aggregate
+ * per-product ayna app activity counts (no people). There is no
  * consumer-data endpoint here and none should ever be added (Phase 1 plan,
  * pp.13 and 17).
  *
@@ -74,6 +75,8 @@ export default async function handler(req, res) {
   return res.status(200).json({
     run: snapshot.run,
     categories: snapshot.categories,
+    // Earlier comparable runs (slot counts only) for trends; empty until run history is stored.
+    history: snapshot.history || [],
     outOfScope: snapshot.outOfScope,
     brands,
     brand: { name, ...snapshot.brands[name] },
