@@ -5,7 +5,9 @@ import { ratePct, money, SYNTHETIC } from './format.js';
 import { explore, versus } from './engine/explore.js';
 import { C } from './chartColors.js';
 import { BACKING as CR_BACKING, TOPICS as CR_TOPICS, PRODUCTS as CR_PRODUCTS, CHECKED as CR_CHECKED, productsOf as crProductsOf, researchedBrands as crResearchedBrands } from './engine/claimsResearch.js';
-import { Panel, ViewSwitch, RankedBars, Stacked100, Dumbbell, Matrix, Pareto, FunnelBars, GroupedBars, BeforeAfter, TrendLine, SortTable, Findings, Method } from './charts.jsx';
+import { Insights, NextSteps, RealInterest } from './tiles.jsx';
+import { realSummary, ENG_RANGE } from './engine/engagement.js';
+import { Panel, ViewSwitch, RankedBars, Stacked100, Dumbbell, Matrix, Pareto, FunnelBars, BeforeAfter, TrendLine, SortTable, Method } from './charts.jsx';
 
 /* Evidence statuses in the plan's own words (p.4). Every status is a draft until a reviewer signs it off. */
 const STATUS_LABEL = {
@@ -223,6 +225,7 @@ export function Overview({ data, b, go, actionState }) {
   const name = b.displayName || b.brand;
   const me = ex.brands.find((x) => x.you) || { slots: 0 };
   const leader = ex.brands[0];
+  const real = realSummary(meta.products.map((p) => ({ ...p, you: p.brand === b.brand })));
   const fit = ex.eligibleToPlaced.den;
   const top3 = ex.brands.filter((x) => !x.you && x.slots > 0).slice(0, 3);
   const RING_COLORS = ['#f7badd', '#769ebe', '#c9d9e6'];
@@ -253,14 +256,13 @@ export function Overview({ data, b, go, actionState }) {
         <CategoryTabs cats={b.categories} cat={c} setCat={setCatId} />
         <span className="ps-ov-how">How this works <InfoTip text={how} label="How this works" /></span>
       </div>
-      <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" icon="trophy" label="Your rank" value={me.slots ? `#${me.rank}` : '–'} den={`of ${ex.brands.length} brands`} info={`Brands ranked by how many top-3 spots their products won across ${ex.scenarios} made-up shoppers in ${catLabel}.`} />
-        <Kpi tone="pink" icon="hash" label="Times picked" value={String(me.slots)} den={`of ${ex.slots} top-3 spots (${ex.slotShare.pct ?? 0}%)`} info="Every made-up shopper gets a top 3. This is how many of those spots went to your products." />
-        <Kpi tone="deep" icon="swap" label="Fit but lost" value={String(ex.lost)} den={`of ${fit} shoppers you fit`} info="Shoppers your product passed every safety and fit check for, but someone else got the spot." />
-        <Kpi tone="plain" icon="crown" label="Category leader" value={leader?.brand || '–'} den={leader ? `${leader.slots} picks (${leader.share}%)` : ''} info="The brand with the most top-3 spots in this category." />
-      </div>
-      <div className="ps-ov-main">
-        <section className="ps-card ps-tabcard" aria-label="Compare">
+      <div className="ps-bento">
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="trophy" label="Your rank" value={me.slots ? `#${me.rank}` : '–'} den={`of ${ex.brands.length} brands`} info={`Brands ranked by how many top-3 spots their products won across ${ex.scenarios} made-up shoppers in ${catLabel}.`} meter={leader?.slots ? (me.slots / leader.slots) * 100 : 0} cmp={leader && !leader.you ? { text: `${leader.brand} leads with ${leader.slots} picks` } : { text: 'You lead this category' }} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="hash" label="Times picked" value={String(me.slots)} den={`of ${ex.slots} top-3 spots (${ex.slotShare.pct ?? 0}%)`} info="Every made-up shopper gets a top 3. This is how many of those spots went to your products." /></div>
+        <div className="b-2"><Kpi tone="deep" icon="swap" label="Fit but lost" value={String(ex.lost)} den={`of ${fit} shoppers you fit`} info="Shoppers your product passed every safety and fit check for, but someone else got the spot." /></div>
+        <div className="b-2"><Kpi tone="butter" icon="crown" label="Category leader" value={leader?.brand || '–'} den={leader ? `${leader.slots} picks (${leader.share}%)` : ''} info="The brand with the most top-3 spots in this category." /></div>
+        <div className="b-2"><Kpi tone="plain" icon="hash" label="Real shoppers who opened" value={String(real.me.opened)} den={real.me.opened ? `#${real.me.rank} of ${real.brands} brands, ayna app` : 'no opens yet, ayna app'} info={`Different people who opened one of your product cards in the real ayna app, ${ENG_RANGE}, counted once per product. ayna team and bots excluded.`} /></div>
+        <section className="ps-card ps-tabcard b-8" aria-label="Compare">
           <div className="ps-tabcard-head">
             <Tabs tabs={TABS} value={tab} onChange={setTab} label="Compare" />
             <InfoTip text={TAB_INFO[tab]} />
@@ -280,7 +282,7 @@ export function Overview({ data, b, go, actionState }) {
           {tab === 'vs' ? <div className="ps-tabpane"><HeadToHead meta={meta} ex={ex} b={b} name={name} /></div> : null}
           {tab === 'need' ? <div className="ps-tabpane"><ByNeed meta={meta} brand={b.brand} outcomes={c.outcomes} /></div> : null}
         </section>
-        <aside className="ps-rail">
+        <aside className="ps-rail b-4">
           <section className="ps-card" aria-labelledby="ov-ring">
             <CardHead id="ov-ring" icon="share" title="Share of top-3 spots" info={`All ${ex.slots} top-3 spots, split by brand.`} />
             <Stacked100 rows={[{ label: 'All spots', counts: Object.fromEntries(ring.map((x) => [x.label, x.value])) }]} keys={ring.map((x) => ({ key: x.label, label: `${x.label} ${pct1(x.value, ex.slots)}`, color: x.color, dark: x.you }))} />
@@ -308,6 +310,7 @@ export function Overview({ data, b, go, actionState }) {
             <span aria-hidden="true">›</span>
           </button>
         </aside>
+        <RealInterest className="b-12" products={meta.products.map((p) => ({ ...p, you: p.brand === b.brand }))} name={name} />
       </div>
     </>
   );
@@ -463,19 +466,19 @@ export function Evidence({ data, b, openSource }) {
         <Picker comps={comps} i={i} setI={setI} />
         <span className="ps-small ps-muted">Compared with the {peers.length} closest-priced products of the same type. <DraftBadge text="Draft, awaiting human review" /></span>
       </div>
-      <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" icon="evidence" label="Claims with relevant evidence" value={allMine.length ? String(relevant) : 'N/A'} den={allMine.length ? `of ${allMine.length} claims on file (draft)` : 'No claims logged yet'} info="Claims with product-specific or indirect evidence located, across your products. Draft statuses until human review." />
-        <Kpi tone="pink" icon="target" label="Product-specific coverage" value={m.draft.direct?.den ? `${Math.round(m.draft.direct.value * 1000) / 10}%` : 'N/A'} den={m.draft.direct?.den ? `${m.draft.direct.num} of ${m.draft.direct.den} claims` : 'No claims logged yet'} info="Share of your claims backed by a study of the product itself. Does not imply a positive result." />
-        <Kpi tone="deep" icon="alert" label="Priority evidence gaps" value={String(gaps.length)} den={`for ${shortName(sku.name, b.displayName || b.brand)}`} info="Claim themes where you lack product-specific evidence, ranked with competitor-documented themes first." />
-        <Kpi tone="plain" icon="swap" label="Difference vs competitors" value={gapPp == null ? 'N/A' : `${gapPp > 0 ? '+' : ''}${gapPp} pp`} den={gapPp == null ? 'Needs claims on file for you and peers' : `vs median of ${m.draft.peerBrands} brands`} info="Your product-specific evidence coverage minus the median of matched comparable products." />
-        <Kpi tone="plain" icon="doc" label="Reviewed by a person" value={ratePct(m.reviewCoverage)} den={`${m.reviewCoverage.num} of ${m.reviewCoverage.den} claims`} info="Reviewed claims / all inventoried claims. Pending claims stay in the denominator." />
-      </div>
-      <div className="ps-split">
-        <Panel id="ev-heat" title="Competitive evidence heatmap" info="Rows are claim themes and documentation fields. Columns are your product and the closest comparable products. Click one of your cells to see the sources on file.">
+      <div className="ps-bento">
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="evidence" label="Claims with relevant evidence" value={allMine.length ? String(relevant) : 'N/A'} den={allMine.length ? `of ${allMine.length} claims on file (draft)` : 'No claims logged yet'} info="Claims with product-specific or indirect evidence located, across your products. Draft statuses until human review." /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Product-specific coverage" value={m.draft.direct?.den ? `${Math.round(m.draft.direct.value * 1000) / 10}%` : 'N/A'} den={m.draft.direct?.den ? `${m.draft.direct.num} of ${m.draft.direct.den} claims` : 'No claims logged yet'} info="Share of your claims backed by a study of the product itself. Does not imply a positive result." /></div>
+        <div className="b-2"><Kpi tone="deep" icon="alert" label="Priority evidence gaps" value={String(gaps.length)} den={`for ${shortName(sku.name, b.displayName || b.brand)}`} info="Claim themes where you lack product-specific evidence, ranked with competitor-documented themes first." /></div>
+        <div className="b-2"><Kpi tone="butter" icon="swap" label="Difference vs competitors" value={gapPp == null ? 'N/A' : `${gapPp > 0 ? '+' : ''}${gapPp} pp`} den={gapPp == null ? 'Needs claims on file for you and peers' : `vs median of ${m.draft.peerBrands} brands`} info="Your product-specific evidence coverage minus the median of matched comparable products." /></div>
+        <div className="b-2"><Kpi tone="plain" icon="doc" label="Reviewed by a person" value={ratePct(m.reviewCoverage)} den={`${m.reviewCoverage.num} of ${m.reviewCoverage.den} claims`} info="Reviewed claims / all inventoried claims. Pending claims stay in the denominator." /></div>
+        <Panel className="b-8 b-tall" id="ev-heat" title="Competitive evidence heatmap" info="Rows are claim themes and documentation fields. Columns are your product and the closest comparable products. Click one of your cells to see the sources on file.">
           <Matrix rows={rows} cols={cols} cell={cell} legend={EV_LEGEND} corner="Claim or field" />
           {!themes.length ? <p className="ps-small ps-muted">No claim themes logged for this product or its closest competitors, so only documentation is compared.</p> : null}
         </Panel>
-        <Panel id="ev-alt" title={view === 'gap' ? 'Gap vs competitors' : view === 'mix' ? 'Evidence mix by product' : 'Evidence gaps, ranked'} info="Switch views for the gap to the competitor median, the mix of evidence statuses, or the ranked list of gaps." right={<ViewSwitch views={[['gap', 'Gap'], ['mix', 'Mix'], ['rank', 'Ranked']]} value={view} onChange={setView} />}>
+        <Insights className="b-4" items={findings} />
+        <NextSteps className="b-4" actions={actions} />
+        <Panel className="b-5" id="ev-alt" title={view === 'gap' ? 'Gap vs competitors' : view === 'mix' ? 'Evidence mix by product' : 'Evidence gaps, ranked'} info="Switch views for the gap to the competitor median, the mix of evidence statuses, or the ranked list of gaps." right={<ViewSwitch views={[['gap', 'Gap'], ['mix', 'Mix'], ['rank', 'Ranked']]} value={view} onChange={setView} />}>
           {view === 'gap' ? <Dumbbell rows={dims} youLabel={shortName(sku.name, b.displayName || b.brand)} benchLabel={`Median of ${peerAll.length} comparable products`} /> : null}
           {view === 'mix' ? <Stacked100 rows={mix} keys={Object.entries(EV).map(([key, v]) => ({ key, label: v.label, color: v.color }))} /> : null}
           {view === 'rank' ? (gaps.length ? (
@@ -484,16 +487,15 @@ export function Evidence({ data, b, openSource }) {
             </ol>
           ) : <p className="ps-small">No open gaps for this product.</p>) : null}
         </Panel>
-      </div>
-      <Panel id="ev-src" title="Research and sources on file" info="Study design, population, sample size, outcome and limitations are recorded during human review. None of these sources has been reviewed yet.">
+        <Panel className="b-7" id="ev-src" title="Research and sources on file" info="Study design, population, sample size, outcome and limitations are recorded during human review. None of these sources has been reviewed yet.">
         <SortTable rows={(rec?.sources || []).map((s, k) => ({ id: k, ...s }))} columns={[
           { key: 'title', label: 'Source', render: (s) => (s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.title}</a> : s.title) },
           { key: 'type', label: 'Type', render: (s) => (s.type ? s.type.replace(/_/g, ' ') : 'Source') },
           { key: 'supports', label: 'Supports', render: (s) => s.supports || '–' },
           { key: 'review', label: 'Design and limitations', render: () => <span className="ps-muted">Recorded at human review</span> },
-        ]} limit={8} />
+        ]} limit={6} />
       </Panel>
-      <Findings findings={findings} actions={actions} />
+      </div>
       <Method updated={updatedOn(data)} scope={`${peerAll.length} comparable products`} items={[
         'Sources: the ayna product passport claim ledger (claim wording, evidence type, source links) and catalog documentation fields.',
         'Statuses follow the Phase 1 plan: product-specific, indirect or ingredient-level, limited, none located. No automatic efficacy grade.',
@@ -519,6 +521,7 @@ export function Claims({ b }) {
   const mine = crProductsOf(brand);
   const [i, setI] = useState(0);
   const [onlyProduct, setOnlyProduct] = useState('');
+  const [cview, setCview] = useState('topic');
   if (!mine.length) {
     return (
       <Empty title={`Claim research for ${b.displayName || brand} isn’t done yet`}>
@@ -559,47 +562,43 @@ export function Claims({ b }) {
         ) : null}
         <span className="ps-small ps-muted">Compared with {rivals.map((p) => p.name).join(', ')}. Quoted from each product page on {CR_CHECKED}.</span>
       </div>
-      <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" icon="claims" label="Claims on your page" value={String(you.claims.length)} den={`${you.name}`} info="Health and benefit claims quoted from the product page." />
-        <Kpi tone="pink" icon="evidence" label="Backed by a study of the product" value={String(yc.product_study || 0)} den={you.study ? 'study described on the page' : 'no product study on the page'} />
-        <Kpi tone="deep" icon="doc" label="Backed by ingredient research only" value={String(yc.ingredient_study || 0)} den="published research, not this product" />
-        <Kpi tone="plain" icon="alert" label="No source named" value={String((yc.none || 0) + (yc.unnamed_study || 0))} den={`of ${you.claims.length} claims`} />
-        <Kpi tone="plain" icon="target" label="“Clinically” without a product study" value={`${clinicalUnbacked.length} of ${clinical.length}`} den="claims using the word" />
-      </div>
-      <div className="ps-split">
-        <Panel id="cl-back" title="What each product’s claims rest on" info="Each bar is one product’s claims, split by what its own page cites behind them. This describes the page, not whether a claim is true.">
+      <div className="ps-bento">
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="claims" label="Claims on your page" value={String(you.claims.length)} den={`${you.name}`} info="Health and benefit claims quoted from the product page." /></div>
+        <div className="b-2"><Kpi tone="pink" icon="evidence" label="Backed by a product study" value={String(yc.product_study || 0)} den={you.study ? 'study described on the page' : 'no product study on the page'} /></div>
+        <div className="b-2"><Kpi tone="deep" icon="doc" label="Ingredient research only" value={String(yc.ingredient_study || 0)} den="published research, not this product" /></div>
+        <div className="b-2"><Kpi tone="butter" icon="alert" label="No source named" value={String((yc.none || 0) + (yc.unnamed_study || 0))} den={`of ${you.claims.length} claims`} /></div>
+        <div className="b-2"><Kpi tone="plain" icon="target" label="“Clinically”, no product study" value={`${clinicalUnbacked.length} of ${clinical.length}`} den="claims using the word" /></div>
+        <Panel className="b-7" id="cl-back" title="What each product’s claims rest on" info="Each bar is one product’s claims, split by what its own page cites behind them. This describes the page, not whether a claim is true.">
           <Stacked100 rows={cols.map((p) => ({ label: p.brand === brand ? `${p.name} (you)` : p.name, you: p.brand === brand, counts: backCounts(p.claims) }))} keys={BACK_KEYS} />
         </Panel>
-        <Panel id="cl-studies" title="Product studies described" info="Every study of the product itself that these pages describe, as the page describes it. ayna hasn’t reviewed them.">
+        <Insights className="b-5" items={findings} />
+      <Panel className="b-8 b-tall" id="cl-topics" title={cview === 'topic' ? 'Claims by topic' : 'Every claim, quoted'} info={cview === 'topic' ? 'How many claims each product makes on each subject. Color shows the strongest thing its page cites for that subject.' : 'Exact wording from each product page, what it cites, and a link to check it yourself.'} right={<>
+        {cview === 'all' ? <select className="ps-select ps-select--sm" aria-label="Product" value={onlyProduct} onChange={(e) => setOnlyProduct(e.target.value)}><option value="">All products</option>{cols.map((p) => <option key={p.sku} value={p.name}>{p.name}</option>)}</select> : null}
+        <ViewSwitch views={[['topic', 'By topic'], ['all', 'Every claim']]} value={cview} onChange={setCview} />
+      </>}>
+        {cview === 'topic' ? <Matrix corner="Topic" rows={topics.map((t) => ({ key: t, label: CR_TOPICS[t] }))} cols={cols.map((p) => ({ key: p.sku, label: p.name, sub: p.brand, you: p.brand === brand }))} cell={(r, col) => {
+              const p = cols.find((x) => x.sku === col.key);
+              const cs = p.claims.filter((c) => c.topic === r.key);
+              if (!cs.length) return { text: '–', color: C.missing, title: 'No claim on this topic' };
+              const best = ['product_study', 'ingredient_study', 'unnamed_study', 'none'].find((k) => cs.some((c) => c.backing === k));
+              return { text: String(cs.length), color: BACK_KEYS.find((k) => k.key === best).color, title: `${cs.length} claim${cs.length === 1 ? '' : 's'}; strongest backing: ${CR_BACKING[best].label}` };
+            }} legend={[...BACK_KEYS.map((k) => ({ ...k, label: `Strongest: ${k.label.toLowerCase()}` })), { key: 'na', label: 'No claim', color: C.missing }]} /> : null}
+        {cview === 'all' ? <SortTable rows={rows} rowClass={(c) => (c.you ? 'is-you' : '')} initial={{ key: 'product', dir: 'asc' }} limit={10} columns={[
+          { key: 'product', label: 'Product', sortValue: (c) => `${c.you ? 0 : 1}${c.product}`, render: (c) => <>{c.product}{c.you ? ' (you)' : ''}</> },
+          { key: 'text', label: 'Claim (exact wording)', render: (c) => <>“{c.text}”{c.note ? <small style={{ display: 'block', fontSize: 11.5, color: 'rgba(62,39,35,.78)', marginTop: 2 }}>{c.note}</small> : null}</> },
+          { key: 'topic', label: 'Topic', sortValue: (c) => CR_TOPICS[c.topic], render: (c) => CR_TOPICS[c.topic] },
+          { key: 'backing', label: 'What the page cites', sortValue: (c) => ['product_study', 'ingredient_study', 'unnamed_study', 'none'].indexOf(c.backing), render: (c) => <span style={{ display: 'inline-block', borderRadius: 999, padding: '2px 9px', fontSize: 11.5, fontWeight: 800, whiteSpace: 'nowrap', background: BACK_KEYS.find((k) => k.key === c.backing).color }}>{CR_BACKING[c.backing].short}</span> },
+          { key: 'source', label: 'Source', render: (c) => (c.source ? <a href={c.source.url} target="_blank" rel="noreferrer">{c.source.label}</a> : <a href={c.url} target="_blank" rel="noreferrer">Product page</a>) },
+        ]} /> : null}
+      </Panel>
+      <NextSteps className="b-4" actions={actions} />
+        <Panel className="b-4" id="cl-studies" title="Product studies described" info="Every study of the product itself that these pages describe, as the page describes it. ayna hasn’t reviewed them.">
           <ul className="ps-list">
               {cols.filter((p) => p.study).map((p) => <li key={p.sku} className="ps-item"><strong>{p.name}{p.brand === brand ? ' (you)' : ''}</strong><span className="ps-small">{p.study}</span></li>)}
               {!cols.some((p) => p.study) ? <li className="ps-item">No product studies described on these pages.</li> : null}
             </ul>
         </Panel>
       </div>
-      <Panel id="cl-topics" title="Claims by topic" info="How many claims each product makes on each subject. Color shows the strongest thing its page cites for that subject.">
-        <Matrix corner="Topic" rows={topics.map((t) => ({ key: t, label: CR_TOPICS[t] }))} cols={cols.map((p) => ({ key: p.sku, label: p.name, sub: p.brand, you: p.brand === brand }))} cell={(r, col) => {
-              const p = cols.find((x) => x.sku === col.key);
-              const cs = p.claims.filter((c) => c.topic === r.key);
-              if (!cs.length) return { text: '–', color: C.missing, title: 'No claim on this topic' };
-              const best = ['product_study', 'ingredient_study', 'unnamed_study', 'none'].find((k) => cs.some((c) => c.backing === k));
-              return { text: String(cs.length), color: BACK_KEYS.find((k) => k.key === best).color, title: `${cs.length} claim${cs.length === 1 ? '' : 's'}; strongest backing: ${CR_BACKING[best].label}` };
-            }} legend={[...BACK_KEYS.map((k) => ({ ...k, label: `Strongest: ${k.label.toLowerCase()}` })), { key: 'na', label: 'No claim', color: C.missing }]} />
-      </Panel>
-      <Panel id="cl-map" title="Every claim, quoted" info="Exact wording from each product page, what it cites, and a link to check it yourself." right={
-        <label className="ps-field-label">Product
-          <select className="ps-select" value={onlyProduct} onChange={(e) => setOnlyProduct(e.target.value)}><option value="">All products</option>{cols.map((p) => <option key={p.sku} value={p.name}>{p.name}</option>)}</select>
-        </label>
-      }>
-        <SortTable rows={rows} rowClass={(c) => (c.you ? 'is-you' : '')} initial={{ key: 'product', dir: 'asc' }} limit={14} columns={[
-          { key: 'product', label: 'Product', sortValue: (c) => `${c.you ? 0 : 1}${c.product}`, render: (c) => <>{c.product}{c.you ? ' (you)' : ''}</> },
-          { key: 'text', label: 'Claim (exact wording)', render: (c) => <>“{c.text}”{c.note ? <small style={{ display: 'block', fontSize: 11.5, color: 'rgba(62,39,35,.78)', marginTop: 2 }}>{c.note}</small> : null}</> },
-          { key: 'topic', label: 'Topic', sortValue: (c) => CR_TOPICS[c.topic], render: (c) => CR_TOPICS[c.topic] },
-          { key: 'backing', label: 'What the page cites', sortValue: (c) => ['product_study', 'ingredient_study', 'unnamed_study', 'none'].indexOf(c.backing), render: (c) => <span style={{ display: 'inline-block', borderRadius: 999, padding: '2px 9px', fontSize: 11.5, fontWeight: 800, whiteSpace: 'nowrap', background: BACK_KEYS.find((k) => k.key === c.backing).color }}>{CR_BACKING[c.backing].short}</span> },
-          { key: 'source', label: 'Source', render: (c) => (c.source ? <a href={c.source.url} target="_blank" rel="noreferrer">{c.source.label}</a> : <a href={c.url} target="_blank" rel="noreferrer">Product page</a>) },
-        ]} />
-      </Panel>
-      <Findings findings={findings} actions={actions} />
       <Method updated={new Date(`${CR_CHECKED}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} scope={`${cols.length} products`} items={[
         `Source: each product’s own page, read on ${CR_CHECKED}. Claims are quoted exactly; the most material claims per page are included.`,
         '“What the page cites” describes the page, not whether a claim is true: a study of this product, published research on an ingredient, a reference to studies with no name, or nothing.',
@@ -629,7 +628,7 @@ export function Share({ data, b, cat, setCat }) {
   const topBrands = ex.brands.filter((x) => x.slots > 0).slice(0, 10);
   const ranked = me.slots && !topBrands.some((x) => x.you) ? [...topBrands.slice(0, 9), me] : topBrands.some((x) => x.you) ? topBrands : [...topBrands.slice(0, 9), me];
   const rival3 = ex.brands.filter((x) => !x.you && x.slots > 0).slice(0, 3).map((x) => x.brand);
-  const needGroups = byNeed.map(({ need: n, e }) => ({ label: `${n}${e.slots ? '' : ' (no products recommended)'}`, items: [name, ...rival3].map((br) => { const row = e.brands.find((x) => x.brand === br); return { name: br, value: e.slots ? row?.share ?? 0 : null, you: br === b.brand || br === name }; }) }));
+  const needGroups = byNeed.map(({ need: n, e }) => ({ label: n, items: [name, ...rival3].map((br) => { const row = e.brands.find((x) => x.brand === br); return { name: br, value: e.slots ? row?.share ?? 0 : null, you: br === b.brand || br === name }; }) }));
   const distKeys = [...ex.brands.filter((x) => x.slots > 0 && !x.you).slice(0, 5).map((x, k) => ({ key: x.brand, label: x.brand, color: [C.rival, C.rival2, '#b9c4ab', C.amberLight, '#e3c9d8'][k] })), { key: '__you', label: `${name} (you)`, color: C.you, dark: true }, { key: '__rest', label: 'Everyone else', color: C.missing }];
   const shownKeys = new Set(distKeys.map((k) => k.key));
   const distCounts = { __you: me.slots, __rest: ex.brands.filter((x) => !x.you && !shownKeys.has(x.brand)).reduce((a, x) => a + x.slots, 0) };
@@ -638,11 +637,14 @@ export function Share({ data, b, cat, setCat }) {
   const eligRate = pctOf(ex.eligibleToPlaced.den, ex.scenarios);
   const bestNeed = byNeed.filter((x) => x.e.brandSlots).sort((x, y) => (y.e.slotShare.pct || 0) - (x.e.slotShare.pct || 0))[0];
   const absent = byNeed.filter((x) => x.e.slots && !x.e.brandSlots).map((x) => x.need);
+  const real = realSummary(meta.products.map((p) => ({ ...p, you: p.brand === b.brand })));
+  const realVsSim = real.me.opened && me.slots && real.me.rank < me.rank ? `Real shoppers in the ayna app opened your products more than ${real.brands - real.me.rank} other brands (#${real.me.rank} by opens), ahead of your #${me.rank} spot in recommendations. Interest is there; the gap is in matching.` : real.me.opened ? `In the real ayna app, your products ranked #${real.me.rank} of ${real.brands} brands by card opens (${ENG_RANGE}).` : null;
   const findings = [
     `${name} holds ${ex.slotShare.pct ?? 0}% of ${ex.slots} recommendation slots${filtered ? ' for these filters' : ''}, #${me.slots ? me.rank : '–'} of ${ex.brands.length} brands. ${ex.brands[0]?.you ? 'You lead.' : `${ex.brands[0]?.brand} leads with ${ex.brands[0]?.share}%.`}`,
     `Your products fit ${ex.eligibleToPlaced.den} of ${ex.scenarios} shoppers (${eligRate ?? 'N/A'}%) and were recommended to ${ex.eligibleToPlaced.num} of them (${ex.eligibleToPlaced.pct ?? 'N/A'}%).`,
     bestNeed ? `Strongest need: ${bestNeed.need} (${bestNeed.e.slotShare.pct}% of slots).` : 'You aren’t recommended for any single need yet.',
     absent.length ? `Not recommended at all for: ${absent.join(', ')}.` : 'You appear in every need that had recommendations.',
+    realVsSim,
   ];
   const actions = [
     { text: 'See why you lost the shoppers you fit.', note: 'Lost recommendations breaks down every miss by reason.' },
@@ -672,27 +674,27 @@ export function Share({ data, b, cat, setCat }) {
         {filtered ? <button type="button" className="ps-link" onClick={() => { setNeed(''); setBudget(''); setFormat(''); }}>Clear filters</button> : null}
         <SyntheticBadge text="Synthetic benchmark: not real consumer demand or sales" />
       </div>
-      <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" icon="share" label="Recommendation share" value={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} den={`${ex.slotShare.num} of ${ex.slotShare.den} slots`} info="Recommendation slots your products occupied / all slots across the evaluated synthetic shoppers." />
-        <Kpi tone="pink" icon="target" label="Eligibility rate" value={eligRate == null ? 'N/A' : `${eligRate}%`} den={`fit ${ex.eligibleToPlaced.den} of ${ex.scenarios} shoppers`} info="Shoppers where at least one of your products passed every safety and fit rule." />
-        <Kpi tone="deep" icon="swap" label="Rate when eligible" value={ex.eligibleToPlaced.pct == null ? 'N/A' : `${ex.eligibleToPlaced.pct}%`} den={`${ex.eligibleToPlaced.num} of ${ex.eligibleToPlaced.den}`} info="Recommended / eligible. N/A when none of your products fit." />
-        <Kpi tone="plain" icon="trophy" label="Position" value={me.slots ? `#${me.rank}` : '–'} den={`of ${ex.brands.length} brands`} />
-        <Kpi tone="plain" icon="reports" label="Change vs last run" value="N/A" den="first benchmark run" info="Needs a second run with the same scenario set, catalog and engine version." />
-      </div>
-      <div className="ps-split">
-        <Panel id="sh-rank" title="Recommendation share by brand" info={`Every brand in ayna’s ${c.label.toLowerCase()} catalog competes (${meta.brands} brands, ${meta.universe} products). Top 10 shown plus you.`}>
+      <div className="ps-bento">
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Recommendation share" value={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} den={`${ex.slotShare.num} of ${ex.slotShare.den} slots`} info="Recommendation slots your products occupied / all slots across the evaluated synthetic shoppers." meter={ex.brands[0]?.share ? ((ex.slotShare.pct || 0) / ex.brands[0].share) * 100 : 0} cmp={ex.brands[0] && !ex.brands[0].you ? { text: `Leader ${ex.brands[0].brand}: ${ex.brands[0].share}%` } : null} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligibility rate" value={eligRate == null ? 'N/A' : `${eligRate}%`} den={`fit ${ex.eligibleToPlaced.den} of ${ex.scenarios} shoppers`} info="Shoppers where at least one of your products passed every safety and fit rule." /></div>
+        <div className="b-2"><Kpi tone="deep" icon="swap" label="Rate when eligible" value={ex.eligibleToPlaced.pct == null ? 'N/A' : `${ex.eligibleToPlaced.pct}%`} den={`${ex.eligibleToPlaced.num} of ${ex.eligibleToPlaced.den}`} info="Recommended / eligible. N/A when none of your products fit." /></div>
+        <div className="b-2"><Kpi tone="butter" icon="trophy" label="Position" value={me.slots ? `#${me.rank}` : '–'} den={`of ${ex.brands.length} brands`} /></div>
+        <div className="b-2"><Kpi tone="plain" icon="hash" label="Real shoppers who opened" value={String(real.me.opened)} den={real.me.opened ? `#${real.me.rank} of ${real.brands} brands, ayna app` : 'no opens yet, ayna app'} info={`Different people who opened one of your product cards in the real ayna app, ${ENG_RANGE}, counted once per product. ayna team and bots excluded.`} /></div>
+        <Panel className="b-7 b-tall" id="sh-rank" title="Recommendation share by brand" info={`Every brand in ayna’s ${c.label.toLowerCase()} catalog competes (${meta.brands} brands, ${meta.universe} products). Top 10 shown plus you.`}>
           <RankedBars rows={ranked.map((x) => ({ label: x.brand, value: x.share, you: x.you, tag: x.partner && !x.you ? <PartnerTag /> : null, sub: `${x.slots} slots` }))} total={`${ex.slots} recommendation slots across ${ex.scenarios} synthetic shoppers`} />
           <RankKey />
         </Panel>
-        <Panel id="sh-alt" title={{ need: 'Share by health need', heat: 'Need × budget', dist: 'Distribution of slots', trend: 'Over time' }[view]} right={<ViewSwitch views={[['need', 'By need'], ['heat', 'Heatmap'], ['dist', 'Distribution'], ['trend', 'Trend']]} value={view} onChange={setView} />} info="Alternative views of the same benchmark.">
-          {view === 'need' ? <GroupedBars groups={needGroups} unit="%" /> : null}
+        <Insights className="b-5" items={findings} />
+        <NextSteps className="b-5" actions={actions} />
+        <Panel className="b-6" id="sh-alt" title={{ need: 'Share by health need', heat: 'Need × budget', dist: 'Distribution of slots', trend: 'Over time' }[view]} right={<ViewSwitch views={[['need', 'By need'], ['heat', 'Heatmap'], ['dist', 'Distribution'], ['trend', 'Trend']]} value={view} onChange={setView} />} info="Alternative views of the same benchmark.">
+          {view === 'need' ? <Matrix corner="Health need" rows={needGroups.map((g) => ({ key: g.label, label: g.label }))} cols={needGroups[0]?.items.map((it) => ({ key: it.name, label: it.name, sub: it.you ? 'You' : '', you: it.you })) || []} cell={(r, col) => { const it = needGroups.find((g) => g.label === r.key).items.find((x) => x.name === col.key); if (it.value == null) return { text: 'N/A', color: C.missing, title: 'No product was recommended for this need' }; const v = it.value; return { text: `${Math.round(v)}%`, color: v ? (it.you ? `rgba(62,39,35,${(0.15 + 0.75 * v / 100).toFixed(2)})` : `rgba(118,158,190,${(0.15 + 0.85 * v / 100).toFixed(2)})`) : '#f3e9c8', dark: it.you && v >= 35, title: `${col.key}: ${v}% of slots for ${r.key}` }; }} legend={[{ key: 'y', label: 'Your share (darker is more)', color: C.you }, { key: 'r', label: 'Competitor share', color: C.rival }]} /> : null}
           {view === 'heat' ? <><Heatmap grid={c.grid} /><p className="ps-small ps-muted">Your share of slots per need and budget, all formats. Hatched: no product fit.</p></> : null}
           {view === 'dist' ? <Stacked100 rows={[{ label: 'All slots', counts: distCounts }]} keys={distKeys} /> : null}
           {view === 'trend' ? <TrendLine points={[{ label: updatedOn(data), value: ex.slotShare.pct ?? 0 }]} /> : null}
         </Panel>
-      </div>
-      <Panel id="sh-tbl" title="Product ranking" info="Every product in the category, sortable. Eligibility is shown for your products.">
-        <SortTable rows={ex.products.map((p) => ({ ...p, eligible: p.you && skuInfo[p.name] ? skuInfo[p.name].selected + skuInfo[p.name].eligible_lost : null }))} rowClass={(p) => (p.you ? 'is-you' : '')} initial={{ key: 'slots', dir: 'desc' }} limit={15} columns={[
+        <RealInterest className="b-6" products={meta.products.map((p) => ({ ...p, you: p.brand === b.brand }))} name={name} />
+      <Panel className="b-12" id="sh-tbl" title="Product ranking" info="Every product in the category, sortable. Eligibility is shown for your products.">
+        <SortTable rows={ex.products.map((p) => ({ ...p, eligible: p.you && skuInfo[p.name] ? skuInfo[p.name].selected + skuInfo[p.name].eligible_lost : null }))} rowClass={(p) => (p.you ? 'is-you' : '')} initial={{ key: 'slots', dir: 'desc' }} limit={8} columns={[
           { key: 'rank', label: '#', num: true },
           { key: 'name', label: 'Product', render: (p) => <>{p.name}{p.partner && !p.you ? <PartnerTag /> : null}</> },
           { key: 'brand', label: 'Brand' },
@@ -701,12 +703,13 @@ export function Share({ data, b, cat, setCat }) {
           { key: 'eligible', label: 'Eligible shoppers', num: true, render: (p) => (p.eligible == null ? '–' : p.eligible) },
         ]} />
       </Panel>
-      <Findings findings={findings} actions={actions} />
+      </div>
       <Method updated={updatedOn(data)} scope={`engine ${data.run.adapterVersion}`} items={[
         `Recommendation share = slots occupied by the brand / all slots across the evaluated synthetic shoppers (top ${meta.k || 3} per shopper; lists with fewer products count actual slots).`,
         'Scenarios: fictional shoppers in a fixed design (need × life stage × budget × format × fragrance sensitivity), equal weights. Not a population estimate.',
         `Engine: ayna’s production matching code, run read-only on a frozen catalog (${meta.catalogVersion}). Partner status and payments are never inputs; a test proves changing them leaves placements unchanged.`,
         'This is simulated recommendation share. It is never retail market share, purchase share or clinical effectiveness.',
+        `Real shopper activity comes from the ayna app (PostHog), ${ENG_RANGE}: different people per product who saw, opened, viewed the page of, or clicked to buy each product. ayna team accounts and bots are excluded. It is kept separate from the simulated benchmark and never feeds rankings.`,
       ]} />
     </>
   );
@@ -775,29 +778,27 @@ export function Losses({ data, b, cat, setCat }) {
         <CategoryTabs cats={b.categories} cat={c} setCat={setCat} />
         <SyntheticBadge text="Synthetic benchmark: not real consumer demand or sales" />
       </div>
-      <div className="ps-grid ps-grid--kpi">
-        <Kpi tone="ink" icon="hash" label="Evaluated opportunities" value={String(c.scenarios)} den="synthetic shoppers" />
-        <Kpi tone="pink" icon="target" label="Eligible opportunities" value={String(f.eligible)} den={`${pctOf(f.eligible, c.scenarios)}% of evaluated`} />
-        <Kpi tone="deep" icon="share" label="Recommendation rate" value={pctOf(f.placed, f.eligible) == null ? 'N/A' : `${pctOf(f.placed, f.eligible)}%`} den={`${f.placed} of ${f.eligible} eligible`} />
-        <Kpi tone="plain" icon="losses" label="Most frequent reason" value={top ? top.short : '–'} den={top ? `${top.n} of ${totalLost} misses` : ''} info={top?.label} />
-        <Kpi tone="plain" icon="doc" label="Fixable with documentation" value={String(f.insufficient_info)} den="shoppers held by a missing fact" />
-      </div>
-      <div className="ps-split">
-        <Panel id="lo-rank" title="Why your products weren’t recommended" info="One primary reason per missed shopper, so the reasons add up to every shopper you didn’t get. Safety exclusions are shown for completeness and are never something to change.">
+      <div className="ps-bento">
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Recommendation rate when eligible" value={pctOf(f.placed, f.eligible) == null ? 'N/A' : `${pctOf(f.placed, f.eligible)}%`} den={`recommended to ${f.placed} of ${f.eligible} eligible shoppers`} meter={pctOf(f.placed, f.eligible) || 0} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligible shoppers" value={String(f.eligible)} den={`${pctOf(f.eligible, c.scenarios)}% of ${c.scenarios} evaluated`} /></div>
+        <div className="b-2"><Kpi tone="deep" icon="losses" label="Top reason" value={top ? top.short : '–'} den={top ? `${top.n} of ${totalLost} misses` : ''} info={top?.label} /></div>
+        <div className="b-2"><Kpi tone="butter" icon="doc" label="Fixable with facts" value={String(f.insufficient_info)} den="held by a missing fact" /></div>
+        <div className="b-2"><Kpi tone="plain" icon="alert" label="Safety exclusions" value={String(f.excluded)} den="never something to change" /></div>
+        <Panel className="b-7" id="lo-rank" title="Why your products weren’t recommended" info="One primary reason per missed shopper, so the reasons add up to every shopper you didn’t get. Safety exclusions are shown for completeness and are never something to change.">
           <RankedBars unit="" rows={reasons.map((r) => ({ label: r.label, value: r.n, color: r.color, sub: r.fix ? null : 'Not something to change' }))} valueText={(r) => `${r.value} · ${pctOf(r.value, totalLost)}%`} total={`${totalLost} missed shoppers (relevant shoppers minus recommended)`} />
         </Panel>
-        <Panel id="lo-alt" title={{ funnel: 'Recommendation funnel', pareto: 'Pareto of reasons', product: 'Reasons by product', sim: 'Price test' }[view]} right={<ViewSwitch views={[['funnel', 'Funnel'], ['pareto', 'Pareto'], ['product', 'By product'], ['sim', 'Price test']]} value={view} onChange={setView} />} info="Funnel stages follow the matching engine’s own order, all against the same denominator.">
+        <Insights className="b-5" items={findings} />
+        <Panel className="b-5 b-tall" id="lo-alt" title={{ funnel: 'Recommendation funnel', pareto: 'Pareto of reasons', product: 'Reasons by product', sim: 'Price test' }[view]} right={<ViewSwitch views={[['funnel', 'Funnel'], ['pareto', 'Pareto'], ['product', 'By product'], ['sim', 'Price test']]} value={view} onChange={setView} />} info="Funnel stages follow the matching engine’s own order, all against the same denominator.">
           {view === 'funnel' ? <FunnelBars steps={steps} /> : null}
           {view === 'pareto' ? <Pareto rows={reasons.map((r) => ({ label: r.label, short: r.short, n: r.n, color: r.color }))} /> : null}
           {view === 'product' ? (skus.length ? <Matrix corner="Product" rows={skus.map((s) => ({ key: s.sku, label: shortName(s.name, b.displayName || b.brand) }))} cols={rcols} cell={(r, col) => { const s = skus.find((x) => x.sku === r.key); const v = skuVal(s, col.key); return v == null ? { text: '–', color: C.missing, title: 'Per-product reasons arrive with the next benchmark run' } : { text: String(v), color: v ? `rgba(62,39,35,${(0.08 + 0.6 * (v / maxCell)).toFixed(2)})` : undefined, dark: v / maxCell > 0.6 }; }} /> : <p className="ps-small">No products in this category.</p>) : null}
           {view === 'sim' ? (sims.length ? <><BeforeAfter rows={sims.map((s) => ({ label: `${shortName(s.name, b.displayName || b.brand)} at ${String(s.changeLabel).split(' ')[0]}`, before: s.before.inclusion.num, after: s.after.inclusion.num }))} unit=" shoppers" /><p className="ps-small ps-muted">Hypothetical: same engine, competitors and shoppers, only the price changes. Safety rules still held in every run. Not a forecast.</p></> : <p className="ps-small">No priced product to simulate.</p>) : null}
         </Panel>
-      </div>
-      <Panel id="lo-tbl" title="Product-level losses" info="Exact counts per product. Each shopper counts once per product.">
-        <SortTable rows={skus.map((s) => { const r = Object.entries(s.reasons || {}).sort((x, y) => y[1] - x[1])[0]; return { id: s.sku, name: s.name, selected: s.selected, eligible_lost: s.eligible_lost, insufficient_info: s.insufficient_info, excluded: s.excluded, top: r ? (LOSS[r[0]]?.short || r[0]) : null }; })} initial={{ key: 'eligible_lost', dir: 'desc' }} columns={[
+      <Panel className="b-7" id="lo-tbl" title="Product-level losses" info="Exact counts per product. Each shopper counts once per product.">
+        <SortTable rows={skus.map((s) => { const r = Object.entries(s.reasons || {}).sort((x, y) => y[1] - x[1])[0]; return { id: s.sku, name: shortName(s.name, b.displayName || b.brand), selected: s.selected, eligible_lost: s.eligible_lost, insufficient_info: s.insufficient_info, excluded: s.excluded, top: r ? (LOSS[r[0]]?.short || r[0]) : null }; })} initial={{ key: 'eligible_lost', dir: 'desc' }} columns={[
           { key: 'name', label: 'Product' },
           { key: 'selected', label: 'Recommended', num: true },
-          { key: 'eligible_lost', label: 'Eligible, not recommended', num: true },
+          { key: 'eligible_lost', label: 'Fit, not picked', num: true },
           { key: 'insufficient_info', label: 'Missing facts', num: true },
           { key: 'excluded', label: 'Safety excluded', num: true },
           { key: 'top', label: 'Top reason', render: (r) => r.top || '–' },
@@ -812,7 +813,8 @@ export function Losses({ data, b, cat, setCat }) {
           </div>
         </details>
       </Panel>
-      <Findings findings={findings} actions={actions} />
+        <NextSteps className="b-7" actions={actions.length ? actions : [{ text: 'Nothing to fix here.' }]} />
+      </div>
       <Method updated={updatedOn(data)} scope={`engine ${data.run.adapterVersion}`} items={[
         'Each missed shopper gets one primary reason, so reasons are mutually exclusive and sum to relevant shoppers minus recommended.',
         'Funnel stages follow the engine’s order: relevance, safety rules, required facts, then ranking. All use the evaluated shoppers as the denominator.',
@@ -931,7 +933,7 @@ export function Reports({ data, b, onExport }) {
       </div>
       <section className="ps-card ps-card--pink" aria-labelledby="rp-limits">
         <CardHead id="rp-limits" icon="alert" title="What this is not" />
-        <p>Not market share, demand, sales, clinical superiority or legal certification, and not a promise of placement. No consumer health data, conversations, wearable data or user events feed this page. Every conclusion shows its scope and date.</p>
+        <p>Not market share, demand, sales, clinical superiority or legal certification, and not a promise of placement. No consumer health data, answers, conversations or wearable data feed this page. The one real-world signal is anonymous product activity from the ayna app (how many people saw, opened or clicked each product), shown separately and never used in rankings. Every conclusion shows its scope and date.</p>
         <p className="ps-small">Viewing {b.displayName || b.brand}. Evidence statuses are drafts from an AI-assisted research pass until a reviewer signs them off.</p>
       </section>
     </>
