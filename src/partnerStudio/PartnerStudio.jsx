@@ -6,7 +6,11 @@
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icon, Drawer, SyntheticBadge } from './ui.jsx';
-import { Overview, Actions, Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
+import { Actions } from './actionsBoard.jsx';
+import { Products } from './productsView.jsx';
+import { Market } from './marketView.jsx';
+import { groupActions } from './engine/actionGroups.js';
+import { Overview, Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
 import { inScope } from './format.js';
 import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
 import { initPartnerAnalytics, track } from './analytics.js';
@@ -14,24 +18,31 @@ import { rollupCsv } from './csv.js';
 import { QUESTIONS, answer, matchQuestion, search } from './assistant.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 
+// Basic plan ($39/mo): Overview, Product intelligence, Market opportunities,
+// Recommendation performance, Reports. Claim and research pages stay in the code
+// but are out of the Basic plan, so they are not in the menu.
 const NAV = [
-  { group: 'Workspace', items: [['overview', 'Overview'], ['actions', 'Action queue']] },
-  { group: 'Modules', items: [['evidence', 'Evidence gaps'], ['claims', 'Health claims'], ['share', 'Recommendation share'], ['losses', 'Lost recommendations']] },
-  { group: 'Monitor', items: [['competitors', 'Competitors'], ['feed', 'Intelligence feed']] },
-  { group: 'Account', items: [['reports', 'Reports and methodology']] },
+  { group: 'Your brand', items: [['overview', 'Overview'], ['actions', 'Action plan']] },
+  { group: 'Product intelligence', items: [['products', 'Product performance'], ['competitors', 'Product comparison']] },
+  { group: 'Market', items: [['market', 'Market opportunities']] },
+  { group: 'Recommendations', items: [['share', 'Recommendation performance'], ['losses', 'Why products miss']] },
+  { group: 'Account', items: [['reports', 'Reports'], ['feed', 'Updates on your products']] },
 ];
-const TITLES = Object.fromEntries(NAV.flatMap((g) => g.items));
-const ICON = { overview: 'overview', actions: 'actions', evidence: 'evidence', claims: 'claims', share: 'share', losses: 'losses', competitors: 'competitors', feed: 'feed', reports: 'reports' };
+const OFF_MENU = { claims: 'Competitor content & positioning', evidence: 'Product information' };
+const TITLES = { ...Object.fromEntries(NAV.flatMap((g) => g.items)), ...OFF_MENU };
+const ICON = { overview: 'overview', products: 'box', market: 'layers', actions: 'actions', evidence: 'evidence', claims: 'claims', share: 'share', losses: 'losses', competitors: 'competitors', feed: 'feed', reports: 'reports' };
 const SUBTITLE = {
-  overview: 'How often ayna recommends your products, how you compare, and what to do next.',
-  actions: 'Everything you can act on, most important first.',
-  evidence: 'Which research and documentation gaps to close first, compared with similar products.',
-  claims: 'How your product promises compare with competitors, and which ones need a closer look.',
-  share: 'Who ayna recommends most in your category, and where you rank. Filter by need, format and budget.',
-  losses: 'When your product was a fit but didn’t make the top 3, and why.',
-  competitors: 'Your products next to the most similar products in ayna’s catalog.',
-  feed: 'What changed on your products and in your category.',
-  reports: 'How the numbers are made, run details and downloads.',
+  overview: 'See how your products are performing on ayna.',
+  products: 'See which products shoppers view and click through to a retailer.',
+  market: 'Where shoppers look on ayna, by category, and how much of that activity your brand gets.',
+  actions: 'Specific things to fix or try, with what each one is worth. Track them as you go.',
+  evidence: 'What your listings include next to similar products, and what to add first.',
+  claims: 'What your product pages say next to competitors’ pages, and what each statement cites. Quoted as written; ayna doesn’t judge whether claims are true.',
+  share: 'How often ayna recommends your products to shoppers, and where you rank. Filter by need, format and budget.',
+  losses: 'Where your products could be recommended but aren’t, and what is holding them back.',
+  competitors: 'Your products next to the most similar products on ayna.',
+  feed: 'Reviews, fact checks and changes on your products.',
+  reports: 'Review and export your brand’s performance, and see how every number is made.',
 };
 
 const DENIED = {
@@ -242,7 +253,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
     track('partner_studio_export_downloaded', { kind: 'csv' });
   }, [data, b]);
 
-  const openCount = useMemo(() => (b?.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done').length, [b, actionState]);
+  const openCount = useMemo(() => groupActions(b?.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done').length, [b, actionState]);
 
   if (status !== 'ok' || !data) return <Gate status={status} denied={denied} onSignedIn={() => { setStatus(null); setDenied(null); setReload((n) => n + 1); }} />;
   const scoped = inScope(b);
@@ -251,7 +262,9 @@ export default function PartnerStudio({ fetcher = fetch }) {
   let body;
   if (!scoped && !['reports'].includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
   else if (view === 'overview') body = <Overview data={data} b={b} go={go} actionState={actionState} />;
-  else if (view === 'actions') body = <Actions b={b} actionState={actionState} setAction={setAction} />;
+  else if (view === 'products') body = <Products data={data} b={b} go={go} />;
+  else if (view === 'market') body = <Market data={data} b={b} go={go} />;
+  else if (view === 'actions') body = <Actions b={b} actionState={actionState} setAction={setAction} go={go} />;
   else if (view === 'evidence') body = <Evidence data={data} b={b} openSource={openSource} />;
   else if (view === 'claims') body = <Claims data={data} b={b} />;
   else if (view === 'share') body = <Share data={data} b={b} cat={catEff} setCat={setCat} />;
