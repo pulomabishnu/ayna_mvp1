@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Kpi } from './ui.jsx';
 import { ViewSwitch } from './charts.jsx';
 import { groupActions } from './engine/actionGroups.js';
-import { ACCEPT, checkFiles, fileSize, loadSubmissions, parseLinks, saveSubmission } from './engine/submissions.js';
+import { ACCEPT, MAX_SEND_BYTES, blobToBase64, checkFiles, fileSize, loadSubmissions, parseLinks, saveSubmission, submissionPayload } from './engine/submissions.js';
+import { accessTokenFromBrowser } from './auth.js';
 
 const TIER = {
   safety: { label: 'Product rules', cls: 'is-pink' },
@@ -40,7 +41,7 @@ function Thumb({ f }) {
   return url ? <img src={url} alt="" /> : <span className="ps-resp-ext">{(f.name.split('.').pop() || 'file').slice(0, 4).toUpperCase()}</span>;
 }
 
-function Respond({ a, brand, saved, onSaved }) {
+function Respond({ a, brand, saved, onSaved, server, fetcher = fetch }) {
   const [text, setText] = useState(() => saved?.text ?? (readNotes(`ps-notes:${brand}`)[a.id] || ''));
   const [linkText, setLinkText] = useState((saved?.links || []).join('\n'));
   const [files, setFiles] = useState(saved?.files || []);
@@ -57,10 +58,27 @@ function Respond({ a, brand, saved, onSaved }) {
   const save = async () => {
     setState('saving');
     try {
-      const rec = await saveSubmission(brand, a.id, { text: text.trim(), links, files, title: a.title });
+      const rec = await saveSubmission(brand, a.id, { text: text.trim(), links, files, title: a.title, sentAt: saved?.sentAt });
       onSaved(rec);
       setState('saved');
     } catch { setState('error'); }
+  };
+  const tooBig = files.reduce((n, f) => n + (f.size || 0), 0) > MAX_SEND_BYTES;
+  const send = async () => {
+    setState('sending');
+    try {
+      const withData = await Promise.all(files.map(async (f) => ({ name: f.name, type: f.type, data: f.blob ? await blobToBase64(f.blob) : '' })));
+      const token = accessTokenFromBrowser();
+      const res = await fetcher('/api/partner-submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ ...submissionPayload(brand, a, { text, links }), files: withData.filter((f) => f.data) }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+    } catch { setState('send_error'); return; }
+    const sentAt = new Date().toISOString();
+    try { onSaved(await saveSubmission(brand, a.id, { text: text.trim(), links, files, title: a.title, sentAt })); } catch { /* sent; the local copy is optional */ }
+    setState('sent');
   };
   const mail = `mailto:team@aynahealth.co?subject=${encodeURIComponent(`Partner Studio: ${a.title}`)}&body=${encodeURIComponent(`${text.trim()}${links.length ? `\n\nLinks:\n${links.join('\n')}` : ''}${files.length ? `\n\nFiles to attach: ${files.map((f) => f.name).join(', ')}` : ''}`)}`;
   return (
@@ -91,18 +109,22 @@ function Respond({ a, brand, saved, onSaved }) {
         </ul>
       ) : null}
       <div className="ps-ab-row">
-        <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" disabled={empty || state === 'saving'} onClick={save}>{state === 'saving' ? 'Saving…' : 'Save response'}</button>
+        {server ? <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" disabled={empty || tooBig || state === 'sending'} onClick={send}>{state === 'sending' ? 'Sending…' : 'Send to ayna'}</button> : null}
+        <button type="button" className={`ps-btn ps-btn--sm${server ? '' : ' ps-btn--ink'}`} disabled={empty || state === 'saving'} onClick={save}>{state === 'saving' ? 'Saving…' : server ? 'Save draft' : 'Save response'}</button>
         <a className="ps-btn ps-btn--sm" href={mail}>Email it to ayna</a>
       </div>
       <p className="ps-small ps-muted" role="status">
-        {state === 'saved' ? 'Saved on this device. ' : state === 'error' ? 'Couldn’t save in this browser. ' : ''}
-        Responses stay on this device until brand accounts launch and they can go straight to the ayna team. Email sends the text and links; attach the files yourself.
+        {state === 'saved' ? 'Saved on this device. ' : state === 'error' ? 'Couldn’t save in this browser. ' : state === 'sent' ? 'Sent to the ayna team. ' : state === 'send_error' ? 'Couldn’t send. Your draft is still here; try again or email it. ' : ''}
+        {saved?.sentAt && state !== 'sent' ? `Last sent ${new Date(saved.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}. ` : ''}
+        {server
+          ? (tooBig ? 'Files over 3 MB in total can’t be sent here; email them instead.' : 'The ayna team sees your note, links and files. Files are stored privately.')
+          : 'Responses stay on this device until brand accounts launch and they can go straight to the ayna team. Email sends the text and links; attach the files yourself.'}
       </p>
     </section>
   );
 }
 
-function ActionRow({ a, lane, setAction, go, brand, saved, onSaved, defaultOpen = false }) {
+function ActionRow({ a, lane, setAction, go, brand, saved, onSaved, server, fetcher, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen);
   const tier = TIER[a.tier] || TIER.differentiation;
   const [page, pageLabel] = PAGE(a.id);
@@ -116,7 +138,7 @@ function ActionRow({ a, lane, setAction, go, brand, saved, onSaved, defaultOpen 
         <span className="ps-row-meta">
           {a.affected ? <span><b>{a.affected}</b> {a.affected === 1 ? 'scenario' : 'scenarios'}</span> : null}
           <span>{EFFORT[a.effort] || 'Some work'}</span>
-          {saved ? <span className="ps-row-flag">Response saved</span> : null}
+          {saved ? <span className="ps-row-flag">{saved.sentAt ? 'Response sent' : 'Response saved'}</span> : null}
         </span>
         <span className="ps-row-chev" aria-hidden="true">{open ? '▴' : '▾'}</span>
       </button>
@@ -131,7 +153,7 @@ function ActionRow({ a, lane, setAction, go, brand, saved, onSaved, defaultOpen 
             {idx < LANES.length - 1 ? <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" onClick={() => setAction(a.id, LANES[idx + 1].id)}>{idx === 0 ? 'Start working on it' : 'Mark done'}</button> : null}
             {go ? <button type="button" className="ps-link ps-ab-go" onClick={() => go(page)}>{pageLabel} ›</button> : null}
           </div>
-          {onSaved ? <Respond key={saved?.updatedAt || 'new'} a={a} brand={brand} saved={saved} onSaved={onSaved} /> : null}
+          {onSaved ? <Respond key={saved?.updatedAt || 'new'} a={a} brand={brand} saved={saved} onSaved={onSaved} server={server} fetcher={fetcher} /> : null}
         </div>
       ) : null}
     </li>
@@ -149,7 +171,7 @@ export function ActionPreview({ b, actionState = {}, go, limit = 3 }) {
   );
 }
 
-export function Actions({ b, actionState, setAction, go }) {
+export function Actions({ b, actionState, setAction, go, features, fetcher }) {
   const [lane, setLane] = useState('open');
   const [saved, setSaved] = useState({});
   useEffect(() => {
@@ -180,7 +202,7 @@ export function Actions({ b, actionState, setAction, go }) {
         <p className="ps-small ps-muted">Tap an action to see why it matters and to reply with a note, links, screenshots or documents.</p>
         {rows.length ? (
           <ul className="ps-rows">
-            {rows.map((a, k) => <ActionRow key={a.id} a={a} lane={lane} setAction={setAction} go={go} brand={b.brand} saved={saved[a.id]} onSaved={(rec) => setSaved((s) => ({ ...s, [a.id]: rec }))} defaultOpen={k === 0 && lane === 'open'} />)}
+            {rows.map((a, k) => <ActionRow key={a.id} a={a} lane={lane} setAction={setAction} go={go} brand={b.brand} saved={saved[a.id]} onSaved={(rec) => setSaved((s) => ({ ...s, [a.id]: rec }))} server={Boolean(features?.submissions)} fetcher={fetcher} defaultOpen={k === 0 && lane === 'open'} />)}
           </ul>
         ) : <p className="ps-ab-empty">{lane === 'done' ? 'Finished actions land here.' : lane === 'in_progress' ? 'Open an action and press Start working on it to move it here.' : 'All caught up.'}</p>}
       </section>
