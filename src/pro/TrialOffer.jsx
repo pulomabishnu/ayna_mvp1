@@ -26,8 +26,17 @@ export default function TrialOffer() {
     if (choice !== 'yes' || !usesAppleIap() || started.current) return undefined;
     started.current = true;
     markSeen();
-    const t = window.setTimeout(() => { try { openProPaywall({ feature: 'signup', featureName: 'ayna Pro' }); } catch { /* no host yet */ } }, 1200);
-    return () => window.clearTimeout(t);
+    // Never on top of the new-account steps (photo + username, "where did you hear", the analytics choice, tips):
+    // wait until no other dialog is open, twice in a row, then open the Pro screen once. Give up after 3 minutes.
+    let clear = 0;
+    const t0 = Date.now();
+    const t = window.setInterval(() => {
+      const busy = document.querySelector('[role="dialog"], [aria-modal="true"], .consent-banner, .ay-tour');
+      clear = busy ? 0 : clear + 1;
+      if (clear >= 2) { window.clearInterval(t); try { openProPaywall({ feature: 'signup', featureName: 'ayna Pro' }); } catch { /* no host */ } }
+      else if (Date.now() - t0 > 180000) window.clearInterval(t);
+    }, 800);
+    return () => window.clearInterval(t);
   }, [choice]);
   useEffect(() => {
     if (choice != null) markSeen();
