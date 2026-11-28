@@ -11,7 +11,8 @@ import { fixtureSnapshot } from './engine/fixture.js';
 
 // eslint-disable-next-line no-undef
 const snapshot = placeholder.run && process.env.PARTNER_STUDIO_REAL === '1' ? placeholder : fixtureSnapshot();
-import { Overview, Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
+import { Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
+import { Overview } from './overviewView.jsx';
 import { Actions } from './actionsBoard.jsx';
 import { Products } from './productsView.jsx';
 import { inScope } from './format.js';
@@ -41,7 +42,7 @@ describe('Partner Studio screens', () => {
         <Products key="pp" data={data} b={b} go={noop} />,
       ];
       for (const s of screens) expect(renderToStaticMarkup(s).length).toBeGreaterThan(50);
-      expect(renderToStaticMarkup(screens[4])).toMatch(/Synthetic benchmark/);
+      expect(renderToStaticMarkup(screens[4])).toMatch(/Simulation: synthetic shopping scenarios/);
       // Real catalog brand names, never anonymized labels (founder, Nov 25).
       expect(renderToStaticMarkup(screens[4])).not.toMatch(/Peer \d/);
       if (name === 'Demo Brand') expect(renderToStaticMarkup(screens[4])).toMatch(/Other Labs/);

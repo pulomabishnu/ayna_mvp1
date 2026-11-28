@@ -8,7 +8,7 @@ import { groupActions } from './engine/actionGroups.js';
 import { ACCEPT, checkFiles, fileSize, loadSubmissions, parseLinks, saveSubmission } from './engine/submissions.js';
 
 const TIER = {
-  safety: { label: 'Safety', cls: 'is-pink' },
+  safety: { label: 'Product rules', cls: 'is-pink' },
   evidence: { label: 'Research', cls: 'is-ink' },
   documentation: { label: 'Product facts', cls: 'is-sky' },
   differentiation: { label: 'Growth', cls: 'is-sky2' },
@@ -114,7 +114,7 @@ function ActionRow({ a, lane, setAction, go, brand, saved, onSaved, defaultOpen 
         <span className={`ps-ab-tier ${tier.cls}`}>{tier.label}</span>
         <span className="ps-row-title">{a.title}</span>
         <span className="ps-row-meta">
-          {a.affected ? <span><b>{a.affected}</b> {a.affected === 1 ? 'shopper' : 'shoppers'}</span> : null}
+          {a.affected ? <span><b>{a.affected}</b> {a.affected === 1 ? 'scenario' : 'scenarios'}</span> : null}
           <span>{EFFORT[a.effort] || 'Some work'}</span>
           {saved ? <span className="ps-row-flag">Response saved</span> : null}
         </span>
@@ -163,13 +163,13 @@ export function Actions({ b, actionState, setAction, go }) {
   const stake = open.reduce((n, a) => n + (a.affected || 0), 0);
   const quick = open.filter((a) => a.effort === 'S').length;
   const done = list.length - open.length;
-  if (!list.length) return <section className="ps-card"><h2 className="ps-tile-title">Nothing to do right now</h2><p className="ps-small">You made the top 3 every time your products fit, and nothing on your products is flagged.</p></section>;
+  if (!list.length) return <section className="ps-card"><h2 className="ps-tile-title">Nothing to do right now</h2><p className="ps-small">Nothing on your products needs attention right now.</p></section>;
   const rows = list.filter((a) => laneOf(a) === lane);
   return (
     <>
       <div className="ps-bento">
         <div className="b-4 b-hero"><Kpi tone="ink" icon="actions" label="Open actions" value={String(open.length)} den={`${done} done so far`} meter={list.length ? (done / list.length) * 100 : 0} /></div>
-        <div className="b-4"><Kpi tone="pink" icon="target" label="Shoppers at stake" value={String(stake)} den="made-up shoppers your open actions could win back" /></div>
+        <div className="b-4"><Kpi tone="pink" icon="target" label="Scenarios affected" value={String(stake)} den="simulated scenarios your open actions affect" /></div>
         <div className="b-4"><Kpi tone="deep" icon="doc" label="Quick fixes" value={String(quick)} den="usually just sending ayna a document" /></div>
       </div>
       <section className="ps-card ps-panel">
