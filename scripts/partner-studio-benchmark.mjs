@@ -34,6 +34,7 @@ import { evidenceRecord } from '../src/partnerStudio/engine/evidence.js';
 import { brandRollup } from '../src/partnerStudio/engine/rollup.js';
 import { ENGAGEMENT, ENG_FROM, ENG_TO } from '../api/_partnerStudio/engagement.js';
 import { summarizeRun } from '../src/partnerStudio/engine/history.js';
+import { applyPriceChecks, PRICE_CHECKED } from '../src/partnerStudio/engine/priceChecks.js';
 
 const CHECK = process.argv.includes('--check');
 // Real ayna app activity (aggregate counts per product), shown beside the benchmark, never used to rank.
@@ -50,6 +51,9 @@ let gitSha = 'unknown';
 try { gitSha = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { /* not a checkout */ }
 
 const t0 = Date.now();
+// Prices re-checked on brands' own pages win over stale catalog prices.
+const priceFixed = applyPriceChecks(ALL_PRODUCTS);
+if (priceFixed.length) console.log(`partner-studio: ${priceFixed.length} prices updated from brand pages checked ${PRICE_CHECKED}: ${priceFixed.join(', ')}`);
 const products = ALL_PRODUCTS.filter((p) => p?.id);
 const runs = [];
 const universeIds = new Map(); // sku -> [category ids]
@@ -168,6 +172,11 @@ const snapshot = {
     ...withEngagement(compactScenarios(r.baseline, r.universe, brandOf, isPartnerBrandItem)),
   })),
   outOfScope: OUT_OF_SCOPE_REASON,
+  // Whole catalog, for app-activity comparisons across every product (public facts plus aggregate counts).
+  catalog: products.filter((p) => p.price || ENGAGEMENT.has(p.id) || isPartnerBrandItem(p)).map((p) => ({
+    id: p.id, name: p.name, brand: brandOf(p), category: p.category || 'other', partner: Boolean(isPartnerBrandItem(p)),
+    ...(ENGAGEMENT.has(p.id) ? { eng: ENGAGEMENT.get(p.id) } : {}),
+  })),
   brands,
 };
 
