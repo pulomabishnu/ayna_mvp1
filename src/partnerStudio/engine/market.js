@@ -15,8 +15,9 @@ export function marketRollup(catalog, brand) {
     const e = engagementOf(p);
     const k = p.category || 'other';
     const r = cats.get(k) || { id: k, label: nice(k), products: 0, brands: new Set(), opened: 0, buy: 0, mine: 0, myOpened: 0, myBuy: 0, partners: 0, byBrand: new Map() };
-    r.products += 1;
-    r.brands.add(p.brand);
+    // Brand accounts get other brands' activity as one combined row per category:
+    // it adds to totals but is not a product or a brand.
+    if (!p.aggregate) { r.products += 1; r.brands.add(p.brand); }
     r.opened += e.opened;
     r.buy += e.buy;
     if (p.partner) r.partners += 1;
@@ -40,6 +41,8 @@ export function marketRollup(catalog, brand) {
 export function brandSnapshot(catalog, brand) {
   const byBrand = new Map();
   const mine = [];
+  // Combined rows (brand accounts) hide single competitors, so ranks can't be worked out.
+  const combined = (catalog || []).some((p) => p.aggregate);
   for (const p of catalog || []) {
     const e = engagementOf(p);
     const r = byBrand.get(p.brand) || { brand: p.brand, opened: 0, buy: 0, products: 0, partner: false };
@@ -51,7 +54,7 @@ export function brandSnapshot(catalog, brand) {
   const rankBy = (key) => {
     const sorted = [...brands].sort((x, y) => y[key] - x[key]);
     const me = byBrand.get(brand);
-    if (!me || !me[key]) return null;
+    if (!me || !me[key] || combined) return null;
     return sorted.filter((r) => r[key] > me[key]).length + 1;
   };
   const tot = mine.reduce((a, p) => ({ seen: a.seen + p.seen, opened: a.opened + p.opened, detail: a.detail + p.detail, buy: a.buy + p.buy }), { seen: 0, opened: 0, detail: 0, buy: 0 });
@@ -65,8 +68,8 @@ export function brandSnapshot(catalog, brand) {
     othersCtr: rate(otherBuy, otherOpened),
     viewRank: rankBy('opened'),
     clickRank: rankBy('buy'),
-    brandCount: brands.length,
-    activeBrands: brands.filter((r) => r.opened > 0).length,
+    brandCount: new Set((catalog || []).filter((p) => !p.aggregate).map((p) => p.brand)).size,
+    activeBrands: combined ? null : brands.filter((r) => r.opened > 0).length,
     categories: marketRollup(catalog, brand).filter((c) => c.mine > 0),
   };
 }

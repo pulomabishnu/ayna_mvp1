@@ -1,6 +1,7 @@
 /* Brand responses to an action: a written reply, links, and files (screenshots,
-   PDFs, documents). Kept in this browser's IndexedDB until brand accounts and a
-   server-side inbox exist; nothing here is sent anywhere. */
+   PDFs, documents). Drafts stay in this browser's IndexedDB. A response is only
+   sent to the ayna team when submissions are switched on and the brand presses
+   Send (POST /api/partner-submissions). */
 
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_FILES = 8;
@@ -75,4 +76,22 @@ export async function saveSubmission(brand, actionId, value) {
     tx.onerror = () => reject(tx.error);
   });
   return record;
+}
+
+/** Files per response sent to the server. Base64 adds a third, and Vercel caps a request body at 4.5 MB. */
+export const MAX_SEND_BYTES = 3 * 1024 * 1024;
+
+/** Read a Blob as base64 without the data: prefix. */
+export function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+/** Pure: the POST body for /api/partner-submissions, minus file data. */
+export function submissionPayload(brand, action, { text, links }) {
+  return { brand, actionId: action.id, actionTitle: action.title, body: String(text || '').trim(), links: links || [] };
 }
