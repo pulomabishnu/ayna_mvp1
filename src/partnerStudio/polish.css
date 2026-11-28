@@ -1,0 +1,82 @@
+/* Partner Studio, Nov 28 pass: action board, calmer canvas, Products page and chart polish. Loaded after bento.css. */
+/* Action board */
+.ps-ab-board { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-areas: 'todo doing' 'todo done'; gap: 16px 20px; margin-top: 16px; align-items: start; }
+.ps-ab-lane.is-open { grid-area: todo; }
+.ps-ab-lane.is-in_progress { grid-area: doing; }
+.ps-ab-lane.is-done { grid-area: done; }
+.ps-ab-cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.ps-ab-lane.is-open .ps-ab-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ps-ab-lane { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.ps-ab-lanehead { display: flex; align-items: center; gap: 8px; font-size: 15px !important; margin: 0 4px 2px; }
+.ps-ab-lanehead span { background: var(--ps-ink); color: var(--ps-butter); border-radius: 999px; font-size: 12px; padding: 1px 9px; }
+.ps-ab-lane.is-in_progress .ps-ab-lanehead span { background: var(--ps-blue); color: var(--ps-ink); }
+.ps-ab-lane.is-done .ps-ab-lanehead span { background: var(--ps-pink); color: var(--ps-ink); }
+.ps-ab-card { background: var(--ps-surface); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 0 rgba(62, 39, 35, .08); }
+.ps-ab-card.is-done { opacity: .7; }
+.ps-ab-card.is-done .ps-ab-title { text-decoration: line-through; text-decoration-thickness: 1px; }
+.ps-ab-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ps-ab-tier { border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+.ps-ab-tier.is-pink { background: var(--ps-pink); }
+.ps-ab-tier.is-ink { background: var(--ps-ink); color: var(--ps-butter); }
+.ps-ab-tier.is-sky { background: var(--ps-blue); }
+.ps-ab-tier.is-sky2 { background: var(--ps-blue-3); }
+.ps-ab-effort { font-size: 12px; font-weight: 600; color: var(--ps-ink-2); margin-right: auto; }
+.ps-ab-title { font-size: 15px !important; line-height: 1.3 !important; margin: 0 !important; }
+.ps-ab-impact { margin: 0; font-size: 13px; }
+.ps-ab-impact b { font-size: 22px; font-weight: 700; margin-right: 4px; }
+.ps-ab-do { margin: 0; font-size: 13.5px; line-height: 1.4; color: var(--ps-ink-2); }
+.ps-ab-note { margin: 0; font-size: 13px; background: rgba(247, 186, 221, .35); border-radius: 12px; padding: 8px 10px; white-space: pre-wrap; }
+.ps-ab-noteedit { display: flex; flex-direction: column; gap: 6px; }
+.ps-ab-text { width: 100%; box-sizing: border-box; font: inherit; font-size: 13.5px; border-radius: 12px; border: 1.5px solid rgba(62, 39, 35, .25); background: var(--ps-butter); padding: 8px 10px; color: var(--ps-ink); resize: vertical; }
+.ps-ab-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.ps-ab-actions { margin-top: 4px; }
+.ps-ab-go { margin-left: auto; font-size: 12.5px; }
+.ps-ab-empty { margin: 0; font-size: 13px; color: var(--ps-ink-2); border: 1.5px dashed rgba(62, 39, 35, .2); border-radius: 16px; padding: 14px; text-align: center; }
+@media (max-width: 1000px) { .ps-ab-board { grid-template-columns: 1fr; grid-template-areas: 'todo' 'doing' 'done'; } .ps-ab-lane.is-open .ps-ab-cards { grid-template-columns: 1fr; } }
+.ps .ps-fixrow-main { flex: 1; display: flex; align-items: center; gap: 10px; text-align: left; border: none; background: transparent; padding: 0; cursor: pointer; color: inherit; font: inherit; min-width: 0; }
+.ps .ps-card--pink { border-left: none; }
+
+/* Calmer canvas (Nov 28): a light cream page with near-white warm cards and soft
+   shadows, like the reference dashboards. Butter stays the brand base: the page is
+   butter at low strength, saturated butter, pink and sky are kept for accents and data. */
+.ps { background: #fbf4e2; --ps-surface: #fffdf7; --ps-cream: #f9f1dc; --ps-shadow: 0 1px 2px rgba(62, 39, 35, .05), 0 8px 24px rgba(62, 39, 35, .06); }
+.ps-main { --ps-butter: #f9f1dc; --ps-butter-2: #f4e8c8; }
+.ps .ps-card, .ps .ps-card--plain, .ps .ps-panel, .ps .ps-tile, .ps .ps-kpi { border: none; box-shadow: var(--ps-shadow); }
+.ps .ps-filters { background: transparent; box-shadow: none; border: none; }
+.ps .ps-kpi--pink, .ps .ps-kpi--deep, .ps .ps-kpi--butter, .ps .ps-kpi--plain { background: var(--ps-surface); }
+.ps-bento .b-2 .ps-kpi-icon { display: inline-flex; }
+.ps .ps-kpi-icon { width: 34px; height: 34px; border-radius: 999px; align-items: center; justify-content: center; flex: none; }
+.ps .ps-kpi--pink .ps-kpi-icon { background: var(--ps-pink); }
+.ps .ps-kpi--deep .ps-kpi-icon { background: var(--ps-blue-3); }
+.ps .ps-kpi--butter .ps-kpi-icon { background: #ffedac; }
+.ps .ps-kpi--plain .ps-kpi-icon { background: #f4e8c8; }
+.ps .ps-kpi--ink .ps-kpi-icon { background: rgba(255, 237, 172, .16); }
+.ps .ps-kpi-label { display: flex; align-items: center; gap: 8px; }
+.ps .ps-kpi:not(.ps-kpi--ink) .ps-kpi-den { color: var(--ps-ink-2); }
+.ps .ps-kpi-meter { background: #f1e6c9; }
+.ps-bento .ps-bars-track, .ps-ri-bar { background: #f3e9cf !important; }
+.ps .ps-table-wrap { border: none; background: transparent; }
+.ps .ps-table th { background: transparent; border-bottom: 1px solid rgba(62, 39, 35, .12); }
+.ps .ps-table td { border-bottom: 1px solid rgba(62, 39, 35, .07); }
+.ps .ps-item { border: none; background: var(--ps-cream); }
+.ps .ps-ab-card { box-shadow: var(--ps-shadow); }
+.ps .ps-ab-lane.is-open .ps-ab-card, .ps .ps-ab-card { background: var(--ps-surface); }
+.ps .ps-drawer { background: #fbf4e2; }
+.ps .ps-why-kpis > div, .ps .ps-why-list li, .ps .ps-why-bands li, .ps .ps-why-ex { background: var(--ps-surface); }
+html:has(.ps), body:has(.ps) { background: #fbf4e2; }
+.ps .ps-kpi--ink .ps-kpi-meter { background: rgba(255, 237, 172, .22); }
+.ps-check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.ps-check input { width: 16px; height: 16px; accent-color: #3e2723; }
+.ps-key-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #769ebe; margin: 0 4px 0 10px; vertical-align: -1px; }
+.ps-key-dot.is-you { background: #3e2723; box-shadow: 0 0 0 2px #f7badd; margin-left: 0; }
+.ps-key-dot.is-partner { background: #f7badd; box-shadow: inset 0 0 0 1.5px #3e2723; }
+.ps-quad { width: 100%; height: auto; display: block; }
+.ps-quad-me { cursor: pointer; }
+.ps-qpill { border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.ps-qpill.is-win { background: #3e2723; color: #ffedac; }
+.ps-qpill.is-look { background: #f7badd; }
+.ps-qpill.is-hidden { background: #769ebe; }
+.ps-qpill.is-low { background: #f1e6c9; }
+/* Chart polish (dataviz checklist): 2px surface gaps between stacked segments, proportional figures on big numbers. */
+.ps .ps-s100-bar, .ps .ps-s100-track, .ps .ps-vs-bar { gap: 2px; }
+.ps .ps-kpi .ps-num, .ps .ps-why-kpis .ps-num { font-variant-numeric: proportional-nums; }
