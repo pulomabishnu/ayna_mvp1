@@ -182,7 +182,7 @@ export function Products({ data, b, go }) {
           </section>
           <div className="ps-ab-row">
             <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" onClick={() => { setPick(null); go?.('losses'); }}>Why it isn’t recommended</button>
-            <button type="button" className="ps-btn ps-btn--sm" onClick={() => { setPick(null); go?.('claims'); }}>View claim comparison</button>
+            <button type="button" className="ps-btn ps-btn--sm" onClick={() => { setPick(null); go?.('competitors'); }}>Compare with similar products</button>
           </div>
           <p className="ps-small ps-muted">Real people in the ayna app, {ENG_RANGE}. Small numbers: read them as direction, not proof.</p>
         </Drawer>
