@@ -33,6 +33,7 @@ import { recommendationShare } from '../src/partnerStudio/engine/metrics.js';
 import { evidenceRecord } from '../src/partnerStudio/engine/evidence.js';
 import { brandRollup } from '../src/partnerStudio/engine/rollup.js';
 import { ENGAGEMENT, ENG_FROM, ENG_TO } from '../api/_partnerStudio/engagement.js';
+import { summarizeRun } from '../src/partnerStudio/engine/history.js';
 
 const CHECK = process.argv.includes('--check');
 // Real ayna app activity (aggregate counts per product), shown beside the benchmark, never used to rank.
@@ -169,6 +170,32 @@ const snapshot = {
   outOfScope: OUT_OF_SCOPE_REASON,
   brands,
 };
+
+// Run history (build plan stage 1): store this run's slot counts and carry the
+// last 24 runs into the snapshot for trends. Skipped quietly when Supabase isn't
+// configured or the partner_studio_runs table hasn't been created yet.
+snapshot.history = [];
+if (!CHECK && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  try {
+    const { createClient } = await import('@supabase/supabase-js');
+    const db = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+    const summary = summarizeRun(snapshot);
+    const row = {
+      run_id: snapshot.run.runId, created_at: snapshot.run.createdAt,
+      scenario_set_version: snapshot.run.scenarioSetVersion, category_set_version: snapshot.run.categorySetVersion,
+      adapter_version: snapshot.run.adapterVersion, engine: snapshot.run.engine, git_sha: snapshot.run.gitSha,
+      catalog_versions: Object.fromEntries(snapshot.categories.map((c) => [c.id, c.catalogVersion])), summary,
+    };
+    const up = await db.from('partner_studio_runs').upsert(row, { onConflict: 'run_id' });
+    if (up.error) throw up.error;
+    const { data, error } = await db.from('partner_studio_runs').select('run_id, created_at, scenario_set_version, category_set_version, adapter_version, summary').order('created_at', { ascending: false }).limit(24);
+    if (error) throw error;
+    snapshot.history = (data || []).map((r) => ({ runId: r.run_id, createdAt: r.created_at, scenarioSetVersion: r.scenario_set_version, categorySetVersion: r.category_set_version, adapterVersion: r.adapter_version, summary: r.summary }));
+    console.log(`partner-studio: stored run, ${snapshot.history.length} runs in history.`);
+  } catch (e) {
+    console.log(`partner-studio: run history skipped (${e?.message || e}).`);
+  }
+}
 
 // Privacy guard: the snapshot must never carry user or event identifiers.
 const serialized = JSON.stringify(snapshot);
