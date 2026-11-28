@@ -10,7 +10,7 @@ export function Insights({ items, title = 'What this means', className = '' }) {
     <section className={`ps-card ps-tile ps-tile--pink ${className}`} aria-label={title}>
       <h2 className="ps-tile-title">{title}</h2>
       <ul className="ps-insights">
-        {items.filter(Boolean).map((t) => <li key={t}>{t}</li>)}
+        {items.filter(Boolean).slice(0, 3).map((t) => <li key={t}>{t}</li>)}
       </ul>
     </section>
   );
@@ -22,10 +22,10 @@ export function NextSteps({ actions, title = 'Do this next', className = '' }) {
     <section className={`ps-card ps-tile ${className}`} aria-label={title}>
       <h2 className="ps-tile-title">{title}</h2>
       <ol className="ps-steps">
-        {actions.map((a, k) => (
+        {actions.slice(0, 3).map((a, k) => (
           <li key={a.text}>
             <span className="ps-steps-n">{k + 1}</span>
-            <span><b>{a.text}</b>{a.note ? <small>{a.note}</small> : null}</span>
+            <span className="ps-steps-t"><b>{a.text}</b>{a.note ? <InfoTip text={a.note} label={a.text} /> : null}</span>
           </li>
         ))}
       </ol>
@@ -95,5 +95,5 @@ export function RealInterest({ products, name, className = '' }) {
   );
 }
 
-const STAGE_COLORS = ['#c9d9e6', '#769ebe', '#4d7699', '#3e2723'];
+const STAGE_COLORS = ['#c9dcea', '#769ebe', '#4d7699', '#3e2723'];
 const shortName = (n, brand) => (n.toLowerCase().startsWith(`${String(brand).toLowerCase()} `) ? n.slice(String(brand).length + 1) : n);
