@@ -11,18 +11,18 @@ import { OUTCOME } from './explore.js';
 
 // Reason families from the Phase 1 plan (p.10).
 export const REASON_LABEL = {
-  budget: 'Price above the shopper’s budget',
-  format: 'Not the format she wanted',
+  budget: 'Price above the scenario’s budget',
+  format: 'A different format was preferred',
   evidence: 'Weaker research than the picks',
-  relevance: 'Listing doesn’t clearly match her need',
-  diversity_tie: 'Tied, another brand got the spot',
+  relevance: 'Listing doesn’t clearly name the need',
+  diversity_tie: 'Tied, another brand was selected',
   below_cutoff: 'Match score too low',
   unclassified: 'Other',
 };
 
 export const REASON_ACTION = {
   budget: 'Test a smaller pack or a lower price point (see the price test).',
-  format: 'Consider whether a second format fits shoppers who prefer it.',
+  format: 'Consider whether a second format fits scenarios that prefer it.',
   evidence: 'Check that your published research is linked to this product and this need.',
   relevance: 'Make sure the listing says plainly which need it is made for.',
   diversity_tie: 'Nothing to fix: a near-equal product took the slot under the shelf variety rules.',
@@ -197,25 +197,28 @@ const PRIORITY = { safety: 1, evidence: 2, documentation: 3, differentiation: 4 
 /** Prioritized action queue (p.5): safety/regulatory, then evidence, then documentation, then differentiation. */
 export function buildActions({ cats, evidenceOut, simulations, feed }) {
   const out = [];
+  const names = (list) => (list.length ? ` Products: ${list.map((x) => x.name).join(', ')}.` : '');
   for (const f of feed) {
     if (f.type === 'qa_correction') out.push({ id: `fix-${f.sku}`, tier: 'safety', title: `Confirm the facts ayna flagged on ${f.name}`, issue: f.detail, trace: 'Passport QA record', affected: null, action: 'Send the official source for the corrected fact.', effort: 'S', confidence: 'Draft, AI-assisted check' });
-    if (f.type === 'clinician_review') out.push({ id: `clin-${f.sku}`, tier: 'safety', title: `Clinical review open on ${f.name}`, issue: f.detail, trace: 'Passport QA record', affected: null, action: 'ayna clinical review; send any safety documentation you have.', effort: 'M', confidence: 'Open review' });
+    if (f.type === 'clinician_review') out.push({ id: `clin-${f.sku}`, tier: 'safety', title: `ayna product review open on ${f.name}`, issue: 'ayna’s reviewer is confirming a product fact before it is final.', trace: 'Passport QA record', affected: null, action: 'Send any product documentation you have; ayna’s reviewer finishes the review.', effort: 'M', confidence: 'Open review' });
   }
   for (const c of cats) {
+    const skus = c.skus || [];
+    const cat = c.label.toLowerCase();
     if (c.funnel.insufficient_info > 0) {
-      out.push({ id: `info-${c.id}`, tier: 'documentation', title: `Missing product facts keep you from ${pl(c.funnel.insufficient_info, `${c.label.toLowerCase()} shopper`)}`, issue: 'The engine needs a fact it can’t find (often allergens or materials) before it can show the product to some shoppers.', trace: `${c.funnel.insufficient_info} of ${c.scenarios} made-up shoppers`, affected: c.funnel.insufficient_info, action: 'Send the official ingredient or materials list.', effort: 'S', confidence: 'Seen directly in the matching engine' });
+      out.push({ id: `info-${c.id}`, tier: 'documentation', title: `Complete product information: ${pl(c.funnel.insufficient_info, `${cat} scenario`)} on hold`, issue: `In ${c.funnel.insufficient_info} of ${c.scenarios} simulated scenarios, the matching engine needed a product attribute it couldn’t find (often ingredients or materials).${names(skus.filter((x) => x.insufficient_info))}`, trace: `${c.funnel.insufficient_info} of ${c.scenarios} simulated scenarios`, affected: c.funnel.insufficient_info, action: 'Send the official ingredient or materials list.', effort: 'S', confidence: 'Matching-data observation, not evidence of lost sales' });
     }
     if (c.boundary.insufficient_info > 0) {
-      out.push({ id: `info-boundary-${c.id}`, tier: 'safety', title: `Missing facts hold you back for sensitive shoppers in ${c.label.toLowerCase()}`, issue: `${pl(c.boundary.insufficient_info, 'shopper')} with a safety concern (pregnancy, breastfeeding, latex allergy, medicines) can’t be shown your product until ayna can check a fact.`, trace: pl(c.boundary.insufficient_info, 'made-up shopper'), affected: c.boundary.insufficient_info, action: 'Send the official ingredient, materials or interaction information. ayna never relaxes the rule itself.', effort: 'S', confidence: 'Seen directly in the matching engine' });
+      out.push({ id: `info-boundary-${c.id}`, tier: 'safety', title: `Add ingredient or materials details for rule-checked ${cat} scenarios`, issue: `${pl(c.boundary.insufficient_info, 'simulated scenario')} include a configured product rule (for example pregnancy, breastfeeding, latex allergy or certain medicines). The engine can’t check your product against the rule without this information.${names(skus.filter((x) => x.insufficient_info))}`, trace: pl(c.boundary.insufficient_info, 'simulated scenario'), affected: c.boundary.insufficient_info, action: 'Send the official ingredient, materials or interaction information. ayna never relaxes the rule itself.', effort: 'S', confidence: 'Matching-data observation, not evidence of lost sales' });
     }
     const top = c.funnel.reasons.find((r) => r.id !== 'diversity_tie' && r.id !== 'unclassified');
-    if (top) out.push({ id: `loss-${c.id}-${top.id}`, tier: top.id === 'evidence' ? 'evidence' : 'differentiation', title: `${top.label}: you lost ${pl(top.n, `${c.label.toLowerCase()} shopper`)}`, issue: `Your products fit ${c.eligible.num} shoppers here and missed the top 3 for ${c.funnel.eligible_lost}. This is the biggest fixable reason.`, trace: `${top.n} of ${c.funnel.eligible_lost} misses`, affected: top.n, action: top.action, effort: top.id === 'budget' || top.id === 'format' ? 'L' : 'M', confidence: top.id === 'budget' ? 'Seen directly: your price vs her budget' : 'Read from the match scores' });
+    if (top) out.push({ id: `loss-${c.id}-${top.id}`, tier: top.id === 'evidence' ? 'evidence' : 'differentiation', title: `${top.label}: not selected in ${pl(top.n, `${cat} scenario`)}`, issue: `Your products were eligible in ${c.eligible.num} of ${c.scenarios} simulated scenarios and not selected in ${c.funnel.eligible_lost}. This was the most common reason you can act on.${names(skus.filter((x) => x.reasons?.[top.id]))}`, trace: `${top.n} of ${c.funnel.eligible_lost} unselected scenarios`, affected: top.n, action: top.action, effort: top.id === 'budget' || top.id === 'format' ? 'L' : 'M', confidence: top.id === 'budget' ? 'Observed: your price vs the scenario budget. Not evidence of lost sales' : 'Read from the match scores. Not evidence of lost sales' });
   }
   const m = evidenceOut.metrics;
   if (m.inventoried > 0 && m.reviewCoverage.num < m.inventoried) out.push({ id: 'review', tier: 'evidence', title: `${m.inventoried - m.reviewCoverage.num} of ${pl(m.inventoried, 'claim')} ${m.inventoried - m.reviewCoverage.num === 1 ? 'awaits' : 'await'} human review`, issue: 'Claim statuses are drafts from an AI-assisted research pass.', trace: 'Passport claim ledger', affected: null, action: 'Send the studies behind your claims; ayna’s reviewer signs off each status.', effort: 'M', confidence: 'Draft' });
   if (m.flagged > 0) out.push({ id: 'flags', tier: 'evidence', title: `${m.flagged} claim${m.flagged > 1 ? 's' : ''} flagged for review`, issue: 'Wording or evidence pattern a reviewer should check. Not a violation.', trace: 'Claim ledger review flags', affected: null, action: 'Open Product claim comparison to see each flag.', effort: 'S', confidence: 'Draft' });
   for (const f of feed) if (f.type === 'stale') out.push({ id: `stale-${f.sku}`, tier: 'documentation', title: `Facts on ${f.name} are ${f.days} days past review`, issue: f.detail, trace: 'Passport freshness', affected: null, action: 'Confirm current price and facts.', effort: 'S', confidence: 'Observed' });
-  for (const s of simulations) if (s.after.inclusion.num > s.before.inclusion.num) out.push({ id: `sim-${s.sku}`, tier: 'differentiation', title: `Price test: ${s.name} at ${s.changeLabel}`, issue: `Picked for ${s.after.inclusion.num} of ${s.scenarios} made-up shoppers instead of ${s.before.inclusion.num}, with only the price changed.`, trace: 'Same engine and competitors, price changed', affected: s.after.inclusion.num - s.before.inclusion.num, action: 'Consider whether a lower price point or smaller pack is viable.', effort: 'L', confidence: 'Simulation' });
+  for (const s of simulations) if (s.after.inclusion.num > s.before.inclusion.num) out.push({ id: `sim-${s.sku}`, tier: 'differentiation', title: `Price test: ${s.name} at ${s.changeLabel}`, issue: `Selected in ${s.after.inclusion.num} of ${s.scenarios} simulated scenarios instead of ${s.before.inclusion.num}, with only the price changed. A simulation, not a forecast.`, trace: 'Same engine and competitors, price changed', affected: s.after.inclusion.num - s.before.inclusion.num, action: 'Consider whether a lower price point or smaller pack is viable.', effort: 'L', confidence: 'Simulation' });
   return out
     .sort((a, b) => PRIORITY[a.tier] - PRIORITY[b.tier] || (b.affected ?? 0) - (a.affected ?? 0))
     .map((a, i) => ({ ...a, rank: i + 1, status: 'open', owner: null }));
