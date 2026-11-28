@@ -1,8 +1,9 @@
 /**
  * ayna Partner Studio (Phase 1, private preview).
- * Four paid modules as primary navigation, plus overview, actions, competitors,
- * feed and reports. All data comes from GET /api/partner-studio, which is
- * admin-only and feature-flagged on the server.
+ * Six sections: Overview, Products, Competitive insights, Recommendations,
+ * Reports, Sales & billing (plus a team-only Brand responses inbox when
+ * submissions are on). All data comes from GET /api/partner-studio, which is
+ * feature-flagged and checks who may see which brand on the server.
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Icon, Drawer, SyntheticBadge } from './ui.jsx';
@@ -10,6 +11,11 @@ import { Actions } from './actionsBoard.jsx';
 import { Products } from './productsView.jsx';
 import { Market } from './marketView.jsx';
 import { Overview } from './overviewView.jsx';
+import { Discovery } from './discoveryView.jsx';
+import { Readiness } from './readinessView.jsx';
+import { Brief } from './briefView.jsx';
+import { Billing } from './billingView.jsx';
+import { Inbox } from './inboxView.jsx';
 import { Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
 import { inScope } from './format.js';
 import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
@@ -18,18 +24,20 @@ import { rollupCsv } from './csv.js';
 import { QUESTIONS, answer, matchQuestion } from './assistant.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 
-// Basic plan ($39/mo): five sections. Pages that belong together sit under one
+// Basic plan ($39/mo): six sections. Pages that belong together sit under one
 // menu item with tabs; the action plan and updates open from the Overview.
 const NAV = [
   { id: 'overview', label: 'Overview', icon: 'overview', views: ['overview'] },
-  { id: 'products', label: 'Products', icon: 'box', views: ['products'] },
+  { id: 'products', label: 'Products', icon: 'box', views: ['products', 'discovery', 'readiness'], tabs: [['products', 'Product performance'], ['discovery', 'How shoppers find you'], ['readiness', 'Product readiness']] },
   { id: 'market', label: 'Competitive insights', icon: 'competitors', views: ['market', 'competitors'], tabs: [['market', 'Market opportunities'], ['competitors', 'Product comparison']] },
   { id: 'share', label: 'Recommendations', icon: 'share', views: ['share', 'losses'], tabs: [['share', 'Simulated selection share'], ['losses', 'Why products aren’t selected']] },
-  { id: 'reports', label: 'Reports', icon: 'reports', views: ['reports'] },
+  { id: 'brief', label: 'Reports', icon: 'reports', views: ['brief', 'reports'], tabs: [['brief', 'Monthly brief'], ['reports', 'Data and methods']] },
+  { id: 'billing', label: 'Sales & billing', icon: 'tag', views: ['billing'] },
 ];
+const TEAM_NAV = { id: 'inbox', label: 'Brand responses', icon: 'doc', views: ['inbox'] };
 // Pages built from the whole catalog work for every brand; the rest need the recommendation benchmark.
-const OPEN_TO_ALL = ['overview', 'products', 'market', 'actions', 'feed', 'reports'];
-const TITLE_OF = { overview: 'Overview', products: 'Products', market: 'Competitive insights', competitors: 'Competitive insights', share: 'Recommendations', losses: 'Recommendations', reports: 'Reports', actions: 'Action plan', feed: 'Updates on your products', claims: 'Competitor content & positioning', evidence: 'Product information' };
+const OPEN_TO_ALL = ['overview', 'products', 'discovery', 'readiness', 'market', 'actions', 'feed', 'reports', 'brief', 'billing', 'inbox'];
+const TITLE_OF = { overview: 'Overview', products: 'Products', market: 'Competitive insights', competitors: 'Competitive insights', share: 'Recommendations', losses: 'Recommendations', reports: 'Reports', brief: 'Reports', discovery: 'Products', readiness: 'Products', billing: 'Sales & billing', inbox: 'Brand responses', actions: 'Action plan', feed: 'Updates on your products', claims: 'Competitor content & positioning', evidence: 'Product information' };
 const SUBTITLE = {
   overview: 'See how shoppers discover and engage with your products on ayna.',
   products: 'See which products shoppers view and click through to a retailer.',
@@ -42,12 +50,18 @@ const SUBTITLE = {
   competitors: 'Your products next to the most similar products on ayna. Public information only.',
   feed: 'Reviews, fact checks and changes on your products.',
   reports: 'Review and export your brand’s performance, and see how every number is made.',
+  brief: 'One page with the month’s headline numbers and next steps. Print it, save it as a PDF or download the CSV.',
+  discovery: 'Whether shoppers reach your products through search or by browsing, next to brands in the same categories.',
+  readiness: 'Which product facts are complete, and what to add so your products can be matched and recommended.',
+  billing: 'Your plan, how commission on sales would work, and what ayna can measure today.',
+  inbox: 'Responses brands sent from their action plan.',
 };
 
 const DENIED = {
   not_team_domain: 'Partner Studio is for @aynahealth.co accounts. Sign in below with your ayna work email.',
   unconfirmed: 'This email isn’t confirmed yet. Open the confirmation link ayna sent you, then reload.',
   not_listed: 'This account isn’t on the Partner Studio admin list for this deploy. Ask whoever manages Vercel to add it to ADMIN_EMAILS.',
+  no_brand_access: 'This account doesn’t have access to a brand in Partner Studio yet. Ask your ayna contact to invite this email.',
 };
 
 /** Sign in right here, so she never leaves this page. Google comes back here too (src/utils/authReturn.js). */
@@ -224,14 +238,21 @@ export default function PartnerStudio({ fetcher = fetch }) {
   if (status !== 'ok' || !data) return <Gate status={status} denied={denied} onSignedIn={() => { setStatus(null); setDenied(null); setReload((n) => n + 1); }} />;
   const scoped = inScope(b);
   const name = b.displayName || b.name;
-  const section = NAV.find((n) => n.views.includes(view));
+  const team = data.access !== 'brand';
+  const nav = team && data.features?.submissions ? [...NAV, TEAM_NAV] : NAV;
+  const section = nav.find((n) => n.views.includes(view));
 
   let body;
   if (!scoped && !OPEN_TO_ALL.includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
   else if (view === 'overview') body = <Overview data={data} b={b} go={go} actionState={actionState} />;
   else if (view === 'products') body = <Products data={data} b={b} go={go} />;
+  else if (view === 'discovery') body = <Discovery data={data} b={b} go={go} />;
+  else if (view === 'readiness') body = <Readiness b={b} go={go} />;
+  else if (view === 'brief') body = <Brief data={data} b={b} actionState={actionState} />;
+  else if (view === 'billing') body = <Billing data={data} b={b} />;
+  else if (view === 'inbox' && team && data.features?.submissions) body = <div className="ps-bento"><Inbox fetcher={fetcher} brand={b.name} /></div>;
   else if (view === 'market') body = <Market data={data} b={b} go={go} />;
-  else if (view === 'actions') body = <Actions b={b} actionState={actionState} setAction={setAction} go={go} />;
+  else if (view === 'actions') body = <Actions b={b} actionState={actionState} setAction={setAction} go={go} features={data.features} fetcher={fetcher} />;
   else if (view === 'evidence') body = <Evidence data={data} b={b} openSource={openSource} />;
   else if (view === 'claims') body = <Claims data={data} b={b} />;
   else if (view === 'share') body = <Share data={data} b={b} cat={catEff} setCat={setCat} />;
@@ -252,13 +273,13 @@ export default function PartnerStudio({ fetcher = fetch }) {
           </select>
         </div>
         <nav aria-label="Sections" className="ps-navgroup">
-          {NAV.map((n) => (
+          {nav.map((n) => (
             <button key={n.id} type="button" className="ps-nav" aria-current={n.views.includes(view) ? 'page' : undefined} onClick={() => go(n.id)}>
               <Icon name={n.icon} />{n.label}
             </button>
           ))}
         </nav>
-        <p className="ps-side-foot">Private preview for the ayna team. Real app activity counts, public product facts, and a separate simulation with synthetic shopping scenarios.</p>
+        <p className="ps-side-foot">{team ? 'Private preview for the ayna team.' : 'Your brand on ayna.'} Real app activity counts, public product facts, and a separate simulation with synthetic shopping scenarios.</p>
       </aside>
       <main className="ps-main" id="main">
         <div className="ps-toolbar">
