@@ -4,9 +4,11 @@ import { Kpi, HBar, SyntheticBadge, DraftBadge, Empty, CardHead, Heatmap, Reason
 import { ratePct, money, SYNTHETIC } from './format.js';
 import { explore, versus } from './engine/explore.js';
 import { C } from './chartColors.js';
-import { BACKING as CR_BACKING, TOPICS as CR_TOPICS, PRODUCTS as CR_PRODUCTS, CHECKED as CR_CHECKED, productsOf as crProductsOf, researchedBrands as crResearchedBrands } from './engine/claimsResearch.js';
+import { BACKING as CR_BACKING, TOPICS as CR_TOPICS, CHECKED as CR_CHECKED, productsOf as crProductsOf, rivalsOf as crRivalsOf, researchedBrands as crResearchedBrands } from './engine/claimsResearch.js';
 import { Insights, NextSteps, RealInterest } from './tiles.jsx';
+import { ClaimCompare } from './claimCompare.jsx';
 import { realSummary, ENG_RANGE } from './engine/engagement.js';
+import { shareSeries, changeSinceLast } from './engine/history.js';
 import { Panel, ViewSwitch, RankedBars, Stacked100, Dumbbell, Matrix, Pareto, FunnelBars, BeforeAfter, TrendLine, SortTable, Method } from './charts.jsx';
 
 /* Evidence statuses in the plan's own words (p.4). Every status is a draft until a reviewer signs it off. */
@@ -530,26 +532,30 @@ export function Claims({ b }) {
     );
   }
   const you = mine[Math.min(i, mine.length - 1)];
-  const rivals = CR_PRODUCTS.filter((p) => p.brand !== brand);
+  const rivals = crRivalsOf(you);
   const cols = [you, ...rivals];
   const all = cols.flatMap((p) => p.claims.map((c, k) => ({ ...c, id: `${p.sku}-${k}`, product: p.name, brand: p.brand, url: p.url, you: p.brand === brand })));
   const yc = backCounts(you.claims);
   const clinical = you.claims.filter((c) => c.topic === 'clinical');
   const clinicalUnbacked = clinical.filter((c) => c.backing !== 'product_study');
-  const topics = Object.keys(CR_TOPICS).filter((t) => cols.some((p) => p.claims.some((c) => c.topic === t)));
+  const accuracy = you.claims.filter((c) => c.topic === 'accuracy');
   const rivalStudy = rivals.filter((p) => p.claims.some((c) => c.backing === 'product_study'));
   const name = b.displayName || brand;
   const findings = [
     `${you.name}: ${you.claims.length} claims checked on its page. ${yc.product_study || 0} rest on a study of the product, ${yc.ingredient_study || 0} on ingredient research, ${(yc.unnamed_study || 0) + (yc.none || 0)} name no source.`,
     you.study ? `The page describes its own study: ${you.study}` : 'The page describes no study of this product.',
+    you.refs ? `Research the brand already lists: ${you.refs.label}. ${(yc.ingredient_study || 0) ? `Only ${yc.ingredient_study} claim${yc.ingredient_study === 1 ? '' : 's'} on the product page point${yc.ingredient_study === 1 ? 's' : ''} to it.` : 'No claim on the product page points to it.'}` : null,
     clinical.length ? `${clinical.length} “clinically” claims; ${clinicalUnbacked.length} not tied to a study of this product (${clinicalUnbacked.map((c) => `“${c.text.replace(/\.$/, '')}”`).join(', ') || 'none'}).` : 'No “clinically” wording on the page.',
-    rivalStudy.length ? `Competitors that describe their own product studies: ${rivalStudy.map((p) => p.name).join(', ')}. Those studies are unnamed and unlinked on their pages.` : 'None of the compared competitors describe a study of their own product.',
+    rivalStudy.length ? `Competitors that describe a study of their own product: ${rivalStudy.map((p) => p.name).join(', ')}.` : `None of the compared competitors (${rivals.map((p) => p.name).join(', ') || 'none researched yet'}) describe a study of their own product.`,
+    accuracy.length ? `Listing check: ${accuracy.map((c) => `${c.where ? `${c.where} ` : ''}says “${c.text.replace(/\.$/, '')}”`).join('; ')}. ${accuracy[0].note || ''}` : null,
   ];
   const actions = [
+    ...(accuracy.length ? [{ text: 'Fix the listing text that describes a different product.', note: accuracy[0].where ? `It sits in the ${accuracy[0].where.toLowerCase()}.` : 'It is on the product page.' }] : []),
     ...(clinicalUnbacked.length ? [{ text: `Back or reword “${clinicalUnbacked[0].text.replace(/\.$/, '')}”.`, note: 'Name the clinician, guideline or study, or drop the word “clinically”.' }] : []),
+    ...(you.refs && (yc.none || 0) ? [{ text: 'Tie your existing references to the claims they support.', note: `Your ${you.refs.label.charAt(0).toLowerCase()}${you.refs.label.slice(1)}. Citing the right paper next to each claim moves it out of “no source”.` }] : []),
     ...((yc.none || 0) ? [{ text: `Add a source for the ${yc.none} claim${yc.none === 1 ? '' : 's'} with none.`, note: 'Or soften the wording to what you can document.' }] : []),
     ...(yc.ingredient_study ? [{ text: 'Say plainly when research is on an ingredient, not your product.', note: 'Shoppers and reviewers read “studies show” as studies of the product.' }] : []),
-    ...(you.study ? [{ text: 'Publish your study’s full method and numbers.', note: 'A named, linked study is stronger than competitors’ unnamed footnotes.' }] : [{ text: 'Consider a product-specific study for your main claim.' }]),
+    ...(you.study ? [{ text: 'Publish the full method and numbers behind the study your page describes.', note: (yc.product_study || 0) ? 'Shoppers and reviewers can only check a study they can read.' : 'Then tie it to the claims it supports; right now no claim on the page points to it.' }] : [{ text: 'Consider a product-specific study for your main claim.' }]),
   ].slice(0, 4);
   const rows = all.filter((c) => !onlyProduct || c.product === onlyProduct);
   return (
@@ -564,28 +570,22 @@ export function Claims({ b }) {
       </div>
       <div className="ps-bento">
         <div className="b-4 b-hero"><Kpi tone="ink" icon="claims" label="Claims on your page" value={String(you.claims.length)} den={`${you.name}`} info="Health and benefit claims quoted from the product page." /></div>
-        <div className="b-2"><Kpi tone="pink" icon="evidence" label="Backed by a product study" value={String(yc.product_study || 0)} den={you.study ? 'study described on the page' : 'no product study on the page'} /></div>
-        <div className="b-2"><Kpi tone="deep" icon="doc" label="Ingredient research only" value={String(yc.ingredient_study || 0)} den="published research, not this product" /></div>
+        <div className="b-2"><Kpi tone="pink" icon="evidence" label="Backed by a product study" value={String(yc.product_study || 0)} den={!you.study ? 'no product study on the page' : (yc.product_study || 0) ? 'study described on the page' : 'a study is described, no claim tied to it'} /></div>
+        <div className="b-2"><Kpi tone="deep" icon="doc" label="Ingredient or method research" value={String(yc.ingredient_study || 0)} den="published research, not this product" /></div>
         <div className="b-2"><Kpi tone="butter" icon="alert" label="No source named" value={String((yc.none || 0) + (yc.unnamed_study || 0))} den={`of ${you.claims.length} claims`} /></div>
         <div className="b-2"><Kpi tone="plain" icon="target" label="“Clinically”, no product study" value={`${clinicalUnbacked.length} of ${clinical.length}`} den="claims using the word" /></div>
         <Panel className="b-7" id="cl-back" title="What each product’s claims rest on" info="Each bar is one product’s claims, split by what its own page cites behind them. This describes the page, not whether a claim is true.">
           <Stacked100 rows={cols.map((p) => ({ label: p.brand === brand ? `${p.name} (you)` : p.name, you: p.brand === brand, counts: backCounts(p.claims) }))} keys={BACK_KEYS} />
         </Panel>
-        <Insights className="b-5" items={findings} />
-      <Panel className="b-8 b-tall" id="cl-topics" title={cview === 'topic' ? 'Claims by topic' : 'Every claim, quoted'} info={cview === 'topic' ? 'How many claims each product makes on each subject. Color shows the strongest thing its page cites for that subject.' : 'Exact wording from each product page, what it cites, and a link to check it yourself.'} right={<>
+        <Insights className="b-5" items={findings.filter(Boolean)} />
+      <Panel className="b-8 b-tall" id="cl-topics" title={cview === 'topic' ? 'Your claims vs a competitor’s, topic by topic' : 'Every claim, quoted'} info={cview === 'topic' ? 'Your exact wording next to one competitor’s on the same subject, strongest backing first. Pick the competitor at the top right of the table.' : 'Exact wording from each product page, what it cites, and a link to check it yourself.'} right={<>
         {cview === 'all' ? <select className="ps-select ps-select--sm" aria-label="Product" value={onlyProduct} onChange={(e) => setOnlyProduct(e.target.value)}><option value="">All products</option>{cols.map((p) => <option key={p.sku} value={p.name}>{p.name}</option>)}</select> : null}
-        <ViewSwitch views={[['topic', 'By topic'], ['all', 'Every claim']]} value={cview} onChange={setCview} />
+        <ViewSwitch views={[['topic', 'Side by side'], ['all', 'Every claim']]} value={cview} onChange={setCview} />
       </>}>
-        {cview === 'topic' ? <Matrix corner="Topic" rows={topics.map((t) => ({ key: t, label: CR_TOPICS[t] }))} cols={cols.map((p) => ({ key: p.sku, label: p.name, sub: p.brand, you: p.brand === brand }))} cell={(r, col) => {
-              const p = cols.find((x) => x.sku === col.key);
-              const cs = p.claims.filter((c) => c.topic === r.key);
-              if (!cs.length) return { text: '–', color: C.missing, title: 'No claim on this topic' };
-              const best = ['product_study', 'ingredient_study', 'unnamed_study', 'none'].find((k) => cs.some((c) => c.backing === k));
-              return { text: String(cs.length), color: BACK_KEYS.find((k) => k.key === best).color, title: `${cs.length} claim${cs.length === 1 ? '' : 's'}; strongest backing: ${CR_BACKING[best].label}` };
-            }} legend={[...BACK_KEYS.map((k) => ({ ...k, label: `Strongest: ${k.label.toLowerCase()}` })), { key: 'na', label: 'No claim', color: C.missing }]} /> : null}
+        {cview === 'topic' ? <ClaimCompare key={you.sku} you={you} rivals={rivals} topics={CR_TOPICS} backing={CR_BACKING} colors={Object.fromEntries(BACK_KEYS.map((k) => [k.key, k.color]))} /> : null}
         {cview === 'all' ? <SortTable rows={rows} rowClass={(c) => (c.you ? 'is-you' : '')} initial={{ key: 'product', dir: 'asc' }} limit={10} columns={[
           { key: 'product', label: 'Product', sortValue: (c) => `${c.you ? 0 : 1}${c.product}`, render: (c) => <>{c.product}{c.you ? ' (you)' : ''}</> },
-          { key: 'text', label: 'Claim (exact wording)', render: (c) => <>“{c.text}”{c.note ? <small style={{ display: 'block', fontSize: 11.5, color: 'rgba(62,39,35,.78)', marginTop: 2 }}>{c.note}</small> : null}</> },
+          { key: 'text', label: 'Claim (exact wording)', render: (c) => <>“{c.text}”{c.where || c.note ? <small style={{ display: 'block', fontSize: 11.5, color: 'rgba(62,39,35,.78)', marginTop: 2 }}>{[c.where, c.note].filter(Boolean).join('. ')}</small> : null}</> },
           { key: 'topic', label: 'Topic', sortValue: (c) => CR_TOPICS[c.topic], render: (c) => CR_TOPICS[c.topic] },
           { key: 'backing', label: 'What the page cites', sortValue: (c) => ['product_study', 'ingredient_study', 'unnamed_study', 'none'].indexOf(c.backing), render: (c) => <span style={{ display: 'inline-block', borderRadius: 999, padding: '2px 9px', fontSize: 11.5, fontWeight: 800, whiteSpace: 'nowrap', background: BACK_KEYS.find((k) => k.key === c.backing).color }}>{CR_BACKING[c.backing].short}</span> },
           { key: 'source', label: 'Source', render: (c) => (c.source ? <a href={c.source.url} target="_blank" rel="noreferrer">{c.source.label}</a> : <a href={c.url} target="_blank" rel="noreferrer">Product page</a>) },
@@ -638,6 +638,10 @@ export function Share({ data, b, cat, setCat }) {
   const bestNeed = byNeed.filter((x) => x.e.brandSlots).sort((x, y) => (y.e.slotShare.pct || 0) - (x.e.slotShare.pct || 0))[0];
   const absent = byNeed.filter((x) => x.e.slots && !x.e.brandSlots).map((x) => x.need);
   const real = realSummary(meta.products.map((p) => ({ ...p, you: p.brand === b.brand })));
+  const series = shareSeries(data.history, c.id, b.brand);
+  const delta = changeSinceLast(series);
+  const shortDay = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const trendPoints = series.points.length ? series.points.map((pt) => ({ label: shortDay(pt.createdAt), value: pt.value ?? 0 })) : [{ label: updatedOn(data), value: ex.slotShare.pct ?? 0 }];
   const realVsSim = real.me.opened && me.slots && real.me.rank < me.rank ? `Real shoppers in the ayna app opened your products more than ${real.brands - real.me.rank} other brands (#${real.me.rank} by opens), ahead of your #${me.rank} spot in recommendations. Interest is there; the gap is in matching.` : real.me.opened ? `In the real ayna app, your products ranked #${real.me.rank} of ${real.brands} brands by card opens (${ENG_RANGE}).` : null;
   const findings = [
     `${name} holds ${ex.slotShare.pct ?? 0}% of ${ex.slots} recommendation slots${filtered ? ' for these filters' : ''}, #${me.slots ? me.rank : '–'} of ${ex.brands.length} brands. ${ex.brands[0]?.you ? 'You lead.' : `${ex.brands[0]?.brand} leads with ${ex.brands[0]?.share}%.`}`,
@@ -645,6 +649,7 @@ export function Share({ data, b, cat, setCat }) {
     bestNeed ? `Strongest need: ${bestNeed.need} (${bestNeed.e.slotShare.pct}% of slots).` : 'You aren’t recommended for any single need yet.',
     absent.length ? `Not recommended at all for: ${absent.join(', ')}.` : 'You appear in every need that had recommendations.',
     realVsSim,
+    delta && !filtered ? `Since the last comparable run (${shortDay(delta.since)}) your share moved ${delta.pp > 0 ? '+' : ''}${delta.pp} percentage points.` : null,
   ];
   const actions = [
     { text: 'See why you lost the shoppers you fit.', note: 'Lost recommendations breaks down every miss by reason.' },
@@ -690,7 +695,7 @@ export function Share({ data, b, cat, setCat }) {
           {view === 'need' ? <Matrix corner="Health need" rows={needGroups.map((g) => ({ key: g.label, label: g.label }))} cols={needGroups[0]?.items.map((it) => ({ key: it.name, label: it.name, sub: it.you ? 'You' : '', you: it.you })) || []} cell={(r, col) => { const it = needGroups.find((g) => g.label === r.key).items.find((x) => x.name === col.key); if (it.value == null) return { text: 'N/A', color: C.missing, title: 'No product was recommended for this need' }; const v = it.value; return { text: `${Math.round(v)}%`, color: v ? (it.you ? `rgba(62,39,35,${(0.15 + 0.75 * v / 100).toFixed(2)})` : `rgba(118,158,190,${(0.15 + 0.85 * v / 100).toFixed(2)})`) : '#f3e9c8', dark: it.you && v >= 35, title: `${col.key}: ${v}% of slots for ${r.key}` }; }} legend={[{ key: 'y', label: 'Your share (darker is more)', color: C.you }, { key: 'r', label: 'Competitor share', color: C.rival }]} /> : null}
           {view === 'heat' ? <><Heatmap grid={c.grid} /><p className="ps-small ps-muted">Your share of slots per need and budget, all formats. Hatched: no product fit.</p></> : null}
           {view === 'dist' ? <Stacked100 rows={[{ label: 'All slots', counts: distCounts }]} keys={distKeys} /> : null}
-          {view === 'trend' ? <TrendLine points={[{ label: updatedOn(data), value: ex.slotShare.pct ?? 0 }]} /> : null}
+          {view === 'trend' ? <><TrendLine points={trendPoints} label={series.skipped ? `${series.skipped} older run${series.skipped === 1 ? '' : 's'} used a different engine or scenario set, so ${series.skipped === 1 ? 'it is' : 'they are'} left out.` : ''} />{filtered ? <p className="ps-small ps-muted">The trend shows all shoppers; filters don’t apply to it.</p> : null}</> : null}
         </Panel>
         <RealInterest className="b-6" products={meta.products.map((p) => ({ ...p, you: p.brand === b.brand }))} name={name} />
       <Panel className="b-12" id="sh-tbl" title="Product ranking" info="Every product in the category, sortable. Eligibility is shown for your products.">
