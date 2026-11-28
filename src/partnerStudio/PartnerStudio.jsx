@@ -252,10 +252,10 @@ export default function PartnerStudio({ fetcher = fetch }) {
   if (!scoped && !['reports'].includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
   else if (view === 'overview') body = <Overview data={data} b={b} go={go} actionState={actionState} />;
   else if (view === 'actions') body = <Actions b={b} actionState={actionState} setAction={setAction} />;
-  else if (view === 'evidence') body = <Evidence b={b} openSource={openSource} />;
-  else if (view === 'claims') body = <Claims b={b} />;
+  else if (view === 'evidence') body = <Evidence data={data} b={b} openSource={openSource} />;
+  else if (view === 'claims') body = <Claims data={data} b={b} />;
   else if (view === 'share') body = <Share data={data} b={b} cat={catEff} setCat={setCat} />;
-  else if (view === 'losses') body = <Losses b={b} cat={catEff} setCat={setCat} />;
+  else if (view === 'losses') body = <Losses data={data} b={b} cat={catEff} setCat={setCat} />;
   else if (view === 'competitors') body = <Competitors b={b} />;
   else if (view === 'feed') body = <Feed b={b} ack={ack} setAck={setAck} />;
   else body = <Reports data={data} b={b} onExport={onExport} />;
