@@ -1,0 +1,93 @@
+/* Partner Studio bento layout. Tiles of different sizes on a 12-column grid,
+   one job per tile, most important tile top-left. ayna colors only: butter
+   page, cream tiles, espresso hero, pink and blue accent tiles. */
+.ps { --ps-surface: #fffbea; --ps-cream: #fff4cc; }
+
+.ps-bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; grid-auto-flow: row dense; align-items: stretch; }
+.ps-bento > * { min-width: 0; }
+.ps-bento .b-2 { grid-column: span 2; }
+.ps-bento .b-3 { grid-column: span 3; }
+.ps-bento .b-4 { grid-column: span 4; }
+.ps-bento .b-5 { grid-column: span 5; }
+.ps-bento .b-6 { grid-column: span 6; }
+.ps-bento .b-7 { grid-column: span 7; }
+.ps-bento .b-8 { grid-column: span 8; }
+.ps-bento .b-12 { grid-column: span 12; }
+.ps-bento .b-tall { grid-row: span 2; }
+.ps-bento > .ps-card { margin: 0; }
+.ps-bento > div > .ps-kpi { height: 100%; }
+
+/* KPI tiles */
+.ps-bento .ps-kpi { border-radius: 20px; padding: 16px 16px 14px; gap: 6px; }
+.ps-bento .b-2 .ps-kpi .ps-num { font-size: 30px; }
+.ps-bento .b-2 .ps-kpi-label { font-size: 12.5px; line-height: 1.25; }
+.ps-bento .b-2 .ps-kpi-icon { display: none; }
+.ps-bento .b-hero .ps-kpi { padding: 20px 22px; gap: 8px; }
+.ps-bento .b-hero .ps-num { font-size: 58px; margin-top: 6px; }
+.ps-bento .b-hero .ps-kpi-label { font-size: 14px; }
+.ps-bento .b-hero .ps-kpi-meter { height: 10px; margin-top: 6px; }
+.ps-bento .b-hero .ps-kpi-meter > span { background: var(--ps-pink); }
+.ps-bento .b-hero .ps-cmp { border: none; padding: 0; font-weight: 700; font-size: 12.5px; color: var(--ps-pink); }
+.ps-kpi--butter { background: var(--ps-cream); }
+.ps-kpi--deep { background: var(--ps-blue-3); }
+.ps-kpi--plain { background: var(--ps-surface); }
+
+/* Content tiles */
+.ps-bento .ps-panel, .ps-tile { border-radius: 20px; }
+.ps-bento .ps-panel-head h2, .ps-tile-title { font-size: 17px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ps-tile { display: flex; flex-direction: column; gap: 12px; }
+.ps-tile-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ps-tile--pink { background: var(--ps-pink) !important; border: none !important; }
+.ps-insights { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.ps-insights li { position: relative; padding-left: 16px; font-size: 13.5px; line-height: 1.45; }
+.ps-insights li::before { content: ''; position: absolute; left: 0; top: 7px; width: 7px; height: 7px; border-radius: 999px; background: var(--ps-ink); }
+.ps-steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.ps-steps li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; font-size: 13.5px; }
+.ps-steps li small { display: block; font-size: 12px; color: var(--ps-ink-2); margin-top: 2px; font-weight: 500; }
+.ps-steps-n { width: 28px; height: 28px; border-radius: 999px; background: var(--ps-ink); color: var(--ps-butter); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+.ps-live { font-size: 11px; font-weight: 800; background: var(--ps-ink); color: var(--ps-butter); border-radius: 999px; padding: 2px 8px; }
+.ps-select--sm { min-height: 32px; padding: 4px 10px; font-size: 12.5px; }
+.ps-panel-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* Stronger chart contrast on cream tiles */
+.ps-bento .ps-bars-track { background: #f3e9c8; height: 16px; border-radius: 5px; }
+.ps-bento .ps-bars-fill { border-radius: 5px; }
+.ps-bento .ps-bars-row.is-you { background: rgba(247, 186, 221, .55); }
+.ps-bars--compact .ps-bars-row { grid-template-columns: minmax(120px, 1fr) minmax(0, 1.4fr) 40px; }
+
+/* Real shopper activity */
+.ps-ri { display: flex; flex-direction: column; gap: 10px; }
+.ps-ri-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; font-weight: 700; }
+.ps-ri-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.ps-ri-row { display: grid; grid-template-columns: minmax(120px, .8fr) minmax(0, 2fr); gap: 12px; align-items: center; }
+.ps-ri-name { font-weight: 700; font-size: 13px; }
+.ps-ri-row.is-avg .ps-ri-name { font-weight: 600; color: var(--ps-ink-2); }
+.ps-ri-bars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ps-ri-bar { position: relative; height: 22px; background: #f3e9c8; border-radius: 6px; display: flex; align-items: center; overflow: hidden; }
+.ps-ri-bar > span { height: 100%; border-radius: 6px; border: 2px solid transparent; min-width: 3px; box-sizing: border-box; }
+.ps-ri-row.is-avg .ps-ri-bar > span { border-style: dashed; }
+.ps-ri-bar b { position: absolute; right: 6px; font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* Overview rail and tabs inside the bento */
+.ps-bento .ps-rail { gap: 16px; }
+.ps-bento .ps-tabcard { min-height: 0; }
+
+/* Method footer stays slim */
+.ps-method { background: transparent; border: 1px dashed rgba(62, 39, 35, .25); }
+
+@media (max-width: 1200px) {
+  .ps-bento .b-2 { grid-column: span 4; }
+  .ps-bento .b-hero { grid-column: span 12; }
+  .ps-bento .b-5, .ps-bento .b-7, .ps-bento .b-4, .ps-bento .b-8 { grid-column: span 6; }
+  .ps-bento .b-tall { grid-row: auto; }
+}
+@media (max-width: 860px) {
+  .ps-bento .b-2 { grid-column: span 6; }
+  .ps-bento > * { grid-column: span 12 !important; }
+  .ps-bento .b-2 { grid-column: span 6 !important; }
+}
+
+/* Filters sit on the page as a slim row, not a box */
+.ps-main > .ps-filters { background: transparent; border: none; box-shadow: none; padding: 0 2px; }
+.ps-bento .b-hero .ps-cmp { background: none; }
+.ps-ri-take { margin-top: auto; font-size: 13px; background: var(--ps-cream); border-radius: 12px; padding: 10px 12px; }
