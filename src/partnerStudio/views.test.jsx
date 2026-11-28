@@ -15,6 +15,10 @@ import { Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope
 import { Overview } from './overviewView.jsx';
 import { Actions } from './actionsBoard.jsx';
 import { Products } from './productsView.jsx';
+import { Discovery } from './discoveryView.jsx';
+import { Readiness } from './readinessView.jsx';
+import { Brief } from './briefView.jsx';
+import { Billing } from './billingView.jsx';
 import { inScope } from './format.js';
 import { rollupCsv } from './csv.js';
 
@@ -40,12 +44,20 @@ describe('Partner Studio screens', () => {
         <Feed key="f" b={b} ack={{}} setAck={noop} />,
         <Reports key="r" data={data} b={b} onExport={noop} />,
         <Products key="pp" data={data} b={b} go={noop} />,
+        <Discovery key="dv" data={data} b={b} go={noop} />,
+        <Readiness key="rd" b={b} go={noop} />,
+        <Brief key="br" data={data} b={b} actionState={{}} />,
+        <Billing key="bl" data={data} b={b} />,
+        <Actions key="as" b={b} actionState={{}} setAction={noop} features={{ submissions: true }} />,
       ];
       for (const s of screens) expect(renderToStaticMarkup(s).length).toBeGreaterThan(50);
       expect(renderToStaticMarkup(screens[4])).toMatch(/Simulation: synthetic shopping scenarios/);
       // Real catalog brand names, never anonymized labels (founder, Nov 25).
       expect(renderToStaticMarkup(screens[4])).not.toMatch(/Peer \d/);
       if (name === 'Demo Brand') expect(renderToStaticMarkup(screens[4])).toMatch(/Other Labs/);
+      const billing = renderToStaticMarkup(screens[13]);
+      expect(billing).toMatch(/not in effect/);
+      expect(billing).toMatch(/Not connected/);
       expect(rollupCsv(data).split('\n')[0]).toMatch(/^brand,run_id/);
     });
   }
