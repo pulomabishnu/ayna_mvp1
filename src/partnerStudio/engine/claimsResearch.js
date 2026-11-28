@@ -5,19 +5,24 @@
  * "backing" describes what the page itself offers, never whether the claim is
  * true:
  *   product_study    a study of this product is described on the page
- *   ingredient_study the page cites published research on an ingredient, not this product
- *   unnamed_study    the page refers to studies or testing but names none
+ *   ingredient_study the page cites published research on an ingredient or method, not this product
+ *   unnamed_study    the page refers to studies, testing or experts but names none
  *   none             no source given
  *
  * Checked by hand from the live product pages on the date shown. A brand not
  * listed here has not been researched yet; the page says so instead of guessing.
+ * A line is only credited to a source the page ties to it. `where` notes when a
+ * claim sits somewhere other than the visible product copy. Products are only
+ * compared within the same Phase 1 category.
+ *
+ * Pilot brands (team sync, Nov 25 2026): GoodCycle, LiM Method, Neycher, BUNI.
  */
 export const CHECKED = '2026-11-27';
 
 export const BACKING = {
   product_study: { label: 'Study of this product described', short: 'Product study' },
-  ingredient_study: { label: 'Ingredient research cited (not this product)', short: 'Ingredient research' },
-  unnamed_study: { label: 'Refers to studies, names none', short: 'Unnamed study' },
+  ingredient_study: { label: 'Research on an ingredient or method cited (not this product)', short: 'Ingredient or method research' },
+  unnamed_study: { label: 'Refers to studies, testing or experts, names none', short: 'Unnamed source' },
   none: { label: 'No source given', short: 'No source' },
 };
 
@@ -27,8 +32,13 @@ export const TOPICS = {
   ph_odor: 'pH and odor',
   microbiome: 'Microbiome and good bacteria',
   intimacy: 'Comfort during sex',
+  pms: 'PMS, cramps and cycle support',
+  pelvic_floor: 'Pelvic floor strength and bladder control',
+  pregnancy: 'Pregnancy and postpartum',
   safety: 'Safety and testing',
-  clinical: '“Clinically” wording',
+  experts: 'Doctor or expert backing',
+  clinical: '“Clinically” and “science” wording',
+  accuracy: 'Listing accuracy',
 };
 
 const NEY = 'https://helloneycher.com/products';
@@ -36,7 +46,7 @@ const ALU = 'https://alubri.com/products';
 
 export const PRODUCTS = [
   {
-    sku: 'p-neycher-vaginal-moisturizer', brand: 'Neycher', name: 'Neycher Vaginal Moisturizer', url: `${NEY}/vaginal-moisturizer`, price: 35.97, format: '10 suppositories',
+    sku: 'p-neycher-vaginal-moisturizer', category: 'intimate-care', brand: 'Neycher', name: 'Neycher Vaginal Moisturizer', url: `${NEY}/vaginal-moisturizer`, price: 35.97, format: '10 suppositories',
     study: 'Page describes a 20-woman, about 1-month, non-randomized, uncontrolled study funded by the brand (ref. FT.CE.110, PDF linked).',
     claims: [
       { text: 'Lasting relief from vaginal dryness and the discomfort it brings, including during sex.', topic: 'dryness', backing: 'none', note: 'The page doesn’t tie this line to its study.' },
@@ -53,7 +63,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-neycher-odor-be-gone', brand: 'Neycher', name: 'Neycher Odor Be Gone', url: `${NEY}/odor-be-gone`, price: 35.97, format: '10 suppositories',
+    sku: 'p-neycher-odor-be-gone', category: 'intimate-care', brand: 'Neycher', name: 'Neycher Odor Be Gone', url: `${NEY}/odor-be-gone`, price: 35.97, format: '10 suppositories',
     study: null,
     claims: [
       { text: 'Controls odor, soothes discomfort, supports healthy pH.', topic: 'ph_odor', backing: 'none' },
@@ -69,7 +79,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-neycher-hydrobloom-gel', brand: 'Neycher', name: 'Neycher HydroBloom Moisturizing Gel', url: `${NEY}/hydrobloom-moisturizing-gel`, price: 25.97, format: 'Gel',
+    sku: 'p-neycher-hydrobloom-gel', category: 'intimate-care', brand: 'Neycher', name: 'Neycher HydroBloom Moisturizing Gel', url: `${NEY}/hydrobloom-moisturizing-gel`, price: 25.97, format: 'Gel',
     study: null,
     claims: [
       { text: 'Lasting hydration, inside and out', topic: 'dryness', backing: 'none' },
@@ -83,7 +93,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-alubri-vaginal-moisturizing-gel', brand: 'Alubri', name: 'Alubri Vaginal Moisturizing Gel', url: `${ALU}/vaginal-moisturizing-gel`, price: 29.99, format: 'Gel with applicators',
+    sku: 'p-alubri-vaginal-moisturizing-gel', category: 'intimate-care', brand: 'Alubri', name: 'Alubri Vaginal Moisturizing Gel', url: `${ALU}/vaginal-moisturizing-gel`, price: 29.99, format: 'Gel with applicators',
     study: 'Page footnotes an independent, IRB-approved study of 51 menopausal women, twice weekly for one month. No name or link.',
     claims: [
       { text: 'Clinically proven internal vaginal moisturizer with up to 72 hours of hydration.', topic: 'dryness', backing: 'product_study', note: '51-woman study footnoted, not named or linked.' },
@@ -96,7 +106,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-alubri-calming-cream', brand: 'Alubri', name: 'Alubri Calming Cream', url: `${ALU}/calming-cream`, price: 29.99, format: 'Cream (0.25% hydrocortisone, OTC)',
+    sku: 'p-alubri-calming-cream', category: 'intimate-care', brand: 'Alubri', name: 'Alubri Calming Cream', url: `${ALU}/calming-cream`, price: 29.99, format: 'Cream (0.25% hydrocortisone, OTC)',
     study: 'Page describes an independent, third-party study of 53 women over 24 hours (self-reported). No name or link.',
     claims: [
       { text: 'Immediately relieves itching and irritation.', topic: 'irritation', backing: 'none' },
@@ -108,7 +118,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-alubri-intimate-serum', brand: 'Alubri', name: 'Alubri Intimate Serum', url: `${ALU}/intimate-serum`, price: 24.99, format: 'Serum',
+    sku: 'p-alubri-intimate-serum', category: 'intimate-care', brand: 'Alubri', name: 'Alubri Intimate Serum', url: `${ALU}/intimate-serum`, price: 24.99, format: 'Serum',
     study: 'Page footnotes an IRB-approved study (gravimetric hydration) and a 50-woman, 2-week perception study. No name or link.',
     claims: [
       { text: 'Instantly delivers a 152% increase in vulvar hydration', topic: 'dryness', backing: 'product_study', note: 'Footnote says measured 72 hours after one application.' },
@@ -120,7 +130,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    sku: 'p-oboo-smooth-daily', brand: 'Oboo', name: 'Smooth Daily Vulva Balm', url: 'https://oboo.love/products/smooth-daily-vulva-balm', price: 36, format: 'Balm',
+    sku: 'p-oboo-smooth-daily', category: 'intimate-care', brand: 'Oboo', name: 'Smooth Daily Vulva Balm', url: 'https://oboo.love/products/smooth-daily-vulva-balm', price: 36, format: 'Balm',
     study: null,
     claims: [
       { text: 'Everyday support for dryness, sensitivity, and discomfort', topic: 'dryness', backing: 'none' },
@@ -130,7 +140,76 @@ export const PRODUCTS = [
       { text: '100 percent natural and organic', topic: 'safety', backing: 'none', note: 'No certification named.' },
     ],
   },
+  {
+    sku: 'p-buni-rejuvenate-vulva-balm', category: 'intimate-care', brand: 'BUNI', name: 'BUNI REJUVENATE Vulva Balm', url: 'https://www.bunibody.com/products/buni-vulva-balm', price: 42.9, format: '1.7 oz airless pump',
+    study: null,
+    claims: [
+      { text: 'Relieves Dryness, Itching & Irritation', topic: 'irritation', backing: 'none' },
+      { text: 'Comfort During Intimacy', topic: 'intimacy', backing: 'none' },
+      { text: 'pH-Balanced Formula', topic: 'ph_odor', backing: 'none' },
+      { text: 'Prevent Ingrown Hairs', topic: 'irritation', backing: 'none' },
+      { text: 'Holds 1000x its weight in water.', topic: 'dryness', backing: 'none', note: 'About hyaluronic acid; no source given.' },
+      { text: 'Safe for sensitive skin', topic: 'safety', backing: 'none' },
+      { text: 'Developed by OB/GYNs and dermatologists with ingredients chosen for real results.', topic: 'experts', backing: 'unnamed_study', note: 'No doctor named.' },
+      { text: 'Backed By Science', topic: 'clinical', backing: 'none', note: 'Section heading; no study or reference under it.' },
+      { text: 'This scar treatment blends Retinyl Palmitate, Snail Secretion, organic oils and antioxidants', topic: 'accuracy', backing: 'none', where: 'Page metadata (search results and link previews)', note: 'Describes a scar treatment with ingredients that are not in this balm’s ingredient list. Looks copied from the scar oil.' },
+    ],
+  },
+  {
+    sku: 'p-goodcycle-dailybasis', category: 'period-care', brand: 'GoodCycle', name: 'DailyBasis by GoodCycle', url: 'https://takegoodcycle.com/products/daily-basis', price: 45, format: 'Daily powder stick packs (Replenish + Balance)',
+    study: null,
+    refs: { label: 'References page lists 45 nutrient and ingredient papers (for example magnesium and B6 for PMS, ginger for period pain), none on DailyBasis itself', url: 'https://takegoodcycle.com/pages/references' },
+    claims: [
+      { text: 'designed to support what the body needs most during each phase of the menstrual cycle.', topic: 'pms', backing: 'none', note: 'A separate References page lists 45 nutrient and ingredient papers; none is tied to this line and none studies DailyBasis.' },
+      { text: 'Reduced Inflammation & PMS Symptom Relief*', topic: 'pms', backing: 'none', where: 'Science page' },
+      { text: 'Deliver critical nutrients to ease common PMS symptoms through the latter half of your cycle.', topic: 'pms', backing: 'none', where: 'Science page' },
+      { text: 'Replenish nutrients lost during menstruation and support healthy ovulation.', topic: 'pms', backing: 'none', where: 'Science page' },
+      { text: 'Daily Energy & Mood Balance*', topic: 'pms', backing: 'none', where: 'Science page' },
+      { text: '70% of menstruating women experience cycle-related nutrient deficiencies.', topic: 'pms', backing: 'none', where: 'Science page', note: 'No source for the 70% figure.' },
+      { text: 'Nutrient deficiencies can cause hormonal imbalances, that increase the likelihood and severity of conditions like PMS, infertility, and diabetes.', topic: 'pms', backing: 'none', where: 'Science page' },
+      { text: 'OBGYN Formulated', topic: 'experts', backing: 'unnamed_study', note: 'Badge. The page quotes Dr Miranda Naylor, DO, but does not say who formulated it.' },
+      { text: '3rd Party Tested', topic: 'safety', backing: 'unnamed_study', note: 'No lab or results named.' },
+    ],
+  },
+  {
+    sku: 'p-flo-gummies', category: 'period-care', brand: 'FLO', name: 'FLO PMS Gummy Vitamins', url: 'https://opositiv.com/products/flo-pms-gummy-vitamins', price: 31.99, format: '60 gummies (30 days)',
+    study: null,
+    claims: [
+      { text: 'for hormonal breakouts, bloating, and cramps*', topic: 'pms', backing: 'none' },
+      { text: 'The tasty, scientifically-designed vitamin for PMS.*', topic: 'clinical', backing: 'none' },
+      { text: 'Chasteberry has been shown to promote healthy hormone levels to help smooth out mood swings', topic: 'pms', backing: 'unnamed_study', note: '“Has been shown”, no study named.' },
+      { text: 'research has found that vitamin B6 may play a key role in relieving the emotional effects of PMS.', topic: 'pms', backing: 'unnamed_study', note: 'No study named.' },
+      { text: 'Lemon balm is best known for its calming qualities and has been traditionally used for cramp relief', topic: 'pms', backing: 'none', note: 'Traditional-use wording.' },
+      { text: 'We recommend 2-3 months of consistent daily use for best results.*', topic: 'pms', backing: 'none' },
+    ],
+  },
+  {
+    sku: 'p-lim-method-bundle', category: 'bladder-pelvic', brand: 'LiM Method', name: 'The LiM Bundle', url: 'https://www.limmethod.com/products/the-lim-bundle-2', price: 199.95, format: 'Sliding board, mat, accessories + 7 video sessions',
+    refs: { label: 'Citations page lists 2 trials of pelvic floor exercise in pregnancy and 1 clinic page, none on LiM itself', url: 'https://www.limmethod.com/pages/citations' },
+    study: 'Citations page mentions a 2025 consumer survey run by the company (98% said they felt more educated about connecting to their pelvic floor). Not peer reviewed and not about outcomes.',
+    claims: [
+      { text: 'Research shows that training the pelvic floor muscles before pregnancy', topic: 'pregnancy', backing: 'ingredient_study', source: { label: 'Szumilewicz et al., Front Physiol 2019', url: 'https://doi.org/10.3389/fphys.2018.01867' }, note: 'Sentence continues on the page. Its Citations page lists trials of pelvic floor exercise in pregnancy, not of LiM.' },
+      { text: 'Properly exercising the pelvic floor throughout pregnancy can contribute to smoother labor and fewer postpartum complications', topic: 'pregnancy', backing: 'none' },
+      { text: 'With consistent practice, common pelvic floor-related concerns like incontinence and painful sex can heal', topic: 'pelvic_floor', backing: 'none', note: 'Treatment outcome claim with no source.' },
+      { text: 'Targets all layers of pelvic floor muscles', topic: 'pelvic_floor', backing: 'none', where: 'Comparison table' },
+      { text: 'Both preventative & reactive', topic: 'pelvic_floor', backing: 'none', where: 'Comparison table' },
+      { text: 'Working in this position will create stability in your pelvic floor muscles, core, and lower body.', topic: 'pelvic_floor', backing: 'none' },
+      { text: 'Natural & non-invasive (no inserts needed, low risk)', topic: 'safety', backing: 'none', where: 'Comparison table' },
+    ],
+  },
+  {
+    sku: 'p-elvie-trainer', category: 'bladder-pelvic', brand: 'Elvie', name: 'Elvie Trainer', url: 'https://www.elvie.com/en-us/shop/elvie-trainer', price: 199, format: 'Insertable sensor + app (biofeedback)',
+    study: null,
+    claims: [
+      { text: 'the gold standard of Kegel training', topic: 'pelvic_floor', backing: 'none', note: 'Refers to biofeedback; no source on the page.' },
+      { text: 'Take charge of your pelvic floor with expert-designed care from home.', topic: 'experts', backing: 'unnamed_study', note: 'No expert named on this page.' },
+      { text: 'award-winning Kegel trainer designed to make pelvic floor exercises effective and fun.', topic: 'pelvic_floor', backing: 'none', where: 'Page metadata (search results and link previews)' },
+      { text: 'completely covered in medical grade silicone with no exposed parts, so it is safe to use with the coil or IUD.', topic: 'safety', backing: 'none', where: 'FAQ' },
+    ],
+  },
 ];
 
 export const researchedBrands = () => [...new Set(PRODUCTS.map((p) => p.brand))];
 export const productsOf = (brand) => PRODUCTS.filter((p) => p.brand === brand);
+/** Researched products from other brands in the same category, for comparison. */
+export const rivalsOf = (product) => PRODUCTS.filter((p) => p.brand !== product.brand && p.category === product.category);
