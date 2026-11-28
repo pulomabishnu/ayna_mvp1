@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Kpi, Drawer } from './ui.jsx';
 import { Insights, NextSteps } from './tiles.jsx';
-import { Panel, SortTable, Method, RankedBars } from './charts.jsx';
+import { Panel, SortTable, Method, RankedBars, ViewSwitch } from './charts.jsx';
 import { C } from './chartColors.js';
 import { ENG_RANGE } from './engine/engagement.js';
 import { marketRollup, rate, pct } from './engine/market.js';
@@ -11,6 +11,7 @@ import { marketRollup, rate, pct } from './engine/market.js';
 export function Market({ data, b, go }) {
   const [pick, setPick] = useState(null);
   const [partnersOnly, setPartnersOnly] = useState(false);
+  const [mode, setMode] = useState('chart');
   const catalog = (data.catalog || []).filter((p) => !partnersOnly || p.partner || p.brand === b.brand);
   const rows = marketRollup(catalog, b.brand);
   const active = rows.filter((r) => r.opened > 0);
@@ -48,16 +49,14 @@ export function Market({ data, b, go }) {
         <div className="b-2"><Kpi tone="deep" icon="trophy" label="Most viewed" value={top ? top.label : 'N/A'} den={top ? `${rate(top.opened, totalViews)}% of all views` : ''} /></div>
         <div className="b-2"><Kpi tone="butter" icon="target" label="Open categories" value={String(gaps.length)} den="busy, and you have no product" info="Categories with above-median product views per product where you have nothing listed." /></div>
         <div className="b-2"><Kpi tone="plain" icon="hash" label="Products listed" value={String(rows.reduce((a, r) => a + r.products, 0))} den={partnersOnly ? 'from brand partners and you' : 'across all brands'} /></div>
-        <Panel className="b-8" id="mk-bars" title="Where shoppers look on ayna" info="Product views by category, added up across products. One person who opens two products in a category counts twice. Tap a category for details.">
-          <RankedBars unit="" rows={active.slice(0, 12).map((r) => ({ label: <button type="button" className="ps-link" onClick={() => setPick(r.id)}>{r.label}</button>, value: r.opened, you: r.mine > 0, sub: `${r.products} ${r.products === 1 ? 'product' : 'products'}, ${r.brandCount} ${r.brandCount === 1 ? 'brand' : 'brands'}` }))} />
-          <p className="ps-small ps-muted"><span className="ps-key-dot is-you" /> You sell in this category <span className="ps-key-dot" style={{ background: C.rival }} /> You don’t</p>
-        </Panel>
-        <div className="b-4 ps-stack-col ps-col12">
-          <Insights items={findings} />
-          <NextSteps actions={actions} />
-        </div>
-        <Panel className="b-12" id="mk-tbl" title="Every category" info="Tap a category to see which brands lead it.">
-          <SortTable limit={12} rows={rows} rowClass={(r) => (r.mine ? 'is-you' : '')} initial={{ key: 'opened', dir: 'desc' }} columns={[
+        <Panel className="b-8" id="mk-bars" title="Where shoppers look on ayna" info="Product views by category, added up across products. One person who opens two products in a category counts twice. Tap a category for details." right={<ViewSwitch label="Show as" views={[['chart', 'Chart'], ['table', 'Table']]} value={mode} onChange={setMode} />}>
+          {mode === 'chart' ? (
+            <>
+              <RankedBars unit="" rows={active.slice(0, 12).map((r) => ({ label: <button type="button" className="ps-link" onClick={() => setPick(r.id)}>{r.label}</button>, value: r.opened, you: r.mine > 0, sub: `${r.products} ${r.products === 1 ? 'product' : 'products'}, ${r.brandCount} ${r.brandCount === 1 ? 'brand' : 'brands'}` }))} />
+              <p className="ps-small ps-muted"><span className="ps-key-dot is-you" /> You sell in this category <span className="ps-key-dot" style={{ background: C.rival }} /> You don’t</p>
+            </>
+          ) : (
+            <SortTable limit={12} rows={rows} rowClass={(r) => (r.mine ? 'is-you' : '')} initial={{ key: 'opened', dir: 'desc' }} columns={[
             { key: 'label', label: 'Category', render: (r) => <button type="button" className="ps-link" onClick={() => setPick(r.id)}>{r.label}</button> },
             { key: 'products', label: 'Products', num: true },
             { key: 'brandCount', label: 'Brands', num: true },
@@ -67,7 +66,12 @@ export function Market({ data, b, go }) {
             { key: 'mine', label: 'Your products', num: true },
             { key: 'myShare', label: 'Your share of views', num: true, render: (r) => (r.mine ? pct(r.myShare) : '') },
           ]} />
+          )}
         </Panel>
+        <div className="b-4 ps-stack-col ps-col12">
+          <Insights items={findings} />
+          <NextSteps actions={actions} />
+        </div>
       </div>
       {sel ? (
         <Drawer title={sel.label} onClose={() => setPick(null)}>
