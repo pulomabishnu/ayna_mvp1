@@ -5,6 +5,7 @@
  * grade, At a glance facts). Nothing is invented; this only decides what goes
  * where. Research: scratchpad/PDP_RESEARCH.md.
  */
+import { keepAcronyms } from '../../utils/seoMeta.js';
 import { isSafetyHold, isBleedingEvaluation, whyMatch, exclusionLines, BLEEDING_EVALUATION, MATCH_UNAVAILABLE } from '../../utils/matchDisplay.js';
 import { firstSentence, splitNote, splitSentences } from './sentences.js';
 import { getPassport } from '../../data/passport/index.js';
@@ -342,7 +343,8 @@ export function keyFormat(product, brand = '') {
   let name = String(product.name || '').replace(/\s*[,(].*$/, '').trim();
   const b = String(brand || product.brand || '').trim();
   if (b && name.toLowerCase().startsWith(b.toLowerCase() + ' ')) name = name.slice(b.length + 1);
-  return cap(name.toLowerCase());
+  // Nov 27 audit: "Uti test + treat": lowercasing the name broke acronyms; put them back.
+  return keepAcronyms(cap(name.toLowerCase()));
 }
 
 /** Index of the safety item the hero line echoes (its text starts with, or contains, the hero line). */

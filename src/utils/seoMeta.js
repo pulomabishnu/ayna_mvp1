@@ -75,10 +75,14 @@ export function productShortUse(product) {
   return CATEGORY_USE[product?.category] || need || kind;
 }
 
+// Nov 27 audit: titles read "uti support"; the use text is lowercased, so put acronyms back in capitals.
+const ACRONYMS = /\b(uti|utis|pcos|pmos|pms|pmdd|bv|iud|hpv|sti|stis|ivf|gsm)\b/gi;
+export const keepAcronyms = (s) => String(s || '').replace(ACRONYMS, (m) => (m.toLowerCase().endsWith('s') && m.length > 3 && !/^(pcos|pmos|pms)$/i.test(m) ? `${m.slice(0, -1).toUpperCase()}s` : m.toUpperCase()));
+
 /** Document title: "Name by Brand: short use | ayna". */
 export function productSeoTitle(product) {
   if (!product?.name) return 'Product not found | ayna';
-  const use = productShortUse(product);
+  const use = keepAcronyms(productShortUse(product));
   return `${productNameWithBrand(product)}${use ? `: ${use}` : ''} | ayna`;
 }
 
