@@ -1,7 +1,8 @@
 /* Partner Studio bento layout. Tiles of different sizes on a 12-column grid,
    one job per tile, most important tile top-left. ayna colors only: butter
-   page, cream tiles, espresso hero, pink and blue accent tiles. */
-.ps { --ps-surface: #fffbea; --ps-cream: #fff4cc; }
+   page, butter-tint tiles (no white surfaces), espresso hero, pink and blue
+   accent tiles. */
+.ps { --ps-surface: #fff8dc; --ps-cream: #fff4cc; }
 
 .ps-bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; grid-auto-flow: row dense; align-items: stretch; }
 .ps-bento > * { min-width: 0; }
