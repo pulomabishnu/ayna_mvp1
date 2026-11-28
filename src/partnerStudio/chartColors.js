@@ -1,17 +1,20 @@
-/* Partner Studio chart colors (ayna tokens plus muted status colors). */
-/* Color roles (ayna tokens): your brand = espresso, competitors = muted blue-gray,
-   benchmark = gray dashed, documented/positive = muted green, attention = amber,
-   safety alert = red, missing = neutral gray. */
+/* Partner Studio chart colors: only ayna's four (espresso, butter, sky, pink) and their tints.
+   See docs/design-rules.md. Ordered scales run espresso (strongest) > sky > light sky > pink (needs attention).
+   Your brand = espresso, competitors = sky, missing = a butter shade. No green, amber or red. */
 export const C = {
   you: '#3e2723',
   rival: '#769ebe',
-  rival2: '#a9c3d9',
-  bench: '#8a7f78',
-  good: '#7f9f78',
-  goodLight: '#c6d9bf',
-  amber: '#d9a441',
-  amberLight: '#f0d9a6',
-  red: '#b5523b',
-  missing: '#ddd5c4',
+  rival2: '#c9dcea',
+  bench: '#9f8a68',
+  good: '#3e2723',
+  goodLight: '#769ebe',
+  amberLight: '#c9dcea',
+  amber: '#f7badd',
+  red: '#f7badd',
+  missing: '#efdca0',
   pink: '#f7badd',
+  skyText: '#4d7699',
 };
+
+/** Text color that reads on a given fill. */
+export const inkOn = (bg) => (bg === C.you || bg === C.skyText ? '#ffedac' : '#3e2723');
