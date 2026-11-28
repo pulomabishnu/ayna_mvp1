@@ -14,7 +14,7 @@
  * - A confirmed @aynahealth.co admin (isAdminUser). Brand tenants come in a
  *   later phase with their own row-level security; until then no brand
  *   account can call this.
- * - brand must be one of the snapshot's partner brands.
+ * - brand must be a partner brand or a brand in the catalog.
  *
  * Local design QA only: with no VERCEL_ENV (never set off Vercel) and
  * PARTNER_STUDIO_LOCAL_DEMO=1, the admin check is skipped. Vercel always sets
@@ -31,12 +31,24 @@ function headers(res) {
 }
 
 export function brandList(snap = snapshot) {
-  return Object.entries(snap.brands).map(([name, b]) => ({
+  const out = Object.entries(snap.brands).map(([name, b]) => ({
     name,
     skus: b.skus?.length || 0,
     inScope: (b.skus || []).filter((s) => s.inScope).length,
     empty: Boolean(b.empty),
+    partner: true,
   }));
+  // Every other brand in the catalog gets a general view built from public facts and aggregate activity.
+  const known = new Set(out.map((b) => b.name));
+  const counts = new Map();
+  for (const p of snap.catalog || []) if (!known.has(p.brand)) counts.set(p.brand, (counts.get(p.brand) || 0) + 1);
+  for (const [name, n] of [...counts].sort((a, b) => a[0].localeCompare(b[0]))) out.push({ name, skus: n, inScope: 0, empty: false, partner: false });
+  return out;
+}
+
+/** A catalog-only brand: no benchmark rollup, just the shape the screens expect. */
+export function catalogBrand(name) {
+  return { brand: name, skus: [], categories: [], competitors: [], simulations: [], feed: [], actions: [], catalogOnly: true };
 }
 
 export default async function handler(req, res) {
@@ -69,8 +81,8 @@ export default async function handler(req, res) {
     try { query = Object.fromEntries(new URL(req.url, 'http://local').searchParams); } catch { query = {}; }
   }
   const wanted = typeof query?.brand === 'string' ? query.brand : '';
-  if (wanted && !Object.hasOwn(snapshot.brands, wanted)) return res.status(404).json({ error: 'unknown_brand' });
-  const name = wanted || brands.slice().sort((a, b) => b.inScope - a.inScope)[0]?.name;
+  if (wanted && !brands.some((b) => b.name === wanted)) return res.status(404).json({ error: 'unknown_brand' });
+  const name = wanted || brands.filter((b) => b.partner).sort((a, b) => b.inScope - a.inScope)[0]?.name;
 
   return res.status(200).json({
     run: snapshot.run,
@@ -81,6 +93,6 @@ export default async function handler(req, res) {
     catalog: snapshot.catalog || [],
     outOfScope: snapshot.outOfScope,
     brands,
-    brand: { name, ...snapshot.brands[name] },
+    brand: { name, ...(Object.hasOwn(snapshot.brands, name) ? snapshot.brands[name] : catalogBrand(name)) },
   });
 }
