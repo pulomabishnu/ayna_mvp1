@@ -114,14 +114,16 @@ export function lossFunnel(results, brand) {
   return { counts, reasons, examples, check: Object.values(reasons).reduce((a, b) => a + b, 0) === counts.eligible_lost };
 }
 
-/** Per-SKU placement counts and stage mix. */
+/** Per-SKU placement counts, stage mix and loss reasons. */
 export function skuBreakdown(results, brand) {
   const m = new Map();
   for (const r of results) {
     for (const c of r.candidates) {
       if (c.brand !== brand) continue;
-      const row = m.get(c.sku) || { sku: c.sku, name: c.name, selected: 0, eligible_lost: 0, insufficient_info: 0, excluded: 0, out_of_scope: 0 };
+      const row = m.get(c.sku) || { sku: c.sku, name: c.name, selected: 0, eligible_lost: 0, insufficient_info: 0, excluded: 0, out_of_scope: 0, reasons: {} };
       row[c.stage] += 1;
+      // Per-product loss reasons (p.11 drill-down): why this SKU missed when it was eligible.
+      if (c.stage === 'eligible_lost') { const k = c.reason || 'unclassified'; row.reasons[k] = (row.reasons[k] || 0) + 1; }
       m.set(c.sku, row);
     }
   }

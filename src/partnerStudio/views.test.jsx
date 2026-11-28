@@ -29,10 +29,10 @@ describe('Partner Studio screens', () => {
       const screens = [
         <Overview key="o" data={data} b={b} go={noop} actionState={{}} />,
         <Actions key="a" b={b} actionState={{}} setAction={noop} />,
-        <Evidence key="e" b={b} openSource={noop} />,
-        <Claims key="c" b={b} />,
+        <Evidence key="e" data={data} b={b} openSource={noop} />,
+        <Claims key="c" data={data} b={b} />,
         <Share key="s" data={data} b={b} cat={cat} setCat={noop} />,
-        <Losses key="l" b={b} cat={cat} setCat={noop} />,
+        <Losses key="l" data={data} b={b} cat={cat} setCat={noop} />,
         <Competitors key="p" b={b} />,
         <Feed key="f" b={b} ack={{}} setAck={noop} />,
         <Reports key="r" data={data} b={b} onExport={noop} />,
