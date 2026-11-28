@@ -9,41 +9,37 @@ import { Icon, Drawer, SyntheticBadge } from './ui.jsx';
 import { Actions } from './actionsBoard.jsx';
 import { Products } from './productsView.jsx';
 import { Market } from './marketView.jsx';
-import { groupActions } from './engine/actionGroups.js';
 import { Overview } from './overviewView.jsx';
 import { Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
 import { inScope } from './format.js';
 import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
 import { initPartnerAnalytics, track } from './analytics.js';
 import { rollupCsv } from './csv.js';
-import { QUESTIONS, answer, matchQuestion, search } from './assistant.js';
+import { QUESTIONS, answer, matchQuestion } from './assistant.js';
 import { getSupabaseClient } from '../utils/supabaseClient.js';
 
-// Basic plan ($39/mo): Overview, Product intelligence, Market opportunities,
-// Recommendation performance, Reports. Claim and research pages stay in the code
-// but are out of the Basic plan, so they are not in the menu.
+// Basic plan ($39/mo): five sections. Pages that belong together sit under one
+// menu item with tabs; the action plan and updates open from the Overview.
 const NAV = [
-  { group: 'Your brand', items: [['overview', 'Overview'], ['actions', 'Action plan']] },
-  { group: 'Product intelligence', items: [['products', 'Product performance'], ['competitors', 'Product comparison']] },
-  { group: 'Market', items: [['market', 'Market opportunities']] },
-  { group: 'Recommendations', items: [['share', 'Recommendation performance'], ['losses', 'Why products miss']] },
-  { group: 'Account', items: [['reports', 'Reports'], ['feed', 'Updates on your products']] },
+  { id: 'overview', label: 'Overview', icon: 'overview', views: ['overview'] },
+  { id: 'products', label: 'Products', icon: 'box', views: ['products'] },
+  { id: 'market', label: 'Competitive insights', icon: 'competitors', views: ['market', 'competitors'], tabs: [['market', 'Market opportunities'], ['competitors', 'Product comparison']] },
+  { id: 'share', label: 'Recommendations', icon: 'share', views: ['share', 'losses'], tabs: [['share', 'Simulated selection share'], ['losses', 'Why products aren’t selected']] },
+  { id: 'reports', label: 'Reports', icon: 'reports', views: ['reports'] },
 ];
 // Pages built from the whole catalog work for every brand; the rest need the recommendation benchmark.
 const OPEN_TO_ALL = ['overview', 'products', 'market', 'actions', 'feed', 'reports'];
-const OFF_MENU = { claims: 'Competitor content & positioning', evidence: 'Product information' };
-const TITLES = { ...Object.fromEntries(NAV.flatMap((g) => g.items)), ...OFF_MENU };
-const ICON = { overview: 'overview', products: 'box', market: 'layers', actions: 'actions', evidence: 'evidence', claims: 'claims', share: 'share', losses: 'losses', competitors: 'competitors', feed: 'feed', reports: 'reports' };
+const TITLE_OF = { overview: 'Overview', products: 'Products', market: 'Competitive insights', competitors: 'Competitive insights', share: 'Recommendations', losses: 'Recommendations', reports: 'Reports', actions: 'Action plan', feed: 'Updates on your products', claims: 'Competitor content & positioning', evidence: 'Product information' };
 const SUBTITLE = {
-  overview: 'See how your products are performing on ayna.',
+  overview: 'See how shoppers discover and engage with your products on ayna.',
   products: 'See which products shoppers view and click through to a retailer.',
   market: 'Where shoppers look on ayna, by category, and how much of that activity your brand gets.',
   actions: 'Specific things to fix or try, with what each one is worth. Track them as you go.',
   evidence: 'What your listings include next to similar products, and what to add first.',
   claims: 'What your product pages say next to competitors’ pages, and what each statement cites. Quoted as written; ayna doesn’t judge whether claims are true.',
-  share: 'How often ayna recommends your products to shoppers, and where you rank. Filter by need, format and budget.',
-  losses: 'Where your products could be recommended but aren’t, and what is holding them back.',
-  competitors: 'Your products next to the most similar products on ayna.',
+  share: 'How your products do in ayna’s matching engine across simulated shopping scenarios. Not actual customer activity.',
+  losses: 'Why your products weren’t selected in simulated shopping scenarios, and what you can change.',
+  competitors: 'Your products next to the most similar products on ayna. Public information only.',
   feed: 'Reviews, fact checks and changes on your products.',
   reports: 'Review and export your brand’s performance, and see how every number is made.',
 };
@@ -123,37 +119,6 @@ function Gate({ status, denied, onSignedIn }) {
   );
 }
 
-function SearchBox({ data, b, go, setCat }) {
-  const [q, setQ] = useState('');
-  const [open, setOpen] = useState(false);
-  const screens = useMemo(() => NAV.flatMap((g) => g.items), []);
-  const results = useMemo(() => search(q, data, b, screens), [q, data, b, screens]);
-  const pick = (r) => {
-    if (r.kind === 'screen') go(r.id);
-    else { setCat(r.cat); go('share'); }
-    setQ(''); setOpen(false);
-    track('partner_studio_search_used', { kind: r.kind });
-  };
-  return (
-    <div className="ps-search" onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false); }}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-      <input type="search" placeholder="Search" value={q} aria-label="Search products, brands and pages" onChange={(e) => { setQ(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onKeyDown={(e) => { if (e.key === 'Enter' && results[0]) pick(results[0]); if (e.key === 'Escape') setOpen(false); }} />
-      <span className="ps-search-scope" aria-hidden="true"><span>Products</span><span>Brands</span><span>Pages</span></span>
-      {open && q.trim().length >= 2 ? (
-        <ul className="ps-search-results" role="listbox">
-          {results.map((r, i) => (
-            <li key={`${r.kind}-${r.label}-${i}`}><button type="button" onClick={() => pick(r)}>
-              <span className="ps-search-kind">{r.kind === 'screen' ? 'Page' : r.kind === 'brand' ? 'Brand' : 'Product'}</span>
-              <span><strong>{r.label}</strong>{r.you ? <em> (you)</em> : null}{r.partner && !r.you ? <span className="ps-tag">ayna partner</span> : null}{r.sub ? <small>{r.sub}</small> : null}</span>
-            </button></li>
-          ))}
-          {!results.length ? <li className="ps-search-empty">No product, brand or page matches “{q}”.</li> : null}
-        </ul>
-      ) : null}
-    </div>
-  );
-}
-
 function AskPanel({ data, b, go, onClose }) {
   const [current, setCurrent] = useState(null);
   const [text, setText] = useState('');
@@ -187,7 +152,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
   const [brand, setBrand] = useState(() => new URLSearchParams(window.location.search).get('brand') || '');
   const [view, setView] = useState(() => {
     const v = new URLSearchParams(window.location.search).get('view');
-    return v && TITLES[v] ? v : 'overview';
+    return v && TITLE_OF[v] ? v : 'overview';
   });
   const [cat, setCat] = useState('');
   const [source, setSource] = useState(null);
@@ -256,11 +221,10 @@ export default function PartnerStudio({ fetcher = fetch }) {
     track('partner_studio_export_downloaded', { kind: 'csv' });
   }, [data, b]);
 
-  const openCount = useMemo(() => groupActions(b?.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done').length, [b, actionState]);
-
   if (status !== 'ok' || !data) return <Gate status={status} denied={denied} onSignedIn={() => { setStatus(null); setDenied(null); setReload((n) => n + 1); }} />;
   const scoped = inScope(b);
   const name = b.displayName || b.name;
+  const section = NAV.find((n) => n.views.includes(view));
 
   let body;
   if (!scoped && !OPEN_TO_ALL.includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
@@ -287,28 +251,17 @@ export default function PartnerStudio({ fetcher = fetch }) {
             <optgroup label="All brands on ayna">{data.brands.filter((x) => x.partner === false).map((x) => <option key={x.name} value={x.name}>{x.name}</option>)}</optgroup>
           </select>
         </div>
-        <nav aria-label="Sections" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {NAV.map((g) => (
-            <div key={g.group} className="ps-navgroup">
-              <span>{g.group}</span>
-              {g.items.map(([id, label]) => (
-                <button key={id} type="button" className="ps-nav" aria-current={view === id ? 'page' : undefined} onClick={() => go(id)}>
-                  <Icon name={ICON[id]} />{label}{id === 'actions' && openCount ? <span className="ps-dot">{openCount}</span> : null}
-                </button>
-              ))}
-            </div>
+        <nav aria-label="Sections" className="ps-navgroup">
+          {NAV.map((n) => (
+            <button key={n.id} type="button" className="ps-nav" aria-current={n.views.includes(view) ? 'page' : undefined} onClick={() => go(n.id)}>
+              <Icon name={n.icon} />{n.label}
+            </button>
           ))}
         </nav>
-        <div className="ps-side-ask">
-          <strong>Need a quick read?</strong>
-          <p>Ask why you’re missing the top 3, who’s beating you, or what to fix first.</p>
-          <button type="button" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
-        </div>
-        <p className="ps-side-foot">Private preview for the ayna team. Made-up shoppers, public product facts, and anonymous ayna app activity counts.</p>
+        <p className="ps-side-foot">Private preview for the ayna team. Real app activity counts, public product facts, and a separate simulation with synthetic shopping scenarios.</p>
       </aside>
       <main className="ps-main" id="main">
         <div className="ps-toolbar">
-          <SearchBox data={data} b={b} go={go} setCat={setCat} />
           <div className="ps-top-actions">
             <SyntheticBadge text={`Updated ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`} />
             <button type="button" className="ps-btn ps-btn--ink" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
@@ -317,10 +270,15 @@ export default function PartnerStudio({ fetcher = fetch }) {
         <header className="ps-top">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span className="ps-small" style={{ fontWeight: 700 }}>{name}</span>
-            <h1>{view === 'overview' ? `Stay up to date, ${name}` : TITLES[view]}</h1>
+            <h1>{view === 'overview' ? `${name} overview` : TITLE_OF[view]}</h1>
             <p className="ps-muted">{SUBTITLE[view]}</p>
           </div>
         </header>
+        {section?.tabs ? (
+          <div className="ps-subtabs" role="tablist" aria-label={section.label}>
+            {section.tabs.map(([id, label]) => <button key={id} type="button" role="tab" aria-selected={view === id} className="ps-subtab" onClick={() => go(id)}>{label}</button>)}
+          </div>
+        ) : null}
         {body}
       </main>
       {asking ? <AskPanel data={data} b={b} go={go} onClose={() => setAsking(false)} /> : null}

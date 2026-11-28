@@ -14,10 +14,10 @@ const pct = (v) => (v == null ? 'N/A' : `${v}%`);
 const short = (name, brand) => (name.toLowerCase().startsWith(`${String(brand).toLowerCase()} `) ? name.slice(String(brand).length + 1) : name);
 
 const QUAD = {
-  win: { label: 'High-intent winners', tip: 'Many product views and a strong click-through rate.', move: 'Keep this listing as your template, and point new shoppers to it.' },
-  look: { label: 'Needs a look', tip: 'Many product views but few clicks to retailer.', move: 'Check price, photos and the first lines of the description against the products that win.' },
-  hidden: { label: 'Hidden performers', tip: 'Few product views, but people who view it click through.', move: 'Make sure its listing names the need it serves so more shoppers find it.' },
-  low: { label: 'Low visibility', tip: 'Few product views and few clicks.', move: 'Fill in missing product facts and the need it is for, so it qualifies for more matches.' },
+  win: { label: 'High-intent winners', tip: 'Many product card opens and a strong click-through rate.', move: 'Keep this listing as your template, and point new shoppers to it.' },
+  look: { label: 'Needs a look', tip: 'Many product card opens but few clicks to retailer.', move: 'Check price, photos and the first lines of the description against the products that win.' },
+  hidden: { label: 'Hidden performers', tip: 'Few product card opens, but people who view it click through.', move: 'Make sure its listing names the need it serves so more shoppers find it.' },
+  low: { label: 'Low visibility', tip: 'Few product card opens and few clicks.', move: 'Fill in missing product facts and the need it is for, so it qualifies for more matches.' },
 };
 
 function Quadrant({ points, xMid, yMid, onPick }) {
@@ -29,23 +29,23 @@ function Quadrant({ points, xMid, yMid, onPick }) {
   const others = points.filter((p) => !p.you);
   const mine = points.filter((p) => p.you);
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="ps-quad" role="img" aria-label="Products by product views and click-through rate">
+    <svg viewBox={`0 0 ${W} ${H}`} className="ps-quad" role="img" aria-label="Products by product card opens and click-through rate">
       <rect x={X(xMid)} y={pad.t} width={W - pad.r - X(xMid)} height={Y(yMid) - pad.t} fill="rgba(247,186,221,.18)" />
       <line x1={X(xMid)} x2={X(xMid)} y1={pad.t} y2={H - pad.b} stroke="rgba(62,39,35,.25)" strokeDasharray="4 4" />
       <line x1={pad.l} x2={W - pad.r} y1={Y(yMid)} y2={Y(yMid)} stroke="rgba(62,39,35,.25)" strokeDasharray="4 4" />
       <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="rgba(62,39,35,.35)" />
       <line x1={pad.l} x2={pad.l} y1={pad.t} y2={H - pad.b} stroke="rgba(62,39,35,.35)" />
       {[0, 50, 100].map((t) => <text key={t} x={pad.l - 8} y={Y(t) + 4} textAnchor="end" fontSize="11" fill="rgba(62,39,35,.75)">{t}%</text>)}
-      <text x={(W + pad.l) / 2} y={H - 8} textAnchor="middle" fontSize="12" fill="rgba(62,39,35,.85)">Product views (people)</text>
+      <text x={(W + pad.l) / 2} y={H - 8} textAnchor="middle" fontSize="12" fill="rgba(62,39,35,.85)">Product card opens (people)</text>
       <text x={14} y={(H - pad.b) / 2} textAnchor="middle" fontSize="12" fill="rgba(62,39,35,.85)" transform={`rotate(-90 14 ${(H - pad.b) / 2})`}>Click-through rate</text>
       <text x={W - pad.r - 6} y={pad.t + 14} textAnchor="end" fontSize="11" fontWeight="600" fill="rgba(62,39,35,.8)">High-intent winners</text>
       <text x={W - pad.r - 6} y={H - pad.b - 8} textAnchor="end" fontSize="11" fontWeight="600" fill="rgba(62,39,35,.8)">Needs a look</text>
       <text x={pad.l + 6} y={pad.t + 14} fontSize="11" fontWeight="600" fill="rgba(62,39,35,.8)">Hidden performers</text>
       <text x={pad.l + 6} y={H - pad.b - 8} fontSize="11" fontWeight="600" fill="rgba(62,39,35,.8)">Low visibility</text>
-      {others.map((p) => <circle key={p.id} cx={X(p.opened)} cy={Y(p.ctr || 0)} r={p.partner ? 6 : 5} fill={p.partner ? C.pink : C.rival} stroke={p.partner ? C.you : 'none'} strokeWidth="1.5" opacity={p.partner ? 0.95 : 0.55}><title>{`${p.name} (${p.brand}${p.partner ? ', brand partner' : ''}): ${p.opened} product views, ${pct(p.ctr)} click-through rate`}</title></circle>)}
+      {others.map((p) => <circle key={p.id} cx={X(p.opened)} cy={Y(p.ctr || 0)} r={p.partner ? 6 : 5} fill={p.partner ? C.pink : C.rival} stroke={p.partner ? C.you : 'none'} strokeWidth="1.5" opacity={p.partner ? 0.95 : 0.55}><title>{`${p.name} (${p.brand}${p.partner ? ', brand partner' : ''}): ${p.opened} product card opens, ${pct(p.ctr)} click-through rate`}</title></circle>)}
       {mine.map((p, k) => (
         <g key={p.id} className="ps-quad-me" onClick={() => onPick(p)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') onPick(p); }}>
-          <circle cx={X(p.opened)} cy={Y(p.ctr || 0)} r="9" fill={C.you} stroke="#f7badd" strokeWidth="3"><title>{`${p.name}: ${p.opened} product views, ${pct(p.ctr)} click-through rate. Tap for details.`}</title></circle>
+          <circle cx={X(p.opened)} cy={Y(p.ctr || 0)} r="9" fill={C.you} stroke="#f7badd" strokeWidth="3"><title>{`${p.name}: ${p.opened} product card opens, ${pct(p.ctr)} click-through rate. Tap for details.`}</title></circle>
           <text x={X(p.opened) > W * 0.62 ? X(p.opened) - 13 : X(p.opened) + 13} y={Y(p.ctr || 0) + (k % 2 ? 22 : -12)} textAnchor={X(p.opened) > W * 0.62 ? 'end' : 'start'} fontSize="12" fontWeight="700" fill="#3e2723">{p.label}</text>
         </g>
       ))}
@@ -76,7 +76,7 @@ export function Products({ data, b, go }) {
   const pool = all.filter((p) => (scope === 'all' || !p.outside) && (!partnersOnly || p.partner || p.you));
   const active = pool.filter((p) => p.opened > 0);
   const otherActive = active.filter((p) => !p.you);
-  // Benchmarks: average views per product with any views, and the pool's overall click-through rate.
+  // Benchmarks: average opens per product with any views, and the pool's overall click-through rate.
   const xMid = active.length ? Math.round((active.reduce((a, p) => a + p.opened, 0) / active.length) * 10) / 10 : 1;
   const yMid = rate(active.reduce((a, p) => a + p.buy, 0), active.reduce((a, p) => a + p.opened, 0)) || 0;
   const quadOf = (p) => (p.opened > xMid ? ((p.ctr || 0) >= yMid ? 'win' : 'look') : ((p.ctr || 0) >= yMid && p.buy ? 'hidden' : 'low'));
@@ -86,7 +86,6 @@ export function Products({ data, b, go }) {
   const byBrand = new Map();
   for (const p of pool) { const r = byBrand.get(p.brand) || { brand: p.brand, partner: false, you: p.brand === b.brand, buy: 0, opened: 0, detail: 0, products: 0 }; r.partner = r.partner || p.partner; r.buy += p.buy; r.opened += p.opened; r.detail += p.detail; r.products += 1; byBrand.set(p.brand, r); }
   const brandRows = [...byBrand.values()].sort((x, y) => y.buy - x.buy || y.opened - x.opened);
-  const clickRank = brandRows.findIndex((r) => r.brand === b.brand) + 1;
   const clickShare = rate(tot.buy, brandRows.reduce((a, r) => a + r.buy, 0));
   const price = {};
   const facts = {};
@@ -97,15 +96,15 @@ export function Products({ data, b, go }) {
   const look = rows.filter((p) => p.quad === 'look');
   const best = rows.filter((p) => p.opened).sort((x, y) => (y.ctr || 0) - (x.ctr || 0))[0];
   const findings = [
-    tot.opened ? `${tot.opened} people viewed your products and ${tot.buy} clicked to a retailer.` : 'No product views yet. Numbers appear here once shoppers open your listings.',
-    myCtr != null && catCtr != null ? `Your click-through rate is ${myCtr}% vs ${catCtr}% for other products${scope === 'all' ? ' on ayna' : ' in your categories'}${partnersOnly ? ' from brand partners' : ''}.` : null,
-    look.length ? `${look[0].label} gets many views but few clicks to retailer.` : best ? `${best.label} has your best click-through rate (${pct(best.ctr)}).` : null,
+    tot.opened ? `${tot.opened} people opened your product cards and ${tot.buy} clicked to a retailer.` : 'No product card opens yet. Numbers appear here once shoppers open your listings.',
+    tot.opened >= 30 && myCtr != null && catCtr != null ? `Your click-through rate is ${myCtr}% vs ${catCtr}% for other products${scope === 'all' ? ' on ayna' : ' in your categories'}${partnersOnly ? ' from brand partners' : ''}.` : null,
+    look.length ? `${look[0].label} gets many card opens but few clicks to retailer.` : best ? `${best.label} has your best click-through rate (${pct(best.ctr)}).` : null,
   ];
   const actions = [
     ...(look.length ? [{ text: `Review ${look[0].label}’s price, photos and opening lines`, note: QUAD.look.move }] : []),
     ...rows.filter((p) => p.quad === 'low').slice(0, 1).map((p) => ({ text: `Help shoppers find ${p.label}`, note: QUAD.low.move })),
     ...rows.filter((p) => p.quad === 'hidden').slice(0, 1).map((p) => ({ text: `Get ${p.label} in front of more shoppers`, note: QUAD.hidden.move })),
-    { text: 'See which shoppers your products miss', note: 'Why products aren’t recommended explains every miss.' },
+    { text: 'See where your products aren’t selected', note: 'Recommendations explains every unselected simulated scenario.' },
   ];
   const sel = pick ? rows.find((r) => r.id === pick.id) || pick : null;
   return (
@@ -119,12 +118,12 @@ export function Products({ data, b, go }) {
         <span className="ps-small ps-muted">Real people in the ayna app, {ENG_RANGE}. ayna team and bots excluded. Purchases happen on the brand or retailer site, so this counts clicks out, not sales.</span>
       </div>
       <div className="ps-bento">
-        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Clicks to retailer" value={String(tot.buy)} den={tot.buy ? `#${clickRank} of ${brandRows.length} brands, ${pct(clickShare)} of all clicks` : 'none yet'} info="Different people who pressed a buy or retailer button on one of your products, counted once per product. A click is not a purchase." meter={clickShare || 0} /></div>
-        <div className="b-2"><Kpi tone="pink" icon="target" label="Product views" value={String(tot.opened)} den="people opened a product" info="Different people who opened the details of one of your products, counted once per product." /></div>
-        <div className="b-2"><Kpi tone="deep" icon="doc" label="Full page views" value={String(tot.detail)} den="people read the full page" info="Different people who opened the full product page on the website, counted once per product." /></div>
-        <div className="b-2"><Kpi tone="butter" icon="swap" label="Click-through rate" value={pct(myCtr)} den={catCtr != null ? `vs ${catCtr}% for others` : 'of product views'} info="Clicks to retailer divided by product views." /></div>
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Clicks to retailer" value={String(tot.buy)} den={tot.opened >= 30 ? `${pct(clickShare)} of all clicks to retailer` : 'early activity, too few opens to compare'} info="Different people who pressed a buy or retailer button on one of your products, counted once per product. A click is not a purchase." meter={clickShare || 0} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Product card opens" value={String(tot.opened)} den="people opened a product" info="Different people who opened the details of one of your products, counted once per product." /></div>
+        <div className="b-2"><Kpi tone="deep" icon="doc" label="Full product page views" value={String(tot.detail)} den="website product page only" info="Different people who opened the full product page on the website. Card opens show details in a panel, so most people never need the full page." /></div>
+        <div className="b-2"><Kpi tone="butter" icon="swap" label="Click-through rate" value={pct(myCtr)} den={catCtr != null && tot.opened >= 30 ? `vs ${catCtr}% for others` : 'too few opens to compare yet'} info="Clicks to retailer divided by product card opens." /></div>
         <div className="b-2"><Kpi tone="plain" icon="hash" label="Products live" value={String(mine.length)} den={`${mine.filter((p) => p.opened).length} opened at least once`} /></div>
-        <Panel className="b-8" id="pp-quad" title="Which products turn views into clicks" info="Each dot is a product with app activity. Right = more product views. Up = higher click-through rate. Dashed lines are the averages: views per product, and the overall click-through rate. Tap one of your dots for its report.">
+        <Panel className="b-8" id="pp-quad" title="Which products turn views into clicks" info="Each dot is a product with app activity. Right = more product card opens. Up = higher click-through rate. Dashed lines are the averages: opens per product, and the overall click-through rate. Tap one of your dots for its report.">
           <Quadrant points={points.filter((p) => p.opened || p.you)} xMid={xMid} yMid={yMid} onPick={setPick} />
           <p className="ps-small ps-muted"><span className="ps-key-dot is-you" /> Your products <span className="ps-key-dot is-partner" /> Brand partners <span className="ps-key-dot" /> Other brands</p>
         </Panel>
@@ -132,28 +131,27 @@ export function Products({ data, b, go }) {
           <Insights items={findings} />
           <NextSteps actions={actions} />
         </div>
-        <Panel className="b-4" id="pp-fun" title="From product view to retailer click" info="How many different people reached each step for your products.">
+        <Panel className="b-4" id="pp-fun" title="From card open to retailer click" info="How many different people reached each step for your products.">
           <FunnelBars steps={[
-            { label: 'Product views', n: tot.opened },
-            { label: 'Full page views', n: tot.detail },
+            { label: 'Product card opens', n: tot.opened },
+            { label: 'Full product page views', n: tot.detail },
             { label: 'Clicks to retailer', n: tot.buy },
           ]} />
         </Panel>
         <Panel className="b-8" id="pp-tbl" title="Your products" info="Tap a row for the product's full report.">
           <SortTable rows={rows} initial={{ key: 'opened', dir: 'desc' }} columns={[
             { key: 'label', label: 'Product', render: (p) => <button type="button" className="ps-link" onClick={() => setPick(p)}>{p.label}</button> },
-            { key: 'opened', label: 'Product views', num: true },
+            { key: 'opened', label: 'Product card opens', num: true },
             { key: 'buy', label: 'Clicks to retailer', num: true },
             { key: 'ctr', label: 'Click-through rate', num: true, render: (p) => pct(p.ctr) },
             { key: 'quad', label: 'Where it stands', sortValue: (p) => p.quad, render: (p) => <span className={`ps-qpill is-${p.quad}`}>{QUAD[p.quad].label}</span> },
           ]} />
         </Panel>
-        <Panel className="b-12" id="pp-brands" title="Which brands get the most clicks to retailer" info="Every brand in the comparison, ranked by people who clicked to a retailer. Brand partners are tagged. Partnering never changes rankings or recommendations.">
-          <SortTable rows={brandRows.map((r, k) => ({ ...r, id: r.brand, rank: k + 1, ctr: rate(r.buy, r.opened) }))} rowClass={(r) => (r.you ? 'is-you' : '')} initial={{ key: 'buy', dir: 'desc' }} limit={10} columns={[
-            { key: 'rank', label: '#', num: true },
+        <Panel className="b-12" id="pp-brands" title="Which brands get the most clicks to retailer" info="Every brand in the comparison, sorted by people who clicked to a retailer. Counts are small, so read them as early direction, not a ranking. Brand partners are tagged. Partnering never changes rankings or recommendations.">
+          <SortTable rows={brandRows.map((r) => ({ ...r, id: r.brand, ctr: rate(r.buy, r.opened) }))} rowClass={(r) => (r.you ? 'is-you' : '')} initial={{ key: 'buy', dir: 'desc' }} limit={10} columns={[
             { key: 'brand', label: 'Brand', render: (r) => <>{r.brand}{r.you ? ' (you)' : ''}{r.partner && !r.you ? <span className="ps-tag">Brand partner</span> : null}</> },
             { key: 'products', label: 'Products', num: true },
-            { key: 'opened', label: 'Product views', num: true },
+            { key: 'opened', label: 'Product card opens', num: true },
             { key: 'buy', label: 'Clicks to retailer', num: true },
             { key: 'ctr', label: 'Click-through rate', num: true, render: (r) => pct(r.ctr) },
           ]} />
@@ -163,7 +161,7 @@ export function Products({ data, b, go }) {
         <Drawer title={sel.label} onClose={() => setPick(null)}>
           <p className="ps-why-verdict">{QUAD[sel.quad].label}: {QUAD[sel.quad].tip}</p>
           <div className="ps-why-kpis">
-            <div><span className="ps-num">{sel.opened}</span><small>product views</small></div>
+            <div><span className="ps-num">{sel.opened}</span><small>product card opens</small></div>
             <div><span className="ps-num">{sel.buy}</span><small>clicks to retailer</small></div>
             <div><span className="ps-num">{pct(sel.ctr)}</span><small>click-through rate{catCtr != null ? `, others ${catCtr}%` : ''}</small></div>
           </div>
@@ -181,7 +179,7 @@ export function Products({ data, b, go }) {
             </ul>
           </section>
           <div className="ps-ab-row">
-            <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" onClick={() => { setPick(null); go?.('losses'); }}>Why it isn’t recommended</button>
+            <button type="button" className="ps-btn ps-btn--sm ps-btn--ink" onClick={() => { setPick(null); go?.('losses'); }}>Why it isn’t selected</button>
             <button type="button" className="ps-btn ps-btn--sm" onClick={() => { setPick(null); go?.('competitors'); }}>Compare with similar products</button>
           </div>
           <p className="ps-small ps-muted">Real people in the ayna app, {ENG_RANGE}. Small numbers: read them as direction, not proof.</p>
@@ -189,10 +187,10 @@ export function Products({ data, b, go }) {
       ) : null}
       <Method updated={ENG_RANGE} scope={`${pool.length} products compared`} items={[
         `Source: ayna app activity in PostHog, ${ENG_RANGE}. Each number counts different people, once per product. ayna team accounts and bots are excluded.`,
-        'Product views = opened a product’s details. Full page views = opened the full product page on the website. Clicks to retailer = pressed a buy or retailer button. Click-through rate = clicks to retailer / product views.',
+        'Product card opens = opened a product’s details. Full product page views = opened the full product page on the website. Clicks to retailer = pressed a buy or retailer button. Click-through rate = clicks to retailer / product card opens.',
         'Product appearances are recorded only on the Explore page and only since Oct 28, so they are not used as a denominator yet.',
         'Clicks to retailer are not purchases. ayna does not yet receive confirmed sales from retailers or affiliate networks.',
-        'Chart lines: average product views per product with any views, and the overall click-through rate of the products compared. Numbers are small, so one person can move a rate a lot.',
+        'Chart lines: average product card opens per product with any views, and the overall click-through rate of the products compared. Numbers are small, so one person can move a rate a lot.',
       ]} />
     </>
   );
