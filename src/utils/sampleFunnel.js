@@ -1,6 +1,7 @@
-import { ALL_PRODUCTS, getProfileMatchPercentForProduct, filterPrescriptionCareGate, isTeenProduct } from '../data/products.js';
+import { ALL_PRODUCTS, getProfileMatchPercentForProduct } from '../data/products.js';
 import { RELEASED_STARTUPS } from '../data/startups';
 import { fitLabel } from './matchDisplay.js';
+import { shopCatalogCounts } from '../data/catalogCounts.js';
 
 // How It Works funnel, computed live from the real catalog and the real
 // matching code for one sample profile, instead of made-up example numbers.
@@ -26,7 +27,8 @@ export function getSampleFunnel() {
   const scores = ALL_PRODUCTS.map((p) => getProfileMatchPercentForProduct(p, SAMPLE_PROFILE, null) || 0);
   cached = {
     // Same catalog the Shop counts: shoppable products plus released services.
-    catalog: filterPrescriptionCareGate(ALL_PRODUCTS).filter((p) => !isTeenProduct(p)).length + RELEASED_STARTUPS.length,
+    // Nov 27 audit: Home said 841 and How it works said 856 for the same catalog. Both now use the Shop's own count.
+    catalog: (({ products, services }) => products + services)(shopCatalogCounts(ALL_PRODUCTS, RELEASED_STARTUPS)),
     matched: scores.filter((s) => s > 0).length,
     // Same line the product draws everywhere: 80+ is a "Strong fit" (matchDisplay.fitLabel).
     strong: scores.filter((s) => fitLabel(s) === 'Strong fit').length,

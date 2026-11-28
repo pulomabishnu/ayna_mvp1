@@ -9,6 +9,8 @@
  */
 import { AUTO_HOUR } from '../../components/rundown/autoLaunch.js';
 
+// Nov 27 audit: a computer with a mouse gets "Click and hold"; phones keep "Press and hold".
+const MOUSE = (() => { try { return window.matchMedia('(hover: hover) and (pointer: fine)').matches; } catch { return false; } })();
 export const OFF_NOTE = 'Turn tips off any time in Settings.';
 // Founder (Oct 25, 23:53): do not overcrowd. One short sentence per tip,
 // at most 2 shown per screen. A third entry is only a fallback for when an
@@ -50,7 +52,8 @@ export const SCREENS = [
     landing: true,
     waitMs: 900,
     tips: [
-      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
+      // Nov 27 audit: "Press and hold" read oddly with a mouse; say "Click and hold" on a computer.
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: `${MOUSE ? 'Click' : 'Press'} and hold any option to see what it means.` },
     ],
   },
   {
@@ -273,7 +276,8 @@ export const WEB_SCREENS = [
     landing: true,
     waitMs: 900,
     tips: [
-      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: 'Press and hold any option to see what it means.' },
+      // Nov 27 audit: "Press and hold" read oddly with a mouse; say "Click and hold" on a computer.
+      { id: 'quiz-hold', anchor: '[data-tour="quiz-hold"]', text: `${MOUSE ? 'Click' : 'Press'} and hold any option to see what it means.` },
     ],
   },
   {

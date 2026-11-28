@@ -31,3 +31,7 @@ export const THIN_IN_CATALOG = new Set([
 export const SHOP_SEARCH_EXAMPLES = [...ROTATING_EXAMPLES.filter((x) => !/poop/.test(x)), ...SHOP_SEARCH_THEMES.flat()]
     .filter((x) => !THIN_IN_CATALOG.has(x));
 
+
+// Nov 27 audit: the Services page's own "Try: …" examples (care, apps and programs, not products).
+export const SERVICE_SEARCH_EXAMPLES = ['pelvic floor therapy app', 'menopause telehealth clinics', 'best perimenopause telehealth provider', 'fertility program']
+    .filter((x) => !THIN_IN_CATALOG.has(x));

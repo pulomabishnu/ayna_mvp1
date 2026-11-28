@@ -850,7 +850,7 @@ export default function ProductModal({
                 <ActionsRow
                   saved={isSaved}
                   saveLabel={isSaved ? `Saved. Remove ${displayName} from Saved` : `Save ${displayName}`}
-                  onSave={onToggleSaved ? () => { onToggleSaved(product); showToast(isSaved ? 'Removed from Saved' : user ? 'Saved to My Ecosystem' : 'Saved on this device. Sign in to keep it everywhere.'); } : null}
+                  onSave={onToggleSaved ? () => { onToggleSaved(product); /* Nov 27 audit: signed out, Save first opens the "Save this to your ayna" prompt and nothing is saved yet, so no toast here (App toasts once it's really saved). */ if (user || isSaved) showToast(isSaved ? 'Removed from Saved' : 'Saved to My Ecosystem'); } : null}
                   inRoutine={isInEcosystem}
                   onRoutine={onAddToEcosystem && user ? () => onAddToEcosystem(product) : null}
                   routineWords={['Routine', 'In my routine']}

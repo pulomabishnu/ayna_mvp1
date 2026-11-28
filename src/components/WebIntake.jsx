@@ -389,9 +389,13 @@ export default function WebIntake({ onComplete, onBrowseLibrary, onExplore = nul
     const onKey = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return;
       const t = e.target;
-      if (t && (t.closest?.('input, textarea, select, [contenteditable="true"], [role="dialog"]'))) return;
+      // Nov 27 audit: the page says "or press Enter", but Enter did nothing in the age box and, on a picked answer,
+      // clicked it again and unticked it. Enter now continues from both; Space still ticks and unticks an answer.
+      const enterInAge = e.key === 'Enter' && t?.matches?.('input') && t.closest?.('.qz-age');
+      if (t && (t.closest?.('input, textarea, select, [contenteditable="true"], [role="dialog"]')) && !enterInAge) return;
       if (e.key === 'Enter') {
-        if (t && t.closest?.('button, a')) return;
+        const onAnswer = t?.closest?.('.aq-chip, .aq-answer button');
+        if (t && t.closest?.('button, a') && !onAnswer && !enterInAge) return;
         if (keyRef.current.ready && keyRef.current.next) { e.preventDefault(); keyRef.current.next(); }
         return;
       }

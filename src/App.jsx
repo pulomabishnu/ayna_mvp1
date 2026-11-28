@@ -2242,6 +2242,7 @@ function App() {
     if (!wasSaved) posthog.capture('product_saved_for_later', { category: product.category });
     // Saved: "Remind me later · Compare" next to it (inline on its product page).
     if (wasSaved) { savePrompt.hide(); toast('Removed from Saved', { label: 'Undo', onClick: () => toggleSavedRef.current?.(product, { fromSheet: true }) }); } else savePrompt.show(product);
+    if (!wasSaved && !user) toast('Saved on this device. Sign in to keep it everywhere.');
     if (!wasSaved) {
       try {
         const h = document.querySelector('.app-nav__circle--wishlist');

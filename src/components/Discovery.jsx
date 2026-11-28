@@ -39,7 +39,7 @@ import { fetchSearchSuggestions } from '../utils/fetchSearchSuggestions';
 import { recordSearch } from '../utils/recentActivity';
 import { availablePreferenceOptions, matchesProductPreference } from '../utils/productPreferences';
 import useRotatingPlaceholder from '../utils/useRotatingPlaceholder.js';
-import { SHOP_SEARCH_EXAMPLES } from './shop/searchExamples.js';
+import { SHOP_SEARCH_EXAMPLES, SERVICE_SEARCH_EXAMPLES } from './shop/searchExamples.js';
 import { getVerificationLinks } from '../utils/verificationLinks';
 import { hasFlaggedRecall } from '../utils/productSafetyAlert';
 import { RELEASED_STARTUPS } from '../data/startups';
@@ -593,7 +593,9 @@ export default function Discovery({ trackedProducts, toggleTrackProduct, myProdu
     const [typeFilter, setTypeFilter] = useState(() => (lockType ? (initialType === 'services' ? 'services' : 'all') : initialType || memo('typeFilter', 'all')));
     useEffect(() => { if (lockType) setTypeFilter(initialType === 'services' ? 'services' : 'all'); }, [lockType, initialType]);
     const [searchQuery, setSearchQuery] = useState(initialSearch || '');
-    const searchPlaceholder = useRotatingPlaceholder(SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: 'Search products', enabled: !searchQuery });
+    // Nov 27 audit: the Services page suggested "organic tampons for a heavy flow"; it now suggests services.
+    const onServices = typeFilter === 'services';
+    const searchPlaceholder = useRotatingPlaceholder(onServices ? SERVICE_SEARCH_EXAMPLES : SEARCH_PLACEHOLDER_EXAMPLES, { prefix: 'Try: ', fallback: onServices ? 'Search services' : 'Search products', enabled: !searchQuery });
     const [submittedQuery, setSubmittedQuery] = useState(initialSearch || '');
     const [sortBy, setSortBy] = useState(() => memo('sortBy', 'default'));
     // Cards fade in on first load only; after that, filter changes swap in place.
