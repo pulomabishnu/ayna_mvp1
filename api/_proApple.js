@@ -1,4 +1,5 @@
-import { verifyAppleJws, subscriptionRow, AppleJwsError, APPLE_TRIAL_PRODUCT } from './_appleJws.js';
+import { createHash } from 'node:crypto';
+import { verifyAppleJws, subscriptionRow, AppleJwsError, APPLE_TRIAL_PRODUCT, APPLE_PRO_PRODUCTS } from './_appleJws.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -79,5 +80,43 @@ export async function handleAppleNotification(admin, signedPayload, verify = ver
   const row = subscriptionRow(tx, userId);
   if (renewal && typeof renewal.autoRenewStatus === 'number') row.auto_renew = renewal.autoRenewStatus === 1;
   if (['REFUND', 'REVOKE'].includes(note.notificationType) && !row.revoked_at) row.revoked_at = new Date().toISOString();
-  return { handled: true, type: note.notificationType, result: await saveAppleRow(admin, row) };
+  return { handled: true, type: note.notificationType, result: await saveAppleRow(admin, row), analytics: appleAnalyticsEvent(note, tx, renewal) };
+}
+
+const NAMES = {
+  SUBSCRIBED: 'pro_apple_subscribed', DID_RENEW: 'pro_apple_renewed', EXPIRED: 'pro_apple_expired',
+  DID_FAIL_TO_RENEW: 'pro_apple_billing_failed', REFUND: 'pro_apple_refunded', REVOKE: 'pro_apple_refunded',
+  DID_CHANGE_RENEWAL_PREF: 'pro_apple_plan_changed', GRACE_PERIOD_EXPIRED: 'pro_apple_expired',
+};
+
+/**
+ * Nov 27 (founder: "make sure it tracks on PostHog"): what Apple tells the server after the app closes (trial turned
+ * paid, canceled, renewed, refunded) as a PostHog event. Pure (tested). Anonymous: keyed on a hash of Apple's
+ * subscription id, no person profile, no health data. `environment` separates Sandbox tests from real customers.
+ */
+export function appleAnalyticsEvent(note, tx, renewal = null) {
+  const type = note?.notificationType;
+  const sub = note?.subtype || null;
+  let event = NAMES[type];
+  if (type === 'DID_CHANGE_RENEWAL_STATUS') event = sub === 'AUTO_RENEW_DISABLED' ? 'pro_apple_canceled' : sub === 'AUTO_RENEW_ENABLED' ? 'pro_apple_resumed' : null;
+  if (!event || !tx?.originalTransactionId) return null;
+  const inTrial = tx.offerDiscountType === 'FREE_TRIAL' || (tx.offerType === 1 && Number(tx.price) === 0);
+  const sincePurchase = Number(tx.purchaseDate) - Number(tx.originalPurchaseDate);
+  const props = {
+    distinct_id: `pro_apple_${createHash('sha256').update(String(tx.originalTransactionId)).digest('hex').slice(0, 24)}`,
+    source: 'apple_notification',
+    store: 'apple',
+    plan: APPLE_PRO_PRODUCTS[tx.productId] || 'unknown',
+    environment: tx.environment || note?.data?.environment || 'unknown',
+    subtype: sub || undefined,
+    in_trial: inTrial,
+    amount: Number.isFinite(Number(tx.price)) ? Number(tx.price) / 1000 : undefined,
+    currency: tx.currency || undefined,
+    ...(note?.notificationUUID ? { $insert_id: `${event}:${note.notificationUUID}` } : {}),
+    $process_person_profile: false,
+  };
+  // The first paid renewal right after a free trial is the trial converting.
+  if (type === 'DID_RENEW') props.trial_converted = Number.isFinite(sincePurchase) && sincePurchase > 0 && sincePurchase < 16 * 864e5 && !inTrial;
+  if (renewal && typeof renewal.autoRenewStatus === 'number') props.auto_renew = renewal.autoRenewStatus === 1;
+  return { event, properties: props };
 }

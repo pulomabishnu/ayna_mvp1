@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { takeTrialOptIn } from './trialOptIn.js';
 import { requestPro } from '../utils/proApi.js';
-import { PRO_CHANGED_EVENT } from './paywall.js';
+import { PRO_CHANGED_EVENT, openProPaywall } from './paywall.js';
 import { toast } from '../utils/toast.js';
 import posthog from 'posthog-js';
 import TrialStart from './TrialStart.jsx';
@@ -21,6 +21,14 @@ export default function TrialOffer() {
   const [open, setOpen] = useState(() => !seen() && choice == null);
   const { checked, available, days } = useTrialAvailable(open || choice === 'yes');
   const started = useRef(false);
+  // iPhone app (Nov 27): ticked on sign-up opens the Apple Pro screen once, a moment after the account exists.
+  useEffect(() => {
+    if (choice !== 'yes' || !usesAppleIap() || started.current) return undefined;
+    started.current = true;
+    markSeen();
+    const t = window.setTimeout(() => { try { openProPaywall({ feature: 'signup', featureName: 'ayna Pro' }); } catch { /* no host yet */ } }, 1200);
+    return () => window.clearTimeout(t);
+  }, [choice]);
   useEffect(() => {
     if (choice != null) markSeen();
     // iPhone app: the trial goes through Apple's $0 purchase, which needs her tap (the button below), never an auto-start.

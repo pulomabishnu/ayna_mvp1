@@ -566,6 +566,13 @@ export default function MobileApp() {
   const { user: realAuthUser, authLoading, signUpWithPassword, signInWithPassword, signInWithGoogle, signInWithApple, signOut: signOutSupabase, resendConfirmation } = useSupabaseAuth();
   // DEVELOPMENT ONLY: a stand-in signed-in user for the ?healthdemo=1 preview. Never in production.
   const authUser = realAuthUser || (DEV_HEALTH_DEMO ? DEV_DEMO_USER : null);
+  // Nov 27 (founder: "a popup after you make your account is confusing, you click it and get lost; let people make
+  // their accounts first"): no "What's new" card while she has no account, or in her first 10 minutes with one.
+  useEffect(() => {
+    if (!updatePop) return;
+    const fresh = authUser?.created_at && Date.now() - Date.parse(authUser.created_at) < 10 * 60 * 1000;
+    if (!authUser?.id || fresh) setUpdatePop(null);
+  }, [updatePop, authUser?.id, authUser?.created_at]);
   // Time to first value (all-pages brief v3): quiz start -> first match on screen. No health details.
   useEffect(() => {
     if (screen === 'quiz' && intakeMode === 'new') trackQuizStarted({ surface: eventSurface(), signed_in: Boolean(authUser) });

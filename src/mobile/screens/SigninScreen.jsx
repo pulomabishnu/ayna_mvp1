@@ -467,10 +467,14 @@ export default function SigninScreen({
 
           {/* Nov 17 (founder: "make sure you can opt in for your 14 day free trial"): her choice, started once the
               account exists (pro/TrialOffer.jsx). */}
-          {mode === 'signup' && !onIosApp() && (
+          {mode === 'signup' && (
             <label className="ay-auth-trial-opt">
               <input type="checkbox" checked={trialOptIn} onChange={(e) => setTrialOptInState(e.target.checked)} />
-              <span><b>Start my free 14-day ayna Pro trial.</b> No card needed. Nothing renews.</span>
+              {/* Nov 27 (founder: "ayna Pro should still be on the sign up page"): in the iPhone app the trial is Apple's,
+                  so ticking this opens the Pro screen (price, trial, terms) once the account exists. Nothing is bought here. */}
+              {onIosApp()
+                ? <span><b>Show me the ayna Pro free trial.</b> You’ll see the plans after you sign up.</span>
+                : <span><b>Start my free 14-day ayna Pro trial.</b> No card needed. Nothing renews.</span>}
             </label>
           )}
 

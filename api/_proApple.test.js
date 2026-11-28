@@ -118,3 +118,22 @@ describe('the $0 Apple 14-Day Trial', () => {
     expect((await verifyAppTransactions(admin, USER, [j(trialTx({ appAccountToken: undefined }))], verify))[0].result).toBe('other_account');
   });
 });
+
+describe('Apple notifications → PostHog (Nov 27)', async () => {
+  const { appleAnalyticsEvent } = await import('./_proApple.js');
+  const base = { originalTransactionId: '2000001', productId: 'co.aynahealth.app.pro.yearly', environment: 'Sandbox', currency: 'USD' };
+  it('trial cancel, trial conversion, anonymous id, no unknown types', () => {
+    const c = appleAnalyticsEvent({ notificationType: 'DID_CHANGE_RENEWAL_STATUS', subtype: 'AUTO_RENEW_DISABLED', notificationUUID: 'u1' }, { ...base, offerType: 1, offerDiscountType: 'FREE_TRIAL', price: 0 });
+    expect(c.event).toBe('pro_apple_canceled');
+    expect(c.properties.in_trial).toBe(true);
+    expect(c.properties.plan).toBe('year');
+    expect(c.properties.distinct_id).toMatch(/^pro_apple_[0-9a-f]{24}$/);
+    expect(c.properties.$insert_id).toBe('pro_apple_canceled:u1');
+    const t0 = Date.UTC(2026, 10, 1);
+    const r = appleAnalyticsEvent({ notificationType: 'DID_RENEW' }, { ...base, price: 89990, originalPurchaseDate: t0, purchaseDate: t0 + 14 * 864e5 });
+    expect(r.event).toBe('pro_apple_renewed');
+    expect(r.properties.trial_converted).toBe(true);
+    expect(r.properties.amount).toBe(89.99);
+    expect(appleAnalyticsEvent({ notificationType: 'TEST' }, base)).toBeNull();
+  });
+});

@@ -9,6 +9,17 @@ import { AppleJwsError } from './_appleJws.js';
  * Apple signs every message, so nothing here needs a secret: a message that doesn't verify
  * against Apple's root certificate is refused.
  */
+/* global process */
+// Same publishable key and host as the Stripe webhook's billing events. Never blocks or fails the notification.
+async function sendPosthog({ event, properties }) {
+  const key = process.env.POSTHOG_PROJECT_KEY || process.env.VITE_PUBLIC_POSTHOG_KEY;
+  const host = process.env.POSTHOG_HOST || 'https://us.i.posthog.com';
+  if (!key) return;
+  try {
+    await fetch(`${host.replace(/\/$/, '')}/capture/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ api_key: key, event, timestamp: new Date().toISOString(), properties }) });
+  } catch { /* analytics never blocks */ }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
@@ -19,7 +30,8 @@ export default async function handler(req, res) {
   const admin = getServiceClient();
   if (!admin) return res.status(503).json({ error: 'unavailable' });
   try {
-    const out = await handleAppleNotification(admin, body.signedPayload);
+    const { analytics, ...out } = await handleAppleNotification(admin, body.signedPayload);
+    if (analytics) await sendPosthog(analytics);
     return res.status(200).json({ ok: true, ...out });
   } catch (e) {
     if (e instanceof AppleJwsError) {
