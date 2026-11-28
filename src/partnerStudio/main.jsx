@@ -7,6 +7,7 @@ import './partner-studio.css';
 import './bento.css';
 import './polish.css';
 import './disclosure.css';
+import './reports.css';
 import PartnerStudio from './PartnerStudio.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(<React.StrictMode><PartnerStudio /></React.StrictMode>);
