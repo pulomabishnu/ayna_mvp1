@@ -10,7 +10,8 @@ import { Actions } from './actionsBoard.jsx';
 import { Products } from './productsView.jsx';
 import { Market } from './marketView.jsx';
 import { groupActions } from './engine/actionGroups.js';
-import { Overview, Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
+import { Overview } from './overviewView.jsx';
+import { Evidence, Claims, Share, Losses, Competitors, Feed, Reports, OutOfScope } from './views.jsx';
 import { inScope } from './format.js';
 import { accessTokenFromBrowser, readLocal, writeLocal } from './auth.js';
 import { initPartnerAnalytics, track } from './analytics.js';
@@ -28,6 +29,8 @@ const NAV = [
   { group: 'Recommendations', items: [['share', 'Recommendation performance'], ['losses', 'Why products miss']] },
   { group: 'Account', items: [['reports', 'Reports'], ['feed', 'Updates on your products']] },
 ];
+// Pages built from the whole catalog work for every brand; the rest need the recommendation benchmark.
+const OPEN_TO_ALL = ['overview', 'products', 'market', 'actions', 'feed', 'reports'];
 const OFF_MENU = { claims: 'Competitor content & positioning', evidence: 'Product information' };
 const TITLES = { ...Object.fromEntries(NAV.flatMap((g) => g.items)), ...OFF_MENU };
 const ICON = { overview: 'overview', products: 'box', market: 'layers', actions: 'actions', evidence: 'evidence', claims: 'claims', share: 'share', losses: 'losses', competitors: 'competitors', feed: 'feed', reports: 'reports' };
@@ -260,7 +263,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
   const name = b.displayName || b.name;
 
   let body;
-  if (!scoped && !['reports'].includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
+  if (!scoped && !OPEN_TO_ALL.includes(view)) body = <OutOfScope b={b} outOfScope={data.outOfScope} />;
   else if (view === 'overview') body = <Overview data={data} b={b} go={go} actionState={actionState} />;
   else if (view === 'products') body = <Products data={data} b={b} go={go} />;
   else if (view === 'market') body = <Market data={data} b={b} go={go} />;
@@ -280,7 +283,8 @@ export default function PartnerStudio({ fetcher = fetch }) {
         <div className="ps-brandpick">
           <label htmlFor="ps-brand">Brand</label>
           <select id="ps-brand" value={b.name} onChange={(e) => { setBrand(e.target.value); track('partner_studio_brand_switched', { brand: e.target.value }); }}>
-            {data.brands.map((x) => <option key={x.name} value={x.name}>{x.name}{x.inScope ? '' : ' (not in Phase 1)'}</option>)}
+            <optgroup label="Brand partners">{data.brands.filter((x) => x.partner !== false).map((x) => <option key={x.name} value={x.name}>{x.name}</option>)}</optgroup>
+            <optgroup label="All brands on ayna">{data.brands.filter((x) => x.partner === false).map((x) => <option key={x.name} value={x.name}>{x.name}</option>)}</optgroup>
           </select>
         </div>
         <nav aria-label="Sections" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
