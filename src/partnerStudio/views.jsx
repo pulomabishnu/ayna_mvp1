@@ -1,14 +1,12 @@
 /* Partner Studio screens. Each one follows a section of the Phase 1 plan (page numbers in comments). */
-import { groupActions } from './engine/actionGroups.js';
 import React, { useMemo, useState } from 'react';
-import { Kpi, HBar, SyntheticBadge, DraftBadge, Empty, CardHead, Heatmap, ReasonStack, Drawer, Ring, InfoTip, Icon } from './ui.jsx';
-import { ratePct, money, SYNTHETIC } from './format.js';
-import { explore, versus } from './engine/explore.js';
+import { Kpi, SyntheticBadge, DraftBadge, Empty, CardHead, Heatmap, Drawer, Ring, InfoTip } from './ui.jsx';
+import { ratePct, money } from './format.js';
+import { explore } from './engine/explore.js';
 import { C, inkOn } from './chartColors.js';
 import { BACKING as CR_BACKING, PRODUCTS as CR_PRODUCTS, TOPICS as CR_TOPICS, CHECKED as CR_CHECKED, productsOf as crProductsOf, rivalsOf as crRivalsOf, researchedBrands as crResearchedBrands } from './engine/claimsResearch.js';
-import { Insights, NextSteps, RealInterest } from './tiles.jsx';
+import { Insights, NextSteps } from './tiles.jsx';
 import { ClaimCompare } from './claimCompare.jsx';
-import { realSummary, ENG_RANGE } from './engine/engagement.js';
 import { shareSeries, changeSinceLast } from './engine/history.js';
 import { Panel, ViewSwitch, RankedBars, Stacked100, Dumbbell, Matrix, Pareto, FunnelBars, BeforeAfter, TrendLine, SortTable, Method } from './charts.jsx';
 
@@ -27,14 +25,6 @@ const STATUS_NOTE = {
   experience_only: 'Only user experience or reviews were found.',
 };
 const STATUS_TONE = { direct: 'ps-chip--ink', indirect: 'ps-chip--blue', regulatory_only: 'ps-chip--blue', brand_reported: 'ps-chip--dash', experience_only: 'ps-chip--dash', not_located: 'ps-chip--dash' };
-const TIER_LABEL = { safety: 'Safety or regulatory', evidence: 'Evidence', documentation: 'Documentation', differentiation: 'Differentiation' };
-const STAGE_LABEL = { selected: 'Made the top 3', eligible_lost: 'Fit, but missed the top 3', insufficient_info: 'On hold for a missing fact', excluded: 'Not safe for that shopper', out_of_scope: 'Not relevant' };
-
-function StatusChip({ status }) {
-  if (!status) return <span className="ps-small ps-muted">Not stated</span>;
-  return <span className={`ps-chip ${STATUS_TONE[status]}`} title={STATUS_NOTE[status] || ''}>{STATUS_LABEL[status]}</span>;
-}
-
 export function OutOfScope({ b, outOfScope }) {
   return (
     <Empty title={`${b.displayName || b.brand} isn't in a Phase 1 category yet`}>
@@ -72,253 +62,7 @@ function RankKey() {
   return <p className="ps-small ps-muted"><span className="ps-key is-pink" /> Your brand <span className="ps-tag">ayna partner</span> Brands that partner with ayna. Partnering never changes where a product ranks.</p>;
 }
 
-/** Brand ranking with real names: every brand in the benchmark universe, by slots won. */
-function BrandRanking({ rows, brand, limit = 10, totalSlots, compact = false }) {
-  const [all, setAll] = useState(false);
-  const youIdx = rows.findIndex((r) => r.brand === brand);
-  let shown = all ? rows : rows.slice(0, limit);
-  if (!all && youIdx >= limit) shown = [...rows.slice(0, limit - 1), rows[youIdx]];
-  const top = Math.max(...rows.map((r) => r.slots), 1);
-  return (
-    <div className="ps-rank" role="table" aria-label="Brand ranking by recommendation slots">
-      <div className="ps-rank-row ps-rank-head" role="row"><span role="columnheader">#</span><span role="columnheader">Brand</span><span role="columnheader">Times in top 3</span><span role="columnheader" className="ps-r">Share</span></div>
-      {shown.map((r) => (
-        <div key={r.brand} role="row" className={`ps-rank-row${r.brand === brand ? ' is-you' : ''}`}>
-          <span role="cell" className="ps-rank-n">{r.rank}</span>
-          <span role="cell" className="ps-rank-name"><span>{r.brand}{r.brand === brand ? <em> (you)</em> : null}{r.partner && r.brand !== brand ? <PartnerTag /> : null}</span>{compact ? null : <small>{r.products} product{r.products === 1 ? '' : 's'}</small>}</span>
-          <span role="cell" className="ps-rank-bar"><span style={{ width: `${(r.slots / top) * 100}%` }} /><b>{r.slots}</b></span>
-          <span role="cell" className="ps-r ps-rank-share">{r.share == null ? 'N/A' : `${r.share}%`}</span>
-        </div>
-      ))}
-      {compact ? null : <div className="ps-rank-foot">
-        <span className="ps-small ps-muted">{rows.length} brands · {totalSlots} top-3 picks in total</span>
-        {rows.length > limit ? <button type="button" className="ps-link" onClick={() => setAll((v) => !v)}>{all ? 'Show top 10' : `Show all ${rows.length}`}</button> : null}
-      </div>}
-    </div>
-  );
-}
-
-/** Product ranking (p.8 product-level drill-down): every catalog product in the universe. */
-function ProductRanking({ rows, limit = 15 }) {
-  const [all, setAll] = useState(false);
-  const shown = all ? rows : [...rows.slice(0, limit), ...rows.slice(limit).filter((r) => r.you)];
-  return (
-    <>
-      <div className="ps-table-wrap">
-        <table className="ps-table">
-          <thead><tr><th>#</th><th>Product</th><th>Brand</th><th className="ps-r">Times in top 3</th><th className="ps-r">Share</th></tr></thead>
-          <tbody>
-            {shown.map((p) => (
-              <tr key={p.id} className={p.you ? 'is-you' : ''}>
-                <td className="ps-rank-n">{p.rank}</td>
-                <td><strong>{p.name}</strong>{p.partner && !p.you ? <PartnerTag /> : null}</td>
-                <td>{p.brand}</td>
-                <td className="ps-r">{p.slots}</td>
-                <td className="ps-r">{p.share == null ? 'N/A' : `${p.share}%`}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {rows.length > limit ? <button type="button" className="ps-link" onClick={() => setAll((v) => !v)}>{all ? 'Show top 15' : `Show all ${rows.length} products`}</button> : null}
-    </>
-  );
-}
-
-/* ---------------- Overview (p.12) ---------------- */
-const pct1 = (n, d) => (d ? `${Math.round((n / d) * 1000) / 10}%` : 'N/A');
 const shortName = (name, brand) => (name.toLowerCase().startsWith(`${String(brand).toLowerCase()} `) ? name.slice(String(brand).length + 1) : name);
-
-/** Tabs inside a card: peers of one thing (Leaderboard, Head to head, By need). */
-function Tabs({ tabs, value, onChange, label }) {
-  return (
-    <div className="ps-seg" role="tablist" aria-label={label}>
-      {tabs.map(([id, text, icon]) => (
-        <button key={id} type="button" role="tab" aria-selected={value === id} className="ps-seg-btn" onClick={() => onChange(id)}>
-          {icon ? <Icon name={icon} /> : null}{text}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** You vs one rival on the same shoppers: who got picked. */
-function HeadToHead({ meta, ex, b, name }) {
-  const rivals = ex.takenBy.slice(0, 6).map((t) => t.brand);
-  const fallback = ex.brands.filter((x) => !x.you && x.slots).slice(0, 6).map((x) => x.brand);
-  const list = rivals.length ? rivals : fallback;
-  const [rival, setRival] = useState(list[0] || '');
-  const pick = list.includes(rival) ? rival : list[0];
-  const outcomes = b.categories.find((c) => c.id === meta.id)?.outcomes || '';
-  const v = pick ? versus(meta, b.brand, outcomes, pick) : null;
-  if (!pick || !v || !v.fit) return <p className="ps-small">None of your products fit these shoppers yet, so there’s no head to head.</p>;
-  const segs = [
-    ['onlyYou', `Only ${name}`, 'is-ink'],
-    ['both', 'Both picked', 'is-pink'],
-    ['onlyThem', `Only ${pick}`, 'is-blue'],
-    ['neither', 'Neither', 'is-butter'],
-  ];
-  const youWin = v.onlyYou + v.both;
-  const themWin = v.onlyThem + v.both;
-  return (
-    <div className="ps-vs">
-      <div className="ps-chips" role="group" aria-label="Pick a competitor">
-        {list.map((r) => <button key={r} type="button" className="ps-chip-btn" aria-pressed={r === pick} onClick={() => setRival(r)}>{r}</button>)}
-      </div>
-      <div className="ps-vs-score">
-        <div className="ps-vs-side is-you"><span className="ps-small">{name}</span><span className="ps-num">{youWin}</span><span className="ps-small ps-muted">picked</span></div>
-        <span className="ps-vs-mid">vs</span>
-        <div className="ps-vs-side"><span className="ps-small">{pick}</span><span className="ps-num">{themWin}</span><span className="ps-small ps-muted">picked</span></div>
-      </div>
-      <p className="ps-vs-caption">Out of the <b>{v.fit}</b> shoppers your products fit.</p>
-      <div className="ps-vs-bar" role="img" aria-label={segs.map(([k, l]) => `${l} ${v[k]}`).join(', ')}>
-        {segs.map(([k, , cls]) => (v[k] ? <span key={k} className={cls} style={{ flex: `${v[k]} 1 0` }}>{v[k] / v.fit >= 0.08 ? v[k] : ''}</span> : null))}
-      </div>
-      <ul className="ps-vs-legend">
-        {segs.map(([k, l, cls]) => <li key={k}><i className={cls} />{l}<b>{v[k]}</b></li>)}
-      </ul>
-    </div>
-  );
-}
-
-/** One row per shopper need: a status pill, your picks, and who leads it. */
-function ByNeed({ meta, brand, outcomes }) {
-  const rows = useMemo(() => meta.needs.map((n) => {
-    const e = explore(meta, brand, outcomes, { need: n });
-    return { need: n, me: e.brandSlots, rank: e.rank.rank, leader: e.brands[0], slots: e.slots };
-  }), [meta, brand, outcomes]);
-  const status = (r) => {
-    if (!r.slots) return ['No match yet', 'ps-pill-st--none'];
-    if (r.rank === 1) return ['You lead', 'ps-pill-st--win'];
-    if (r.me) return [`#${r.rank}`, 'ps-pill-st--mid'];
-    return ['Not picked', 'ps-pill-st--lose'];
-  };
-  return (
-    <ul className="ps-needs">
-      {rows.map((r) => {
-        const [label, tone] = status(r);
-        return (
-          <li key={r.need} className="ps-need">
-            <span className="ps-need-name">{r.need}</span>
-            <span className={`ps-pill-st ${tone}`}>{label}</span>
-            <span className="ps-need-meta">{r.slots ? <>You {r.me} · {r.leader.you ? 'you lead' : <>{r.leader.brand} {r.leader.slots}</>}</> : 'Nothing recommended'}</span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-const FIX = {
-  relevance: { icon: 'target', title: 'Say clearly what it’s for' },
-  budget: { icon: 'tag', title: 'Fit the under-$25 budget' },
-  below_cutoff: { icon: 'doc', title: 'Fill in missing product facts' },
-  format: { icon: 'layers', title: 'Offer another format' },
-};
-
-export function Overview({ data, b, go, actionState }) {
-  const open = groupActions(b.actions || []).filter((a) => (actionState[a.id] || 'open') !== 'done');
-  const [catId, setCatId] = useState(b.categories[0]?.id);
-  const [tab, setTab] = useState('rank');
-  const [rankMode, setRankMode] = useState('brands');
-  const c = b.categories.find((x) => x.id === catId) || b.categories[0];
-  const meta = data.categories.find((x) => x.id === c?.id);
-  const ex = useMemo(() => (meta?.rows ? explore(meta, b.brand, c.outcomes) : null), [meta, b.brand, c]);
-  if (!ex) return null;
-  const name = b.displayName || b.brand;
-  const me = ex.brands.find((x) => x.you) || { slots: 0 };
-  const leader = ex.brands[0];
-  const real = realSummary(meta.products.map((p) => ({ ...p, you: p.brand === b.brand })));
-  const fit = ex.eligibleToPlaced.den;
-  const top3 = ex.brands.filter((x) => !x.you && x.slots > 0).slice(0, 3);
-  const RING_COLORS = [C.pink, C.rival, C.rival2];
-  const rest = ex.slots - me.slots - top3.reduce((a2, x) => a2 + x.slots, 0);
-  const ring = [
-    { label: `${name} (you)`, value: me.slots, color: '#3e2723', you: true },
-    ...top3.map((x, k) => ({ label: x.brand, value: x.slots, color: RING_COLORS[k] })),
-    { label: 'Everyone else', value: Math.max(rest, 0), color: C.missing },
-  ];
-  const sims = (b.simulations || []).filter((s) => s.category === c.id && s.after.inclusion.num > s.before.inclusion.num)
-    .sort((x, y) => (y.after.inclusion.num - y.before.inclusion.num) - (x.after.inclusion.num - x.before.inclusion.num));
-  const fixes = [
-    ...sims.slice(0, 1).map((s) => ({ key: `sim-${s.sku}`, icon: 'tag', title: `Price ${shortName(s.name, name)} at ${String(s.changeLabel).split(' ')[0]}`, detail: 'A test run with only the price changed.', impact: `+${s.after.inclusion.num - s.before.inclusion.num} shoppers`, go: 'losses' })),
-    ...(c.funnel.reasons || []).filter((r) => r.n && FIX[r.id]).map((r) => ({ key: r.id, icon: FIX[r.id].icon, title: FIX[r.id].title, detail: r.action, impact: `${r.n} lost picks`, go: 'losses' })),
-  ].slice(0, 3);
-  const flags = new Set((b.feed || []).map((f) => f.title)).size;
-  const catLabel = c.label.toLowerCase();
-  const how = `ayna runs ${ex.scenarios} made-up shoppers through the same matching engine as the app and counts which products land in each top 3. All ${meta.universe} ${catLabel} products in ayna’s catalog compete (${meta.brands} brands). No real customers or sales. Updated ${new Date(data.run.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.`;
-  const TABS = [['rank', 'Leaderboard', 'trophy'], ['vs', 'Head to head', 'swap'], ['need', 'By shopper need', 'target']];
-  const TAB_INFO = {
-    rank: 'Every brand in the category, partner or not, by how many top-3 spots it won. ayna partner tags never change a rank.',
-    vs: 'Pick a competitor. Of the shoppers your products fit, this shows who got picked: only you, both, only them, or neither.',
-    need: 'Where you win and where you don’t, for each thing shoppers came looking for.',
-  };
-  return (
-    <>
-      <div className="ps-ov-bar">
-        <CategoryTabs cats={b.categories} cat={c} setCat={setCatId} />
-        <span className="ps-ov-how">How this works <InfoTip text={how} label="How this works" /></span>
-      </div>
-      <div className="ps-bento">
-        <div className="b-4 b-hero"><Kpi tone="ink" icon="trophy" label="Your rank" value={me.slots ? `#${me.rank}` : 'Not yet'} den={me.slots ? `of ${ex.brands.length} brands` : `in the top 3 for any of ${ex.scenarios} shoppers`} info={`Brands ranked by how many top-3 spots their products won across ${ex.scenarios} made-up shoppers in ${catLabel}.`} meter={leader?.slots ? (me.slots / leader.slots) * 100 : 0} cmp={leader && !leader.you ? { text: `${leader.brand} leads with ${leader.slots} picks` } : { text: 'You lead this category' }} /></div>
-        <div className="b-2"><Kpi tone="pink" icon="hash" label="Times picked" value={String(me.slots)} den={`of ${ex.slots} top-3 spots (${ex.slotShare.pct ?? 0}%)`} info="Every made-up shopper gets a top 3. This is how many of those spots went to your products." /></div>
-        <div className="b-2"><Kpi tone="deep" icon="swap" label="Fit but lost" value={String(ex.lost)} den={`of ${fit} shoppers you fit`} info="Shoppers your product passed every safety and fit check for, but someone else got the spot." /></div>
-        <div className="b-2"><Kpi tone="butter" icon="crown" label="Category leader" value={leader?.brand || '–'} den={leader ? `${leader.slots} picks (${leader.share}%)` : ''} info="The brand with the most top-3 spots in this category." /></div>
-        <div className="b-2"><Kpi tone="plain" icon="hash" label="Real opens" value={String(real.me.opened)} den={real.me.opened ? `#${real.me.rank} of ${real.brands} brands, ayna app` : 'no opens yet, ayna app'} info={`Different people who opened one of your product cards in the real ayna app, ${ENG_RANGE}, counted once per product. ayna team and bots excluded.`} /></div>
-        <section className="ps-card ps-tabcard b-8" aria-label="Compare">
-          <div className="ps-tabcard-head">
-            <Tabs tabs={TABS} value={tab} onChange={setTab} label="Compare" />
-            <InfoTip text={TAB_INFO[tab]} />
-          </div>
-          {tab === 'rank' ? (
-            <div className="ps-tabpane">
-              <div className="ps-tabpane-bar">
-                <div className="ps-toggle" role="group" aria-label="Rank by">
-                  <button type="button" aria-pressed={rankMode === 'brands'} onClick={() => setRankMode('brands')}>Brands</button>
-                  <button type="button" aria-pressed={rankMode === 'products'} onClick={() => setRankMode('products')}>Products</button>
-                </div>
-                <button type="button" className="ps-link" onClick={() => go('share')}>Filter by need and budget ›</button>
-              </div>
-              {rankMode === 'brands' ? <BrandRanking rows={ex.brands} brand={b.brand} totalSlots={ex.slots} limit={8} compact /> : <ProductRanking rows={ex.products} limit={8} />}
-            </div>
-          ) : null}
-          {tab === 'vs' ? <div className="ps-tabpane"><HeadToHead meta={meta} ex={ex} b={b} name={name} /></div> : null}
-          {tab === 'need' ? <div className="ps-tabpane"><ByNeed meta={meta} brand={b.brand} outcomes={c.outcomes} /></div> : null}
-        </section>
-        <aside className="ps-rail b-4">
-          <section className="ps-card" aria-labelledby="ov-ring">
-            <CardHead id="ov-ring" icon="share" title="Share of top-3 spots" info={`All ${ex.slots} top-3 spots, split by brand.`} />
-            <Stacked100 rows={[{ label: 'All spots', counts: Object.fromEntries(ring.map((x) => [x.label, x.value])) }]} keys={ring.map((x) => ({ key: x.label, label: `${x.label} ${pct1(x.value, ex.slots)}`, color: x.color, dark: x.you }))} />
-          </section>
-          <section className="ps-card" aria-labelledby="ov-fix">
-            <CardHead id="ov-fix" icon="actions" title="Fix this next" right={<button type="button" className="ps-btn ps-btn--sm" onClick={() => go('actions')}>See all {open.length}</button>} />
-            {fixes.length ? (
-              <ol className="ps-fixlist">
-                {fixes.map((f, k) => (
-                  <li key={f.key}>
-                    <div className="ps-fixrow">
-                      <button type="button" className="ps-fixrow-main" onClick={() => go(f.go)}>
-                        <span className="ps-fix-num">{k + 1}</span>
-                        <span className="ps-fixrow-text"><strong>{f.title}</strong><span className="ps-impact">{f.impact}</span></span>
-                      </button>
-                      <InfoTip text={f.detail} label={f.title} />
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            ) : <p className="ps-small">Nothing to fix: you made the top 3 every time you fit.</p>}
-          </section>
-          <button type="button" className="ps-card ps-flagcard" onClick={() => go('feed')}>
-            <span className="ps-fix-icon"><Icon name="alert" /></span>
-            <span><strong>{flags ? `${flags} to check on your products` : 'Nothing flagged'}</strong><span className="ps-small ps-muted">Reviews, freshness, claim flags</span></span>
-            <span aria-hidden="true">›</span>
-          </button>
-        </aside>
-        <RealInterest className="b-12" products={meta.products.map((p) => ({ ...p, you: p.brand === b.brand }))} name={name} />
-      </div>
-    </>
-  );
-}
 
 /* ---------------- Shared evidence status scale (plan p.4; draft until human review) ---------------- */
 const EV_GROUP = { direct: 'direct', indirect: 'indirect', regulatory_only: 'indirect', brand_reported: 'limited', experience_only: 'limited', not_located: 'none' };
@@ -586,7 +330,7 @@ export function Claims({ b }) {
 }
 
 /* ---------------- Recommendation share (pp.8-9) ---------------- */
-/** Why a brand got the share it did for one shopper need, and what to do about it. Opened by tapping a cell. */
+/** Why a brand got the share it did for one need in the simulation, and what to do about it. Opened by tapping a cell. */
 const BUDGET_LABEL = { 'under-25': 'Under $25', '25-75': '$25 to $75', any: 'Price no factor' };
 function NeedWhy({ meta, b, c, need, col, budget, format, onClose }) {
   const name = b.displayName || b.brand;
@@ -621,36 +365,36 @@ function NeedWhy({ meta, b, c, need, col, budget, format, onClose }) {
   const winners = e.products.filter((p) => p.slots > 0 && p.brand !== b.brand).slice(0, 3);
   let verdict;
   if (!e.slots) verdict = 'Nothing in the catalog was recommended for this need.';
-  else if (isYou && !fit && counts.i) verdict = `Your products were held back for ${counts.i} shoppers because a product fact is missing.`;
-  else if (isYou && !fit) verdict = 'None of your products is made for this need, so they were never in the running.';
-  else if (isYou && !counts.s) verdict = `You fit all ${fit} shoppers here, but ${winners.map((p) => p.brand).filter((v, k, arr) => arr.indexOf(v) === k).slice(0, 2).join(' and ')} got the spots.`;
-  else if (isYou) verdict = `You were picked for ${counts.s} of the ${fit} shoppers your products fit.`;
+  else if (isYou && !fit && counts.i) verdict = `Your products were on hold in ${counts.i} scenarios because a product attribute is missing.`;
+  else if (isYou && !fit) verdict = 'None of your products is listed for this need, so they weren’t considered.';
+  else if (isYou && !counts.s) verdict = `You were eligible in all ${fit} scenarios here, but ${winners.map((p) => p.brand).filter((v, k, arr) => arr.indexOf(v) === k).slice(0, 2).join(' and ')} were selected.`;
+  else if (isYou) verdict = `You were selected in ${counts.s} of the ${fit} scenarios where you were eligible.`;
   else verdict = row.slots ? `${col} won ${row.slots} of ${e.slots} top-3 spots for this need.` : `${col} wasn’t picked for this need.`;
   const moves = [];
-  if (isYou && !fit && counts.i) moves.push({ t: 'Send your full ingredient list', d: `It unblocks ${counts.i} shoppers with this need right away.` });
-  if (isYou && !fit && !counts.i) moves.push({ t: 'Decide if this need is worth a product', d: `${e.scenarios} shoppers looked for it. ${winners[0] ? `${winners[0].name} leads.` : ''}` });
+  if (isYou && !fit && counts.i) moves.push({ t: 'Send your full ingredient list', d: `It releases ${counts.i} scenarios with this need right away.` });
+  if (isYou && !fit && !counts.i) moves.push({ t: 'Decide if this need is worth a product', d: `${e.scenarios} simulated scenarios include it. ${winners[0] ? `${winners[0].name} leads.` : ''}` });
   if (topReason && LOSS_ACTION[topReason]) moves.push({ t: LOSS_ACTION[topReason].replace(/\.$/, ''), d: `Most common reason you missed here: ${(LOSS[topReason]?.label || topReason).toLowerCase()}.` });
-  const tieMove = topReason === 'diversity_tie' ? { t: 'You already score like the winners', d: 'You lose on shelf variety, not on fit: ayna mixes brands in each top 3, so ties can go either way.' } : null;
+  const tieMove = topReason === 'diversity_tie' ? { t: 'You already score like the winners', d: 'The difference is shelf variety, not eligibility: ayna mixes brands in each top 3, so ties can go either way.' } : null;
   const cheap = bands['under-25'];
-  if (cheap && cheap.shoppers && !cheap.you && Object.values(bands).some((v) => v.you) && myPrices.some((v) => v > 25)) moves.push({ t: 'Under-$25 shoppers never see you', d: `${cheap.shoppers} shoppers here have that budget. Your price: ${myPrices.map((v) => money(v)).join(', ')}.` });
+  if (cheap && cheap.shoppers && !cheap.you && Object.values(bands).some((v) => v.you) && myPrices.some((v) => v > 25)) moves.push({ t: 'Under-$25 scenarios never select you', d: `${cheap.shoppers} scenarios here have that budget. Your price: ${myPrices.map((v) => money(v)).join(', ')}.` });
   const needSkus = new Set(examples.map((x) => x.sku));
   const sim = sims.find((x) => needSkus.has(x.sku));
-  if (sim) moves.push({ t: `Test ${shortName(sim.name, name)} at ${String(sim.changeLabel).split(' ')[0]}`, d: `In a test run that wins ${sim.after.inclusion.num - sim.before.inclusion.num} more shoppers across the category.` });
+  if (sim) moves.push({ t: `Test ${shortName(sim.name, name)} at ${String(sim.changeLabel).split(' ')[0]}`, d: `In a test run this adds ${sim.after.inclusion.num - sim.before.inclusion.num} scenarios across the category.` });
   if (tieMove) moves.push(tieMove);
   return (
     <Drawer title={`${need}: ${isYou ? 'you' : col}`} onClose={onClose}>
       <p className="ps-why-verdict">{verdict}</p>
       <div className="ps-why-kpis">
         <div><span className="ps-num">{row.share ?? 0}%</span><small>of top-3 spots</small></div>
-        <div><span className="ps-num">{e.scenarios}</span><small>shoppers with this need</small></div>
-        {isYou ? <div><span className="ps-num">{fit}</span><small>your products fit</small></div> : <div><span className="ps-num">{row.slots}</span><small>times picked</small></div>}
+        <div><span className="ps-num">{e.scenarios}</span><small>scenarios with this need</small></div>
+        {isYou ? <div><span className="ps-num">{fit}</span><small>eligible scenarios</small></div> : <div><span className="ps-num">{row.slots}</span><small>times selected</small></div>}
       </div>
       <section>
         <h3 className="ps-why-h">By budget</h3>
         <ul className="ps-why-bands">
           {Object.entries(bands).map(([k, v]) => (
             <li key={k}>
-              <span>{BUDGET_LABEL[k] || k}<small>{v.shoppers} shoppers</small></span>
+              <span>{BUDGET_LABEL[k] || k}<small>{v.shoppers} scenarios</small></span>
               <span className="ps-why-pill is-you">You {v.you}</span>
               {!isYou ? <span className="ps-why-pill">{col} {v.them}</span> : null}
             </li>
@@ -668,16 +412,16 @@ function NeedWhy({ meta, b, c, need, col, budget, format, onClose }) {
         <section>
           <h3 className="ps-why-h">Why {col} wins here</h3>
           <ul className="ps-why-list">{picks.map((p) => <li key={p.id}><span>{p.name}<small>{price[p.name] != null ? money(price[p.name]) : 'Price not on file'}</small></span><b>{p.slots} picks</b></li>)}</ul>
-          <p className="ps-small">{myPrices.length && picks.some((p) => price[p.name] != null) ? `Your price: ${myPrices.map((v) => money(v)).join(', ')}. ` : ''}Their products are listed for this need and fit these shoppers’ budgets.</p>
+          <p className="ps-small">{myPrices.length && picks.some((p) => price[p.name] != null) ? `Your price: ${myPrices.map((v) => money(v)).join(', ')}. ` : ''}Their products are listed for this need and within these scenarios’ budgets.</p>
         </section>
       )}
       {isYou && examples[0] ? (
         <section>
-          <h3 className="ps-why-h">One shopper, explained</h3>
-          <div className="ps-why-ex"><b>{examples[0].label}</b><span>{examples[0].detail}</span><small>Picked instead: {examples[0].placed.join(', ') || 'nothing qualified'}</small></div>
+          <h3 className="ps-why-h">One scenario, explained</h3>
+          <div className="ps-why-ex"><b>{examples[0].label}</b><span>{examples[0].detail}</span><small>Selected instead: {examples[0].placed.join(', ') || 'nothing qualified'}</small></div>
         </section>
       ) : null}
-      <p className="ps-small ps-muted">Made-up shoppers run through ayna’s matching engine. Not sales or real demand.</p>
+      <p className="ps-small ps-muted">Simulated shopping scenarios run through ayna’s matching engine. Not actual customer activity, sales or clinical suitability.</p>
     </Drawer>
   );
 }
@@ -708,24 +452,22 @@ export function Share({ data, b, cat, setCat }) {
   const eligRate = pctOf(ex.eligibleToPlaced.den, ex.scenarios);
   const bestNeed = byNeed.filter((x) => x.e.brandSlots).sort((x, y) => (y.e.slotShare.pct || 0) - (x.e.slotShare.pct || 0))[0];
   const absent = byNeed.filter((x) => x.e.slots && !x.e.brandSlots).map((x) => x.need);
-  const real = realSummary(meta.products.map((p) => ({ ...p, you: p.brand === b.brand })));
   const series = shareSeries(data.history, c.id, b.brand);
   const delta = changeSinceLast(series);
   const shortDay = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const trendPoints = series.points.length ? series.points.map((pt) => ({ label: shortDay(pt.createdAt), value: pt.value ?? 0 })) : [{ label: updatedOn(data), value: ex.slotShare.pct ?? 0 }];
-  const realVsSim = real.me.opened && me.slots && real.me.rank < me.rank ? `#${real.me.rank} by real opens, #${me.rank} in recommendations. Interest is there; matching lags.` : real.me.opened ? `#${real.me.rank} of ${real.brands} brands by real opens in the ayna app.` : null;
   const findings = [
     me.slots ? `#${me.rank} of ${ex.brands.length} brands, ${ex.slotShare.pct ?? 0}% of slots. ${ex.brands[0]?.you ? 'You lead.' : `${ex.brands[0]?.brand} leads (${ex.brands[0]?.share}%).`}` : `Not in any top 3 yet. ${ex.brands[0]?.brand} leads (${ex.brands[0]?.share}%).`,
-    realVsSim,
     delta && !filtered ? `${delta.pp > 0 ? '+' : ''}${delta.pp} points since ${shortDay(delta.since)}.` : null,
-    `Fit ${ex.eligibleToPlaced.den} of ${ex.scenarios} shoppers, picked for ${ex.eligibleToPlaced.num}.`,
+    `Eligible in ${ex.eligibleToPlaced.den} of ${ex.scenarios} scenarios, selected in ${ex.eligibleToPlaced.num}.`,
+    ex.slots < ex.scenarios * (meta.k || 3) ? `${ex.slots} of ${ex.scenarios * (meta.k || 3)} possible spots were filled; some scenarios had fewer than 3 products that met the rules.` : null,
     bestNeed ? `Best need: ${bestNeed.need} (${bestNeed.e.slotShare.pct}%).` : 'Not picked for any single need yet.',
     absent.length ? `Never picked for: ${absent.join(', ')}.` : null,
   ];
   const actions = [
-    { text: 'See why you lost the shoppers you fit.', note: 'Why products aren’t recommended breaks down every miss by reason.' },
+    { text: 'See why you weren’t selected', note: 'Why products miss breaks down every unselected scenario by reason.' },
     ...(absent.length ? [{ text: `Check whether a product of yours is made for ${absent[0].toLowerCase()}.`, note: 'If it is, make sure its listing says so plainly.' }] : []),
-    { text: 'Treat this as a benchmark, not sales.', note: 'Simulated recommendation share is never retail market share, purchase share or clinical effectiveness.' },
+    { text: 'Treat this as a simulation, not sales', note: 'Simulated selection share is never retail market share, purchase share or clinical effectiveness.' },
   ];
   return (
     <>
@@ -748,47 +490,45 @@ export function Share({ data, b, cat, setCat }) {
           </select>
         </label>
         {filtered ? <button type="button" className="ps-link" onClick={() => { setNeed(''); setBudget(''); setFormat(''); }}>Clear filters</button> : null}
-        <SyntheticBadge text="Synthetic benchmark: not real consumer demand or sales" />
+        <SyntheticBadge text="Simulation: synthetic shopping scenarios, not actual activity or sales" />
       </div>
       <div className="ps-bento">
-        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Recommendation share" value={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} den={`${ex.slotShare.num} of ${ex.slotShare.den} slots`} info="Recommendation slots your products occupied / all slots across the evaluated synthetic shoppers." meter={ex.brands[0]?.share ? ((ex.slotShare.pct || 0) / ex.brands[0].share) * 100 : 0} cmp={ex.brands[0] && !ex.brands[0].you ? { text: `Leader ${ex.brands[0].brand}: ${ex.brands[0].share}%` } : null} /></div>
-        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligibility rate" value={eligRate == null ? 'N/A' : `${eligRate}%`} den={`fit ${ex.eligibleToPlaced.den} of ${ex.scenarios} shoppers`} info="Shoppers where at least one of your products passed every safety and fit rule." /></div>
-        <div className="b-2"><Kpi tone="deep" icon="swap" label="Rate when eligible" value={ex.eligibleToPlaced.pct == null ? 'N/A' : `${ex.eligibleToPlaced.pct}%`} den={`${ex.eligibleToPlaced.num} of ${ex.eligibleToPlaced.den}`} info="Recommended / eligible. N/A when none of your products fit." /></div>
-        <div className="b-2"><Kpi tone="butter" icon="trophy" label="Position" value={me.slots ? `#${me.rank}` : 'Not yet'} den={me.slots ? `of ${ex.brands.length} brands` : 'no top-3 spots yet'} /></div>
-        <div className="b-2"><Kpi tone="plain" icon="hash" label="Real opens" value={String(real.me.opened)} den={real.me.opened ? `#${real.me.rank} of ${real.brands} brands, ayna app` : 'no opens yet, ayna app'} info={`Different people who opened one of your product cards in the real ayna app, ${ENG_RANGE}, counted once per product. ayna team and bots excluded.`} /></div>
-        <Panel className="b-7 b-tall" id="sh-rank" title="Recommendation share by brand" info={`Every brand in ayna’s ${c.label.toLowerCase()} catalog competes (${meta.brands} brands, ${meta.universe} products). Top 10 shown plus you.`}>
-          <RankedBars rows={ranked.map((x) => ({ label: x.brand, value: x.share, you: x.you, tag: x.partner && !x.you ? <PartnerTag /> : null, sub: `${x.slots} slots` }))} total={`${ex.slots} recommendation slots across ${ex.scenarios} synthetic shoppers`} />
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Simulated selection share" value={ex.slotShare.pct == null ? 'N/A' : `${ex.slotShare.pct}%`} den={`${ex.slotShare.num} of ${ex.slotShare.den} filled spots`} info="Top-3 spots your products filled divided by all filled spots across the simulated scenarios. Scenarios with fewer than 3 eligible products fill fewer spots." meter={ex.brands[0]?.share ? ((ex.slotShare.pct || 0) / ex.brands[0].share) * 100 : 0} cmp={ex.brands[0] && !ex.brands[0].you ? { text: `Leader ${ex.brands[0].brand}: ${ex.brands[0].share}%` } : null} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligible in simulation" value={eligRate == null ? 'N/A' : `${eligRate}%`} den={`${ex.eligibleToPlaced.den} of ${ex.scenarios} scenarios`} info="Scenarios where at least one of your products met the configured matching requirements." /></div>
+        <div className="b-2"><Kpi tone="deep" icon="swap" label="Selected when eligible" value={ex.eligibleToPlaced.pct == null ? 'N/A' : `${ex.eligibleToPlaced.pct}%`} den={`${ex.eligibleToPlaced.num} of ${ex.eligibleToPlaced.den}`} info="Selected / eligible scenarios. N/A when none of your products were eligible." /></div>
+        <div className="b-2"><Kpi tone="butter" icon="trophy" label="Simulated rank" value={me.slots ? `#${me.rank}` : 'None yet'} den={me.slots ? `of ${ex.brands.filter((x) => x.slots).length} brands with a selection` : '0 selections in this simulation'} /></div>
+        <div className="b-2"><Kpi tone="plain" icon="hash" label="Simulated scenarios" value={String(ex.scenarios)} den={`${ex.slots} of ${ex.scenarios * (meta.k || 3)} possible spots filled`} info="Synthetic shopping scenarios run through ayna’s matching engine. Each has up to 3 spots; a scenario fills fewer when fewer products meet the configured rules." /></div>
+        <Panel className="b-7 b-tall" id="sh-rank" title="Simulated selection share by brand" info={`Every brand in ayna’s ${c.label.toLowerCase()} catalog is in the simulation (${meta.brands} brands, ${meta.universe} products). Top 10 shown plus you.`}>
+          <RankedBars rows={ranked.map((x) => ({ label: x.brand, value: x.share, you: x.you, tag: x.partner && !x.you ? <PartnerTag /> : null, sub: x.slots ? `${x.slots} selections` : 'No selections' }))} total={`${ex.slots} filled spots across ${ex.scenarios} simulated scenarios (${ex.scenarios * (meta.k || 3)} possible)`} />
           <RankKey />
         </Panel>
         <div className="b-5 ps-stack-col ps-col12">
           <Insights items={findings} />
           <NextSteps actions={actions} />
         </div>
-        <Panel className="b-6" id="sh-alt" title={{ need: 'Share by health need', heat: 'Need × budget', dist: 'Distribution of slots', trend: 'Over time' }[view]} right={<ViewSwitch views={[['need', 'By need'], ['heat', 'Heatmap'], ['dist', 'Distribution'], ['trend', 'Trend']]} value={view} onChange={setView} />} info="Tap any cell to see why.">
+        <Panel className="b-12" id="sh-alt" title={{ need: 'Share by health need', heat: 'Need × budget', dist: 'Distribution of slots', trend: 'Over time' }[view]} right={<ViewSwitch views={[['need', 'By need'], ['heat', 'Heatmap'], ['dist', 'Distribution'], ['trend', 'Trend']]} value={view} onChange={setView} />} info="Tap any cell to see why.">
           {view === 'need' ? <Matrix corner="Health need" rows={needGroups.map((g) => ({ key: g.label, label: g.label }))} cols={needGroups[0]?.items.map((it) => ({ key: it.name, label: it.name, sub: it.you ? 'You' : '', you: it.you })) || []} cell={(r, col) => { const it = needGroups.find((g) => g.label === r.key).items.find((x) => x.name === col.key); const open = () => setWhy({ need: r.key, col: col.key }); if (it.value == null) return { text: 'N/A', color: C.missing, title: 'No product was recommended for this need', onClick: open }; const v = it.value; return { onClick: open, text: `${Math.round(v)}%`, color: v ? (it.you ? (v < 34 ? '#fcdcee' : C.pink) : (v < 34 ? C.rival2 : v < 67 ? '#a3bfd6' : C.rival)) : C.missing, title: `${col.key}: ${v}% of slots for ${r.key}. Tap to see why.` }; }} legend={[{ key: 'y', label: 'You (deeper is more)', color: C.pink }, { key: 'r', label: 'Competitors', color: C.rival }]} /> : null}
-          {view === 'heat' ? <><Heatmap grid={c.grid} /><p className="ps-small ps-muted">Your share of slots per need and budget, all formats. Hatched: no product fit.</p></> : null}
+          {view === 'heat' ? <><Heatmap grid={c.grid} /><p className="ps-small ps-muted">Your share of slots per need and budget, all formats. Hatched: no product was eligible.</p></> : null}
           {view === 'dist' ? <Stacked100 rows={[{ label: 'All slots', counts: distCounts }]} keys={distKeys} /> : null}
-          {view === 'trend' ? <><TrendLine points={trendPoints} label={series.skipped ? `${series.skipped} older run${series.skipped === 1 ? '' : 's'} used a different engine or scenario set, so ${series.skipped === 1 ? 'it is' : 'they are'} left out.` : ''} />{filtered ? <p className="ps-small ps-muted">The trend shows all shoppers; filters don’t apply to it.</p> : null}</> : null}
+          {view === 'trend' ? <><TrendLine points={trendPoints} label={series.skipped ? `${series.skipped} older run${series.skipped === 1 ? '' : 's'} used a different engine or scenario set, so ${series.skipped === 1 ? 'it is' : 'they are'} left out.` : ''} />{filtered ? <p className="ps-small ps-muted">The trend covers all scenarios; filters don’t apply to it.</p> : null}</> : null}
         </Panel>
-        <RealInterest className="b-6" products={meta.products.map((p) => ({ ...p, you: p.brand === b.brand }))} name={name} />
       <Panel className="b-12" id="sh-tbl" title="Product ranking" info="Every product in the category, sortable. Eligibility is shown for your products.">
         <SortTable rows={ex.products.map((p) => ({ ...p, eligible: p.you && skuInfo[p.name] ? skuInfo[p.name].selected + skuInfo[p.name].eligible_lost : null }))} rowClass={(p) => (p.you ? 'is-you' : '')} initial={{ key: 'slots', dir: 'desc' }} limit={8} columns={[
-          { key: 'rank', label: '#', num: true },
+          { key: 'rank', label: '#', num: true, render: (p) => p.rank ?? '–' },
           { key: 'name', label: 'Product', render: (p) => <>{p.name}{p.partner && !p.you ? <PartnerTag /> : null}</> },
           { key: 'brand', label: 'Brand' },
-          { key: 'slots', label: 'Slots', num: true },
+          { key: 'slots', label: 'Selections', num: true },
           { key: 'share', label: 'Share', num: true, render: (p) => (p.share == null ? 'N/A' : `${p.share}%`) },
-          { key: 'eligible', label: 'Eligible shoppers', num: true, render: (p) => (p.eligible == null ? '–' : p.eligible) },
+          { key: 'eligible', label: 'Eligible scenarios', num: true, render: (p) => (p.eligible == null ? '–' : p.eligible) },
         ]} />
       </Panel>
       </div>
       {why ? <NeedWhy meta={meta} b={b} c={c} need={why.need} col={why.col} budget={budget} format={format} onClose={() => setWhy(null)} /> : null}
       <Method updated={updatedOn(data)} scope={`engine ${data.run.adapterVersion}`} items={[
-        `Recommendation share = slots occupied by the brand / all slots across the evaluated synthetic shoppers (top ${meta.k || 3} per shopper; lists with fewer products count actual slots).`,
-        'Scenarios: fictional shoppers in a fixed design (need × life stage × budget × format × fragrance sensitivity), equal weights. Not a population estimate.',
+        `Simulated selection share = top-3 spots filled by the brand / all filled spots. Each scenario has up to ${meta.k || 3} spots; ${ex.scenarios * (meta.k || 3) - ex.slots} of ${ex.scenarios * (meta.k || 3)} stayed empty because fewer products met the rules, and some scenarios had none.`,
+        'Scenarios: synthetic shopping scenarios in a fixed design (need × life stage × budget × format × fragrance sensitivity), equal weights. Not a population estimate and not actual customers.',
         `Engine: ayna’s production matching code, run read-only on a frozen catalog (${meta.catalogVersion}). Partner status and payments are never inputs; a test proves changing them leaves placements unchanged.`,
-        'This is simulated recommendation share. It is never retail market share, purchase share or clinical effectiveness.',
-        `Real shopper activity comes from the ayna app (PostHog), ${ENG_RANGE}: different people per product who saw, opened, viewed the page of, or clicked to buy each product. ayna team accounts and bots are excluded. It is kept separate from the simulated benchmark and never feeds rankings.`,
+        'This is a simulation. It is never retail market share, purchase share or clinical suitability.',
       ]} />
     </>
   );
@@ -796,20 +536,20 @@ export function Share({ data, b, cat, setCat }) {
 
 /* ---------------- Lost recommendations (pp.10-11) ---------------- */
 const LOSS = {
-  diversity_tie: { label: 'Tied, another brand got the spot', short: 'Tie', fix: false },
-  relevance: { label: 'Listing doesn’t clearly match her need', short: 'Need match', fix: true },
-  budget: { label: 'Price above her budget', short: 'Price', fix: true },
-  format: { label: 'Not the format she wanted', short: 'Format', fix: true },
+  diversity_tie: { label: 'Tied, another brand was selected', short: 'Tie', fix: false },
+  relevance: { label: 'Listing doesn’t clearly name the need', short: 'Need match', fix: true },
+  budget: { label: 'Price above the scenario’s budget', short: 'Price', fix: true },
+  format: { label: 'A different format was preferred', short: 'Format', fix: true },
   evidence: { label: 'Weaker research than the picks', short: 'Research', fix: true },
   below_cutoff: { label: 'Match score too low', short: 'Low match', fix: true },
-  insufficient_info: { label: 'Missing product facts', short: 'Missing facts', fix: true, color: C.amber },
-  excluded: { label: 'Not safe for her (safety rule)', short: 'Safety', fix: false, color: C.red },
+  insufficient_info: { label: 'Missing product information', short: 'Missing info', fix: true, color: C.amber },
+  excluded: { label: 'Excluded by configured product rules', short: 'Product rules', fix: false, color: C.red },
   unclassified: { label: 'Other', short: 'Other', fix: false },
 };
 const LOSS_ACTION = {
   relevance: 'Make sure the listing says plainly which need it is made for.',
   budget: 'Test a smaller pack or a lower price point (see the price test).',
-  format: 'Consider whether a second format fits shoppers who prefer it.',
+  format: 'Consider whether a second format fits scenarios that prefer it.',
   evidence: 'Send product-specific evidence for review.',
   below_cutoff: 'Check the need mapping and published facts for this product.',
   insufficient_info: 'Send the official ingredient or materials list so the engine can check it.',
@@ -829,11 +569,11 @@ export function Losses({ data, b, cat, setCat }) {
   const totalLost = reasons.reduce((a, r) => a + r.n, 0);
   const top = reasons[0];
   const steps = [
-    { label: 'Evaluated shoppers', n: c.scenarios, note: 'Synthetic shoppers in this category' },
-    { label: 'Health-need relevant', n: f.in_scope, note: 'One of your products is made for their need' },
-    { label: 'Safety-eligible', n: f.in_scope - f.excluded, note: `${f.excluded} excluded by safety rules` },
-    { label: 'Eligible with complete facts', n: f.eligible, note: `${f.insufficient_info} on hold for a missing fact` },
-    { label: 'Recommended', n: f.placed, note: 'Made the shopper’s top 3' },
+    { label: 'Simulated scenarios', n: c.scenarios, note: 'Synthetic shopping scenarios in this category' },
+    { label: 'Need matches your listing', n: f.in_scope, note: 'One of your products is listed for the scenario’s need' },
+    { label: 'Passed configured product rules', n: f.in_scope - f.excluded, note: `${f.excluded} excluded by configured product rules` },
+    { label: 'Eligible with complete information', n: f.eligible, note: `${f.insufficient_info} on hold for missing product information` },
+    { label: 'Selected', n: f.placed, note: 'In the scenario’s top 3' },
   ];
   const skus = c.skus || [];
   const rcols = reasons.map((r) => ({ key: r.id, label: r.short }));
@@ -841,55 +581,55 @@ export function Losses({ data, b, cat, setCat }) {
   const maxCell = Math.max(1, ...skus.flatMap((s) => rcols.map((col) => skuVal(s, col.key) || 0)));
   const sims = (b.simulations || []).filter((s) => s.category === c.id);
   const findings = [
-    `Picked for ${f.placed} of ${f.eligible} shoppers you fit (${pctOf(f.placed, f.eligible) ?? 'N/A'}%).`,
+    `Selected in ${f.placed} of ${f.eligible} scenarios where you were eligible (${pctOf(f.placed, f.eligible) ?? 'N/A'}%).`,
     top ? `Top reason: ${top.short.toLowerCase()} (${top.n} of ${totalLost}).` : 'No losses recorded.',
-    f.insufficient_info ? `${f.insufficient_info} shoppers blocked by a missing product fact. Easiest fix.` : null,
-    f.excluded ? `${f.excluded} safety exclusions. Never something to change.` : null,
+    f.insufficient_info ? `${f.insufficient_info} scenarios on hold for missing product information. The quickest fix.` : null,
+    f.excluded ? `${f.excluded} scenarios excluded by configured product rules. Not something to change.` : null,
   ];
   const actions = [
-    ...(f.insufficient_info ? [{ text: LOSS_ACTION.insufficient_info, note: `Affects ${f.insufficient_info} shoppers.` }] : []),
-    ...reasons.filter((r) => r.fix && r.id !== 'insufficient_info').slice(0, 2).map((r) => ({ text: LOSS_ACTION[r.id], note: `${r.label}: ${r.n} shoppers.` })),
+    ...(f.insufficient_info ? [{ text: LOSS_ACTION.insufficient_info, note: `Affects ${f.insufficient_info} simulated scenarios.` }] : []),
+    ...reasons.filter((r) => r.fix && r.id !== 'insufficient_info').slice(0, 2).map((r) => ({ text: LOSS_ACTION[r.id], note: `${r.label}: ${r.n} simulated scenarios.` })),
     ...(sims.some((s) => s.after.inclusion.num > s.before.inclusion.num) ? [{ text: 'Review the price test before changing price.', note: 'It is a hypothetical simulation, kept separate from real outcomes.' }] : []),
   ].slice(0, 4);
   return (
     <>
       <div className="ps-filters" role="group" aria-label="Filters">
         <CategoryTabs cats={b.categories} cat={c} setCat={setCat} />
-        <SyntheticBadge text="Synthetic benchmark: not real consumer demand or sales" />
+        <SyntheticBadge text="Simulation: synthetic shopping scenarios, not actual activity or sales" />
       </div>
       <div className="ps-bento">
-        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Recommendation rate when eligible" value={pctOf(f.placed, f.eligible) == null ? 'N/A' : `${pctOf(f.placed, f.eligible)}%`} den={`recommended to ${f.placed} of ${f.eligible} eligible shoppers`} meter={pctOf(f.placed, f.eligible) || 0} /></div>
-        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligible shoppers" value={String(f.eligible)} den={`${pctOf(f.eligible, c.scenarios)}% of ${c.scenarios} evaluated`} /></div>
-        <div className="b-2"><Kpi tone="deep" icon="losses" label="Top reason" value={top ? top.short : '–'} den={top ? `${top.n} of ${totalLost} misses` : ''} info={top?.label} /></div>
-        <div className="b-2"><Kpi tone="butter" icon="doc" label="Fixable with facts" value={String(f.insufficient_info)} den="held by a missing fact" /></div>
-        <div className="b-2"><Kpi tone="plain" icon="alert" label="Safety exclusions" value={String(f.excluded)} den="never something to change" /></div>
-        <Panel className="b-7" id="lo-rank" title="Why your products weren’t recommended" info="One primary reason per missed shopper, so the reasons add up to every shopper you didn’t get. Safety exclusions are shown for completeness and are never something to change.">
-          <RankedBars unit="" rows={reasons.map((r) => ({ label: r.label, value: r.n, color: r.color, sub: r.fix ? null : 'Not something to change' }))} valueText={(r) => `${r.value} · ${pctOf(r.value, totalLost)}%`} total={`${totalLost} missed shoppers (relevant shoppers minus recommended)`} />
+        <div className="b-4 b-hero"><Kpi tone="ink" icon="share" label="Selected when eligible" value={pctOf(f.placed, f.eligible) == null ? 'N/A' : `${pctOf(f.placed, f.eligible)}%`} den={`selected in ${f.placed} of ${f.eligible} eligible scenarios`} meter={pctOf(f.placed, f.eligible) || 0} /></div>
+        <div className="b-2"><Kpi tone="pink" icon="target" label="Eligible scenarios" value={String(f.eligible)} den={`${pctOf(f.eligible, c.scenarios)}% of ${c.scenarios} evaluated`} /></div>
+        <div className="b-2"><Kpi tone="deep" icon="losses" label="Top reason" value={top ? top.short : '–'} den={top ? `${top.n} of ${totalLost} unselected` : ''} info={top?.label} /></div>
+        <div className="b-2"><Kpi tone="butter" icon="doc" label="Missing information" value={String(f.insufficient_info)} den="scenarios on hold" /></div>
+        <div className="b-2"><Kpi tone="plain" icon="alert" label="Rule exclusions" value={String(f.excluded)} den="excluded by configured product rules" /></div>
+        <Panel className="b-7" id="lo-rank" title="Why your products weren’t selected" info="One primary reason per unselected scenario, so the reasons add up to every scenario where you weren’t selected. Rule exclusions are shown for completeness and are not something to change.">
+          <RankedBars unit="" rows={reasons.map((r) => ({ label: r.label, value: r.n, color: r.color, sub: r.fix ? null : 'Not something to change' }))} valueText={(r) => `${r.value} · ${pctOf(r.value, totalLost)}%`} total={`${totalLost} unselected scenarios (need-matched scenarios minus selected)`} />
         </Panel>
         <div className="b-5 ps-stack-col ps-col12">
           <Insights items={findings} />
           <NextSteps actions={actions.length ? actions : [{ text: 'Nothing to fix here.' }]} />
         </div>
-        <Panel className="b-5" id="lo-alt" title={{ funnel: 'Recommendation funnel', pareto: 'Pareto of reasons', product: 'Reasons by product', sim: 'Price test' }[view]} right={<ViewSwitch views={[['funnel', 'Funnel'], ['pareto', 'Pareto'], ['product', 'By product'], ['sim', 'Price test']]} value={view} onChange={setView} />} info="Funnel stages follow the matching engine’s own order, all against the same denominator.">
+        <Panel className="b-5" id="lo-alt" title={{ funnel: 'Selection funnel', pareto: 'Pareto of reasons', product: 'Reasons by product', sim: 'Price test' }[view]} right={<ViewSwitch views={[['funnel', 'Funnel'], ['pareto', 'Pareto'], ['product', 'By product'], ['sim', 'Price test']]} value={view} onChange={setView} />} info="Funnel stages follow the matching engine’s own order, all against the same denominator.">
           {view === 'funnel' ? <FunnelBars steps={steps} /> : null}
           {view === 'pareto' ? <Pareto rows={reasons.map((r) => ({ label: r.label, short: r.short, n: r.n, color: r.color }))} /> : null}
           {view === 'product' ? (skus.length ? <Matrix corner="Product" rows={skus.map((s) => ({ key: s.sku, label: shortName(s.name, b.displayName || b.brand) }))} cols={rcols} cell={(r, col) => { const s = skus.find((x) => x.sku === r.key); const v = skuVal(s, col.key); return v == null ? { text: '–', color: C.missing, title: 'Per-product reasons arrive with the next benchmark run' } : { text: String(v), color: v ? `rgba(62,39,35,${(0.08 + 0.6 * (v / maxCell)).toFixed(2)})` : undefined, dark: v / maxCell > 0.6 }; }} /> : <p className="ps-small">No products in this category.</p>) : null}
-          {view === 'sim' ? (sims.length ? <><BeforeAfter rows={sims.map((s) => ({ label: `${shortName(s.name, b.displayName || b.brand)} at ${String(s.changeLabel).split(' ')[0]}`, before: s.before.inclusion.num, after: s.after.inclusion.num }))} unit=" shoppers" /><p className="ps-small ps-muted">Hypothetical: same engine, competitors and shoppers, only the price changes. Safety rules still held in every run. Not a forecast.</p></> : <p className="ps-small">No priced product to simulate.</p>) : null}
+          {view === 'sim' ? (sims.length ? <><BeforeAfter rows={sims.map((s) => ({ label: `${shortName(s.name, b.displayName || b.brand)} at ${String(s.changeLabel).split(' ')[0]}`, before: s.before.inclusion.num, after: s.after.inclusion.num }))} unit=" scenarios" /><p className="ps-small ps-muted">Hypothetical: same engine, competitors and scenarios, only the price changes. Product rules still applied in every run. Not a forecast.</p></> : <p className="ps-small">No priced product to simulate.</p>) : null}
         </Panel>
-      <Panel className="b-7" id="lo-tbl" title="Product-level losses" info="Exact counts per product. Each shopper counts once per product.">
+      <Panel className="b-7" id="lo-tbl" title="By product" info="Exact counts per product. Each scenario counts once per product.">
         <SortTable rows={skus.map((s) => { const r = Object.entries(s.reasons || {}).sort((x, y) => y[1] - x[1])[0]; return { id: s.sku, name: shortName(s.name, b.displayName || b.brand), selected: s.selected, eligible_lost: s.eligible_lost, insufficient_info: s.insufficient_info, excluded: s.excluded, top: r ? (LOSS[r[0]]?.short || r[0]) : null }; })} initial={{ key: 'eligible_lost', dir: 'desc' }} columns={[
           { key: 'name', label: 'Product' },
-          { key: 'selected', label: 'Recommended', num: true },
-          { key: 'eligible_lost', label: 'Fit, not picked', num: true },
-          { key: 'insufficient_info', label: 'Missing facts', num: true },
-          { key: 'excluded', label: 'Safety excluded', num: true },
+          { key: 'selected', label: 'Selected', num: true },
+          { key: 'eligible_lost', label: 'Eligible but not selected', num: true },
+          { key: 'insufficient_info', label: 'Missing information', num: true },
+          { key: 'excluded', label: 'Rule exclusions', num: true },
           { key: 'top', label: 'Top reason', render: (r) => r.top || '–' },
         ]} />
         <details className="ps-method" open={allEx} onToggle={(e) => setAllEx(e.currentTarget.open)}>
-          <summary>Examples from the matching engine ({f.examples.length})</summary>
+          <summary>Matching-engine results for selected synthetic scenarios ({f.examples.length})</summary>
           <div className="ps-table-wrap">
             <table className="ps-table">
-              <thead><tr><th>Made-up shopper</th><th>Your product</th><th>Why it missed</th><th>Recommended instead</th></tr></thead>
+              <thead><tr><th>Simulated scenario</th><th>Your product</th><th>Why it wasn’t selected</th><th>Selected instead</th></tr></thead>
               <tbody>{f.examples.map((e) => <tr key={e.scenarioId + e.sku}><td>{e.label}</td><td>{skus.find((x) => x.sku === e.sku)?.name || e.sku}</td><td><strong>{LOSS[e.reason]?.label || e.reason}</strong><br /><span className="ps-small">{e.detail}</span></td><td className="ps-small">{e.placed.join(', ') || 'Nothing qualified'}</td></tr>)}</tbody>
             </table>
           </div>
@@ -897,10 +637,10 @@ export function Losses({ data, b, cat, setCat }) {
       </Panel>
       </div>
       <Method updated={updatedOn(data)} scope={`engine ${data.run.adapterVersion}`} items={[
-        'Each missed shopper gets one primary reason, so reasons are mutually exclusive and sum to relevant shoppers minus recommended.',
-        'Funnel stages follow the engine’s order: relevance, safety rules, required facts, then ranking. All use the evaluated shoppers as the denominator.',
-        `Special cases checked separately: shoppers who are pregnant, breastfeeding, latex-allergic or on certain medicines (${Object.values(c.boundary || {}).reduce((a, n) => a + n, 0)} results) and shoppers who skipped questions (${Object.values(c.unknown || {}).reduce((a, n) => a + n, 0)}).`,
-        'ayna never suggests removing safety restrictions or clinical safeguards to win recommendations. Price tests are hypothetical and kept apart from real outcomes.',
+        'Each unselected scenario gets one primary reason, so reasons are mutually exclusive and sum to need-matched scenarios minus selected.',
+        'Funnel stages follow the engine’s order: need match, configured product rules, required information, then ranking. All use the simulated scenarios as the denominator.',
+        `Scenarios with configured product rules (pregnancy, breastfeeding, latex allergy or certain medicines) are checked separately (${Object.values(c.boundary || {}).reduce((a, n) => a + n, 0)} results), as are scenarios with skipped questions (${Object.values(c.unknown || {}).reduce((a, n) => a + n, 0)}).`,
+        'ayna never suggests removing product rules to win selections. Price tests are hypothetical and kept apart from actual outcomes. These results describe how ayna’s matching engine reads product information; they are not a clinical assessment.',
       ]} />
     </>
   );
@@ -968,9 +708,9 @@ export function Feed({ b, ack, setAck }) {
           const id = `${f.type}-${f.sku}-${k}`;
           return (
             <li key={id} className="ps-item" style={ack[id] ? { opacity: 0.6 } : undefined}>
-              <div className="ps-item-head"><strong>{f.title}</strong><span className="ps-chip">{TYPE[f.type] || f.type}</span></div>
+              <div className="ps-item-head"><strong>{f.type === 'clinician_review' ? 'Product review open' : f.title}</strong><span className="ps-chip">{TYPE[f.type] || f.type}</span></div>
               <span className="ps-small">{f.name}{f.date ? ` · ${f.date}` : ''}</span>
-              <span className="ps-small">{f.detail}</span>
+              <span className="ps-small">{f.type === 'clinician_review' ? 'ayna’s reviewer is confirming a product fact before it is final.' : f.detail}</span>
               <button type="button" className="ps-btn ps-btn--sm" style={{ alignSelf: 'flex-start' }} onClick={() => setAck(id)}>{ack[id] ? 'Acknowledged' : 'Acknowledge'}</button>
             </li>
           );
@@ -1004,10 +744,10 @@ export function Reports({ data, b, onExport }) {
           <CardHead id="rp-def" icon="doc" title="Definitions" />
           <ul className="ps-list">
             <li className="ps-item"><strong>Share of top-3 picks (slot share)</strong><span className="ps-small">Your placements across final top-{r.k} lists ÷ all placements in those lists, counting every brand in ayna’s catalog for the category.</span></li>
-            <li className="ps-item"><strong>Shoppers you reached (scenario inclusion)</strong><span className="ps-small">Scenarios with at least one of your products placed ÷ all scenarios, no-result scenarios included. Brands’ rates don’t add to 100%.</span></li>
-            <li className="ps-item"><strong>Win rate when you qualified (eligible to placed)</strong><span className="ps-small">Scenarios with a placement ÷ scenarios where at least one of your products qualified. N/A when none qualified.</span></li>
+            <li className="ps-item"><strong>Scenarios with a selection (scenario inclusion)</strong><span className="ps-small">Scenarios with at least one of your products placed ÷ all scenarios, no-result scenarios included. Brands’ rates don’t add to 100%.</span></li>
+            <li className="ps-item"><strong>Selected when eligible</strong><span className="ps-small">Scenarios with a placement ÷ scenarios where at least one of your products qualified. N/A when none qualified.</span></li>
             <li className="ps-item"><strong>Claims checked by a person (review coverage)</strong><span className="ps-small">Claims reviewed by a person ÷ all inventoried claims. Pending claims stay in the denominator.</span></li>
-            <li className="ps-item"><strong>Scenarios</strong><span className="ps-small">Fictional shoppers in a fixed design, equal weights. Not a population estimate. Safety boundary and skipped-answer cases are reported separately.</span></li>
+            <li className="ps-item"><strong>Scenarios</strong><span className="ps-small">Synthetic shopping scenarios in a fixed design, equal weights. Not a population estimate. Scenarios with configured product rules and skipped answers are reported separately.</span></li>
             <li className="ps-item"><strong>Engine</strong><span className="ps-small">ayna’s production matching code, run read-only on a frozen catalog. Partner status, affiliate links and payments are not inputs; a test proves changing them leaves placements unchanged.</span></li>
           </ul>
         </section>
