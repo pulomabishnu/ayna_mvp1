@@ -287,7 +287,7 @@ export default function PartnerStudio({ fetcher = fetch }) {
           <p>Ask why you’re missing the top 3, who’s beating you, or what to fix first.</p>
           <button type="button" onClick={() => { setAsking(true); track('partner_studio_ask_opened'); }}>Ask a question</button>
         </div>
-        <p className="ps-side-foot">Private preview for the ayna team. Made-up shoppers and public product facts only.</p>
+        <p className="ps-side-foot">Private preview for the ayna team. Made-up shoppers, public product facts, and anonymous ayna app activity counts.</p>
       </aside>
       <main className="ps-main" id="main">
         <div className="ps-toolbar">
