@@ -77,6 +77,8 @@ export default async function handler(req, res) {
     categories: snapshot.categories,
     // Earlier comparable runs (slot counts only) for trends; empty until run history is stored.
     history: snapshot.history || [],
+    // Every catalog product with public facts and aggregate app activity, for whole-catalog comparisons.
+    catalog: snapshot.catalog || [],
     outOfScope: snapshot.outOfScope,
     brands,
     brand: { name, ...snapshot.brands[name] },
